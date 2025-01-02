@@ -32,8 +32,8 @@
 #include "debug/hexview.h"
 #include "lib/command_parser.h"
 
-#include "../ports/eBat/eBat.h"
-#include "../ports/eBat/eBatRuntime.h"
+//#include "../ports/eBat/eBat.h"
+//#include "../ports/eBat/eBatRuntime.h"
 
 int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
@@ -744,22 +744,22 @@ void cli(){
 
         /////////////////////////////////////
 
-        int preprocessor = 0;
+        // int preprocessor = 0;
 
-        if (preprocessor == 0){
+        // if (preprocessor == 0){
             cli_handler(input_buffer);
-        } else {
-            BAT_T* token = bat_parse_string(input_buffer);
-            token->Debug = 0;
-            token->Echo = 1;
-            int ret = bat_runtime_exec(token);
-            qemu_warn("RETURN CODE: %d\n",ret);
-            bat_destroy(token);
-        }
+        // } else {
+        //     BAT_T* token = bat_parse_string(input_buffer);
+        //     token->Debug = 0;
+        //     token->Echo = 1;
+        //     int ret = bat_runtime_exec(token);
+        //     qemu_warn("RETURN CODE: %d\n",ret);
+        //     bat_destroy(token);
+        // }
         ////////////////////////////////////
 
 		//
-		tty_printf("\n");
+		// tty_printf("\n");
 
 		ssize_t delta = (int)system_heap.used_memory - (int)memory_cur;
 		ssize_t delta_blocks = (int)system_heap.allocated_count - (int)memory_cnt_cur;

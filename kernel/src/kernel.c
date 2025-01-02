@@ -30,8 +30,8 @@
 #include "drv/ps2.h"
 #include "net/dhcp.h"
 #include "gfx/intel.h"
-#include "ports/eBat/eBat.h"
-#include "ports/eBat/eBatRuntime.h"
+// #include "ports/eBat/eBat.h"
+// #include "ports/eBat/eBatRuntime.h"
 
 
 #include <lib/pixel.h>
@@ -68,7 +68,7 @@ void autoexec(){
     variable_write("SUBVERSIONNAME", SUBVERSIONNAME);
     variable_write("VERSION", VERSION_STRING);
 
-
+/*
     char* f = "R:\\autoexec.bat";
     FILE* cat_file = fopen(f, "r");
     if (!cat_file){
@@ -96,6 +96,7 @@ void autoexec(){
     fclose(cat_file);
 
     kfree(buffer);
+    */
 }
 
 void __createRamDisk(){
