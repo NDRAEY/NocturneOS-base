@@ -15,7 +15,7 @@
 /rust/target
 /rust/Cargo.lock
 .idea/
-iso/boot/ramdisk
+iso/ramdisk
 disk*.img
 builds/
 cmake-*/

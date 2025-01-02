@@ -13,6 +13,7 @@
 #include <lib/php/explode.h>
 #include <sys/unwind.h>
 
+#include "io/ports.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
@@ -108,22 +109,6 @@ void __createRamDisk(){
     fs_tempfs_format('T');
     qemu_ok("[INITRD] The virtual hard disk has been successfully created.");
 }
-
-#ifndef RELEASE
-void draw_raw_fb(multiboot_header_t* mboot, int x, int y, int w, int h, int color) {
-    for(uint32_t i = y; i < y + h; i++) {
-        for(uint32_t j = x; j < x + w; j++) {
-            uint8_t* a = (framebuffer_addr + (j * ((mboot->framebuffer_bpp) >> 3)) + i * (mboot->framebuffer_pitch));
-
-            a[2] = (color >> 16) & 0xff;
-            a[1] = (color >> 8) & 0xff;
-            a[0] = (color) & 0xff;
-        }
-    }
-}
-#else
-#define draw_raw_fb(a, b, c, d, e, f)
-#endif
 
 /**
  * @brief Обработка команд указаных ядру при загрузке
@@ -232,6 +217,37 @@ extern size_t RODATA_end;
 extern size_t BSS_start;
 extern size_t BSS_end;
 
+uint64_t __udivmoddi4(uint64_t num, uint64_t den, uint64_t *rem_p)
+ {
+   uint64_t quot = 0, qbit = 1;
+ 
+   if ( den == 0 ) {
+     return 1/((unsigned)den); /* Intentional divide by zero, without
+                                  triggering a compiler warning which
+                                  would abort the build */
+   }
+ 
+   /* Left-justify denominator and count shift */
+   while ( (int64_t)den >= 0 ) {
+     den <<= 1;
+     qbit <<= 1;
+   }
+ 
+   while ( qbit ) {
+     if ( den <= num ) {
+       num -= den;
+       quot += qbit;
+     }
+     den >>= 1;
+     qbit >>= 1;
+   }
+ 
+   if ( rem_p )
+     *rem_p = num;
+ 
+   return quot;
+ }
+
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -246,10 +262,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     
     framebuffer_addr = (uint8_t *) (mboot->framebuffer_addr);
     
-    draw_raw_fb(mboot, 0, 0, 200, 16, 0x444444);
-    
     drawASCIILogo(0);
-    
+
     qemu_log("SayoriOS v%d.%d.%d\nBuilt: %s",
              VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
              __TIMESTAMP__                                   // Время окончания компиляции ядра
@@ -271,13 +285,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     qemu_log("Initializing FPU...");
     fpu_init();
     
-    draw_raw_fb(mboot, 0, 0, 400, 16, 0x888888);
-    
     init_timer(CLOCK_FREQ);
     
     __asm__ volatile("sti");
-    
-    draw_raw_fb(mboot, 0, 0, 800, 16, 0xffffff);
     
     qemu_log("Checking RAM...");
     check_memory_map((memory_map_entry_t *) mboot->mmap_addr, mboot->mmap_length);

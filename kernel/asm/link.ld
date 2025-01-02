@@ -56,5 +56,9 @@ SECTIONS
         USER_end = .;
     }
 
+    /DISCARD/ : {
+        *(.note.gnu.build-id)
+    }
+
     KERNEL_END_pos = .;
 }

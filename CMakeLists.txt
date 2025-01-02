@@ -15,8 +15,8 @@ set(ISO_DIR "${CMAKE_SOURCE_DIR}/iso/")
 set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/")
-set(CMAKE_ASM_FLAGS "-m32 -x assembler-with-cpp")
-set(CMAKE_C_FLAGS "-O0 -static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -mno-red-zone -MMD -MP -g -fdiagnostics-color -m32 -march=i386 ${C_INCLUDES}")
+set(CMAKE_ASM_FLAGS "-m32 -g")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES}")
 
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static")
 
@@ -41,6 +41,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
+set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -O0" CACHE STRING "Flags for Debug" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "-D RELEASE -O0" CACHE STRING "Flags for Release" FORCE)
+set(CMAKE_C_FLAGS_RELEASEOPTIMIZED "-D RELEASE -O2" CACHE STRING "Flags for ReleaseOptimized" FORCE)
 
 set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")
 
@@ -61,7 +64,7 @@ set(ASM_SRC kernel/asm/init.s
 	kernel/asm/sys_calls.s 
 	kernel/asm/usr.s 
 	kernel/asm/sse.s 
-kernel/asm/gdt.s 
+	kernel/asm/gdt.s 
 	kernel/asm/paging.s 
 	kernel/asm/regs.s 
 	kernel/src/lib/setjmp.s 
@@ -209,7 +212,7 @@ add_executable(${KERNEL} ${SRC})
 
 # Targets
 
-if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Release"))
+if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     add_custom_command(
             TARGET ${KERNEL}
             COMMAND strip -s ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
@@ -240,9 +243,16 @@ else()
 endif()
 
 add_custom_target(
+    ramdisk
+    COMMAND tar cvf ${ISO_DIR}/ramdisk ramdisk/
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    DEPENDS copy_kernel
+)
+
+add_custom_target(
         iso
         COMMAND ${MKRESCUE} ${MKRESCUE_FLAGS}
-        DEPENDS copy_kernel
+        DEPENDS ramdisk
 )
 
 add_custom_target(
@@ -251,5 +261,3 @@ add_custom_target(
         USES_TERMINAL
         DEPENDS iso
 )
-
-

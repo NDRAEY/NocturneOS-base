@@ -2,17 +2,23 @@
 .global	sse_check
 
 sse_check:
-    mov $0x1, %eax
+    push %ebx 
+    push %ecx
+    push %edx 
 
+    mov $0x1, %eax        # Request CPU feature information
     cpuid
 
-    test $(1 << 25), %edx
-    mov $0x1, %eax
+    test $(1 << 25), %edx # Check if the SSE bit is set in edx
+    mov $0x1, %eax        # Assume SSE is available (eax = 1)
 
-    jnz good
+    jnz .good             # If the SSE bit is set, jump to .good
 
-    xor %eax, %eax
-good:
+    xor %eax, %eax        # Otherwise, set eax to 0 (no SSE support)
+.good:
+    pop %edx              # Restore the original value of edx
+    pop %ecx              # Restore the original value of ecx
+    pop %ebx              # Restore the original value of ebx
     ret
 
 

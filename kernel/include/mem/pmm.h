@@ -39,11 +39,11 @@ typedef 	uint32_t 			physical_addr_t;
 
 // The space where first page table starts
 /// Начало где расположены все таблицы страниц
-static uint32_t* page_directory_start = (uint32_t*)(0xffffffff - (4 * MB) + 1);
+#define page_directory_start ((uint32_t*)(0xffffffff - (4 * MB) + 1))
 
 // The space where we can modify page directory
 /// Начало директории таблиц для страниц
-static uint32_t* page_directory_virt = (uint32_t*)(0xffffffff - (4 * KB) + 1);
+#define page_directory_virt ((uint32_t*)(0xffffffff - (4 * KB) + 1))
 
 
 extern void load_page_directory(size_t addr);
