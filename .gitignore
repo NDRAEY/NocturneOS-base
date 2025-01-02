@@ -18,5 +18,6 @@
 iso/boot/ramdisk
 disk*.img
 builds/
+cmake-*/
 compile_commands.json
 .cache/
