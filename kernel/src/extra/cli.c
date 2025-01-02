@@ -225,23 +225,6 @@ uint32_t CLI_CMD_MKDIR(uint32_t c, char* v[]){
     return 0;
 }
 
-uint32_t CLI_CMD_JSE(uint32_t c, char* v[]){
-    if (c == 0 || (c == 1 && (strcmpn(v[1],"/?")))){
-        _tty_printf("JavaScript Engine.\n");
-        _tty_printf("Пример:\"JSE R:\\jse\\console.js\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-
-    int res = elk_file(v[1]);
-
-    if (!res) {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("   [JSE] Произошла ошибка при выполнении скрипта. Подробности отправлены в консоль.");
-    }
-    return 1;
-}
-
 uint32_t CLI_CMD_SET(uint32_t c, char* v[]){
 	if (c == 1 && (strcmpn(v[1],"/?"))){
 		_tty_printf("Для получения данных переменной введите \"SET ПЕРЕМЕННАЯ\".\n");
@@ -613,7 +596,6 @@ uint32_t pavi_view(uint32_t, char**);
 uint32_t minesweeper(uint32_t, char**);
 uint32_t shell_diskctl(uint32_t, char**);
 uint32_t calendar(uint32_t, char**);
-uint32_t forth_sys(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
 	{"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
@@ -639,7 +621,6 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
 	// {"RS", "rs", rust_command, "Rust command"},
 	{"PROC", "proc", proc_list, "Список процессов"},
     {"SYSINFO", "sysinfo", CLI_CMD_SYSINFO, "Информация о системе"},
-    {"JSE", "jse", CLI_CMD_JSE, "JavaScript Engine"},
     {"TOUCH", "touch", CLI_CMD_TOUCH, "Создать файл"},
     {"DEL", "DEL", CLI_CMD_DEL, "Удалить файл"},
     {"MKDIR", "mkdir", CLI_CMD_MKDIR, "Создать папку"},
@@ -650,8 +631,6 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
     {"HEX", "hex", CLI_CMD_HEX, "Show hex data"},
     {"ST", "st", CLI_SPAWN_TEST, "spawn test"},
-    {"FORTH", "forth",forth_sys, "Форт система"},
-    {"4TH", "4th",forth_sys, "Форт система"},
 	{nullptr, nullptr, nullptr}
 };
 

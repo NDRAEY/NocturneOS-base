@@ -1,0 +1,1933 @@
+00100000 R KERNEL_BASE_pos
+00101030 T CODE_start	/home/ndraey/NocturneOS-base/kernel/asm/init.s:38
+00101030 T __pre_init	/home/ndraey/NocturneOS-base/kernel/asm/init.s:38
+0010104d t conword	/home/ndraey/NocturneOS-base/kernel/asm/init.s:55
+0010104f t loop	/home/ndraey/NocturneOS-base/kernel/asm/init.s:61
+00101051 T isr0	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:34
+0010105b T isr1	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:35
+00101065 T isr2	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:36
+0010106f T isr3	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:37
+00101079 T isr4	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:38
+00101083 T isr5	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:39
+0010108d T isr6	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:40
+00101097 T isr7	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:41
+001010a1 T isr8	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:42
+001010a9 T isr9	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:43
+001010b3 T isr10	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:44
+001010bb T isr11	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:45
+001010c3 T isr12	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:46
+001010cb T isr13	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:47
+001010d3 T isr14	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:48
+001010db T isr15	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:49
+001010e5 T isr16	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:50
+001010ef T isr17	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:51
+001010f9 T isr18	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:52
+00101103 T isr19	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:53
+0010110d T isr20	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:54
+00101117 T isr21	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:55
+00101121 T isr22	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:56
+0010112b T isr23	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:57
+00101135 T isr24	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:58
+0010113f T isr25	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:59
+00101149 T isr26	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:60
+00101153 T isr27	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:61
+0010115d T isr28	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:62
+00101167 T isr29	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:63
+00101171 T isr30	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:64
+0010117b T isr31	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:65
+00101185 T irq0	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:68
+0010118f T irq1	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:69
+00101199 T irq2	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:70
+001011a3 T irq3	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:71
+001011ad T irq4	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:72
+001011b7 T irq5	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:73
+001011c1 T irq6	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:74
+001011cb T irq7	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:75
+001011d2 T irq8	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:76
+001011d9 T irq9	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:77
+001011e0 T irq10	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:78
+001011e7 T irq11	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:79
+001011ee T irq12	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:80
+001011f5 T irq13	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:81
+001011fc T irq14	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:82
+00101203 T irq15	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:83
+0010120a T isr80	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:88
+00101229 t isr_common_stub_err	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:110
+0010123c t isr_common_stub_noerr	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:131
+0010124f t irq_common_stub	/home/ndraey/NocturneOS-base/kernel/asm/interrupt.s:152
+00101262 T syscall_entry_call	/home/ndraey/NocturneOS-base/kernel/asm/sys_calls.s:9
+0010126f T user_mode_switch	/home/ndraey/NocturneOS-base/kernel/asm/usr.s:14
+0010128c T sse_check	/home/ndraey/NocturneOS-base/kernel/asm/sse.s:5
+001012a2 t good	/home/ndraey/NocturneOS-base/kernel/asm/sse.s:16
+001012a3 T sse_enable	/home/ndraey/NocturneOS-base/kernel/asm/sse.s:23
+001012bc T gdt_flush	/home/ndraey/NocturneOS-base/kernel/asm/gdt.s:4
+001012d8 t flush	/home/ndraey/NocturneOS-base/kernel/asm/gdt.s:20
+001012d9 T tss_flush	/home/ndraey/NocturneOS-base/kernel/asm/gdt.s:24
+001012e1 T idt_flush	/home/ndraey/NocturneOS-base/kernel/asm/gdt.s:30
+001012e9 T load_page_directory	/home/ndraey/NocturneOS-base/kernel/asm/paging.s:4
+001012f7 T enable_paging	/home/ndraey/NocturneOS-base/kernel/asm/paging.s:15
+00101309 T flush_tlb_entry	/home/ndraey/NocturneOS-base/kernel/asm/paging.s:27
+00101317 T read_cr0	/home/ndraey/NocturneOS-base/kernel/asm/regs.s:5
+0010131b T write_cr0	/home/ndraey/NocturneOS-base/kernel/asm/regs.s:12
+00101326 T read_cr3	/home/ndraey/NocturneOS-base/kernel/asm/regs.s:24
+0010132a T write_cr3	/home/ndraey/NocturneOS-base/kernel/asm/regs.s:31
+00101335 T read_cr2	/home/ndraey/NocturneOS-base/kernel/asm/regs.s:43
+00101339 T setjmp	/home/ndraey/NocturneOS-base/kernel/src/lib/setjmp.s:7
+00101358 T longjmp	/home/ndraey/NocturneOS-base/kernel/src/lib/setjmp.s:24
+0010137a T task_switch_v2	/home/ndraey/NocturneOS-base/kernel/asm/switch_task.s:78
+001013c6 t .no_need	/home/ndraey/NocturneOS-base/kernel/asm/switch_task.s:129
+001013cc T __udivdi3	/home/ndraey/NocturneOS-base/kernel/asm/64bit_on_32bit.s:7
+0010146c T __umoddi3	/home/ndraey/NocturneOS-base/kernel/asm/64bit_on_32bit.s:103
+0010151f T detect_cpu	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:45
+00101637 T getNameBrand	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:80
+0010164c T do_intel	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:152
+00101856 t .L25	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:190
+00101882 t .L24	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:193
+001018ae t .L23	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:196
+001018d7 t .L22	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:199
+00101900 t .L20	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:202
+00101927 t .L19	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:204
+00101a0d t .L41	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:219
+00101a39 t .L40	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:222
+00101a65 t .L39	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:225
+00101a91 t .L38	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:228
+00101aba t .L37	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:231
+00101ae3 t .L36	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:234
+00101b0c t .L34	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:237
+00101b35 t .L80	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:240
+00101c35 t .L56	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:264
+00101c61 t .L55	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:267
+00101c8d t .L54	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:270
+00101cb6 t .L53	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:273
+00101cdf t .L52	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:276
+00101d08 t .L50	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:279
+00101d31 t .L82	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:282
+00101fa6 T do_amd	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:357
+001021ad t .L100	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:402
+001021df t .L101	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:405
+0010220b t .L99	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:408
+00102234 t .L97	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:411
+0010225d t .L96	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:414
+0010240c T get_max_cpuid_count	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:459
+0010244c t __x86.get_pc_thunk.ax
+00102450 t __x86.get_pc_thunk.si
+00102454 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001024b6 T sod_screen_legacy	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:17
+001027a3 T bsod_screen	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:59
+00102a5b T print_regs	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:88
+00102bcb T division_by_zero	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:99
+00102c51 T fault_opcode	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:105
+00102cd7 T double_error	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:110
+00102d6b T invalid_tss	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:115
+00102eee T segment_is_not_available	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:144
+0010307a T stack_error	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:176
+00103114 T general_protection_error	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:182
+001031ae T page_fault	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:189
+0010343e T fpu_fault	/home/ndraey/NocturneOS-base/kernel/src/sys/cpu_isr.c:243
+001034d8 t __x86.get_pc_thunk.bx
+001034dc T gdt_set_gate	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:23
+0010357d T write_tss	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:51
+001036da T init_gdt	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:103
+001037b0 T idt_set_gate	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:152
+00103826 T init_idt	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:160
+00103dd4 T init_descriptor_tables	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:244
+00103df1 T isr_handler	/home/ndraey/NocturneOS-base/kernel/src/sys/isr.c:16
+00103e47 T irq_handler	/home/ndraey/NocturneOS-base/kernel/src/sys/isr.c:23
+00103ecc T register_interrupt_handler	/home/ndraey/NocturneOS-base/kernel/src/sys/isr.c:38
+00103f24 T isr_init	/home/ndraey/NocturneOS-base/kernel/src/sys/isr.c:45
+00103ff0 t __x86.get_pc_thunk.cx
+00103ff4 T switch_qemu_logging	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:19
+00104010 T insl	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:30
+00104065 T outsl	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:44
+001040b9 T insw	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:50
+001040f7 T outsw	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:56
+00104135 T is_transmit_empty	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:67
+0010416e T serial_readchar	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:72
+001041c1 T serial_readchar_timeout	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:83
+0010425a T io_wait	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:99
+00104280 T isprint	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:109
+001042b0 T is_com_port	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:120
+00104390 T qemu_printf	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:149
+001043f1 T new_qemu_printf	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:164
+00104476 T __com_setInit	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:25
+001044a9 T __com_getInit	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:36
+001044cf T __com_readBigData	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:40
+00104524 T __com_writeBigData	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:54
+00104578 T __com_readString	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:67
+001045a5 T __com_is_ready	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:76
+001045de T __com_writeChar	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:85
+0010462c T __com_writeString	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:96
+00104690 T __com_io_wait	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:107
+001046b6 T __com_writeInt	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:112
+0010478f T __com_writeUInt	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:136
+0010483c T __com_writeHex	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:151
+0010491d T __com_pre_formatString	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:171
+0010497e t .L49	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:180
+001049b5 t .L53	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:184
+001049db t .L52	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:187
+001049fc t .L51	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:190
+00104b47 t .L50	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:216
+00104b68 t .L48	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:219
+00104b89 t .L45	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:222
+00104ba9 t .L47	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:225
+00104bc9 t .L44	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:228
+00104c27 T __com_formatString	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:243
+00104c6e T __com_init	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:256
+00104da2 t __x86.get_pc_thunk.dx
+00104da6 T isalnum	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:14
+00104dee T isUTF	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:27
+00104e1e T isSymbol	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:41
+00104e54 T SymConvert	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:56
+00104ee2 T UTFConvert	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:77
+00104f27 T strlen	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:88
+00104f63 T mb_strlen	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:107
+00104fc1 T struntil	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:124
+00105005 T memcpy	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:173
+0010509e T memset	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:203
+001050e0 T memmove	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:220
+0010515e T strcmp	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:253
+001051a0 T strcmpn	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:270
+001051c5 T strcpy	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:282
+00105213 T memcmp	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:305
+00105265 T str_bksp	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:325
+001052c2 T strpbrk	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:345
+00105311 T strspn	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:366
+00105377 T strncmp	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:394
+001053c1 T strtok	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:411
+0010544c T strncpy	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:447
+00105497 T strcat	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:463
+001054e1 T substr	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:492
+00105514 T strchr	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:505
+00105551 T strtolower	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:519
+00105591 T strtoupper	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:533
+001055d1 T isNumber	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:549
+0010562d T atoi	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:565
+001056c8 T htoi	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:580
+00105781 T strver	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:605
+001057e9 T itoa	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:623
+001058bd T itou	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:651
+0010594a T itoh	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:671
+00105a07 T dcmpstr	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:694
+00105a61 T digit_count	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:702
+00105ac2 T hex_count	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:714
+00105afd T isnumberstr	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:726
+00105b50 T strcount	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:746
+00105b90 T strstr	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:757
+00105c03 T strtod	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:782
+00105dd6 T strtoul	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:840
+00105f43 T fpu_isInitialized	/home/ndraey/NocturneOS-base/kernel/src/drv/fpu.c:15
+00105f58 T fpu_fldcw	/home/ndraey/NocturneOS-base/kernel/src/drv/fpu.c:20
+00105f75 T fpu_init	/home/ndraey/NocturneOS-base/kernel/src/drv/fpu.c:25
+00105ff2 T getTicks	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:26
+00106007 T getUptime	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:30
+00106053 T getFrequency	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:43
+00106068 T sleep_ticks	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:52
+0010609d T sleep_ms	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:68
+001060d7 T timer_callback	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:80
+00106133 T init_timer	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:93
+001061c5 T drawASCIILogo	/home/ndraey/NocturneOS-base/kernel/src/sys/logo.c:10
+0010622f T fac	/home/ndraey/NocturneOS-base/kernel/src/lib/math/math.c:5
+0010626a T ipow	/home/ndraey/NocturneOS-base/kernel/src/lib/math/math.c:15
+001062a3 T deg2rad	/home/ndraey/NocturneOS-base/kernel/src/lib/math/math.c:24
+001062cc T rad2deg	/home/ndraey/NocturneOS-base/kernel/src/lib/math/math.c:28
+001062f5 T phys_alloc_single_page	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:42
+00106406 T phys_alloc_multi_pages	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:82
+001065a5 T phys_free_single_page	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:156
+00106621 T phys_free_multi_pages	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:176
+001066cd T phys_is_used_page	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:204
+00106720 T phys_mark_page_entry	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:218
+001067c2 T new_page_directory	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:234
+00106884 T blank_page_directory	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:275
+001068c2 T get_page_table_by_vaddr	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:282
+00106907 T reload_cr3	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:289
+0010691d T map_single_page	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:303
+00106a6f T unmap_single_page	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:350
+00106ad9 T phys_get_page_data	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:371
+00106b3e T virt2phys	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:386
+00106ba8 T phys_set_flags	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:402
+00106c2f T map_pages	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:427
+00106c9c T check_memory_map	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:444
+00106de6 T getInstalledRam	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:466
+00106dfb T mark_reserved_memory_as_used	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:470
+00106efb T get_kernel_page_directory	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:494
+00106f22 T init_paging	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:501
+001072b7 T map_pages_overlapping	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:573
+00107374 T unmap_pages_overlapping	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:594
+001073dd T phys_not_enough_memory	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:608
+00107417 T pmm_alloc_and_map_self	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:28
+00107465 T vmm_init	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:37
+0010754c T heap_dump	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:54
+00107705 T alloc_no_map	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:74
+001078ed T free_no_map	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:132
+001079e8 T kmalloc_common	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:161
+00107bc2 T vmm_is_page_used_by_entries	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:209
+00107c82 T heap_get_block	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:224
+00107cf4 T heap_get_block_ref	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:235
+00107d49 T heap_get_block_idx	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:246
+00107d91 T kfree	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:256
+00107ef0 T krealloc	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:289
+00108183 T clone_kernel_page_directory	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:403
+00108414 T vmm_debug_switch	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:450
+0010842d t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0010848f T fmodecheck	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:28
+0010868b T fcheckerror	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:98
+00108763 T ferror	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:123
+00108778 T perror	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:133
+0010884e T fopen	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:166
+00108882 T fopen_binmode	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:172
+00108afd T fclose	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:213
+00108b3a T fsize	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:227
+00108bb9 T fread	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:250
+00108d2d T ftell	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:287
+00108e19 T fseek	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:315
+001090b1 T rewind	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:362
+00109128 T fwrite	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:381
+00109237 T str_cdsp	/home/ndraey/NocturneOS-base/kernel/src/lib/split.c:22
+00109294 T str_split	/home/ndraey/NocturneOS-base/kernel/src/lib/split.c:40
+00109361 T getDisplayAddr	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:29
+00109376 T getFrameBufferAddr	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:33
+0010938b T getDisplayPitch	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:42
+001093a0 T getDisplayBpp	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:51
+001093b5 T create_back_framebuffer	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:55
+00109529 T init_vbe	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:87
+00109710 T getPixel	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:156
+001097b2 T rgba_blend	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:168
+00109870 T setPixelAlpha	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:179
+001099ae T getScreenWidth	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:222
+001099c3 T getScreenHeight	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:232
+001099d8 T graphics_update	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:236
+00109b3c T clean_screen	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:267
+00109b70 T rect_copy	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:271
+00109c2e T tty_taskInit	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:48
+00109cc0 T tty_fontConfigurate	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:62
+00109d7a T tty_changeState	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:76
+00109d93 T getPosX	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:85
+00109da8 T getPosY	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:95
+00109dbd T set_cursor_enabled	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:99
+00109dd6 T tty_setcolor	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:108
+00109def T tty_getcolor	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:112
+00109e04 T tty_set_bgcolor	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:121
+00109e1d T tty_scroll	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:129
+00109ec2 T setPosX	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:154
+00109edb T setPosY	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:164
+00109ef4 T buffer_set_pixel4	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:177
+00109f64 T _tty_putchar	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:193
+0010a09a T tty_putchar	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:216
+0010a0f9 T tty_backspace	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:225
+0010a1bf T _tty_puts	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:245
+0010a247 T _tty_print	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:260
+0010a299 T _tty_printf	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:270
+0010a304 T animTextCursor	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:290
+0010a420 T clean_tty_screen_no_update	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:319
+0010a451 T clean_tty_screen	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:326
+0010a494 T oct2bin	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:21
+0010a4da T fs_tarfs_read	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:32
+0010a60f T fs_tarfs_write	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:50
+0010a62c T fs_tarfs_create	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:54
+0010a649 T fs_tarfs_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:58
+0010a666 T fs_tarfs_info	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:62
+0010a8a3 T fs_tarfs_label	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:99
+0010a8e9 T fs_tarfs_detect	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:103
+0010aaf7 T fs_tarfs_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:120
+0010af76 T fs_tarfs_countFiles	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:181
+0010b012 T fs_tarfs_init	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:200
+0010b4fa T tarfs_infoFile	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:264
+0010b5ad T tarfs_readFile	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:272
+0010b6a6 t str_contains	/home/ndraey/NocturneOS-base/kernel/include/lib/php/str_contains.h:13
+0010b6dc T fsm_DateConvertToUnix	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:24
+0010b838 T fsm_convertUnix	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:54
+0010ba4a T fsm_timePrintable	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:101
+0010bab4 T fsm_isPathToFile	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:115
+0010bc20 T fsm_getIDbyName	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:140
+0010bc8c T fsm_dump	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:148
+0010bdf8 T fsm_read	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:158
+0010bef0 T fsm_create	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:166
+0010bf6c T fsm_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:172
+0010bfe8 T fsm_write	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:179
+0010c06a T fsm_info	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:186
+0010c1ac T fsm_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:196
+0010c2ad T fsm_reg	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:208
+0010c4d0 T fsm_getMode	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:224
+0010c530 T fsm_dpm_update	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:231
+0010c9d5 T nvfs_decode	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:23
+0010cc44 T nvfs_read	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:80
+0010ccf6 T nvfs_create	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:100
+0010cd6b T nvfs_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:115
+0010cde0 T nvfs_write	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:132
+0010ce5e T nvfs_info	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:149
+0010cfe7 T nvfs_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:185
+0010d0af T fs_natfs_read	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:17
+0010d141 T fs_natfs_write	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:27
+0010d15e T fs_natfs_info	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:31
+0010d2c7 T fs_natfs_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:54
+0010d78d T fs_natfs_create	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:138
+0010d7aa T fs_natfs_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:142
+0010d7c7 T fs_natfs_label	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:146
+0010d80d T fs_natfs_detect	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:150
+0010d82a T fs_natfs_init	/home/ndraey/NocturneOS-base/kernel/src/fs/natfs.c:157
+0010d906 T fs_tempfs_func_getCountAllBlocks	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:19
+0010d93b T fs_tempfs_func_checkSign	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:28
+0010d972 T fs_tempfs_func_fixPackage	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:32
+0010d9a2 T fs_tempfs_tcache_update	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:38
+0010dee9 T fs_tempfs_func_readPackage	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:130
+0010df6b T fs_tempfs_func_writePackage	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:141
+0010dfc0 T fs_tempfs_func_getIndexEntity	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:146
+0010e204 T fs_tempfs_func_readEntity	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:191
+0010e3e5 T fs_tempfs_func_writeEntity	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:222
+0010e43e T fs_tempfs_func_updateBoot	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:228
+0010e486 T fs_tempfs_func_getBootInfo	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:233
+0010e4ca T fs_tempfs_func_getCountAllFreeEntity	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:239
+0010e50e T fs_tempfs_func_findFreePackage	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:245
+0010e71f T fs_tempfs_func_findFreeInfoBlock	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:293
+0010e82e T fs_tempfs_func_findDIR	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:320
+0010e9b6 T fs_tempfs_func_findFilesOnDIR	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:353
+0010ea6a T fs_tempfs_func_findFILE	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:371
+0010ebb8 T fs_tempfs_func_clearBlocks	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:400
+0010ed60 T fs_tempfs_func_cacheUpdate	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:436
+0010ed89 T fs_tempfs_read	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:440
+0010ef3a T fs_tempfs_write	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:481
+0010f413 T fs_tempfs_info	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:576
+0010f568 T fs_tempfs_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:594
+0010fbe4 T fs_tempfs_create	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:688
+00110072 T fs_tempfs_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:768
+001103aa T fs_tempfs_label	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:829
+00110440 T fs_tempfs_detect	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:838
+001104ac T fs_tempfs_format	/home/ndraey/NocturneOS-base/kernel/src/fs/tempfs.c:848
+001107ec T char_replace	/home/ndraey/NocturneOS-base/kernel/src/lib/php/str_replace.c:21
+00110857 T init_task_manager	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:33
+00110a6f T scheduler_mode	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:82
+00110a88 T create_process	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:86
+00110c37 T get_current_proc	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:125
+00110c4c T blyat_fire	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:129
+00110ca7 T _thread_create_unwrapped	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:147
+00110e66 T thread_create	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:200
+00110ec6 T thread_suspend	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:222
+00110edf T thread_exit	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:231
+00110f05 T is_multitask	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:261
+00110f1a T task_switch_v2_wrapper	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:265
+0011124d T str_cdsp2	/home/ndraey/NocturneOS-base/kernel/src/lib/php/explode.c:21
+001112ac T explode	/home/ndraey/NocturneOS-base/kernel/src/lib/php/explode.c:32
+001113f3 T pathinfo	/home/ndraey/NocturneOS-base/kernel/src/lib/php/pathinfo.c:13
+00111681 T text_init	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:32
+00111848 T psf1_get_w	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:68
+00111860 T psf1_get_h	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:72
+00111878 T psf1_rupatch	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:76
+00111909 t .L80	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:83
+00111929 t .L64	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:84
+0011194a t .L81	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:85
+00111952 t .L59	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:85
+0011195e t .L39	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:85
+0011196a t .L79	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:86
+00111975 t .L58	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:86
+00111981 t .L38	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:86
+0011198d t .L78	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:87
+00111998 t .L57	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:87
+001119a4 t .L37	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:87
+001119b0 t .L77	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:88
+001119bb t .L56	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:88
+001119c7 t .L36	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:88
+001119d3 t .L76	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:89
+001119de t .L55	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:89
+001119ea t .L35	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:89
+001119f6 t .L75	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:90
+00111a01 t .L54	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:90
+00111a0d t .L34	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:90
+00111a19 t .L74	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:91
+00111a24 t .L53	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:91
+00111a30 t .L33	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:91
+00111a3c t .L73	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:92
+00111a47 t .L52	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:92
+00111a53 t .L32	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:92
+00111a5f t .L72	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:93
+00111a6a t .L51	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:93
+00111a76 t .L31	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:93
+00111a82 t .L71	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:94
+00111a8d t .L50	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:94
+00111a99 t .L30	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:94
+00111aa5 t .L70	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:95
+00111ab0 t .L49	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:95
+00111abc t .L29	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:95
+00111ac8 t .L69	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:96
+00111ad3 t .L48	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:96
+00111adf t .L28	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:96
+00111aeb t .L68	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:97
+00111af6 t .L47	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:97
+00111b02 t .L27	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:97
+00111b0e t .L67	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:98
+00111b19 t .L46	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:98
+00111b25 t .L26	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:98
+00111b31 t .L66	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:99
+00111b3c t .L45	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:99
+00111b48 t .L25	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:99
+00111b54 t .L65	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:100
+00111b5d t .L44	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:100
+00111b69 t .L24	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:100
+00111b75 t .L63	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:101
+00111b7e t .L43	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:101
+00111b87 t .L23	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:101
+00111b90 t .L62	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:102
+00111b99 t .L42	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:102
+00111ba2 t .L22	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:102
+00111bab t .L61	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:103
+00111bb4 t .L41	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:103
+00111bbd t .L21	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:103
+00111bc6 t .L60	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:104
+00111bcf t .L40	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:104
+00111bd8 t .L20	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:104
+00111be1 t .L19	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:105
+00111bea t .L17	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:105
+00111bfd T psf1_get_glyph	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:110
+00111c92 T draw_vga_ch	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:121
+00111dfa T draw_vga_str	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:159
+00111f25 T decode_hex	/home/ndraey/NocturneOS-base/kernel/src/sys/unwind.c:11
+00111fcf T get_func_name_by_addr	/home/ndraey/NocturneOS-base/kernel/src/sys/unwind.c:32
+001120b2 T unwind_stack	/home/ndraey/NocturneOS-base/kernel/src/sys/unwind.c:61
+0011216d t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001121cf T __milla_setLogin	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:26
+00112252 T __milla_setPasswd	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:32
+001122d5 T __milla_getCode	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:38
+001122ea T __milla_sendcmd	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:48
+00112329 T __milla_getcmd	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:58
+001123e4 T __milla_getSizeFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:85
+0011247b T __milla_getDiskInfo_Name	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:97
+001124c5 T __milla_getDiskInfo_Free	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:106
+00112559 T __milla_getDiskInfo_Use	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:118
+001125ed T __milla_getDiskInfo_All	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:130
+00112684 T __milla_cleanState	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:145
+001127a4 T __milla_getFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:167
+0011296a T __milla_writeFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:200
+00112b47 T __milla_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:224
+00112ba0 T __milla_mkdir	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:232
+00112bf9 T __milla_findID	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:240
+00112c4c T __milla_isDir	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:247
+00112c9f T __milla_isFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:253
+00112cf2 T __milla_getRootID	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:259
+00112d3b T __milla_touch	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:266
+00112d94 T __milla_getList	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:277
+00112fc4 T __milla_getCountFiles	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:317
+00113017 T __milla_init	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:327
+0011321a T __milla_destroy	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:363
+00113245 T nat_readChar	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:384
+00113283 T nat_read	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:399
+0011332b T nat_write	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:419
+0011337a T nat_getLengthFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:432
+001133b8 T nat_getOffsetFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:446
+001133f6 T nat_findFile	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:458
+0011342e T nat_findDir	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:471
+00113466 T nat_countElemFolder	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:481
+00113497 T nat_list	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:490
+0011381f T nat_diskUsed	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:543
+0011385d T nat_diskSpace	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:555
+0011389b T nat_diskSize	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:567
+001138d9 T nat_getDevName	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:579
+00113934 T nat_dirfree	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:585
+0011396e T isInitNatSuki	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:589
+00113983 T NatSuki_initrd	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:600
+00113c78 T initrd_tarfs	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/initrd.c:18
+00113d8e T dpm_searchFreeIndex	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:17
+00113e2a T dpm_fnc_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:37
+00113efc T dpm_metadata_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:51
+00113fae T dpm_metadata_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:63
+00114022 T dpm_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:82
+001142cf T dpm_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:123
+00114588 T dpm_unmount	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:154
+00114738 T dpm_reg	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:187
+00114c4a T dpm_FileSystemUpdate	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:229
+00114d0e T dpm_LabelUpdate	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:241
+00114dcc T dpm_disk_size	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:252
+00114e3a T dpm_info	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:262
+00114ead T list_init	/home/ndraey/NocturneOS-base/kernel/src/lib/list.c:11
+00114eda T list_add	/home/ndraey/NocturneOS-base/kernel/src/lib/list.c:17
+00114f98 T list_remove	/home/ndraey/NocturneOS-base/kernel/src/lib/list.c:38
+00115038 T is_file	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:24
+0011508d T is_dir	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:39
+001150e3 T file_exists	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:54
+0011512a T filesize	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:67
+0011517d T filemtime	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:83
+001151fb T is_readable	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:104
+00115256 T is_writable	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:121
+001152b1 T is_executable	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:138
+0011530c T fileperms	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:155
+001153a3 T touch	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:179
+001153e2 T mkdir	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:192
+0011540a T unlink	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:203
+00115432 T rmdir	/home/ndraey/NocturneOS-base/kernel/src/lib/fileio.c:214
+0011545a T mutex_get	/home/ndraey/NocturneOS-base/kernel/src/sys/sync.c:19
+0011549f T mutex_release	/home/ndraey/NocturneOS-base/kernel/src/sys/sync.c:36
+001154b8 T fill_screen	/home/ndraey/NocturneOS-base/kernel/src/gui/basics.c:4
+00115594 T draw_rectangle	/home/ndraey/NocturneOS-base/kernel/src/gui/basics.c:15
+001157f5 T draw_filled_rectangle	/home/ndraey/NocturneOS-base/kernel/src/gui/basics.c:28
+001158c4 T drawRect	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:25
+001159a4 T drawRectLine	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:44
+001159b4 T drawRectBorder	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:66
+00115c0e T drawHorizontalLine	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:86
+00115cbe T drawVerticalLine	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:100
+00115d6e T drawCirclePoints	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:117
+001161d1 T drawCircle	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:136
+0011627c T drawFilledCircle	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:163
+0011636b T drawFilledRectBorder	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:195
+00116571 T drawRoundedSquare	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:227
+00116762 T drawRoundedRectangle	/home/ndraey/NocturneOS-base/kernel/src/lib/pixel.c:263
+0011692d t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0011698f T bootScreenLazy	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:31
+001169a8 T bootScreenChangeTheme	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:40
+001169c1 T bootScreenTheme	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:49
+00116a33 T bootScreenClose	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:84
+00116aa0 T bootScreenChangeMode	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:97
+00116ab9 T bootScreenInfo	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:104
+00116bc8 T bootScreenProcentPaint	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:131
+00116c78 T bootScreenPaint	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:149
+00116ed4 T bootScreenInit	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:195
+00116f64 T hexview_advanced	/home/ndraey/NocturneOS-base/kernel/src/debug/hexview.c:11
+00117037 T drv_vbe_init	/home/ndraey/NocturneOS-base/kernel/src/drv/video/vbe.c:60
+0011706e t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001170d0 T __getCharKeyboard	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:55
+0011710f T getCharKeyboard	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:67
+00117144 t .L75	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:74
+00117177 t .L113	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:75
+001171aa t .L112	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:76
+001171dd t .L111	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:77
+00117210 t .L110	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:78
+00117243 t .L109	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:79
+00117276 t .L108	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:80
+001172a9 t .L107	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:81
+001172dc t .L106	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:82
+0011730f t .L105	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:83
+00117342 t .L104	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:84
+00117375 t .L103	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:85
+001173a8 t .L102	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:86
+001173db t .L99	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:88
+0011740e t .L98	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:89
+00117441 t .L97	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:90
+00117474 t .L96	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:91
+001174a7 t .L95	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:92
+001174da t .L94	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:93
+0011750d t .L93	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:94
+00117540 t .L92	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:95
+00117573 t .L91	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:96
+001175a6 t .L90	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:97
+001175d9 t .L89	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:98
+0011760c t .L88	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:99
+0011763f t .L86	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:101
+00117672 t .L85	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:102
+001176a5 t .L84	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:103
+001176d8 t .L83	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:104
+0011770b t .L82	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:105
+0011773e t .L81	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:106
+00117771 t .L80	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:107
+001177a4 t .L79	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:108
+001177d7 t .L78	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:109
+0011780a t .L77	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:110
+0011783d t .L76	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:111
+00117870 t .L74	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:112
+001178a3 t .L73	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:114
+001178d6 t .L72	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:115
+00117909 t .L71	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:116
+0011793c t .L70	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:117
+0011796f t .L69	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:118
+001179a2 t .L68	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:119
+001179d5 t .L67	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:120
+00117a08 t .L66	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:121
+00117a3b t .L65	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:122
+00117a6e t .L64	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:123
+00117aa1 t .L101	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:126
+00117ad4 t .L100	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:127
+00117b07 t .L63	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:128
+00117b3a t .L87	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:129
+00117b6d t .L27	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:131
+00117ba0 t .L62	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:132
+00117bd3 t .L61	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:133
+00117c06 t .L60	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:134
+00117c39 t .L59	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:135
+00117c6c t .L58	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:136
+00117c9f t .L57	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:137
+00117cd2 t .L56	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:138
+00117d05 t .L55	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:139
+00117d38 t .L54	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:140
+00117d6b t .L53	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:141
+00117d9e t .L52	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:142
+00117dd1 t .L51	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:143
+00117e04 t .L50	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:145
+00117e37 t .L49	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:146
+00117e6a t .L48	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:147
+00117e9d t .L47	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:148
+00117ed0 t .L46	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:149
+00117f03 t .L45	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:150
+00117f36 t .L44	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:151
+00117f69 t .L43	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:152
+00117f9c t .L42	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:153
+00117fcf t .L41	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:154
+00118002 t .L40	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:155
+00118035 t .L39	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:156
+00118068 t .L38	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:158
+0011809b t .L37	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:159
+001180ce t .L36	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:160
+00118101 t .L35	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:161
+00118134 t .L34	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:162
+00118167 t .L33	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:163
+0011819a t .L32	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:164
+001181cd t .L31	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:165
+00118200 t .L30	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:166
+00118233 t .L29	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:167
+00118266 t .L28	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:168
+00118299 t .L26	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:169
+001182cc t .L25	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:171
+001182ff t .L24	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:172
+00118332 t .L23	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:173
+00118365 t .L22	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:174
+00118398 t .L21	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:175
+001183cb t .L20	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:176
+001183fe t .L19	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:177
+00118431 t .L18	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:178
+00118464 t .L17	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:179
+00118494 t .L16	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:180
+001184c4 t .L14	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:182
+001184f4 t .L13	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:184
+00118522 T getPressReleaseKeyboard	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:190
+0011853a T keyboardctl	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:194
+00118562 T getCharRaw	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:200
+00118577 T is_lctrl_key	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:204
+0011858c T getIntKeyboardWait	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:208
+001185ea T getCharKeyboardWait	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:218
+00118658 T kbd_add_char	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:234
+00118705 T gets	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:253
+00118766 T gets_max	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:271
+00118803 T keyboardHandler	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:298
+001189e0 T keyboardInit	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:350
+00118c90 T ps2_keyboard_install_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:414
+00118ce3 T isMouseInit	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:68
+00118d00 T mouse_parse_packet	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:77
+00118f30 T mouse_handler	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:118
+00119032 T mouse_wait	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:149
+001190b6 T mouse_write	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:173
+00119107 T mouse_read	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:191
+00119137 T mouse_install	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:203
+001191b0 T ps2_mouse_install_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:221
+001191e3 T mouse_get_x	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:226
+001191f8 T mouse_get_y	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:227
+0011920d T mouse_get_b1	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:228
+00119222 T mouse_get_b2	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:229
+00119237 T mouse_get_b3	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:230
+0011924c T mouse_get_b4	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:231
+00119261 T mouse_get_b5	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:232
+00119276 T syscall_handler	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:25
+001192f0 T syscall_env	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:44
+00119324 T syscall_memory_alloc	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:50
+0011938f T syscall_memory_realloc	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:58
+001193c8 T syscall_memory_free	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:66
+001193f3 T syscall_tty_write	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:72
+00119443 T syscall_trigger_reg	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:77
+0011949e T syscall_trigger_on	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:83
+001194f2 T syscall_trigger_off	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:89
+00119546 T syscall_trigger_del	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:95
+0011959a T syscall_getkey	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:101
+001195b7 T syscall_get_timer_ticks	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:105
+001195d4 T syscall_sleep	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:109
+001195ff T syscall_datetime	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:115
+00119645 T syscall_exit	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:121
+001196cf T init_syscalls	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:140
+00119812 T measure_func	/home/ndraey/NocturneOS-base/kernel/src/sys/testing.c:7
+00119870 T _FoundFreeIndexTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:23
+001198c1 T RegTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:35
+00119a09 T DeleteTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:56
+00119ad0 T OnTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:69
+00119b51 T OffTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:81
+00119bfd T CallTrigger	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:93
+00119c95 T triggersConfig	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:106
+00119ccc T rand	/home/ndraey/NocturneOS-base/kernel/src/lib/rand.c:5
+00119d3e T get_update_in_progress_flag	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:46
+00119d7e T get_RTC_register	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:54
+00119dbb T read_rtc	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:62
+0011a1d1 T isleap	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:137
+0011a218 T get_time	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:144
+0011a294 T beeperPlay	/home/ndraey/NocturneOS-base/kernel/src/drv/beeper.c:21
+0011a35e T beeperSilent	/home/ndraey/NocturneOS-base/kernel/src/drv/beeper.c:42
+0011a39e T configure_env	/home/ndraey/NocturneOS-base/kernel/src/user/env.c:20
+0011a463 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0011a4c5 T pci_read_confspc_word	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:32
+0011a564 T pci_read32	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:54
+0011a5f4 T pci_get_class	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:217
+0011a635 T pci_get_subclass	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:230
+0011a672 T pci_get_hdr_type	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:243
+0011a6af T pci_get_vendor	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:256
+0011a6ec T pci_get_device	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:269
+0011a729 T pci_get_device_type	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:281
+0011a790 T pci_get_vendor_name	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:295
+0011a7e5 T pci_get_bar	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:318
+0011a8e6 T pci_write	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:342
+0011a964 T pci_find_device	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:362
+0011aab8 T pci_find_device_by_class_and_subclass	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:394
+0011ad6d T pci_enable_bus_mastering	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:435
+0011add6 T pci_print_nth	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:443
+0011afa4 T pci_scan_everything	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:477
+0011b415 T pci_print_list	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:589
+0011b4d9 T point_in_rect	/home/ndraey/NocturneOS-base/kernel/src/gui/pointutils.c:11
+0011b51e T draw_line	/home/ndraey/NocturneOS-base/kernel/src/gui/line.c:6
+0011b68a T draw_line_extern	/home/ndraey/NocturneOS-base/kernel/src/gui/line.c:46
+0011b794 T draw_circle	/home/ndraey/NocturneOS-base/kernel/src/gui/circle.c:4
+0011ba4b T exp	/home/ndraey/NocturneOS-base/kernel/src/lib/math/exp.c:3
+0011baa4 T log	/home/ndraey/NocturneOS-base/kernel/src/lib/math/log.c:3
+0011bb2f T pow	/home/ndraey/NocturneOS-base/kernel/src/lib/math/pow.c:3
+0011bbe1 T acos	/home/ndraey/NocturneOS-base/kernel/src/lib/math/acos.c:3
+0011bc3d t int2float	/home/ndraey/NocturneOS-base/kernel/include/lib/math.h:27
+0011bc58 T asin_ipart	/home/ndraey/NocturneOS-base/kernel/src/lib/math/asin.c:3
+0011bcb6 T asin	/home/ndraey/NocturneOS-base/kernel/src/lib/math/asin.c:7
+0011bd45 T atan_ipart	/home/ndraey/NocturneOS-base/kernel/src/lib/math/atan.c:3
+0011bda1 T atan	/home/ndraey/NocturneOS-base/kernel/src/lib/math/atan.c:7
+0011bdeb t floor	/home/ndraey/NocturneOS-base/kernel/include/lib/math.h:59
+0011be59 t ceil	/home/ndraey/NocturneOS-base/kernel/include/lib/math.h:65
+0011bec8 T modf	/home/ndraey/NocturneOS-base/kernel/src/lib/math/modf.c:3
+0011bf2b T fmod	/home/ndraey/NocturneOS-base/kernel/src/lib/math/modf.c:11
+0011bfa5 T trapezoidal_rule	/home/ndraey/NocturneOS-base/kernel/src/lib/math/integral.c:3
+0011c072 T sin	/home/ndraey/NocturneOS-base/kernel/src/lib/math/sin.c:3
+0011c198 T cos	/home/ndraey/NocturneOS-base/kernel/src/lib/math/cos.c:3
+0011c2a1 T tan	/home/ndraey/NocturneOS-base/kernel/src/lib/math/tan.c:3
+0011c2f2 T sqrt	/home/ndraey/NocturneOS-base/kernel/src/lib/math/sqrt.c:3
+0011c35d T draw_rgb_image	/home/ndraey/NocturneOS-base/kernel/src/io/rgb_image.c:18
+0011c4ba T scale_rgb_image	/home/ndraey/NocturneOS-base/kernel/src/io/rgb_image.c:56
+0011c671 T cbrt	/home/ndraey/NocturneOS-base/kernel/src/lib/math/cbrt.c:3
+0011c6d7 T cpu_get_id	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuid.c:11
+0011c70a T cpu_get_id_string	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuid.c:19
+0011c758 T cpu_get_basic_info	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuid.c:32
+0011c9b0 T is_long_mode_supported	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuid.c:106
+0011c9fc t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0011ca5e T ide_poll_drq	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:21
+0011cac0 T ide_poll_bsy	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:32
+0011cb1e T ide_select_drive	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:43
+0011cb7a T ide_primary_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:50
+0011cb9d T ide_secondary_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:59
+0011cbc0 T ide_soft_reset	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:68
+0011cc19 T dpm_ata_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:74
+0011cc93 T dpm_ata_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:85
+0011cd0d T ide_identify	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:96
+0011e062 T ide_400ns_delay	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:344
+0011e0d8 T ide_poll	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:351
+0011e1a1 T ata_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:376
+0011e419 T ata_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:414
+0011e60f T ata_list	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:441
+0011e995 T ata_check_all	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:487
+0011e9e4 T ata_init	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:494
+0011ea50 T ata_scsi_status_wait	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:23
+0011eadc T ata_scsi_send	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:47
+0011ec61 T ata_scsi_receive_size_of_transfer	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:81
+0011ed1a T ata_scsi_read_result	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:99
+0011ed5f T atapi_read_size	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:109
+0011ee59 T atapi_read_block_size	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:151
+0011ef3b T atapi_read_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:182
+0011f0f5 T atapi_eject	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:236
+0011f1ba T atapi_request_sense	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:278
+0011f28e T atapi_check_media_presence	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/atapi.c:304
+0011f341 T is_temperature_module_present	/home/ndraey/NocturneOS-base/kernel/src/sys/cputemp.c:15
+0011f3a2 T cputemp_calibrate	/home/ndraey/NocturneOS-base/kernel/src/sys/cputemp.c:36
+0011f412 T get_cpu_temperature	/home/ndraey/NocturneOS-base/kernel/src/sys/cputemp.c:57
+0011f46e T bit_flip_byte	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:3
+0011f4af T bit_flip_short	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:8
+0011f4ea T bit_flip_int	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:14
+0011f543 T htonb	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:22
+0011f56b T ntohb	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:26
+0011f59b T htons	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:30
+0011f5c1 T htonl	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:34
+0011f5db T ntohs	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:38
+0011f601 T ntohl	/home/ndraey/NocturneOS-base/kernel/src/net/endianess.c:42
+0011f61b T netcards_list_init	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:9
+0011f68b T netcard_add	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:15
+0011f6f6 T netcards_get_count	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:22
+0011f70b T netcard_get	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:26
+0011f73c T ethernet_dump	/home/ndraey/NocturneOS-base/kernel/src/net/ethernet.c:10
+0011ff4c T ethernet_send_packet	/home/ndraey/NocturneOS-base/kernel/src/net/ethernet.c:86
+001200bf T ethernet_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/ethernet.c:107
+00120285 T arp_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:15
+00120618 T arp_send_packet	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:87
+00120757 T arp_lookup_add	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:123
+001208a8 T arp_lookup	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:148
+00120a9b T arp_init	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:172
+00120aec t __x86.get_pc_thunk.di
+00120af0 T ipv4_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/ipv4.c:17
+00120f47 T ipv4_checksum	/home/ndraey/NocturneOS-base/kernel/src/net/ipv4.c:64
+00120fc5 T ipv4_send_packet	/home/ndraey/NocturneOS-base/kernel/src/net/ipv4.c:82
+0012123c T udp_calculate_checksum	/home/ndraey/NocturneOS-base/kernel/src/net/udp.c:9
+00121250 T udp_send_packet	/home/ndraey/NocturneOS-base/kernel/src/net/udp.c:14
+0012137a T udp_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/udp.c:30
+00121439 T dhcp_discover	/home/ndraey/NocturneOS-base/kernel/src/net/dhcp.c:9
+00121675 T dhcp_request	/home/ndraey/NocturneOS-base/kernel/src/net/dhcp.c:72
+001218cb T dhcp_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/dhcp.c:134
+00121ba1 T dhcp_init_all_cards	/home/ndraey/NocturneOS-base/kernel/src/net/dhcp.c:167
+00121c35 T icmp_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/icmp.c:4
+00121cae T getSysPath	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:24
+00121cc3 T setSysPath	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:35
+00121d5f T reboot	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:49
+00121dcf T shutdown	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:64
+00121e48 T getUserName	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:76
+00121e5d T setUserName	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:87
+00121f1b T getHostname	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:106
+00121f30 T setHostname	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:117
+00122001 T ERROR_sound	/home/ndraey/NocturneOS-base/kernel/src/io/status_sounds.c:6
+0012205d T ATTENTION_sound	/home/ndraey/NocturneOS-base/kernel/src/io/status_sounds.c:16
+001220db T ALERT_sound	/home/ndraey/NocturneOS-base/kernel/src/io/status_sounds.c:29
+00122137 T GLOBAL_ERROR_sound	/home/ndraey/NocturneOS-base/kernel/src/io/status_sounds.c:39
+001221d4 T tty_error	/home/ndraey/NocturneOS-base/kernel/src/io/status_loggers.c:7
+00122255 T tty_attention	/home/ndraey/NocturneOS-base/kernel/src/io/status_loggers.c:24
+001222d6 T tty_alert	/home/ndraey/NocturneOS-base/kernel/src/io/status_loggers.c:41
+00122357 T tty_global_error	/home/ndraey/NocturneOS-base/kernel/src/io/status_loggers.c:58
+001223d8 t is_elf_file	/home/ndraey/NocturneOS-base/kernel/include/elf/elf.h:150
+0012249d t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001224ff T CLI_CMD_CLS	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:78
+00122521 T CLI_CMD_SYSINFO	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:83
+001226b9 T CLI_CMD_DISKPART	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:112
+00122765 T CLI_CMD_CAT	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:127
+001228e3 T CLI_CMD_DEL	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:155
+001229ad T CLI_CMD_RMDIR	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:174
+00122a77 T CLI_CMD_TOUCH	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:192
+00122b41 T CLI_CMD_MKDIR	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:210
+00122c0b T CLI_CMD_SET	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:228
+00122f6f T CLI_CMD_DIR	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:276
+0012317e T CLI_CMD_RUN	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:307
+0012326b T CLI_CMD_ECHO	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:337
+00123604 T CLI_CMD_HELP	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:375
+00123710 T CLI_MEMINFO	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:401
+001237fc T proc_list	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:412
+0012397b T CLI_CMD_REBOOT	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:445
+0012399d T CLI_SPAWN	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:452
+00123ab8 T CLI_SPAWN_TEST	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:483
+00123b1d T CLI_CMD_MTRR	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:493
+00123b3f T CLI_RD	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:499
+00123c89 T CLI_CMD_HEX	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:526
+00123dc8 T CLI_PLAIN	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:557
+00123fcc T cli_handler_ebat	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:637
+001240d7 T cli_handler	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:657
+00124249 T cli	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:687
+001245b4 t str_contains	/home/ndraey/NocturneOS-base/kernel/include/lib/php/str_contains.h:13
+001245ea T variable_freeID	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:19
+001246a6 T variable_write	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:33
+00124870 T variable_read	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:51
+001249e5 T variable_list	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:63
+00124cae T fs_fat32_read	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:24
+00124d33 T fs_fat32_write	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:42
+00124d50 T fs_fat32_info	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:46
+00124f46 T fs_fat32_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:84
+0012552b T fs_fat32_create	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:174
+00125548 T fs_fat32_delete	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:178
+00125565 T fs_fat32_label	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:182
+001255ad T fs_fat32_get_clusters	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:188
+0012562a T fs_fat32_read_entire_fat	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:207
+00125711 T fs_fat32_read_clusters_to_memory	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:221
+00125818 T fs_fat32_optimize	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:238
+001258fc T fs_fat32_read_clusters_to_memory_precise	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:263
+00125d2f T fs_fat32_get_cluster_count	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:358
+00125d7c T fs_fat32_read_lfn	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:368
+00126014 T fs_fat32_read_file_info	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:427
+00126151 T fs_fat32_get_object_info	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:462
+0012630f T fs_fat32_read_file_from_dir	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:503
+001264cf T fs_fat32_scan_directory	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:544
+0012665f T fs_fat32_evaluate	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:582
+0012689c T fs_fat32_detect	/home/ndraey/NocturneOS-base/kernel/src/fs/fat32.c:645
+00126d1e T fpu_save	/home/ndraey/NocturneOS-base/kernel/src/sys/fxsave_region.c:3
+00126d35 T fpu_restore	/home/ndraey/NocturneOS-base/kernel/src/sys/fxsave_region.c:7
+00126d4c T gfxbench	/home/ndraey/NocturneOS-base/kernel/src/toys/gfxbench.c:12
+00126eea T miniplay_display	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:21
+00127121 T miniplay	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:56
+00127382 T rtl8139_netcard_get_mac	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:46
+001273b6 T rtl8139_init	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:59
+00127681 T rtl8139_read_mac	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:115
+0012778f T rtl8139_enable_rx_tx	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:130
+001277bf T rtl8139_setup_rcr	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:134
+001277f2 T rtl8139_wake_up	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:144
+00127822 T rtl8139_sw_reset	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:148
+0012787c T rtl8139_init_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:155
+001278b1 T rtl8139_handler	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:159
+001279b0 T rtl8139_send_packet	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:182
+00127ac4 T rtl8139_receive_packet	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:216
+00127dc0 T rtl8139_init_interrupts	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:257
+00127ea9 T vio_ntw_init	/home/ndraey/NocturneOS-base/kernel/src/drv/network/virtio_network.c:38
+001282ca T tga_extract_info	/home/ndraey/NocturneOS-base/kernel/src/fmt/tga.c:9
+0012832b T tga_extract_pixels	/home/ndraey/NocturneOS-base/kernel/src/fmt/tga.c:24
+00128aad T tga_extract_pixels_from_data	/home/ndraey/NocturneOS-base/kernel/src/fmt/tga.c:227
+00129215 t int2float	/home/ndraey/NocturneOS-base/kernel/include/lib/math.h:27
+00129230 T measure_vsprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:9
+0012937d t .L21	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:50
+001293e1 t .L24	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:70
+001293f2 t .L23	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:77
+001294cb t .L22	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:102
+00129550 t .L20	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:124
+001295a1 t .L17	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:135
+001295f2 t .L19	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:147
+0012965e t .L16	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:163
+00129685 T vsprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:176
+001297a3 t .L68	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:218
+0012989a t .L71	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:253
+001298b7 t .L70	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:260
+00129a45 t .L69	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:310
+00129b2b t .L67	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:343
+00129c08 t .L64	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:371
+00129d05 t .L66	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:406
+00129dea t .L123	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:437
+00129e05 T measure_sprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:443
+00129e35 T sprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:454
+00129e7b T vasprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:467
+00129f0b T asprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:477
+00129f51 T vsnprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:490
+0012a01d T snprintf	/home/ndraey/NocturneOS-base/kernel/src/lib/sprintf.c:508
+0012a050 T __ubsan_handle_out_of_bounds	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:9
+0012a0a2 T __ubsan_handle_pointer_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:19
+0012a0d9 T __ubsan_handle_type_mismatch_v1	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:24
+0012a1f4 T __ubsan_handle_mul_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:49
+0012a22b T __ubsan_handle_add_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:54
+0012a262 T __ubsan_handle_sub_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:59
+0012a299 T __ubsan_handle_shift_out_of_bounds	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:64
+0012a2d0 T __ubsan_handle_divrem_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:69
+0012a307 T __ubsan_handle_float_cast_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:74
+0012a33e T __ubsan_handle_negate_overflow	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:79
+0012a375 T __ubsan_handle_vla_bound_not_positive	/home/ndraey/NocturneOS-base/kernel/src/debug/ubsan.c:84
+0012a3ac t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0012a40e T Floppy	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:39
+0012a451 T irq_waitFloppy	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:43
+0012a483 t irqFloppy	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:49
+0012a49d T _FloppyError	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:53
+0012a51b t _FloppyROOT	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:59
+0012a5e4 t _FloppyDMA	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:70
+0012a768 T _FloppyMotor	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:105
+0012a9b1 T _FloppyCMD	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:133
+0012aac2 T _FloppyData	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:146
+0012ab8b T _FloppyCI	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:158
+0012abda T _FloppyCalibrate	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:166
+0012ad2c T _FloppyReset	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:187
+0012adf2 T _FloppySeek	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:210
+0012af60 T _FloppyTrack	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:233
+0012b3f5 T addr_2_coff	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:315
+0012b45d T _FloppyCache	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:323
+0012b504 T _FloppyRead	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:343
+0012b5f7 T _FloppyWrite	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:360
+0012b701 T _FloppyServiceA	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:379
+0012b7b9 T _FloppyCheck	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:395
+0012be4e T _FloppyDPMWriteA	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:471
+0012bf99 T _FloppyDPMReadA	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:491
+0012c0bd T _FloppyPrint	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:508
+0012c2cd T initFloppy	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:530
+0012c47f t ata_set_params	/home/ndraey/NocturneOS-base/kernel/include/drv/disk/ata.h:143
+0012c4cf T ata_dma_init	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:30
+0012c7bc T ata_dma_clear_prdt	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:71
+0012c7f7 T ata_dma_set_prdt_entry	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:75
+0012c86c T dump_prdt	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:81
+0012c99e T ata_dma_read_sector	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:102
+0012cd47 T ata_dma_read_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:182
+0012d162 T ata_dma_write_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:291
+0012d5ba T ata_dma_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:391
+0012d87a T ata_dma_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:436
+0012db25 T ac97_set_master_volume	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:39
+0012db8e T ac97_set_pcm_volume	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:47
+0012dc00 T ac97_set_pcm_sample_rate	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:54
+0012dc58 T ac97_reset_channel	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:77
+0012dcad T ac97_clear_status_register	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:81
+0012dcde T _ac97_update_bdl	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:85
+0012dd11 T ac97_update_bdl	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:89
+0012dd30 T ac97_update_lvi	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:93
+0012dd6a T ac97_set_play_sound	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:97
+0012dda0 T ac97_init	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:102
+0012e328 T ac97_is_initialized	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:197
+0012e33d T ac97_FillBDLs	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:201
+0012e412 T ac97_WriteAll	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:231
+0012e551 T ac97_test	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:263
+0012e664 T load_elf	/home/ndraey/NocturneOS-base/kernel/src/sys/elf.c:17
+0012e859 T unload_elf	/home/ndraey/NocturneOS-base/kernel/src/sys/elf.c:56
+0012e8b5 T run_elf_file	/home/ndraey/NocturneOS-base/kernel/src/sys/elf.c:64
+0012efd7 T spawn	/home/ndraey/NocturneOS-base/kernel/src/sys/elf.c:162
+0012f479 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0012f4db T rsdp_find	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:13
+0012f65d T acpi_checksum_sdt	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:48
+0012f6a3 T find_table	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:58
+0012f7c1 T acpi_scan_all_tables	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:90
+0012f990 T find_facp	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:130
+0012fc6e T find_apic	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:187
+0012ffdf t .L43	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:250
+001300b1 t .L42	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:262
+00130173 t .L41	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:272
+0013026d t .L40	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:283
+00130333 t .L38	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:293
+00130465 T pixfmt_conv	/home/ndraey/NocturneOS-base/kernel/src/sys/pixfmt.c:7
+00130554 T gui_restore	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:22
+00130576 T gui_render_widgets	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:29
+00130620 T gui_render_window	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:43
+001307ab T is_point_on_any_window_titlebar	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:78
+00130850 T is_point_on_any_window	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:96
+0013091d T get_window_index	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:114
+00130973 T gui_handle_mouse	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:124
+00130c35 T gui_render_windows	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:205
+00130c8a T gui_render	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:213
+00130d57 T _window_new	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:12
+00130e60 T get_window_list	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:33
+00130e75 T get_window_count	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:37
+00130e8a T window_add_widget	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:41
+00130f47 T window_remove_widget	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:50
+00130fc0 T _window_add_to_list	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:60
+00131063 T _window_remove_from_list	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:72
+0013132e T window_new	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:104
+00131395 T window_is_in_list	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:115
+001313e4 T window_destroy	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:125
+00131583 T destroy_all_windows	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:157
+00131657 T window_send_signal	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:168
+0013185f T log_window_manager_state	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:214
+00131abc T new_bare_widget	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget.c:6
+00131b5e T destroy_widget	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget.c:20
+00131bf1 T widget_notify	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget.c:27
+00131d40 T widget_button_renderer	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_button.c:9
+00131e3f T new_widget_button	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_button.c:36
+00131f54 T destroy_widget_button	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_button.c:57
+00131fac T widget_progress_renderer	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_progress.c:6
+00132059 T new_widget_progress	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_progress.c:24
+001320e3 T destroy_widget_progress	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_progress.c:37
+0013210e T widget_image_renderer	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_image.c:11
+00132182 T new_widget_image	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_image.c:24
+0013233c T destroy_widget_image	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_image.c:66
+001323a5 T widget_label_renderer	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_label.c:8
+0013240a T new_widget_label	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_label.c:21
+00132546 T destroy_widget_label	/home/ndraey/NocturneOS-base/kernel/src/desktop/widget_label.c:44
+0013259e T eki_start	/home/ndraey/NocturneOS-base/kernel/src/desktop/eki.c:13
+00132704 T eki_on_close	/home/ndraey/NocturneOS-base/kernel/src/desktop/eki.c:49
+00132795 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001327f7 T make_time_string	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:24
+00132854 T shutdown_system_activity_real	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:34
+00132afb T shutdown_system_activity	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:92
+00132b34 T parallel_desktop_start	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:102
+001331a3 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+00133205 T mtrr_init	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:21
+001333a4 T list_mtrrs	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:53
+0013344e T get_mtrr_index	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:66
+001334c7 T read_mtrr	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:81
+0013351b T write_mtrr	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:91
+00133569 T write_mtrr_size	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:101
+001335db T find_free_mtrr	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:111
+00133632 T CLI_CMD_NET	/home/ndraey/NocturneOS-base/kernel/src/net/net_info_cli.c:11
+0013373e T mala_init	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:50
+001337c1 T mala_flush	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:61
+00133981 T mala_exit	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:91
+001339bd T check_colors	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:99
+00133ab2 T mala_control	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:116
+00133cfb T mala_draw	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:164
+00133d6b T memmeter	/home/ndraey/NocturneOS-base/kernel/src/debug/memmeter.c:5
+00133e48 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+00133eaa T ahci_init	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:44
+0013456c T ahci_rebase_memory_for	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:207
+00134752 T ahci_is_drive_attached	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:258
+001347e3 T ahci_free_cmd_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:281
+0013485b T ahci_start_cmd	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:297
+001348bf T ahci_stop_cmd	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:309
+00134937 T ahci_irq_handler	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:327
+001349df T ahci_send_cmd	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:349
+00134b53 T ahci_read_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:388
+00135168 T ahci_write_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:513
+001355c3 T ahci_eject_cdrom	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:596
+00135718 T ahci_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:633
+001358ff T ahci_dpm_read	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:660
+0013597e T ahci_dpm_write	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:670
+001359d4 T ahci_identify	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:679
+00135da3 t ata_set_params	/home/ndraey/NocturneOS-base/kernel/include/drv/disk/ata.h:143
+00135df3 T ata_pio_read_sector	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_pio.c:11
+00136049 T ata_pio_read_sectors_pre	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_pio.c:56
+001362ab T ata_pio_write_raw_sector	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_pio.c:108
+0013651b T ata_pio_write_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_pio.c:153
+001365ed T ata_pio_read_sectors	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_pio.c:166
+001366bb T init_array	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:34
+001366de T array_append	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:39
+00136745 T array_get	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:45
+00136763 T array_clear	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:49
+001367a0 T move_array	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:55
+001367f3 T draw_sprite	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:68
+0013691a T init_field	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:79
+00136b28 T draw_field	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:122
+00136c5e T input	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:151
+0013706d T minesweeper	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:242
+00137177 T dayofweek	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:26
+00137200 T is_leap	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:34
+00137244 T days_in_month	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:38
+00137280 T month_by_name	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:46
+001372ce T calendar	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:56
+001374db t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0013753d T diskctl_help	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:7
+00137562 T diskctl_show_disk	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:17
+00137730 T diskctl_show_all_disks	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:61
+00137765 T diskctl_info	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:67
+001377fc T diskctl_eject	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:87
+001378ec T diskctl_test	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:114
+00137a39 T shell_diskctl	/home/ndraey/NocturneOS-base/kernel/src/toys/diskctl.c:151
+00137b30 T utf16_to_utf8	/home/ndraey/NocturneOS-base/kernel/src/lib/utf_conversion.c:8
+00137d57 T b64e	/home/ndraey/NocturneOS-base/kernel/src/lib/base64.c:47
+00137f82 T b64d	/home/ndraey/NocturneOS-base/kernel/src/lib/base64.c:82
+001381b0 T file_descriptors_init	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:15
+001381f7 T file_descriptor_allocate	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:22
+0013831d T file_descriptor_get	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:45
+00138384 T file_descriptor_read	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:57
+001384d7 T file_descriptor_write	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:82
+001385d6 T file_descriptor_close	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:103
+001386ef T file_descriptor_seek	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:128
+001387c9 T file_descriptor_tell	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:161
+0013883e T tcp_find_connection	/home/ndraey/NocturneOS-base/kernel/src/net/tcp.c:18
+001388d8 T tcp_new_connection	/home/ndraey/NocturneOS-base/kernel/src/net/tcp.c:30
+00138a29 T tcp_handle_packet	/home/ndraey/NocturneOS-base/kernel/src/net/tcp.c:56
+00138f5c T netstack_init	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:17
+00138fa0 T netstack_push	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:23
+0013908d T netstack_pop	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:36
+001390c4 T netstack_poll	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:42
+001390ea T netstack_processor	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:49
+001391b8 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0013921a T pavi_view	/home/ndraey/NocturneOS-base/kernel/src/toys/pavi.c:17
+00139697 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+001396f9 T hda_init	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:58
+00139d77 T hda_find_afg	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:205
+00139ed6 T hda_initialize_afg	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:238
+0013a23f T hda_interrupt_handler	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:295
+0013a309 T hda_send_verb_via_corb_rirb	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:326
+0013a3ba T hda_reset	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:346
+0013a45f T hda_calculate_entries	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:361
+0013a4a6 T grub_modules_prescan	/home/ndraey/NocturneOS-base/kernel/src/sys/grub_modules.c:14
+0013a4de T grub_modules_init	/home/ndraey/NocturneOS-base/kernel/src/sys/grub_modules.c:21
+0013a647 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0013a6a9 T ebr_recursive_dump	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/mbr.c:7
+0013a8eb T mbr_dump	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/mbr.c:35
+0013aaba T mbr_dump_all	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/mbr.c:61
+0013ab65 T lapic_init	/home/ndraey/NocturneOS-base/kernel/src/sys/lapic.c:10
+0013abbe T ps2_read_configuration_byte	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:13
+0013abed T ps2_write_configuration_byte	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:20
+0013ac2e T ps2_in_wait_until_empty	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:27
+0013ac60 T ps2_out_wait_until_full	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:31
+0013ac92 T ps2_read	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:35
+0013acbc T ps2_write	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:40
+0013acf0 T ps2_disable_first_device	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:45
+0013ad1b T ps2_disable_second_device	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:50
+0013ad46 T ps2_enable_first_device	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:55
+0013ad71 T ps2_enable_second_device	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:60
+0013ad9c T ps2_flush	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:65
+0013ade0 T ps2_test	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:72
+0013ae2d T ps2_init	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:85
+0013b008 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0013b06a T igfx_gmbus_reset	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:32
+0013b0b8 T igfx_wait	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:40
+0013b0e2 T igfx_init	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:45
+0013b68c T command_parser_new	/home/ndraey/NocturneOS-base/kernel/src/extra/command_parser.c:4
+0013b8e8 T command_parser_destroy	/home/ndraey/NocturneOS-base/kernel/src/extra/command_parser.c:62
+0013b956 T vector_new	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:8
+0013ba46 T vector_resize	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:29
+0013baa9 T vector_push_back	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:43
+0013bb3d T vector_pop_back	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:60
+0013bbbe T vector_get	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:70
+0013bc16 T vector_erase_all	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:77
+0013bca6 T vector_erase_nth	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:88
+0013bd65 T vector_clone	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:106
+0013be62 T vector_shrink_fit	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:122
+0013bebb T vector_swap	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:135
+0013bf32 T vector_insert	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:150
+0013bfbf T vector_destroy	/home/ndraey/NocturneOS-base/kernel/src/lib/libvector/src/vector.c:166
+0013bffe T string_new	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:12
+0013c0c3 T string_append_charptr	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:24
+0013c185 T string_append	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:50
+0013c1ba T string_crop	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:57
+0013c29d T string_append_char	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:78
+0013c323 T string_from_charptr	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:95
+0013c440 T string_from_sized_charptr	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:113
+0013c4fe T string_split	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:129
+0013c64b T string_split_free	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:172
+0013c6ab T string_clone	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:183
+0013c6f3 T string_reverse	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:197
+0013c76c T string_from_integer	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:210
+0013c834 T string_destroy	/home/ndraey/NocturneOS-base/kernel/src/lib/libstring/src/string.c:243
+0013c874 t tty_printf	/home/ndraey/NocturneOS-base/kernel/include/io/tty.h:20
+0013c8d6 T autoexec	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:53
+0013ca33 T __createRamDisk	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:99
+0013cb4d T draw_raw_fb	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:113
+0013cbe8 T kHandlerCMD	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:134
+0013d0c6 T initrd_sefs	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:209
+0013d16f T kmain	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:241
+0013dd32 T CODE_end
+0013e000 d cpu_flag_edx_description	/home/ndraey/NocturneOS-base/kernel/include/sys/cpuid.h:30
+0013e000 D DATA_start
+0013e080 D Intel	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:84
+0013e0e0 D Intel_Other	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:116
+0013e140 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e144 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e148 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e14c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e150 D default_qemu_printf	/home/ndraey/NocturneOS-base/kernel/src/io/ports.c:17
+0013e154 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e158 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e15c D frequency	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:19
+0013e160 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e164 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e168 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/src/mem/../../include/mem/pmm.h:42
+0013e16c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/src/mem/../../include/mem/pmm.h:46
+0013e170 D stdio_debug	/home/ndraey/NocturneOS-base/kernel/src/lib/stdio.c:17
+0013e174 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e178 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e17c D lazyDraw	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:18
+0013e180 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e184 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e188 D tty_feedback	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:27
+0013e18c D tty_off_pos_x	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:31
+0013e190 D tty_off_pos_h	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:33
+0013e194 D stateTTY	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:36
+0013e198 D showAnimTextCursor	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:41
+0013e19c d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e1a0 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e1c0 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013e1e8 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e1ec d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e1f0 D scheduler_working	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:26
+0013e1f4 d _w	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:21
+0013e200 D __milla_login	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:22
+0013e300 D __milla_passwd	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:23
+0013e400 D __milla_null	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:20
+0013e404 D txColorDark	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:15
+0013e408 D bgColorLight	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:16
+0013e40c D txColorLight	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:17
+0013e410 D maxElem	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:22
+0013e414 D bs_logs	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:24
+0013e418 D echo	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:37
+0013e41c d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e420 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e440 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013e468 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e46c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e470 D rand_seed	/home/ndraey/NocturneOS-base/kernel/src/lib/rand.c:3
+0013e474 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013e478 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013e480 d pci_device_type_strings	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:74
+0013e760 d pci_vendor_name_strings	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:174
+0013e860 d cpu_flag_edx_description	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpuid.h:30
+0013e8e0 d intel_brand_names	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpu_intel.h:7
+0013e940 d intel_additional_brand_names	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpu_intel.h:34
+0013e9a0 d intel_cpu_types	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpu_intel.h:61
+0013e9c0 d intel_cpu_family_names	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpu_intel.h:68
+0013ea00 d intel_model_names	/home/ndraey/NocturneOS-base/kernel/src/sys/../../include/sys/cpu_intel.h:76
+0013eb00 d cpu_flag_edx_description	/home/ndraey/NocturneOS-base/kernel/include/sys/cpuid.h:30
+0013eb80 D default_broadcast_mac_address	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:10
+0013eb88 D whoami	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:16
+0013eb8c D hostname	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:17
+0013eb90 D syspath	/home/ndraey/NocturneOS-base/kernel/src/sys/system.c:18
+0013eba0 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013eba4 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013eba8 D G_CLI_H_KYB	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:40
+0013ebac D G_CLI_CURINXD	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:41
+0013ebc0 D G_CLI_PATH	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:42
+0013efc0 d cpu_flag_edx_description	/home/ndraey/NocturneOS-base/kernel/include/sys/cpuid.h:30
+0013f040 D G_CLI_CMD	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:51
+0013f240 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f244 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f248 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f24c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f250 D TSAD_array	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:31
+0013f254 D TSD_array	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:32
+0013f260 D rtl8139_netcard	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:52
+0013f2ac d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f2b0 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f2c0 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f300 d drive_types	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:24
+0013f320 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f324 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f328 D prdt_entry_count	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:25
+0013f32c d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f330 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f334 D current_sample_rate	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:27
+0013f344 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f348 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f34c d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f350 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f354 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f358 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f360 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f388 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f38c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f3a0 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f3c8 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f3cc d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f3d0 D time_for_label	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:20
+0013f3e0 d cpu_flag_edx_description	/home/ndraey/NocturneOS-base/kernel/include/sys/cpuid.h:30
+0013f460 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f464 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f468 D brush_size	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:20
+0013f480 D colors	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:37
+0013f520 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f548 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f54c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f550 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f554 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f558 D running	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:64
+0013f560 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f5a0 D days_in_months	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:9
+0013f600 D months	/home/ndraey/NocturneOS-base/kernel/src/toys/calendar.c:11
+0013f630 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f634 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f640 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f668 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f66c d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f670 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f674 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f68c d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f690 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f694 d page_directory_start	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:42
+0013f698 d page_directory_virt	/home/ndraey/NocturneOS-base/kernel/include/mem/pmm.h:46
+0013f69c D test_pcs	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:42
+0013f6a0 D test_floppy	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:43
+0013f6a4 D test_network	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:44
+0013f6a8 D is_rsdp	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:45
+0013f6ac D ramdisk_size	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:48
+0013f6c0 d Type_Check_Kinds	/home/ndraey/NocturneOS-base/kernel/include/debug/ubsan.h:36
+0013f6e8 D DATA_end
+0013f6e8 d _GLOBAL_OFFSET_TABLE_
+00140000 R RODATA_start
+00140ad8 r __FUNCTION__.2
+00140ae4 r __FUNCTION__.1
+00140af0 r __FUNCTION__.0
+001419ec r __FUNCTION__.11
+00141a00 r __FUNCTION__.10
+00141a0c r __FUNCTION__.9
+00141a18 r __FUNCTION__.8
+00141a2c r __FUNCTION__.7
+00141a3c r __FUNCTION__.6
+00141a4c r __FUNCTION__.5
+00141a58 r __FUNCTION__.4
+00141a74 r __FUNCTION__.3
+00141a80 r __FUNCTION__.2
+00141a9c r __FUNCTION__.1
+00141aa8 r __FUNCTION__.0
+00141b30 r __FUNCTION__.0
+00141bb8 r __FUNCTION__.0
+00141ce4 r __FUNCTION__.0
+00142178 r __FUNCTION__.0
+0014264c r __FUNCTION__.8
+00142664 r __FUNCTION__.7
+0014267c r __FUNCTION__.6
+00142690 r __FUNCTION__.5
+001426a0 r __FUNCTION__.4
+001426b4 r __FUNCTION__.3
+001426d4 r __FUNCTION__.2
+001426e0 r __FUNCTION__.1
+001426f8 r __FUNCTION__.0
+00142b54 r __FUNCTION__.6
+00142b60 r __FUNCTION__.5
+00142b6c r __FUNCTION__.4
+00142b7c r __FUNCTION__.3
+00142b8c r __FUNCTION__.2
+00142b94 r __FUNCTION__.1
+00142ba0 r __FUNCTION__.0
+0014316c r __FUNCTION__.8
+00143178 r __FUNCTION__.7
+00143184 r __FUNCTION__.6
+00143194 r __FUNCTION__.5
+0014319c r __FUNCTION__.4
+001431a4 r __FUNCTION__.3
+001431ac r __FUNCTION__.2
+001431b4 r __FUNCTION__.1
+001431bc r __FUNCTION__.0
+00143398 r __FUNCTION__.1
+001433b0 r __FUNCTION__.0
+00143518 r __FUNCTION__.2
+00143528 r __FUNCTION__.1
+0014353c r __FUNCTION__.0
+001437c0 r __FUNCTION__.4
+001437d0 r __FUNCTION__.3
+001437e0 r __FUNCTION__.2
+001437f0 r __FUNCTION__.1
+00143800 r __FUNCTION__.0
+00143c68 r __FUNCTION__.6
+00143c78 r __FUNCTION__.5
+00143c84 r __FUNCTION__.4
+00143c90 r __FUNCTION__.3
+00143c9c r __FUNCTION__.2
+00143ca4 r __FUNCTION__.1
+00143cac r __FUNCTION__.0
+00143e04 r __FUNCTION__.2
+00143e10 r __FUNCTION__.1
+00143e1c r __FUNCTION__.0
+00144114 r __FUNCTION__.3
+00144124 r __FUNCTION__.2
+00144134 r __FUNCTION__.1
+00144144 r __FUNCTION__.0
+00145100 r __FUNCTION__.4
+00145114 r __FUNCTION__.3
+00145124 r __FUNCTION__.2
+00145130 r __FUNCTION__.1
+00145140 r __FUNCTION__.0
+001453f0 r __FUNCTION__.2
+001453fc r __FUNCTION__.1
+0014540c r __FUNCTION__.0
+00145494 r __FUNCTION__.0
+00145d60 r __FUNCTION__.21
+00145d74 r __FUNCTION__.20
+00145d88 r __FUNCTION__.19
+00145d9c r __FUNCTION__.18
+00145db8 r __FUNCTION__.17
+00145dd0 r __FUNCTION__.16
+00145de8 r __FUNCTION__.15
+00145dfc r __FUNCTION__.14
+00145e0c r __FUNCTION__.13
+00145e20 r __FUNCTION__.12
+00145e30 r __FUNCTION__.11
+00145e40 r __FUNCTION__.10
+00145e50 r __FUNCTION__.9
+00145e5c r __FUNCTION__.8
+00145e68 r __FUNCTION__.7
+00145e7c r __FUNCTION__.6
+00145e88 r __FUNCTION__.5
+00145e98 r __FUNCTION__.4
+00145ea8 r __FUNCTION__.3
+00145eb8 r __FUNCTION__.2
+00145ec8 r __FUNCTION__.1
+00145ed4 r __FUNCTION__.0
+00145fc8 r __FUNCTION__.0
+00146584 r __FUNCTION__.2
+00146590 r __FUNCTION__.1
+0014659c r __FUNCTION__.0
+001465fc r __FUNCTION__.0
+001466dc r __FUNCTION__.1
+001466ec r __FUNCTION__.0
+00146760 r __FUNCTION__.0
+00146e3c r __FUNCTION__.1
+00146e4c r __FUNCTION__.0
+00147180 r __FUNCTION__.6
+00147190 r __FUNCTION__.5
+001471a4 r __FUNCTION__.4
+001471b8 r __FUNCTION__.3
+001471cc r __FUNCTION__.2
+001471e0 r __FUNCTION__.1
+001471f0 r __FUNCTION__.0
+0014744c r __FUNCTION__.4
+00147458 r __FUNCTION__.3
+00147468 r __FUNCTION__.2
+00147474 r __FUNCTION__.1
+00147480 r __FUNCTION__.0
+001486e4 r __FUNCTION__.2
+00148700 r __FUNCTION__.1
+00148728 r __FUNCTION__.0
+00148c40 r __FUNCTION__.0
+00148c54 R possible_dpm_letters_for_ata	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:18
+001493e0 r __FUNCTION__.5
+001493f0 r __FUNCTION__.4
+001493fc r __FUNCTION__.3
+00149408 r __FUNCTION__.2
+00149414 r __FUNCTION__.1
+00149420 r __FUNCTION__.0
+001494f4 r __FUNCTION__.4
+00149520 r __FUNCTION__.3
+00149544 r __FUNCTION__.2
+00149558 r __FUNCTION__.1
+00149564 r __FUNCTION__.0
+00149ae8 r __FUNCTION__.2
+00149af8 r __FUNCTION__.1
+00149b10 r __FUNCTION__.0
+00149dac r __FUNCTION__.2
+00149dc0 r __FUNCTION__.1
+00149dd0 r __FUNCTION__.0
+0014a1a4 r __FUNCTION__.1
+0014a1b8 r __FUNCTION__.0
+0014a270 r __FUNCTION__.1
+0014a280 r __FUNCTION__.0
+0014a4b4 r __FUNCTION__.3
+0014a4c4 r __FUNCTION__.2
+0014a4d4 r __FUNCTION__.1
+0014a4e8 r __FUNCTION__.0
+0014a568 r __FUNCTION__.0
+0014a658 r __FUNCTION__.1
+0014a660 r __FUNCTION__.0
+0014c1b0 r __FUNCTION__.5
+0014c1bc r __FUNCTION__.4
+0014c1c8 r __FUNCTION__.3
+0014c1d4 r __FUNCTION__.2
+0014c1e8 r __FUNCTION__.1
+0014c1f4 r __FUNCTION__.0
+0014c384 r __FUNCTION__.2
+0014c394 r __FUNCTION__.1
+0014c3a4 r __FUNCTION__.0
+0014cc8c r __FUNCTION__.7
+0014cc9c r __FUNCTION__.6
+0014ccac r __FUNCTION__.5
+0014cce0 r __FUNCTION__.4
+0014cd0c r __FUNCTION__.3
+0014cd28 r __FUNCTION__.2
+0014cd40 r __FUNCTION__.1
+0014cd54 r __FUNCTION__.0
+0014d378 r __FUNCTION__.5
+0014d388 r __FUNCTION__.4
+0014d39c r __FUNCTION__.3
+0014d3ac r __FUNCTION__.2
+0014d3c0 r __FUNCTION__.1
+0014d3d8 r __FUNCTION__.0
+0014d5b0 r __FUNCTION__.0
+0014d7a4 r __FUNCTION__.1
+0014d7b8 r __FUNCTION__.0
+0014d984 r __FUNCTION__.0
+0014de30 r __FUNCTION__.10
+0014de60 r __FUNCTION__.9
+0014de80 r __FUNCTION__.8
+0014dea0 r __FUNCTION__.7
+0014debc r __FUNCTION__.6
+0014ded8 r __FUNCTION__.5
+0014df00 r __FUNCTION__.4
+0014df24 r __FUNCTION__.3
+0014df60 r __FUNCTION__.2
+0014df84 r __FUNCTION__.1
+0014dfc0 r __FUNCTION__.0
+00158000 r FLOPPY_DMABUFA	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:35
+0015ce88 r __FUNCTION__.12
+0015ce98 r __FUNCTION__.11
+0015cea4 r __FUNCTION__.10
+0015ceb0 r __FUNCTION__.9
+0015cec0 r __FUNCTION__.8
+0015cecc r __FUNCTION__.7
+0015ced8 r __FUNCTION__.6
+0015ceec r __FUNCTION__.5
+0015cef8 r flags.4	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:235
+0015cefc r __FUNCTION__.3
+0015cf0c r __FUNCTION__.2
+0015cf1c r __FUNCTION__.1
+0015cf30 r __FUNCTION__.0
+0015d350 r __FUNCTION__.6
+0015d360 r __FUNCTION__.5
+0015d36c r __FUNCTION__.4
+0015d380 r __FUNCTION__.3
+0015d398 r __FUNCTION__.2
+0015d3b0 r __FUNCTION__.1
+0015d3c0 r __FUNCTION__.0
+0015d6d8 r __FUNCTION__.3
+0015d6e4 r __FUNCTION__.2
+0015d6f4 r __FUNCTION__.1
+0015d704 r __FUNCTION__.0
+0015dc30 r __FUNCTION__.2
+0015dc3c r __FUNCTION__.1
+0015dc4c r __FUNCTION__.0
+0015e3dc r __FUNCTION__.4
+0015e3e8 r __FUNCTION__.3
+0015e3f4 r __FUNCTION__.2
+0015e40c r __FUNCTION__.1
+0015e418 r __FUNCTION__.0
+0015e4a0 r __FUNCTION__.0
+0015ecb0 r __FUNCTION__.8
+0015ecbc r __FUNCTION__.7
+0015ecd0 r __FUNCTION__.6
+0015ece4 r __FUNCTION__.5
+0015ed00 r __FUNCTION__.4
+0015ed0c r __FUNCTION__.3
+0015ed1c r __FUNCTION__.2
+0015ed30 r __FUNCTION__.1
+0015ed44 r __FUNCTION__.0
+0015ef5c r __FUNCTION__.1
+0015ef6c r __FUNCTION__.0
+0015f0e4 r __FUNCTION__.1
+0015f0f8 r __FUNCTION__.0
+0015f260 r __FUNCTION__.1
+0015f274 r __FUNCTION__.0
+0015f398 r __FUNCTION__.1
+0015f3ac r __FUNCTION__.0
+0015f41c r __FUNCTION__.0
+0015f778 r __FUNCTION__.0
+0015f974 r __FUNCTION__.1
+0015f980 r __FUNCTION__.0
+0015fb78 r __FUNCTION__.0
+001604e0 r __FUNCTION__.9
+001604ec r __FUNCTION__.8
+00160504 r __FUNCTION__.7
+00160518 r __FUNCTION__.6
+00160528 r __FUNCTION__.5
+0016053c r __FUNCTION__.4
+00160550 r __FUNCTION__.3
+00160564 r __FUNCTION__.2
+00160570 r __FUNCTION__.1
+00160580 r __FUNCTION__.0
+001606c4 r __FUNCTION__.4
+001606d8 r __FUNCTION__.3
+001606f4 r __FUNCTION__.2
+00160710 r __FUNCTION__.1
+00160728 r __FUNCTION__.0
+001607e0 r nums_sprites	/home/ndraey/NocturneOS-base/kernel/src/toys/./minesweeper_sprites.h:5
+001697e0 r flag_sprite	/home/ndraey/NocturneOS-base/kernel/src/toys/./minesweeper_sprites.h:314
+0016a7e0 r mine_sprite	/home/ndraey/NocturneOS-base/kernel/src/toys/./minesweeper_sprites.h:349
+0016bc60 r encoding_table	/home/ndraey/NocturneOS-base/kernel/src/lib/base64.c:11
+0016bca0 r decoding_table	/home/ndraey/NocturneOS-base/kernel/src/lib/base64.c:21
+0016c0b0 r __FUNCTION__.5
+0016c0c8 r __FUNCTION__.4
+0016c0e4 r __FUNCTION__.3
+0016c0fc r __FUNCTION__.2
+0016c114 r __FUNCTION__.1
+0016c12c r __FUNCTION__.0
+0016c34c r __FUNCTION__.0
+0016c494 r __FUNCTION__.0
+0016c664 r __FUNCTION__.0
+0016cc48 r __FUNCTION__.4
+0016cc54 r __FUNCTION__.3
+0016cc64 r __FUNCTION__.2
+0016cc78 r __FUNCTION__.1
+0016cc94 r __FUNCTION__.0
+0016cdec r __FUNCTION__.0
+0016cfb0 r __FUNCTION__.1
+0016cfc4 r __FUNCTION__.0
+0016d024 r __FUNCTION__.0
+0016d208 r __FUNCTION__.0
+0016d388 r __FUNCTION__.0
+0016d430 r __FUNCTION__.1
+0016d444 r __FUNCTION__.0
+0016e464 r __FUNCTION__.3
+0016e474 r __FUNCTION__.2
+0016e480 r __FUNCTION__.1
+0016e48c r __FUNCTION__.0
+0016e492 R RODATA_end
+00177000 B BSS_start
+00177000 b stack_bottom
+00197000 B brandAllName	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:16
+00197000 b stack_top	/home/ndraey/NocturneOS-base/kernel/src/sys/cpuinfo.c:16
+00197080 B tss	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:15
+00197100 B gdt_entries	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:20
+00197130 B gdt_ptr	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:21
+00197140 B idt_entries	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:149
+00197940 B idt_ptr	/home/ndraey/NocturneOS-base/kernel/src/sys/gdt.c:150
+00197960 B interrupt_handlers	/home/ndraey/NocturneOS-base/kernel/src/sys/isr.c:14
+00197d60 B com_init	/home/ndraey/NocturneOS-base/kernel/src/io/serial_port.c:17
+00197d70 b olds.0	/home/ndraey/NocturneOS-base/kernel/src/lib/string.c:412
+00197d74 B fpu_initialized	/home/ndraey/NocturneOS-base/kernel/src/drv/fpu.c:12
+00197d78 B tick	/home/ndraey/NocturneOS-base/kernel/src/sys/timer.c:18
+00197d80 B kernel_start	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:21
+00197d84 B kernel_end	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:22
+00197d88 B mmap_length	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:24
+00197d8c B mentry	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:25
+00197d90 B phys_memory_size	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:27
+00197d94 B used_phys_memory_size	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:28
+00197d98 B kernel_page_directory	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:30
+00197da0 B pages_bitmap	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:34
+00217da0 B paging_initialized	/home/ndraey/NocturneOS-base/kernel/src/mem/pmm.c:36
+00217da4 B system_heap	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:16
+00217db8 B vmm_debug	/home/ndraey/NocturneOS-base/kernel/src/mem/vmm.c:17
+00217dbc B framebuffer_addr	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:11
+00217dc0 B framebuffer_pitch	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:12
+00217dc4 B framebuffer_bpp	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:13
+00217dc8 B framebuffer_width	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:14
+00217dcc B framebuffer_height	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:15
+00217dd0 B framebuffer_size	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:16
+00217dd4 B back_framebuffer_addr	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:17
+00217dd8 B tty_oem_mode	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:19
+00217ddc B fb_mtrr_idx	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:21
+00217de0 B bfb_mtrr_idx	/home/ndraey/NocturneOS-base/kernel/src/io/screen.c:22
+00217e00 B tty_line_fill	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:28
+00218e00 B tty_pos_x	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:29
+00218e04 B tty_pos_y	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:30
+00218e08 B tty_off_pos_p	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:32
+00218e0c B tty_text_color	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:34
+00218e10 B tty_bg_color	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:35
+00218e14 B threadTTY01	/home/ndraey/NocturneOS-base/kernel/src/io/tty.c:40
+00218e18 B tarfs_debug	/home/ndraey/NocturneOS-base/kernel/src/fs/tarfs.c:19
+00218e20 B G_FSM	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:20
+0021f9b4 B C_FSM	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:21
+0021f9b8 B fsm_debug	/home/ndraey/NocturneOS-base/kernel/src/fs/fsm.c:22
+0021f9bc B nvfs_debug	/home/ndraey/NocturneOS-base/kernel/src/fs/nvfs.c:21
+0021f9c0 B process_list	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:14
+0021f9cc B thread_list	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:15
+0021f9d8 B next_pid	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:17
+0021f9dc B next_thread_id	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:18
+0021f9e0 B multi_task	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:19
+0021f9e4 B kernel_proc	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:20
+0021f9e8 B kernel_thread	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:21
+0021f9ec B current_proc	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:22
+0021f9f0 B current_thread	/home/ndraey/NocturneOS-base/kernel/src/sys/scheduler.c:23
+0021f9f4 B psf_font_version	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:17
+0021f9f8 B first_glyph	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:23
+0021f9fc B unicode	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:25
+0021fa00 b _font_ptr	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:19
+0021fa04 b _init	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:20
+0021fa08 b _h	/home/ndraey/NocturneOS-base/kernel/src/drv/psf.c:22
+0021fa20 B _temp_funcname	/home/ndraey/NocturneOS-base/kernel/src/sys/unwind.c:9
+0021fe20 B nat_root	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:18
+0021fe24 B __milla_b_init	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:19
+0021fe28 B __milla_buffer	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:21
+0021fe2c B __milla_return_code	/home/ndraey/NocturneOS-base/kernel/src/fs/NatSuki.c:24
+0021fe40 B dpm_debug	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:13
+0021fe60 B DPM_Disks	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/dpm.c:15
+00221d60 B theme	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:13
+00221d64 B bgColorDark	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:14
+00221d68 B maxStrLine	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:18
+00221d6c B maxHeightLine	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:19
+00221d70 B lazy	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:20
+00221d74 B curElem	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:21
+00221d78 B mode	/home/ndraey/NocturneOS-base/kernel/src/sys/bootscreen.c:23
+00221d7c B SHIFT	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:33
+00221d80 B RU	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:34
+00221d84 B lastKey	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:35
+00221d88 B kbdstatus	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:36
+00221d8c B key_ctrl	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:38
+00221d90 B key_alt	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:39
+00221d94 B kmode	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:41
+00221d98 B curbuf	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:42
+00221d9c B chartyped	/home/ndraey/NocturneOS-base/kernel/src/drv/input/keyboard.c:43
+00221da0 B mouse_ready	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:17
+00221da4 B mouse_x	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:19
+00221da8 B mouse_y	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:20
+00221dac B mouse_ox	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:23
+00221db0 B mouse_oy	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:24
+00221db4 B mouse_b1	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:26
+00221db8 B mouse_b2	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:27
+00221dbc B mouse_b3	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:28
+00221dc0 B mouse_b4	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:29
+00221dc4 B mouse_b5	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:30
+00221dc8 B mouse_wheel	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:32
+00221dcc B ps2m_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:61
+00221dd4 b recbyte.1	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:124
+00221dd8 b mousebuf.0	/home/ndraey/NocturneOS-base/kernel/src/drv/input/mouse.c:125
+00221de0 B calls_table	/home/ndraey/NocturneOS-base/kernel/src/sys/syscalls.c:18
+00221e40 B Triggers	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:20
+00226e40 B TriggersCount	/home/ndraey/NocturneOS-base/kernel/src/sys/trigger.c:21
+00226e44 B century_register	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:17
+00226e48 B cmos_second	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:19
+00226e49 B cmos_minute	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:20
+00226e4a B cmos_hour	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:21
+00226e4b B cmos_day	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:22
+00226e4c B cmos_month	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:23
+00226e4e B cmos_year	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:24
+00226e50 B cmos_century	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:25
+00226e51 B last_second	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:27
+00226e52 B last_minute	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:28
+00226e53 B last_hour	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:29
+00226e54 B last_day	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:30
+00226e55 B last_month	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:31
+00226e56 B last_year	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:32
+00226e57 B last_century	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:33
+00226e58 B registerB	/home/ndraey/NocturneOS-base/kernel/src/drv/cmos.c:34
+00226e5c B config	/home/ndraey/NocturneOS-base/kernel/src/drv/beeper.c:14
+00226e60 B system_environment	/home/ndraey/NocturneOS-base/kernel/src/user/env.c:18
+00226ea0 B pci_device_list	/home/ndraey/NocturneOS-base/kernel/src/drv/pci.c:18
+00226ec0 B drives	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata.c:19
+00226f90 B cputemp_calibrate_value	/home/ndraey/NocturneOS-base/kernel/src/sys/cputemp.c:8
+00226f94 B netcards_list	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:5
+00226f98 B netcards_list_capacity	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:6
+00226f9c B netcards_count	/home/ndraey/NocturneOS-base/kernel/src/net/cards.c:7
+00226fa0 B arp_table	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:12
+002275a0 B arp_table_curr	/home/ndraey/NocturneOS-base/kernel/src/net/arp.c:13
+002275a4 B G_CLI_CURINXA	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:38
+002275a8 B G_CLI_CURINXB	/home/ndraey/NocturneOS-base/kernel/src/extra/cli.c:39
+002275c0 B G_VARIABLE	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:16
+0024f7c0 B C_VARIABLE	/home/ndraey/NocturneOS-base/kernel/src/sys/variable.c:17
+0024f7d0 B fxsave_region	/home/ndraey/NocturneOS-base/kernel/src/sys/fxsave_region.c:1
+0024f9e0 B miniplay_filename	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:10
+0024f9e4 B miniplay_pages_total	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:11
+0024f9e8 B miniplay_pages_played	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:12
+0024f9ec B miniplay_filesize	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:13
+0024f9f0 B miniplay_timestamp	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:14
+0024fa00 B miniplay_hdr	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:15
+0024fa24 B miniplay_anim_pos	/home/ndraey/NocturneOS-base/kernel/src/toys/miniplay.c:17
+0024fa28 B rtl8139_busnum	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:22
+0024fa29 B rtl8139_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:22
+0024fa2a B rtl8139_func	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:22
+0024fa2c B rtl8139_io_base	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:23
+0024fa30 B rtl8139_mem_base	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:23
+0024fa34 B rtl8139_bar_type	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:23
+0024fa38 B rtl8139_phys_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:25
+0024fa3c B rtl8139_virt_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:26
+0024fa40 B rtl8139_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:27
+0024fa44 B rtl8139_mac	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:29
+0024fa4c B rtl8139_current_tx_index	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:34
+0024fa50 B rtl8139_transfer_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:36
+0024fa54 B rtl8139_transfer_buffer_phys	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:37
+0024fa58 B rtl8139_in_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:42
+0024fa5c B rtl8139_current_packet_ptr	/home/ndraey/NocturneOS-base/kernel/src/drv/network/rtl8139.c:213
+0024fa60 B _FloppyDebug	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:19
+0024fa80 B floppy_data	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:21
+0024fb10 B interrupted	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/floppy.c:37
+0024fb14 B ata_busnum	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:17
+0024fb15 B ata_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:18
+0024fb16 B ata_func	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:19
+0024fb18 B ata_dma_bar4	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:21
+0024fb1c B ata_dma_prdt	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:23
+0024fb20 B ata_dma_phys_prdt	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ata_dma.c:24
+00250000 B ac97_busnum	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:14
+00250001 B ac97_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:14
+00250002 B ac97_func	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:14
+00250004 B ac97_initialized	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:16
+00250008 B ac97_varibale_sample_rate	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:17
+0025000c B native_audio_mixer	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:19
+0025000e B native_audio_bus_master	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:20
+00250010 B ac97_bar0_type	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:22
+00250011 B ac97_bar1_type	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:23
+00250014 B currently_pages_count	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:25
+00251000 B ac97_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:29
+00251100 B ac97_audio_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:31
+00251104 B ac97_audio_buffer_phys	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:32
+00251108 B ac97_lvi	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/ac97.c:34
+0025110c B system_processors_found	/home/ndraey/NocturneOS-base/kernel/src/sys/acpi.c:11
+00251110 B active_window	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:11
+00251114 B dragging_mode	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:13
+00251118 B click	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:14
+0025111c B drag_window	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:15
+00251120 B dragx	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:17
+00251124 B dragy	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:18
+00251128 B focused	/home/ndraey/NocturneOS-base/kernel/src/desktop/render.c:20
+0025112c B window_global_id	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:7
+00251130 B window_count	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:8
+00251134 B windows	/home/ndraey/NocturneOS-base/kernel/src/desktop/window.c:10
+00251140 B label_for_memory	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:21
+00251160 B label_for_fps	/home/ndraey/NocturneOS-base/kernel/src/desktop/parallel_desktop.c:22
+00251168 B mtrr_is_supported	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:14
+0025116c B mtrr_wc_available	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:15
+00251170 B mtrr_fixed_size_available	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:16
+00251174 B variable_size_mtrrs	/home/ndraey/NocturneOS-base/kernel/src/sys/mtrr.c:17
+00251178 B buffer	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:8
+0025117c B canvas_width	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:10
+00251180 B canvas_height	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:11
+00251184 B cursor_pos_x	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:13
+00251188 B cursor_pos_y	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:14
+0025118c B current_color	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:16
+00251190 B is_click	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:17
+00251194 B buffer_size	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:19
+00251198 B old_x	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:22
+0025119c B old_y	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:23
+002511a0 B change_coords	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:25
+002511a4 B text_buffer	/home/ndraey/NocturneOS-base/kernel/src/toys/mala.c:48
+002511c0 B ports	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:20
+00251440 B ahci_busnum	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:22
+00251441 B ahci_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:22
+00251442 B ahci_func	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:22
+00251444 B ahci_vendor	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:23
+00251446 B ahci_devid	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:23
+00251448 B ahci_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:24
+0025144c B ahci_initialized	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:25
+00251450 B abar	/home/ndraey/NocturneOS-base/kernel/src/drv/disk/ahci.c:27
+00251460 B field	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:63
+00251ab4 B mb1	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:65
+00251ab5 B mb2	/home/ndraey/NocturneOS-base/kernel/src/toys/minesweeper.c:66
+00251ab8 B descriptors	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:12
+00251abc B last_descriptor_number	/home/ndraey/NocturneOS-base/kernel/src/sys/file_descriptors.c:13
+00251ac0 B tcp_connections	/home/ndraey/NocturneOS-base/kernel/src/net/tcp.c:16
+002520c0 B system_network_incoming_queue	/home/ndraey/NocturneOS-base/kernel/src/net/stack.c:13
+002520c4 B pavi_tga_header	/home/ndraey/NocturneOS-base/kernel/src/toys/pavi.c:13
+002520d8 B pavi_image_buffer	/home/ndraey/NocturneOS-base/kernel/src/toys/pavi.c:14
+002520dc B pavi_view_buffer	/home/ndraey/NocturneOS-base/kernel/src/toys/pavi.c:15
+002520e0 B hda_bus	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:14
+002520e1 B hda_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:15
+002520e2 B hda_func	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:16
+002520e4 B hda_vendor	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:18
+002520e6 B hda_device	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:19
+002520e8 B hda_addr	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:21
+002520ec B hda_corb	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:23
+002520f0 B hda_corb_phys	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:24
+002520f4 B hda_rirb	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:25
+002520f8 B hda_rirb_phys	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:26
+002520fc B hda_corb_entry_count	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:28
+00252100 B hda_rirb_entry_count	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:29
+00252104 B hda_corb_current	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:31
+00252108 B hda_rirb_current	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:32
+0025210c B hda_irq	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:34
+00252110 B hda_fired	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:36
+00252114 B hda_response	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:37
+00252118 B hda_afg_codec_id	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:53
+0025211c B hda_afg_node_id	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:54
+00252120 B hda_output_nodes	/home/ndraey/NocturneOS-base/kernel/src/drv/audio/hda.c:56
+00252124 B grub_last_module_end	/home/ndraey/NocturneOS-base/kernel/src/sys/grub_modules.c:11
+00252128 B ps2_channel1_okay	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:10
+0025212c B ps2_channel2_okay	/home/ndraey/NocturneOS-base/kernel/src/drv/ps2.c:11
+00252140 B igfx_bus	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:14
+00252141 B igfx_slot	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:15
+00252142 B igfx_func	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:16
+00252144 B igfx_addr	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:18
+00252148 B igfx_width	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:20
+0025214c B igfx_height	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:21
+00252160 B igfx_edid_buffer	/home/ndraey/NocturneOS-base/kernel/src/drv/video/intel.c:30
+002521e0 B init_esp	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:41
+002521e4 B initRD	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:46
+002521e8 B kernel_start_time	/home/ndraey/NocturneOS-base/kernel/src/kernel.c:47
+002521ec B BSS_end
+00253000 D function_addr_data	/home/ndraey/NocturneOS-base/kernel/src/sys/unwind.c:7
+00273000 D KERNEL_END_pos
+00273000 D USER_end
+00273000 D USER_start

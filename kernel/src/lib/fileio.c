@@ -85,13 +85,12 @@ size_t filemtime(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return 0;
     if (file.Type != 0) return 0;
-    size_t unix = 1234567;
-    return unix;
+    return 1234567;
    // qemu_log(" |--- Query: %x", &file.LastTime);
     //size_t unix = fsm_DateConvertToUnix(file.LastTime);
 
     //qemu_log(" |--- Return: %d", unix);
-    return unix;
+    // return unix;
 }
 
 

@@ -1,0 +1,6 @@
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/kernel.elf.dir
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/copy_kernel.dir
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/iso.dir
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/run.dir
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ndraey/NocturneOS-base/cmake-build-debug/CMakeFiles/rebuild_cache.dir

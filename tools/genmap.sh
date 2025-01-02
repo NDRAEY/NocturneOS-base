@@ -1,1 +1,2 @@
-nm -Cl -n iso/boot/kernel.elf | awk '{ if ($2 != "a") print; }' > kernel.map
+nm -Cl -n $1 | awk '{ if ($2 != "a") print; }' > kernel.map
+

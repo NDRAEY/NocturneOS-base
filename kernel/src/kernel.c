@@ -30,8 +30,6 @@
 #include "drv/ps2.h"
 #include "net/dhcp.h"
 #include "gfx/intel.h"
-// #include "ports/eBat/eBat.h"
-// #include "ports/eBat/eBatRuntime.h"
 
 
 #include <lib/pixel.h>
@@ -52,13 +50,12 @@ size_t ramdisk_size = INITRD_RW_SIZE;
 void jse_file_getBuff(char* buf);
 void kHandlerCMD(char*);
 
-void autoexec(){
-
+void autoexec() {
     variable_write("HOSTNAME", "SAYORISOUL");
     variable_write("SYSTEMROOT", "R:\\Sayori\\");
     variable_write("TEMP", "T:\\");
     variable_write("USERNAME", "OEM");
-    variable_write("BUILDUSER", BUILDUSER);
+    variable_write("BUILDUSER", "OEM");
     variable_write("BUILDDATA", __TIMESTAMP__);
     variable_write("VERSION_MAJOR", TOSTRING(VERSION_MAJOR));
     variable_write("VERSION_MINOR", TOSTRING(VERSION_MINOR));
@@ -315,8 +312,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
             &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
     fsm_reg("NatFS", 1, &fs_natfs_read, &fs_natfs_write, &fs_natfs_info, &fs_natfs_create, &fs_natfs_delete,
             &fs_natfs_dir, &fs_natfs_label, &fs_natfs_detect);
-    fsm_reg("ISO9660", 1, &fs_iso9660_read, &fs_iso9660_write, &fs_iso9660_info, &fs_iso9660_create, &fs_iso9660_delete,
-            &fs_iso9660_dir, &fs_iso9660_label, &fs_iso9660_detect);
+    // fsm_reg("ISO9660", 1, &fs_iso9660_read, &fs_iso9660_write, &fs_iso9660_info, &fs_iso9660_create, &fs_iso9660_delete,
+    //         &fs_iso9660_dir, &fs_iso9660_label, &fs_iso9660_detect);
     fsm_reg("TEMPFS", 1, &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
             &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
     fs_natfs_init();
