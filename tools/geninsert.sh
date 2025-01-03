@@ -1,4 +1,4 @@
-nm -Cl -n $1 | awk '{ if ($2 != "a") print; }' > kernel.map
+nm -C -n $1 | awk '{ if ($2 != "a") print; }' > kernel.map
 
 OBJCOPY="${OBJCOPY:-objcopy}"
 content=$(mktemp)

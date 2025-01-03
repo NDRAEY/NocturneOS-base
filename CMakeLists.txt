@@ -69,7 +69,8 @@ set(ASM_SRC kernel/asm/init.s
 	kernel/asm/regs.s 
 	kernel/src/lib/setjmp.s 
 	kernel/asm/switch_task.s 
-	kernel/asm/64bit_on_32bit.s)
+	# kernel/asm/64bit_on_32bit.s
+)
 
 set(C_SRC 	kernel/src/sys/cpuinfo.c 
 	kernel/src/sys/cpu_isr.c 
@@ -197,11 +198,12 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
 	kernel/src/sys/lapic.c 
-	kernel/src/drv/ps2.c 
+	# kernel/src/drv/ps2.c 
 	kernel/src/drv/video/intel.c 
 	kernel/src/extra/command_parser.c
     kernel/src/lib/libvector/src/vector.c
     kernel/src/lib/libstring/src/string.c
+    # kernel/src/lib/intrin.c
 	kernel/src/kernel.c 
 )
 
@@ -209,6 +211,46 @@ set(SRC ${ASM_SRC} ${C_SRC})
 
 add_executable(${KERNEL} ${SRC})
 
+
+# Rust
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+add_custom_command(
+       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne_fake.a"
+       COMMAND cargo +nightly-2023-04-11 rustc --target i686-unknown-none.json -Zbuild-std 
+       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+       COMMENT "Building Rust files..."
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+       USES_TERMINAL
+       VERBATIM
+)
+
+add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+add_dependencies(${KERNEL} rs)
+
+target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+
+else()
+
+add_custom_command(
+       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a"
+       COMMAND cargo +nightly-2023-04-11 rustc --target i686-unknown-none.json -Zbuild-std --release
+       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+       COMMENT "Building Rust files..."
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+       USES_TERMINAL
+       VERBATIM
+)
+
+add_custom_target(rs
+					DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
+add_dependencies(${KERNEL} rs)
+
+target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
+
+endif()
 
 # Targets
 
@@ -231,6 +273,7 @@ else()
             TARGET ${KERNEL}
             COMMAND bash ${CMAKE_SOURCE_DIR}/tools/geninsert.sh ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
             COMMENT "Adding debug symbols..."
+			POST_BUILD
     )
 
     add_custom_target(

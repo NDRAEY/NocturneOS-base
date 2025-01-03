@@ -217,36 +217,7 @@ extern size_t RODATA_end;
 extern size_t BSS_start;
 extern size_t BSS_end;
 
-uint64_t __udivmoddi4(uint64_t num, uint64_t den, uint64_t *rem_p)
- {
-   uint64_t quot = 0, qbit = 1;
- 
-   if ( den == 0 ) {
-     return 1/((unsigned)den); /* Intentional divide by zero, without
-                                  triggering a compiler warning which
-                                  would abort the build */
-   }
- 
-   /* Left-justify denominator and count shift */
-   while ( (int64_t)den >= 0 ) {
-     den <<= 1;
-     qbit <<= 1;
-   }
- 
-   while ( qbit ) {
-     if ( den <= num ) {
-       num -= den;
-       quot += qbit;
-     }
-     den >>= 1;
-     qbit >>= 1;
-   }
- 
-   if ( rem_p )
-     *rem_p = num;
- 
-   return quot;
- }
+extern void rust_main();
 
 /*
   Спаси да сохрани этот кусок кода
@@ -529,6 +500,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     autoexec();
 
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
+
+    rust_main();
 
     // char* args[] = {};
     // spawn("R:\\hellors", 0, args);

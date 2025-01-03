@@ -6,8 +6,7 @@ SECTIONS
 
     KERNEL_BASE_pos = .;
 
-    .text ALIGN (0x1000) :
-    {
+    .text ALIGN (0x1000) : {
         *(.mboot)
 
         CODE_start = .;

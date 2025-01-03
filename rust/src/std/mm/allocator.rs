@@ -12,8 +12,7 @@ static ALLOCATOR: Allocator = Allocator;
 pub struct Allocator;
 unsafe impl GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let size = layout.size();
-        let ptr = kmalloc_common(size, 0);
+        let ptr = kmalloc_common(layout.size(), layout.align());
         
         if ptr.is_null() {
             panic!("Failed to allocate memory");

@@ -17,7 +17,8 @@
 .idea/
 iso/ramdisk
 disk*.img
-builds/
+build/
+build*/
 cmake-*/
 compile_commands.json
 .cache/

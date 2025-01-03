@@ -4,7 +4,7 @@
 
 
 #ifndef RELEASE
-__attribute__((section(".debug_symbols"))) char function_addr_data[192 * KB] = {0};
+__attribute__((section(".debug_symbols"))) char function_addr_data[400 * KB] = {0};
 
 char _temp_funcname[1024] = {0};
 

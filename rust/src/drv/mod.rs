@@ -1,1 +1,1 @@
-pub mod hda;
+pub mod ps2;
