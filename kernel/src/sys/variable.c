@@ -13,15 +13,21 @@
 #include <io/ports.h>
 #include <sys/variable.h>  
 
-VARIABLE G_VARIABLE[128] = {0};
+#define VARIABLE_COUNT 128
+
+VARIABLE G_VARIABLE[VARIABLE_COUNT] = {0};
 size_t C_VARIABLE = 0;
 
 size_t variable_freeID(char* Key){
 	bool Key404 = false;
-	for (int i = 0; i < 512;i++){
+	for (int i = 0; i < VARIABLE_COUNT; i++){
 		/// Сначала ищем по ключу, если не найдена, то ищем пустую ячейку
-		if (strcmpn(G_VARIABLE[i].Key,Key)) return i;
-		if (G_VARIABLE[i].Ready == 0 && Key404) return i;
+		if (strcmpn(G_VARIABLE[i].Key, Key))
+            return i;
+		
+        if (G_VARIABLE[i].Ready == 0 && Key404)
+            return i;
+
 		if (i == 511 && !Key404){
 			Key404 = true;
 			i = 0;
@@ -50,7 +56,7 @@ int variable_write(char* Key, char* Value){
 
 char* variable_read(char* Key){
 	qemu_log("[Variable] [Read] %s",Key);
-	for (int i = 0; i < 512;i++){
+	for (int i = 0; i < VARIABLE_COUNT; i++){
 		if (G_VARIABLE[i].Ready && strcmpn(G_VARIABLE[i].Key,Key)){
 			qemu_log("[Variable] [Read] %s=%s",G_VARIABLE[i].Key,G_VARIABLE[i].Value);
 			return G_VARIABLE[i].Value;
@@ -64,7 +70,7 @@ VARIABLE* variable_list(char* Search){
 	qemu_log("[Variable] [List] [ALL=%d] Search: %s",C_VARIABLE,Search);
 	VARIABLE* list = kmalloc(sizeof(VARIABLE)*(C_VARIABLE+1));
 	size_t inx = 0;
-	for (int i = 0; i < 512;i++){
+	for (int i = 0; i < VARIABLE_COUNT; i++){
 		if (G_VARIABLE[i].Ready == 0) continue;
 		qemu_log("[%d] Ready: %d | Search:%d | Key:%s",inx, G_VARIABLE[i].Ready, str_contains(G_VARIABLE[i].Key,Search), G_VARIABLE[i].Key);
 		if (str_contains(G_VARIABLE[i].Key,Search) == 0) continue;

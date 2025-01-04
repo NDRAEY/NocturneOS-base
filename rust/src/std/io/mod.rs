@@ -1,6 +1,6 @@
+use alloc::string::String;
 use core::fmt;
 use core::fmt::Write;
-use alloc::string::String;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
@@ -92,13 +92,11 @@ pub fn _print_qemu(args: fmt::Arguments) {
 }
 
 lazy_static! {
-    pub static ref QEMU: Mutex<SerialWriter> = Mutex::new(SerialWriter {
-        port: PORT_COM1
-    });
+    pub static ref QEMU: Mutex<SerialWriter> = Mutex::new(SerialWriter { port: PORT_COM1 });
 }
 
 pub struct SerialWriter {
-    pub port: u16
+    pub port: u16,
 }
 
 impl fmt::Write for SerialWriter {

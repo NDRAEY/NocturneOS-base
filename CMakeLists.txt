@@ -254,7 +254,8 @@ endif()
 
 # Targets
 
-if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+if(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
+    #if(0)
     add_custom_command(
             TARGET ${KERNEL}
             COMMAND strip -s ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
@@ -284,6 +285,23 @@ else()
             COMMENT "Copying files..."
     )
 endif()
+
+add_custom_target(
+	clippy
+	COMMAND cargo +nightly-2023-04-11 clippy --target i686-unknown-none.json -Zbuild-std 
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+	USES_TERMINAL
+	VERBATIM
+)
+
+add_custom_target(
+	fmt
+	COMMAND cargo +nightly-2023-04-11 fmt
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+	USES_TERMINAL
+	VERBATIM
+)
+
 
 add_custom_target(
     ramdisk

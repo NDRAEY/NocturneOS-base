@@ -13,7 +13,6 @@ static mut ps2_channel1_okay: bool = false;
 #[no_mangle]
 static mut ps2_channel2_okay: bool = false;
 
-
 #[no_mangle]
 pub unsafe extern "C" fn ps2_read_configuration_byte() -> u8 {
     ps2_in_wait_until_empty();
@@ -32,14 +31,14 @@ pub unsafe extern "C" fn ps2_write_configuration_byte(byte: u8) {
 
 #[no_mangle]
 unsafe fn ps2_in_wait_until_empty() {
-    while((inb(PS2_STATE_REG) & (1 << 1)) != 0) {
+    while ((inb(PS2_STATE_REG) & (1 << 1)) != 0) {
         asm!("nop");
     }
 }
 
 #[no_mangle]
 unsafe fn ps2_out_wait_until_full() {
-    while((inb(PS2_STATE_REG) & 1) == 0) {}
+    while ((inb(PS2_STATE_REG) & 1) == 0) {}
 }
 
 #[no_mangle]
@@ -77,22 +76,27 @@ pub unsafe fn ps2_enable_second_device() {
 }
 
 pub unsafe fn ps2_flush() {
-    while((inb(PS2_STATE_REG) & 1) != 0) {
+    while (inb(PS2_STATE_REG) & 1 != 0) {
         inb(PS2_DATA_PORT);
     }
 }
 
-
 fn ps2_test() -> Option<()> {
     unsafe { ps2_in_wait_until_empty() };
 
-    unsafe { outb(PS2_STATE_REG, 0xAA); } // Test command
+    unsafe {
+        outb(PS2_STATE_REG, 0xAA);
+    } // Test command
 
     unsafe { ps2_out_wait_until_full() };
 
     let reply: u8 = unsafe { inb(PS2_DATA_PORT) };
 
-    return if reply == 0x55 { Some(()) } else { None };
+    if reply == 0x55 {
+        Some(())
+    } else {
+        None
+    }
 }
 
 #[no_mangle]
@@ -100,13 +104,11 @@ pub extern "C" fn ps2_init() {
     unsafe {
         ps2_disable_first_device();
         ps2_disable_second_device();
-        
+
         ps2_flush();
 
         ps2_in_wait_until_empty();
     };
-
-
 
     let conf: u8 = unsafe { ps2_read_configuration_byte() };
     unsafe { ps2_write_configuration_byte(conf & !(0b1000011)) };
@@ -115,9 +117,9 @@ pub extern "C" fn ps2_init() {
 
     let test_ok = ps2_test();
 
-    if !test_ok.is_some() {
+    if test_ok.is_none() {
         qemu_err!("PS/2 TEST ERROR!");
-        return;        
+        return;
     }
 
     qemu_ok!("PS/2 test ok!");
@@ -130,7 +132,7 @@ pub extern "C" fn ps2_init() {
     unsafe { ps2_out_wait_until_full() };
     let mut result: u8 = unsafe { inb(PS2_DATA_PORT) };
 
-    if(result == 0x00) {
+    if (result == 0x00) {
         qemu_ok!("Passed test for channel 1!");
         unsafe { ps2_channel1_okay = true };
     } else {

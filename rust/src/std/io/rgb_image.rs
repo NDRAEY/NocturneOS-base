@@ -15,7 +15,6 @@ pub struct Image<'a> {
 }
 
 impl<'a> Image<'a> {
-
     /// Создает новый экземпляр структуры Image.
     ///
     ///
@@ -31,23 +30,35 @@ impl<'a> Image<'a> {
     ///
     /// # Пример
     ///
-    /// 
+    ///
     /// let data: &[u8] = &[255, 0, 0, 0, 0, 255, 0, 0, 0, 0, 255, 0];
     /// let image = Image::new(data, 0, 0, 3, 1, 32);
     /// image.draw();
-    /// 
+    ///
 
-    pub fn new(data: &'a [u8], x: u32, y: u32,
-        width: isize, height: isize, bpp: isize) -> Self {
-            assert!(width >= 0 && height >= 0 && bpp >= 0);
-            Self { data, x, y, width, height, bpp }
+    pub fn new(data: &'a [u8], x: u32, y: u32, width: isize, height: isize, bpp: isize) -> Self {
+        assert!(width >= 0 && height >= 0 && bpp >= 0);
+        Self {
+            data,
+            x,
+            y,
+            width,
+            height,
+            bpp,
+        }
     }
 
     /// Отрисовывает изображение.
     pub fn draw(&self) {
         unsafe {
-            draw_rgb_image(self.data.as_ptr(),
-                self.width, self.height, self.bpp, self.x, self.y);
+            draw_rgb_image(
+                self.data.as_ptr(),
+                self.width,
+                self.height,
+                self.bpp,
+                self.x,
+                self.y,
+            );
         }
     }
 }

@@ -1,5 +1,5 @@
-pub mod tty;
-pub mod mm;
-pub mod lib;
-pub mod io;
 pub mod fs;
+pub mod io;
+pub mod lib;
+pub mod mm;
+pub mod tty;

@@ -1,10 +1,11 @@
 #include "sys/unwind.h"
 #include "io/ports.h"
-#include "lib/string.h"
+#include "io/tty.h"
+//#include "lib/string.h"
 
 
-#ifndef RELEASE
-__attribute__((section(".debug_symbols"))) char function_addr_data[400 * KB] = {0};
+// #ifndef RELEASE
+__attribute__((section(".debug_symbols"))) char function_addr_data[400 * KB];
 
 char _temp_funcname[1024] = {0};
 
@@ -32,8 +33,6 @@ size_t decode_hex(const char s[], int length) {
 bool get_func_name_by_addr(size_t addr) {
     char* temp = (char*)function_addr_data;
 
-    memset(_temp_funcname, 0, 1024);
-
     do {
         memset(_temp_funcname, 0, 1024);
     
@@ -48,8 +47,6 @@ bool get_func_name_by_addr(size_t addr) {
 
         size_t next_addr = decode_hex(temp, 8); // Second addr
         
-        // qemu_log("%x | %x | %x", current_addr, addr, next_addr);
-
         if(addr >= current_addr && addr < next_addr) {
             return true;
         }
@@ -59,21 +56,22 @@ bool get_func_name_by_addr(size_t addr) {
 }
 
 void unwind_stack(uint32_t MaxFrames) {
-    struct stackframe *stk;
+    struct stackframe *stk = 0;
     __asm__ volatile("movl %%ebp, %0" : "=r"(stk) :: );
 
     qemu_log("Stack trace:");
+    tty_printf("Stack trace:\n");
 
     for(uint32_t frame = 0; stk && frame < MaxFrames; ++frame) {
         qemu_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
+        tty_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
 
         bool exists = get_func_name_by_addr(stk->eip);
 
         qemu_printf("%s\n", exists ? _temp_funcname : "???");
+        tty_printf("%s\n", exists ? _temp_funcname : "???");
 
         stk = stk->ebp;
     }
-
-    // qemu_log("%s", function_addr_data);
 }
-#endif
+// #endif

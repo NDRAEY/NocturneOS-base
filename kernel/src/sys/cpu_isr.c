@@ -85,7 +85,7 @@ _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t co
     }
 }
 
-void print_regs(registers_t regs){
+void print_regs(registers_t regs) {
     qemu_log("EAX = %x", regs.eax);
     qemu_log("EBX = %x", regs.ebx);
     qemu_log("ECX = %x", regs.ecx);
@@ -233,6 +233,7 @@ void page_fault(registers_t regs){
     if (id){
         tty_printf("EIP error ");
     }
+
     tty_printf("at address (virtual) %x",fault_addr);
 
 

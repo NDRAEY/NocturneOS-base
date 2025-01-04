@@ -97,18 +97,18 @@ void autoexec() {
     */
 }
 
-void __createRamDisk(){
-    qemu_note("[INITRD] Create virtual read-write disk...");
-    void* disk_t = kmalloc(INITRD_RW_SIZE+1);
-    if (disk_t == NULL){
-        qemu_err("[INITRD] Fatal create virtual disk");
-        return;
-    }
-    qemu_log("[INITRD] Temp disk is (%d bytes) created to %x", ramdisk_size, disk_t);
-    dpm_reg('T',"TempDisk","TEMPFS", 2, ramdisk_size, 0, 0, 2, "TEMP-DISK", disk_t);
-    fs_tempfs_format('T');
-    qemu_ok("[INITRD] The virtual hard disk has been successfully created.");
-}
+// void __createRamDisk(){
+//     qemu_note("[INITRD] Create virtual read-write disk...");
+//     void* disk_t = kmalloc(INITRD_RW_SIZE+1);
+//     if (disk_t == NULL){
+//         qemu_err("[INITRD] Fatal create virtual disk");
+//         return;
+//     }
+//     qemu_log("[INITRD] Temp disk is (%d bytes) created to %x", ramdisk_size, disk_t);
+//     dpm_reg('T',"TempDisk","TEMPFS", 2, ramdisk_size, 0, 0, 2, "TEMP-DISK", disk_t);
+//     fs_tempfs_format('T');
+//     qemu_ok("[INITRD] The virtual hard disk has been successfully created.");
+// }
 
 /**
  * @brief Обработка команд указаных ядру при загрузке
@@ -351,13 +351,13 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     bootScreenPaint("Настройка FDT...");
     file_descriptors_init();
 
-    char* btitle = 0;
+    // char* btitle = 0;
 
-    asprintf(&btitle, "Создание виртуального диска (%u kb.)...", ramdisk_size/1024);
+    // asprintf(&btitle, "Создание виртуального диска (%u kb.)...", ramdisk_size/1024);
 
-    bootScreenPaint(btitle);
-    kfree(btitle);
-    __createRamDisk();
+    // bootScreenPaint(btitle);
+    // kfree(btitle);
+    // __createRamDisk();
     
     bootScreenPaint("Настройка системных вызовов...");
     qemu_log("Registering System Calls...");
@@ -486,7 +486,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 // 
 // 	while(1);
 
+    tty_printf("CHECKING GFX\n");
     igfx_init();
+    tty_printf("OK\n");
 
 //    hda_init();
 	// void k();
@@ -497,7 +499,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 //    sleep_ms(1500);
 //    create_process(k, "process3", false, true);
 
+    tty_printf("AUTOEXEC\n");
     autoexec();
+    tty_printf("OK\n");
 
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 

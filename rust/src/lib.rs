@@ -5,9 +5,9 @@ extern crate alloc;
 
 use core::panic::PanicInfo;
 
+mod drv;
 pub mod std;
 mod system;
-mod drv;
 
 use alloc::vec;
 
