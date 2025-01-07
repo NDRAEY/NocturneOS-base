@@ -506,9 +506,11 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     autoexec();
     tty_printf("OK\n");
 
-    qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 
     rust_main();
+
+    qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
+    tty_printf("System initialized everything at: %.2f seconds.\n", (double) (getTicks() - kernel_start_time) / getFrequency());
 
     // char* args[] = {};
     // spawn("R:\\hellors", 0, args);

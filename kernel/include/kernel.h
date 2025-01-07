@@ -77,6 +77,5 @@
 #include "net/arp.h"
 
 #include "debug/hexview.h"
-#include "debug/ubsan.h"
 
 #include "sys/cputemp.h"

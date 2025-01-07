@@ -158,10 +158,9 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/toys/gfxbench.c 
 	kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
-	kernel/src/drv/network/virtio_network.c 
+	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/fmt/tga.c 
-	kernel/src/lib/sprintf.c 
-	kernel/src/debug/ubsan.c 
+	kernel/src/lib/sprintf.c
 	kernel/src/drv/disk/floppy.c 
 	kernel/src/drv/disk/ata_dma.c 
 	kernel/src/drv/audio/ac97.c 
