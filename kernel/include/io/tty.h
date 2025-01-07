@@ -10,12 +10,14 @@ extern bool stateTTY;
 
 void tty_fontConfigurate();
 
+void _tty_putchar(uint16_t c);
 void _tty_puts(const char str[]);
 void _tty_print(const char *format, va_list args);
 void _tty_printf(const char *text, ...);
 
 #define tty_print(format, args) _tty_print(format, args); punch()
 #define tty_puts(str) _tty_puts(str); punch()
+#define tty_putchar(c) _tty_putchar(c); punch()
 
 static inline void tty_printf(char *text, ...) {
     if (stateTTY){
@@ -40,8 +42,6 @@ void set_cursor_enabled(bool en);
 
 void _tty_putuint(const size_t i);
 void _tty_putint(const ssize_t i);
-void _tty_putchar(char c, char c1);
-void tty_putchar(char c, char c1);
 
 void clean_screen();
 void clean_tty_screen();

@@ -319,13 +319,19 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     tty_fontConfigurate();
     
     draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
+    // draw_vga_str("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", 63, 0, 0, 0xffffff);
+    // draw_vga_str("ЭЙ ЖЛОБ! ГДЕ ТУЗ? ПРЯЧЬ ЮНЫХ СЪЁМЩИЦ В ШКАФ!", 77, 0, 24, 0xffffff);
     punch();
+
+    // while(1)
+    // ;
 
     bootScreenInit(15);
     bootScreenLazy(true);
 
     bootScreenPaint("Настройка PS/2...");
     ps2_init();
+
     bootScreenPaint("Настройка PS/2 Клавиатуры...");
     keyboardInit();
 

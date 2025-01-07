@@ -190,7 +190,7 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
  *
  * @param c - символ
  */
-void _tty_putchar(char c, char c1) {
+void _tty_putchar(uint16_t c) {
     if ((tty_pos_x + tty_off_pos_x) >= (int) VESA_WIDTH || c == '\n') {
         tty_line_fill[tty_pos_y] = tty_pos_x;
         tty_pos_x = 0;
@@ -207,15 +207,10 @@ void _tty_putchar(char c, char c1) {
             tty_scroll(1);
         }
 
-        draw_vga_ch(c, c1, tty_pos_x, tty_pos_y, tty_text_color);
+        draw_vga_ch(c, tty_pos_x, tty_pos_y, tty_text_color);
         
         tty_pos_x += tty_off_pos_x;
     }
-}
-
-void tty_putchar(char c, char c1) {
-    _tty_putchar(c, c1);
-    punch();
 }
 
 /**
@@ -244,10 +239,16 @@ void tty_backspace() {
  */
 void _tty_puts(const char str[]) {
     for (size_t i = 0, len = strlen(str); i < len; i++) {
-        _tty_putchar(str[i], str[i+1]);
-        if (isUTF(str[i])){
+        uint16_t ch = (uint16_t)(uint8_t)str[i];
+
+        if(ch == 0xd0 || ch == 0xd1) {
             i++;
+
+            ch <<= 8;
+            ch |= (uint16_t)(uint8_t)str[i];
         }
+
+        _tty_putchar(ch);
     }
 }
 

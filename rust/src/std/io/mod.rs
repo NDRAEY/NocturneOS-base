@@ -1,6 +1,7 @@
 use alloc::string::String;
 use core::fmt;
 use core::fmt::Write;
+use core::result;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
@@ -109,3 +110,15 @@ impl fmt::Write for SerialWriter {
         Ok(())
     }
 }
+
+pub type Result<T> = result::Result<T, ()>;
+
+// pub struct Error {
+//     pub kind: ErrorKind,
+// }
+
+// pub enum ErrorKind<T> {
+//     None,
+//     Unknown,
+//     Custom(T)
+// }

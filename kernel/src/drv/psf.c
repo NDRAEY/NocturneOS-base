@@ -16,9 +16,10 @@
 
 uint32_t psf_font_version = 0;
 
+uint8_t psf_h = 0;
+
 static psf_t *_font_ptr = nullptr;
 static bool _init = false;
-static uint8_t _h = 0;
 static uint8_t* first_glyph = 0;
 
 uint16_t *unicode;
@@ -50,48 +51,50 @@ bool text_init(char* psf){
 
     psf_t *header = (psf_t*)buffer;
     _init = false;
-    _h = 0;
+    psf_h = 0;
     if (header->magic[0] != PSF1_MAGIC0 || header->magic[1] != PSF1_MAGIC1){
         qemu_log("PSF Header Error");
         return false;
     }
     _font_ptr = (psf_t*)buffer;
-    _h = header->charHeight;
+    psf_h = header->charHeight;
+
+    qemu_log("Height is: %d", psf_h);
+    
     _init = true;
     first_glyph = (uint8_t*)_font_ptr+sizeof(psf_t);
     return _init;
 }
 
 size_t psf1_get_h(){
-    return _h;
+    return psf_h;
 }
-/// 252
-uint16_t psf1_rupatch(uint16_t c,uint16_t c2){
-    if (!isUTF(c)) return c;
-    if ((c & 0x1F) != 16 && (c & 0x1F) != 17)
-        return c;
 
-    uint8_t lo = (uint8_t)(c2 & 0x3F);
-    uint8_t hi = (uint8_t)(c);
+uint16_t psf1_rupatch(uint16_t c){
+    uint8_t hi = (uint8_t)(c >> 8);
+    uint8_t lo = (uint8_t)(c & 0xff);
     
+    bool is_utf_compatible = hi == 0xd0 || hi == 0xd1;
+
+    if(!is_utf_compatible) {
+        return c;
+    }
+
     uint16_t t = 0;
+    uint16_t sym = lo & 0x3f;
 
-    if(hi == 0xd0 || hi == 0xd1) {
-        uint16_t sym = lo & 0x3f;
-
-        if(sym == 0) {
-            t = 224;
-        } else if(sym == 1) {
-            t = hi == 0xd0 ? 240 : 225;
-        } else if(sym >= 2 && sym <= 15) {
-            t = 224 + sym;
-        } else if(sym == 16) {
-            t = 128;
-        } else if(sym >= 18 && sym <= 63) {
-            t = 128 + (sym - 16);
-        } else if(sym == 17) {
-            t = hi == 0xd1 ? 241 : 129;
-        }
+    if(sym == 0) {
+        t = 224;
+    } else if(sym == 1) {
+        t = hi == 0xd0 ? 240 : 225;
+    } else if(sym >= 2 && sym <= 15) {
+        t = 224 + sym;
+    } else if(sym == 16) {
+        t = 128;
+    } else if(sym >= 18 && sym <= 63) {
+        t = 128 + (sym - 16);
+    } else if(sym == 17) {
+        t = hi == 0xd1 ? 241 : 129;
     }
 
     return t;
@@ -104,25 +107,7 @@ uint8_t *psf1_get_glyph(uint16_t ch){
         return 0;
     }
 
-    return ((uint8_t*)_font_ptr+sizeof(psf_t)+(ch*_h));
-}
-
-void draw_vga_ch(uint16_t c, uint16_t c2, size_t pos_x, size_t pos_y, size_t color) {
-    // char mask[8] = {128,64,32,16,8,4,2,1};
-    uint8_t *glyph = psf1_get_glyph(psf1_rupatch(c, c2));
-
-	if(!glyph)
-		return;
-
-    for (size_t y = 0; y < _h; y++) {
-        size_t rposy = pos_y + y;
-        for (register size_t x = 0; x < 8; x++){
-            if (glyph[y] & (1 << (8 - x))) {
-            // if (glyph[y] & mask[x]) {
-                set_pixel(pos_x+x, rposy, color);
-            }
-        }
-    }
+    return ((uint8_t*)_font_ptr+sizeof(psf_t)+(ch*psf_h));
 }
 
 void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color){
@@ -132,15 +117,18 @@ void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color){
 
     size_t scrwidth = getScreenWidth();
     for(int i = 0; i < len; i++){
-        if (x + 8 <= scrwidth){
-            if (isUTF(text[i])){
-                draw_vga_ch(text[i], text[i+1], x, y, color);
+        if (x + 8 <= scrwidth) {
+            uint16_t ch = (uint16_t)(uint8_t)text[i];
+            if(ch == 0xd0 || ch == 0xd1) {
                 i++;
-            } else {
-                if(!text[i])
-                    return;
-                draw_vga_ch(text[i], 0, x, y, color);
+
+                uint16_t ch2 = (uint16_t)(uint8_t)text[i];
+                ch <<= 8;
+
+                ch |= ch2;
             }
+
+            draw_vga_ch(ch, x, y, color);
             x += 8;
         } else {
             break;

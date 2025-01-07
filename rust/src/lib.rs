@@ -10,7 +10,9 @@ pub mod gfx;
 pub mod std;
 pub mod system;
 
-use alloc::vec;
+use std::io;
+
+use alloc::{string::String, vec};
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -21,12 +23,19 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[no_mangle]
 #[inline(never)]
-pub extern "C" fn rust_main() {
-    let myvec = vec!["one", "two", "three"];
+pub extern "C" fn io_test() {
+    let mut buf = String::new();
 
+    let mut file = std::fs::File::open("R:\\Zeraora.txt").unwrap();
+    file.read_to_string(&mut buf).unwrap();
+
+    println!("Data: [{}]", buf);
+}
+
+#[no_mangle]
+#[inline(never)]
+pub extern "C" fn rust_main() {
     println!("Привет, {}!", "Rust");
 
-    for i in myvec {
-        println!("{}", i);
-    }
+    io_test();
 }
