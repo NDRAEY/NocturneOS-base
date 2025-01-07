@@ -7,6 +7,7 @@ extern "C" {
     static framebuffer_pitch: u32;
 }
 
+#[inline(always)]
 pub unsafe fn set_pixel(x: u32, y: u32, color: u32) {
     let offset: usize = ((x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch) as usize;
     let pixels: *mut u8 = back_framebuffer_addr.wrapping_add(offset);

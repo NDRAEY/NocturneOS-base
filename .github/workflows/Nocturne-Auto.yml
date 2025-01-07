@@ -11,12 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Just lists all version of clang
-        run: sudo apt list "clang-*"
-
       - name: Step 1 - Software installation
         run: |
-          sudo apt install python3 build-essential xorriso grub-pc-bin mtools llvm lld doxygen ninja-build cmake
+          sudo apt install python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
 
       - name: Step 1.1 - Install Rust
         run: |
@@ -25,17 +22,11 @@ jobs:
       - name: Step 1.2 - Install toolchain
         run: rustup toolchain install nightly-2023-04-11 && rustup component add rust-src --toolchain nightly-2023-04-11-x86_64-unknown-linux-gnu
 
-      - name: Step 2 - Compiling the kernel
+      - name: Step 2 - Configuring the kernel
         run: bash tools/make_builds.sh
 
-      - name: Step 3.1 - Build Debug build
-        run: cmake --build cmake-build-debug/ -j4 -- iso
-
-      - name: Step 3.1 - Build Release build
-        run: cmake --build cmake-build-release/ -j4 -- iso
-
-      - name: Step 3.1 - Build ReleaseOptimized build
-        run: cmake --build cmake-build-release-opt/ -j4 -- iso
+      - name: Step 3 - Build all
+        run: bash tools/compile_builds.sh
 
       - name: Step 8 - Update to the latest unstable release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -45,7 +36,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest-unstable"
           prerelease: true
-          title: "💽 SayoriOS Soul- [Автосборка] Нестабильный релиз"
+          title: "💽 NocturneOS Soul - [Autobuild] Unstable release"
           description: "Внимание! Данный релиз собран из последних изменений в ядре! Это не окончательная версия содержит ошибки и не рекомендуется к запуску без проверки на виртуальной машине."
           files: |
             cmake-build-debug/NocturneOS_Debug.iso
