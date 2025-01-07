@@ -343,46 +343,65 @@ void pci_find_device(uint16_t vendor, uint16_t device, uint8_t *bus_ret, uint8_t
 	*bus_ret = *slot_ret = *func_ret = 0xFF;
 }
 
-void pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass, uint16_t *vendor_ret, uint16_t *deviceid_ret,
+void pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass,
+                                           uint16_t *vendor_ret, uint16_t *deviceid_ret,
 										   uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret) {
-    uint8_t func;
+    assert(pci_device_list == 0, "DEVICE LIST IS NULL!");
 
-	for (uint32_t bus = 0; bus < 256; bus++) {
-		for (uint32_t slot = 0; slot < 32; slot++) {
-            if (pci_get_class(bus, slot, 0) == class
-                && pci_get_subclass(bus, slot, 0) == subclass) {
-                *vendor_ret = pci_get_vendor(bus, slot, 0);
-                *deviceid_ret = pci_get_device(bus, slot, 0);
-                *bus_ret = bus;
-                *slot_ret = slot;
-                *func_ret = 0;
+    for(int i = 0; i < pci_device_list->size; i++) {
+        pci_device_t *dev = (pci_device_t*)pci_device_list->data[i];
+        if(dev->klass == class && dev->subclass == subclass) {
+            *vendor_ret = dev->vendor_id;
+            *deviceid_ret = dev->device_id;
+            *bus_ret = dev->bus;
+            *slot_ret = dev->slot;
+            *func_ret = dev->func;
+            return;
+        }
+    }
 
-				qemu_ok("! FOUND %d.%d.%d", *bus_ret, *slot_ret, *func_ret);
-                return;
-            }
-
-            if((pci_get_hdr_type(bus, slot, 0) & 0x80) == 0) {
-                for (func = 1; func < 8; func++) {
-                    if (pci_get_class(bus, slot, func) == class
-                        && pci_get_subclass(bus, slot, func) == subclass) {
-                        *vendor_ret = pci_get_vendor(bus, slot, func);
-                        *deviceid_ret = pci_get_device(bus, slot, func);
-                        *bus_ret = bus;
-                        *slot_ret = slot;
-                        *func_ret = func;
-
-
-						qemu_ok("!! FOUND %d.%d.%d", *bus_ret, *slot_ret, *func_ret);
-                        return;
-                    }
-                }
-            }
-		}
-	}
-
-	*vendor_ret = *deviceid_ret = 0;
 	*bus_ret = *slot_ret = *func_ret = 0xFF;
 }
+// void pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass, uint16_t *vendor_ret, uint16_t *deviceid_ret,
+// 										   uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret) {
+//     uint8_t func;
+
+// 	for (uint32_t bus = 0; bus < 256; bus++) {
+// 		for (uint32_t slot = 0; slot < 32; slot++) {
+//             if (pci_get_class(bus, slot, 0) == class
+//                 && pci_get_subclass(bus, slot, 0) == subclass) {
+//                 *vendor_ret = pci_get_vendor(bus, slot, 0);
+//                 *deviceid_ret = pci_get_device(bus, slot, 0);
+//                 *bus_ret = bus;
+//                 *slot_ret = slot;
+//                 *func_ret = 0;
+
+// 				qemu_ok("! FOUND %d.%d.%d", *bus_ret, *slot_ret, *func_ret);
+//                 return;
+//             }
+
+//             if((pci_get_hdr_type(bus, slot, 0) & 0x80) == 0) {
+//                 for (func = 1; func < 8; func++) {
+//                     if (pci_get_class(bus, slot, func) == class
+//                         && pci_get_subclass(bus, slot, func) == subclass) {
+//                         *vendor_ret = pci_get_vendor(bus, slot, func);
+//                         *deviceid_ret = pci_get_device(bus, slot, func);
+//                         *bus_ret = bus;
+//                         *slot_ret = slot;
+//                         *func_ret = func;
+
+
+// 						qemu_ok("!! FOUND %d.%d.%d", *bus_ret, *slot_ret, *func_ret);
+//                         return;
+//                     }
+//                 }
+//             }
+// 		}
+// 	}
+
+// 	*vendor_ret = *deviceid_ret = 0;
+// 	*bus_ret = *slot_ret = *func_ret = 0xFF;
+// }
 
 void pci_enable_bus_mastering(uint8_t bus, uint8_t slot, uint8_t func) {
     uint16_t command_register = pci_read_confspc_word(bus, slot, func, 4);
