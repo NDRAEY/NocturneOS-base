@@ -1,4 +1,4 @@
-name: 🤖 Автоматическая сборка
+name: Autobuild
 
 on:
   push:
@@ -17,6 +17,13 @@ jobs:
       - name: Step 1 - Software installation
         run: |
           sudo apt install python3 build-essential xorriso grub-pc-bin mtools llvm lld doxygen ninja-build cmake
+
+      - name: Step 1.1 - Install Rust
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
+
+      - name: Step 1.2 - Install toolchain
+        run: rustup toolchain install nightly-2023-04-11 && rustup component add rust-src --toolchain nightly-2023-04-11-x86_64-unknown-linux-gnu
 
       - name: Step 2 - Compiling the kernel
         run: bash tools/make_builds.sh

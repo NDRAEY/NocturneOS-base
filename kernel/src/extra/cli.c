@@ -593,7 +593,7 @@ uint32_t CLI_PLAIN(uint32_t argc, char** argv) {
 }
 
 uint32_t pavi_view(uint32_t, char**);
-uint32_t minesweeper(uint32_t, char**);
+//uint32_t minesweeper(uint32_t, char**);
 uint32_t shell_diskctl(uint32_t, char**);
 uint32_t calendar(uint32_t, char**);
 
