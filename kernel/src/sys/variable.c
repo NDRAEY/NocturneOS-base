@@ -20,6 +20,7 @@ size_t C_VARIABLE = 0;
 
 size_t variable_freeID(char* Key){
 	bool Key404 = false;
+	
 	for (int i = 0; i < VARIABLE_COUNT; i++){
 		/// Сначала ищем по ключу, если не найдена, то ищем пустую ячейку
 		if (strcmpn(G_VARIABLE[i].Key, Key))
@@ -28,11 +29,12 @@ size_t variable_freeID(char* Key){
         if (G_VARIABLE[i].Ready == 0 && Key404)
             return i;
 
-		if (i == 511 && !Key404){
+		if (i == (VARIABLE_COUNT - 1) && !Key404){
 			Key404 = true;
 			i = 0;
 		}
 	}
+
 	return -1;
 }
 

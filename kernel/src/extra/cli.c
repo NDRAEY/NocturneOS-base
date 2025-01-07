@@ -599,7 +599,7 @@ uint32_t calendar(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
 	{"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
-    {"CALENDAR", "calendar", calendar, "Календарь"},
+    // {"CALENDAR", "calendar", calendar, "Календарь"},
     {"CAT", "cat", CLI_CMD_CAT, "Выводит содержимое файла на экран"},
 	{"ECHO", "echo", CLI_CMD_ECHO, "Выводит сообщение на экран."},
 	{"DIR", "dir", CLI_CMD_DIR, "Выводит список файлов и папок."},
@@ -614,7 +614,7 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
 	{"MINIPLAY", "miniplay", miniplay, "WAV-проиграватель"},
 	{"DESKTOP", "desktop", parallel_desktop_start, "Рабочий стол"},
 	{"MALA", "mala", mala_draw, "Нарисовать рисунок"},
-    {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
+    // {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
     {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
 	{"PAVI", "pavi", pavi_view, "Программа для просмотра изображений"},
 	{"PCI", "pci", pci_print_list, "Список PCI устройств"},

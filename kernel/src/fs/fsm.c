@@ -242,8 +242,8 @@ void fsm_dpm_update(char Letter){
             	continue;
             }
 
-            qemu_note("SCANNING PARTITIONS ON: %c", DISKID);
-            mbr_dump_all(DISKID);
+            // qemu_note("SCANNING PARTITIONS ON: %c", DISKID);
+            // mbr_dump_all(DISKID);
 
             for(int f = 0; f < C_FSM; f++){
                 qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, G_FSM[f].Name);

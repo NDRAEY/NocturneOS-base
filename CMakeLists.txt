@@ -185,7 +185,7 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/debug/memmeter.c 
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
-	kernel/src/toys/minesweeper.c 
+	# kernel/src/toys/minesweeper.c 
 	kernel/src/toys/calendar.c 
 	kernel/src/toys/diskctl.c 
 	kernel/src/lib/utf_conversion.c 
