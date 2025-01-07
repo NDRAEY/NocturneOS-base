@@ -158,10 +158,10 @@ void ac97_init() {
 
     const uint32_t status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
 
-    qemu_log("Status: %d (%x)\n", status, status);
-//    qemu_log("Status Reserved: %d\n", status.reserved);
-//    qemu_log("Status Channels: %d\n", (status.channel==0?2:(status.channel==1?4:(status.channel==2?6:0))));
-//    qemu_log("Status Samples: %s\n", status.sample==1?"16 and 20 bits":"only 16 bits");
+    qemu_log("Status: %d (%x)", status, status);
+//    qemu_log("Status Reserved: %d", status.reserved);
+//    qemu_log("Status Channels: %d", (status.channel==0?2:(status.channel==1?4:(status.channel==2?6:0))));
+//    qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
     
     // */
 
@@ -169,7 +169,7 @@ void ac97_init() {
     qemu_log("Status: %d", extended_audio);
 
     if((extended_id & 1) != 0) { // Check for variable sample rate
-        qemu_log("AC'97 supports variable sample rate!!!\n");
+        qemu_log("AC'97 supports variable sample rate!!!");
         extended_audio |= 1;
         ac97_varibale_sample_rate = true;
     }
@@ -185,7 +185,7 @@ void ac97_init() {
     ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
                                        (virtual_addr_t)ac97_audio_buffer);
 
-    qemu_log("Updated capabilities\n");
+    qemu_log("Updated capabilities");
 
     ac97_FillBDLs();
 

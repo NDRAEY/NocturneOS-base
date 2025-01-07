@@ -36,7 +36,7 @@ void fs_tempfs_func_fixPackage(char* src, int count){
 }
 
 int fs_tempfs_tcache_update(const char Disk){
-    tfs_log("[>] TCache update...\n");
+    tfs_log("[>] TCache update...");
 
     TEMPFS_Cache* __TCache__ = dpm_metadata_read(Disk);
 
@@ -49,34 +49,34 @@ int fs_tempfs_tcache_update(const char Disk){
     }
     memset(__TCache__,  0, sizeof(TEMPFS_Cache));
     if (__TCache__->Boot != 0){
-        tfs_log(" |--- Free boot (0x%x)...\n", __TCache__->Boot);
+        tfs_log(" |--- Free boot (0x%x)...", __TCache__->Boot);
         free(__TCache__->Boot);
     }
 
     if (__TCache__->Files != 0){
-        tfs_log(" |--- Free files (0x%x)...\n", __TCache__->Files);
+        tfs_log(" |--- Free files (0x%x)...", __TCache__->Files);
         for (uint32_t i = 0; i < __TCache__->CountFiles; i++) {
             free(&__TCache__->Files[i]);
         }
         free(__TCache__->Files);
     }
-    tfs_log(" |--- Malloc Boot...\n");
+    tfs_log(" |--- Malloc Boot...");
     __TCache__->Boot = malloc(sizeof(TEMPFS_BOOT));
     if (__TCache__->Boot == NULL){
         return 1;
     }
-    tfs_log(" |  |--- Addr Boot: 0x%x\n", __TCache__->Boot);
-    tfs_log(" |  |--- Zero Boot...\n");
+    tfs_log(" |  |--- Addr Boot: 0x%x", __TCache__->Boot);
+    tfs_log(" |  |--- Zero Boot...");
     memset(__TCache__->Boot, 0, sizeof(TEMPFS_BOOT));
-    tfs_log(" |  |--- Read Boot...\n");
+    tfs_log(" |  |--- Read Boot...");
     int read = dpm_read(Disk, 0, 0, sizeof(TEMPFS_BOOT), __TCache__->Boot);
     if (read != sizeof(TEMPFS_BOOT)){
-        tfs_log(" |       |--- Read: %d\n", read);
+        tfs_log(" |       |--- Read: %d", read);
         return 2;
     }
 
     if (fs_tempfs_func_checkSign(__TCache__->Boot->Sign1, __TCache__->Boot->Sign2) != 1){
-        tfs_log(" |      |--- Error check signature\n");
+        tfs_log(" |      |--- Error check signature");
         return 3;
     }
 
@@ -88,13 +88,13 @@ int fs_tempfs_tcache_update(const char Disk){
         memset(__TCache__->Files, 0, sizeof(TEMPFS_ENTITY) * __TCache__->Boot->CountFiles);
         size_t offset = 512;
         size_t inx = 0;
-        tfs_log(" |--- [>] Enter while\n");
+        tfs_log(" |--- [>] Enter while");
         while(1){
             if (inx + 1 > __TCache__->Boot->CountFiles) break;
-            tfs_log(" |     |--- [>] %d | %d\n", inx + 1, __TCache__->Boot->CountFiles);
+            tfs_log(" |     |--- [>] %d | %d", inx + 1, __TCache__->Boot->CountFiles);
             int eread = dpm_read(Disk, 0, offset, sizeof(TEMPFS_ENTITY), &__TCache__->Files[inx]);
-            tfs_log(" |     |     |--- [>] Disk read\n");
-            tfs_log(" |     |     |     |--- Offset: %d\n", offset);
+            tfs_log(" |     |     |--- [>] Disk read");
+            tfs_log(" |     |     |     |--- Offset: %d", offset);
             tfs_log(" |     |     |     |--- Size: %d\n", sizeof(TEMPFS_ENTITY));
             offset += sizeof(TEMPFS_ENTITY);
             if (eread != sizeof(TEMPFS_ENTITY)){
@@ -102,15 +102,15 @@ int fs_tempfs_tcache_update(const char Disk){
                 break;
             }
             if (__TCache__->Files[inx].Status != TEMPFS_ENTITY_STATUS_READY){
-                tfs_log(" |           |--- No data.!\n");
+                tfs_log(" |           |--- No data.!");
                 continue;
             }
 
-            tfs_log(" |     |     |--- [>] File info\n");
-            tfs_log(" |     |     |     |--- Name: %s\n", __TCache__->Files[inx].Name);
-            tfs_log(" |     |     |     |--- Path: %s\n", __TCache__->Files[inx].Path);
-            tfs_log(" |     |     |     |--- Size: %d\n", __TCache__->Files[inx].Size);
-            tfs_log(" |     |     |     |--- Type: %s\n", (__TCache__->Files[inx].Type == TEMPFS_ENTITY_TYPE_FOLDER?"Folder":"File"));
+            tfs_log(" |     |     |--- [>] File info");
+            tfs_log(" |     |     |     |--- Name: %s", __TCache__->Files[inx].Name);
+            tfs_log(" |     |     |     |--- Path: %s", __TCache__->Files[inx].Path);
+            tfs_log(" |     |     |     |--- Size: %d", __TCache__->Files[inx].Size);
+            tfs_log(" |     |     |     |--- Type: %s", (__TCache__->Files[inx].Type == TEMPFS_ENTITY_TYPE_FOLDER?"Folder":"File"));
             //tfs_log(" |     |     |     |--- Date: %s\n", Files[count].LastTime);
             tfs_log(" |     |     |     |--- CHMOD: 0x%x\n", __TCache__->Files[inx].CHMOD);
             tfs_log(" |     |     |--- Next!\n");

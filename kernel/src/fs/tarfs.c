@@ -101,6 +101,13 @@ void fs_tarfs_label(const char Disk, char* Label){
 }
 
 int fs_tarfs_detect(const char Disk){
+    DPM_Disk disk = dpm_info(Disk);
+
+    if(disk.SectorSize == 2048) {
+        qemu_err("Won't work on CD/DVD-ROM");
+        return 0;
+    }
+
 	char* Buffer = kmalloc(5);
 
 	dpm_read(Disk,0,257, 5,Buffer);

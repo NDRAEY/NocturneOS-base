@@ -648,6 +648,14 @@ int fs_fat32_detect(char Disk) {
 //        qemu_err("WHAT?");
 //        while(1);
 //    }
+    DPM_Disk disk = dpm_info(Disk);
+
+    if(disk.SectorSize == 2048) {
+        qemu_err("Won't work on CD/DVD-ROM");
+        return 0;
+    }
+
+
 
     fat_description_t* fat_system = kcalloc(1, sizeof(fat_description_t));
 

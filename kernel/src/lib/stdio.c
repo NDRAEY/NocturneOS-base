@@ -313,7 +313,8 @@ int ftell(FILE* stream) {
  * @return Если возращает 0, значит все в порядке
  */
 ssize_t fseek(FILE* stream, ssize_t offset, uint8_t whence){
-	qemu_log("fseek() call\n");
+	qemu_log("fseek() call");
+
 	ON_NULLPTR(stream, {
 		return -1;
 	});
