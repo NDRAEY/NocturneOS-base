@@ -43,6 +43,7 @@ void ahci_irq_handler();
 
 void ahci_init() {
 	// Find controller
+    qemu_log("Finding AHCI...");
 
 	pci_find_device_by_class_and_subclass(AHCI_CLASS, AHCI_SUBCLASS, &ahci_vendor, &ahci_devid, &ahci_busnum, &ahci_slot, &ahci_func);
 
