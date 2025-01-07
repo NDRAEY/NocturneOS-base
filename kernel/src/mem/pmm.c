@@ -279,7 +279,7 @@ void blank_page_directory(uint32_t* pagedir_addr) {
 	}
 }
 
-uint32_t* get_page_table_by_vaddr(uint32_t* page_dir, virtual_addr_t vaddr) {
+uint32_t* get_page_table_by_vaddr(const uint32_t* page_dir, virtual_addr_t vaddr) {
 	if(paging_initialized)
 		return (uint32_t*)((char*)page_directory_start + (PD_INDEX(vaddr) * PAGE_SIZE));
 	else

@@ -27,7 +27,7 @@
 #define AMD_MAGIC   0x68747541
 
 
-static const char* cpu_flag_edx_description[] = {
+/*static const char* cpu_flag_edx_description[] = {
 		"fpu",
 		"vme",
 		"debugging",
@@ -61,7 +61,7 @@ static const char* cpu_flag_edx_description[] = {
 		"ia64",
 		"pbe"
 };
-
+*/
 struct cpu_info {
 	size_t manufacturer_id;
 	size_t model_id;

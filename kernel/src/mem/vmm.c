@@ -254,13 +254,15 @@ size_t heap_get_block_idx(size_t address) {
 }
 
 void kfree(void* ptr) {
-	if(!ptr)
+	if(!ptr) {
 		return;
+    }
 
 	struct heap_entry block = heap_get_block((size_t)ptr);
 
-    if(vmm_debug)
+    if(vmm_debug) {
         qemu_printf("Freeing %x\n", (size_t)ptr);
+    }
 
 	if(!block.address) {
 		qemu_warn("No block!");
@@ -274,8 +276,9 @@ void kfree(void* ptr) {
 		if(!vmm_is_page_used_by_entries(block.address + i)) {
 			size_t phys_addr = phys_get_page_data(get_kernel_page_directory(), block.address + i) & ~0xfff;
 
-            if(vmm_debug)
+            if(vmm_debug) {
     			qemu_warn("Unmapping %x => %x", block.address + i, phys_addr);
+            }
 
 			unmap_single_page(get_kernel_page_directory(), block.address + i);
 

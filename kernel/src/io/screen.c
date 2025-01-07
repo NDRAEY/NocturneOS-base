@@ -132,7 +132,8 @@ void init_vbe(multiboot_header_t *mboot) {
 			  framebuffer_size,
 			  PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 
-    qemu_log("Okay mapping! (took %d millis)", (getTicks() - start_tk)/(getFrequency()/1000));
+    size_t time = (getTicks() - start_tk)/(getFrequency()/1000);
+    qemu_log("Okay mapping! (took %d millis)", time);
 
     qemu_log("Creating second framebuffer");
 

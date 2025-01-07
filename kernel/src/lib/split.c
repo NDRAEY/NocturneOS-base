@@ -37,7 +37,7 @@ uint32_t str_cdsp(const char *a_str, const char* del){
  * @param del - Делитель (только 1 символ)
  *
  */
-void str_split(const char a_str[], char *out[], char* del){
+void str_split(char a_str[], char *out[], char* del){
 	size_t x = str_cdsp(a_str, del);
     // char* copy = kcalloc(strlen(a_str) + 1, 1);
     // memcpy(copy, a_str, strlen(a_str));

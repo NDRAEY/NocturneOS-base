@@ -5,7 +5,7 @@ enable_language(C ASM)
 
 # Options
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;ReleaseOptimized" CACHE STRING "Available configurations" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;ReleaseOptimized;ReleaseOptimizedSSE" CACHE STRING "Available configurations" FORCE)
 
 option(NOCTURNE_USE_CLANG "Use Clang compiler for building" OFF)
 
@@ -44,6 +44,7 @@ endif()
 set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -O0" CACHE STRING "Flags for Debug" FORCE)
 set(CMAKE_C_FLAGS_RELEASE "-DRELEASE -O0" CACHE STRING "Flags for Release" FORCE)
 set(CMAKE_C_FLAGS_RELEASEOPTIMIZED "-DRELEASE -O2" CACHE STRING "Flags for ReleaseOptimized" FORCE)
+set(CMAKE_C_FLAGS_RELEASEOPTIMIZEDSSE "-DRELEASE -O2 -msse2" CACHE STRING "Flags for ReleaseOptimizedSSE" FORCE)
 
 set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")
 
@@ -186,7 +187,6 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/toys/calendar.c 
 	kernel/src/toys/diskctl.c 
 	kernel/src/lib/utf_conversion.c 
-	kernel/src/lib/base64.c 
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
 	kernel/src/net/stack.c 
