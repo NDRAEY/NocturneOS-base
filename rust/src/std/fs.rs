@@ -2,7 +2,6 @@
 
 use alloc::string::String;
 use core::ffi::{c_void, CStr};
-use core::ptr::null_mut;
 
 use alloc::vec;
 use alloc::vec::Vec;
@@ -30,7 +29,7 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
 
     let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), b"r\0".as_ptr()) };
 
-    if file == null_mut() {
+    if file.is_null() {
         return Err("Failed to open file.");
     }
 

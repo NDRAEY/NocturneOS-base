@@ -8,9 +8,11 @@ static PS2_DATA_PORT: u16 = 0x60;
 static PS2_STATE_REG: u16 = 0x64;
 
 #[no_mangle]
+#[allow(non_upper_case_globals)]
 static mut ps2_channel1_okay: bool = false;
 
 #[no_mangle]
+#[allow(non_upper_case_globals)]
 static mut ps2_channel2_okay: bool = false;
 
 #[no_mangle]
@@ -31,14 +33,14 @@ pub unsafe extern "C" fn ps2_write_configuration_byte(byte: u8) {
 
 #[no_mangle]
 unsafe fn ps2_in_wait_until_empty() {
-    while ((inb(PS2_STATE_REG) & (1 << 1)) != 0) {
+    while (inb(PS2_STATE_REG) & (1 << 1)) != 0 {
         asm!("nop");
     }
 }
 
 #[no_mangle]
 unsafe fn ps2_out_wait_until_full() {
-    while ((inb(PS2_STATE_REG) & 1) == 0) {}
+    while (inb(PS2_STATE_REG) & 1) == 0 {}
 }
 
 #[no_mangle]
@@ -76,7 +78,7 @@ pub unsafe fn ps2_enable_second_device() {
 }
 
 pub unsafe fn ps2_flush() {
-    while (inb(PS2_STATE_REG) & 1 != 0) {
+    while inb(PS2_STATE_REG) & 1 != 0 {
         inb(PS2_DATA_PORT);
     }
 }
@@ -132,7 +134,7 @@ pub extern "C" fn ps2_init() {
     unsafe { ps2_out_wait_until_full() };
     let mut result: u8 = unsafe { inb(PS2_DATA_PORT) };
 
-    if (result == 0x00) {
+    if result == 0x00 {
         qemu_ok!("Passed test for channel 1!");
         unsafe { ps2_channel1_okay = true };
     } else {

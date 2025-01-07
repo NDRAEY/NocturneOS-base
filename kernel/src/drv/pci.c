@@ -44,27 +44,6 @@ uint16_t pci_read_confspc_word(uint8_t bus, uint8_t slot, uint8_t function, uint
 }
 
 /**
- * @brief Чтение данных из шины PCI
- * @param bus Шина
- * @param slot Слот
- * @param function Функция
- * @param offset Отступ
- * @return Значение поля
- */
-uint32_t pci_read32(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset) {
-    uint32_t addr;
-    uint32_t bus32 = bus;
-    uint32_t slot32 = slot;
-    uint32_t func32 = function;
-    addr = (uint32_t)((bus32 << 16) | (slot32 << 11) |
-           (func32 << 8) | offset | 0x80000000); //yes, this line is copied from osdev
-    outl(PCI_ADDRESS_PORT, addr);
-    // return ((inl(PCI_DATA_PORT) >> ((offset & 2) * 8)) & 0xffffffff); //this too... I'm too lazy to write them
-    return inl(PCI_DATA_PORT); //this too... I'm too lazy to write them
-}
-
-
-/**
  * @brief [PCI] Категория устройств
  *
  */
@@ -339,17 +318,6 @@ uint32_t pci_get_bar(uint8_t hdrtype, uint8_t bus, uint8_t slot, uint8_t func, u
     return 0;
 }
 
-void pci_write(uint8_t bus, uint8_t slot, uint8_t func, uint32_t offset, uint32_t value) {
-    uint32_t addr = (bus << 16) | (slot << 11) | (func << 8) | (offset & 0xfc) | ((uint32_t)0x80000000);
-	// uint32_t addr = 0x80000000 | (bus << 16) | (slot << 11) | (func << 8) | offset;
-    // qemu_log("PCI Write to: %x; Value: %d (%x)", addr, value, value);
-    // Tell where we want to write
-	outl(PCI_ADDRESS_PORT, addr);
-	// Value to write
-	outl(PCI_DATA_PORT, value);
-    // qemu_log("Ok.");
-}
-
 /**
  * @brief [PCI] Поиск устройства по ID-поставшика и устройства
  *
@@ -360,22 +328,6 @@ void pci_write(uint8_t bus, uint8_t slot, uint8_t func, uint32_t offset, uint32_
  * @param func_ret
  */
 void pci_find_device(uint16_t vendor, uint16_t device, uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret) {
-//	qemu_log("Checking device: %x:%x\n", vendor, device);
-
-//	for (uint32_t bus = 0; bus < 256; bus++) {
-//		for (uint32_t slot = 0; slot < 32; slot++) {
-//			for (uint32_t func = 0; func < 8; func++) {
-//				if (pci_get_device(bus, slot, func) == device
-//					&& pci_get_vendor(bus, slot, func) == vendor) {
-//					*bus_ret = bus;
-//					*slot_ret = slot;
-//					*func_ret = func;
-//					return;
-//				}
-//			}
-//		}
-//	}
-
     assert(pci_device_list == 0, "DEVICE LIST IS NULL!");
 
     for(int i = 0; i < pci_device_list->size; i++) {

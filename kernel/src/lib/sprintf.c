@@ -76,7 +76,7 @@ size_t measure_vsprintf(const char *format, va_list args) {
                 case 'f': {
                     double a = va_arg(args, double);
 
-					if(!fpu_isInitialized()) {
+					if(!fpu_is_initialized()) {
 						size += 7;
 						break;
 					}
@@ -258,7 +258,7 @@ int vsprintf(char* buffer, const char *format, va_list args) {
                 	// FIXME: IMPLEMENT PRECISION HERE!
 
                     double a = va_arg(args, double);
-					if(!fpu_isInitialized()) {
+					if(!fpu_is_initialized()) {
 						memcpy(buffer, "0.00000", 7);
 
                         buffer += 7;

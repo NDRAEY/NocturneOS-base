@@ -79,7 +79,6 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/io/ports.c 
 	kernel/src/io/serial_port.c 
 	kernel/src/lib/string.c 
-	kernel/src/drv/fpu.c 
 	kernel/src/sys/timer.c 
 	kernel/src/sys/logo.c 
 	kernel/src/lib/math/math.c 
@@ -121,7 +120,6 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/drv/beeper.c 
 	kernel/src/user/env.c 
 	kernel/src/drv/pci.c 
-	kernel/src/gui/pointutils.c 
 	kernel/src/gui/line.c 
 	kernel/src/gui/circle.c 
 	kernel/src/lib/math/exp.c 
@@ -198,7 +196,6 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
 	kernel/src/sys/lapic.c 
-	# kernel/src/drv/ps2.c 
 	kernel/src/drv/video/intel.c 
 	kernel/src/extra/command_parser.c
     kernel/src/lib/libvector/src/vector.c
@@ -216,7 +213,7 @@ add_executable(${KERNEL} ${SRC})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(
-       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne_fake.a"
+       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
        COMMAND cargo +nightly-2023-04-11 rustc --target i686-unknown-none.json -Zbuild-std 
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."
@@ -234,7 +231,7 @@ target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-no
 else()
 
 add_custom_command(
-       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a"
+       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
        COMMAND cargo +nightly-2023-04-11 rustc --target i686-unknown-none.json -Zbuild-std --release
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."

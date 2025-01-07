@@ -189,7 +189,7 @@ void __com_pre_formatString(int16_t port, const char* format, va_list args){
             case 'f': {
                 double a = va_arg(args, double);
 
-				if(!fpu_isInitialized()) {
+				if(!fpu_is_initialized()) {
 					__com_writeString(port,"!0.0000000");
 					break;
 				}
