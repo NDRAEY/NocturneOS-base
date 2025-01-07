@@ -66,38 +66,8 @@ bool text_init(char* psf){
     return _init;
 }
 
-size_t psf1_get_h(){
+size_t psf1_get_h() {
     return psf_h;
-}
-
-uint16_t psf1_rupatch(uint16_t c){
-    uint8_t hi = (uint8_t)(c >> 8);
-    uint8_t lo = (uint8_t)(c & 0xff);
-    
-    bool is_utf_compatible = hi == 0xd0 || hi == 0xd1;
-
-    if(!is_utf_compatible) {
-        return c;
-    }
-
-    uint16_t t = 0;
-    uint16_t sym = lo & 0x3f;
-
-    if(sym == 0) {
-        t = 224;
-    } else if(sym == 1) {
-        t = hi == 0xd0 ? 240 : 225;
-    } else if(sym >= 2 && sym <= 15) {
-        t = 224 + sym;
-    } else if(sym == 16) {
-        t = 128;
-    } else if(sym >= 18 && sym <= 63) {
-        t = 128 + (sym - 16);
-    } else if(sym == 17) {
-        t = hi == 0xd1 ? 241 : 129;
-    }
-
-    return t;
 }
 
 uint8_t *psf1_get_glyph(uint16_t ch){
