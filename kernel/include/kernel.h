@@ -1,5 +1,7 @@
 #pragma		once
 
+#include <common.h>
+
 #include <version.h>
 
 #include <stdarg.h>
@@ -8,7 +10,6 @@
 #include <emmintrin.h>
 #endif
 
-#include "common.h"
 #include "config.h"
 
 #include "lib/string.h"
@@ -31,7 +32,6 @@
 #include "sys/logo.h"
 #include "sys/descriptor_tables.h"
 #include "sys/syscalls.h"
-#include "sys/v8086.h"
 #include "sys/system.h"
 
 #include <io/ports.h>

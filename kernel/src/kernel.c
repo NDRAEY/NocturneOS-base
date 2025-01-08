@@ -218,7 +218,7 @@ extern size_t BSS_start;
 extern size_t BSS_end;
 
 extern void rust_main();
-
+extern void keyboard_buffer_init();
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -328,6 +328,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 
     bootScreenInit(15);
     bootScreenLazy(true);
+
+    keyboard_buffer_init();
 
     bootScreenPaint("Настройка PS/2...");
     ps2_init();
