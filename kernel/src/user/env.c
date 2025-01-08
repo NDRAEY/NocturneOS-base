@@ -4,7 +4,7 @@
  * @brief Пользовательское окружение ОС
  * @version 0.3.5
  * @date 2022-11-07
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
 #include <version.h>

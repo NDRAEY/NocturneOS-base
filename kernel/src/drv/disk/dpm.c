@@ -4,7 +4,7 @@
  * @brief Disk Partition Manager - Менеджер разметки дисков
  * @version 0.3.5
  * @date 2023-10-16
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
 #include <io/ports.h>

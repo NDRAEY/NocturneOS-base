@@ -4,7 +4,7 @@
  * @brief Драйвер VBE
  * @version 0.3.5
  * @date 2022-11-01
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 #include "multiboot.h"
 #include <io/ports.h> 

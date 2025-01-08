@@ -3,7 +3,7 @@
  * @author NDRAEY >_
  * @version 0.3.5
  * @date 2022-04-12
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
 #include <drv/rtl8139.h>

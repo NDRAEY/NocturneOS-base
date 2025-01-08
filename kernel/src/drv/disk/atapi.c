@@ -3,7 +3,7 @@
  * @author NDRAEY >_
  * @date 2023-07-21
  * @version 0.3.5
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
 // Super-duper original ATAPI driver by NDRAEY (c) 2023

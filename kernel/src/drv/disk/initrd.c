@@ -4,7 +4,7 @@
  * @brief Файл виртуального диска, основаного на основе TarFS
  * @version 0.3.5
  * @date 2023-08-03
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
 #include <io/ports.h> 

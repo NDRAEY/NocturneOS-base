@@ -5,7 +5,7 @@
  * @brief Проект Милла
  * @version 0.3.5
  * @date 2023-01-23
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
 void __milla_sendcmd(char* msg);

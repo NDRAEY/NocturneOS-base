@@ -3,7 +3,7 @@
  * @author NDRAEY >_
  * @version 0.3.5
  * @date 2023-11-04
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
 // Charmander - a new virtual memory manager by NDRAEY (c) 2023

@@ -4,7 +4,7 @@
  * @brief Драйвер мыши
  * @version 0.3.5
  * @date 2022-12-11
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
 #include <io/ports.h>

@@ -4,7 +4,7 @@
  * @brief Основные определения ядра
  * @version 0.3.5
  * @date 2023-12-07
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 #pragma once
 

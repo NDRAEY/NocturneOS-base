@@ -4,7 +4,7 @@
  * @brief Драйвер Floppy
  * @version 0.3.5
  * @date 2023-07-25
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
 

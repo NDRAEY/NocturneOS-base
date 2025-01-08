@@ -4,7 +4,7 @@
  * @brief Файловая система TarFS
  * @version 0.3.5
  * @date 2023-10-14
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
 

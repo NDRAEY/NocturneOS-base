@@ -6,7 +6,7 @@
  * @date 2023-06-01
  *
  * @warning А зачем они нам нужны если более выгодно вручную проверять клавиатуру и мышь, при этом производительность падает при триггерах
- * @copyright Copyright SayoriOS Team (c) 2022-2024
+ * @copyright Copyright SayoriOS Team (c) 2022-2025
  *
  */
 #include <io/ports.h>
