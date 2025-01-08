@@ -560,9 +560,9 @@ bool isNumber(const char* c) {
  *
  * @param s - Указатель на строку.
  *
- * @return uint32_t - Число
+ * @return int - Число
  */
-uint32_t atoi(const char s[]){
+int atoi(const char s[]){
     int i = 0, n = 0;
     bool minus = *s == '-';
 

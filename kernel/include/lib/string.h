@@ -35,7 +35,7 @@ size_t strcount(const char* string, char character);
 char* strstr(const char* haystack, const char* needle);
 char *strncpy(char *dest, const char *src, size_t n);
 
-uint32_t atoi(const char s[]);
+int atoi(const char* s);
 
 SAYORI_INLINE bool isdigit(char a) {
 	return a >= '0' && a <= '9';
