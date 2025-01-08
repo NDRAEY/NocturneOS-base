@@ -4,8 +4,8 @@
 //#include "lib/string.h"
 
 
-// #ifndef RELEASE
-__attribute__((section(".debug_symbols"))) char function_addr_data[400 * KB];
+#ifndef RELEASE
+__attribute__((section(".debug_symbols"))) char function_addr_data[512 * KB];
 
 char _temp_funcname[1024] = {0};
 
@@ -74,4 +74,4 @@ void unwind_stack(uint32_t MaxFrames) {
         stk = stk->ebp;
     }
 }
-// #endif
+#endif

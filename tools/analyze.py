@@ -1,7 +1,11 @@
 import subprocess
+import sys
 
+if not sys.argv[1:]:
+    print("./analyze.py <kernel>")
+    exit(1)
 
-r = subprocess.Popen(['readelf', '-s', 'iso/boot/kernel.elf'], stdout=subprocess.PIPE)
+r = subprocess.Popen(['readelf', '-s', sys.argv[1]], stdout=subprocess.PIPE)
 d = r.stdout.read().split(b'\n')[3:];
 
 processed = []
