@@ -4,8 +4,8 @@ exec tail -n +3 $0
 # menu entries you want to add after this comment.  Be careful not to change
 # the 'exec tail' line above.
 
-menuentry "SayoriOS" {
-	multiboot /boot/sayorios_kernel.elf
- 	module /boot/sayori_ramdisk initrd_tarfs
+menuentry "NocturneOS" {
+	multiboot /boot/nocturne.elf
+ 	module /boot/nocturne_ramdisk initrd_tarfs
 	boot
 }

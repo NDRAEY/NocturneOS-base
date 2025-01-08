@@ -55,31 +55,6 @@ display_message() {
                     ;;
             esac
             ;;
-        "sv" )
-            case $2 in
-                "file_exists" )
-                    echo "Filen $file_path finns."
-                    ;;
-                "replace_confirmation" )
-                    read -p "Vill du ersätta den? (J/N): " answer
-                    ;;
-                "replace_file" )
-                    echo "Ersätter filen..."
-                    ;;
-                "no_replace" )
-                    echo "Inget byte behövs."
-                    ;;
-                "invalid_input" )
-                    echo "Ogiltig inmatning. Ingen ersättning kommer att utföras."
-                    ;;
-                "file_not_exist" )
-                    echo "Filen $file_path finns inte."
-                    ;;
-                *)
-                    echo "Okänt meddelande: $2"
-                    ;;
-            esac
-            ;;
         *)
             echo "Unknown language code: $1"
             ;;
@@ -93,7 +68,7 @@ if [ -f "$file_path" ]; then
     case $answer in
         [Yy]* )
             display_message "en" "replace_file"
-            cp 40_custom $file_path
+            cp 41_sayori $file_path
             # Add your code to replace the file
             ;;
         [Nn]* )
