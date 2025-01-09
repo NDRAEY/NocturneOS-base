@@ -5,6 +5,8 @@
 NocturneOS - это форк операционной системы SayoriOS.
 
 ![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
+![Rust](https://img.shields.io/badge/rust-%239A0000.svg?style=for-the-badge&logo=rust&logoColor=white)
+
 
 ![Workflow](https://github.com/NDRAEY/NocturneOS-base/actions/workflows/Nocturne-Auto.yml/badge.svg)
 
@@ -46,10 +48,8 @@ NocturneOS - это форк операционной системы SayoriOS.
 - Файлы и папки
   - Виртуальная файловая система [VFS] Позволит вам не задаваться вопросом на каком устройстве файл
   - Sayori Easy File System (Простая файловая система для виртуального диска)
-  - Работа с реальными железом ([В планах] Поддержка работы IDE/ATA/S-ATA)
-  - TarFS ([В планах] Виртуальный диск в формате архива)
-  - FAT 12/16/32 ([В планах] Для поддержки работы устройств USB)
-  - Milla ([В планах] ...)
+  - TarFS
+  - FAT32
 - Сеть
   - Протоколы ([В планах] Без протоколов сеть бесполезна)
 - Прочие
@@ -123,10 +123,6 @@ cmake --build cmake-build-debug/ -j4 -- run
 Еще одним способом помочь проекту является тестирование. Вы можете протестировать новые функции, исправления ошибок и сообщить о найденных проблемах.
 
 Последний релиз: https://github.com/pimnik98/SayoriOS/releases
-
-### <a id="techwriters">Документирование</a>
-
-Приветствуется вклад Technical Writers!
 
 ### <a id="adv">Пиар</a>
 
