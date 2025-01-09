@@ -147,3 +147,7 @@ NocturneOS это не дистрибутив Linux, это совершенно
 * [Никита Пиминов](https://github.com/pimnik98) (Создатель SayoriOS)
 * [Андреян Павленко](https://github.com/NDRAEY) (создатель форка - NocturneOS)
 * [Михаил Глухов](https://github.com/rigidus)
+
+Этот README написан Михаилом Глуховым, спасибо вам огромное.
+
+NDRAEY.
