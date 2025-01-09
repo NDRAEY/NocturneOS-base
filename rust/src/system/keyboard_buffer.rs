@@ -8,7 +8,7 @@ use spin::Mutex;
 
 use crate::{qemu_err, qemu_ok};
 
-static mut KEYBOARD_BUFFER: OnceCell<Arc<Mutex<KeyboardBuffer>>> = OnceCell::new();
+static mut KEYBOARD_BUFFER: OnceCell<KeyboardBuffer> = OnceCell::new();
 
 pub struct KeyboardBuffer {
     buffer: Vec<u32>
@@ -38,7 +38,7 @@ impl KeyboardBuffer {
 
 #[no_mangle]
 pub unsafe extern fn keyboard_buffer_init() {
-    match KEYBOARD_BUFFER.set(Arc::new(Mutex::new(KeyboardBuffer::new()))) {
+    match KEYBOARD_BUFFER.set(KeyboardBuffer::new()) {
         Ok(()) => {
             qemu_ok!("Keyboard buffer initialized!");
         }
@@ -50,9 +50,14 @@ pub unsafe extern fn keyboard_buffer_init() {
 
 #[no_mangle]
 pub unsafe extern fn keyboard_buffer_put(character: u32) {
-    let v = &KEYBOARD_BUFFER.get_mut().unwrap();
-    let lk = Arc::clone(v);
+    let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
-    let mut val = lk.lock();
-    val.push(character);
+    v.push(character);
+}
+
+#[no_mangle]
+pub unsafe extern fn keyboard_buffer_get() -> u32 {
+    let v = KEYBOARD_BUFFER.get_mut().unwrap();
+
+    v.get()
 }

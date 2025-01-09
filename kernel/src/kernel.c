@@ -219,6 +219,8 @@ extern size_t BSS_end;
 
 extern void rust_main();
 extern void keyboard_buffer_init();
+extern void keyboard_buffer_put(uint32_t keycode);
+extern uint32_t keyboard_buffer_get();
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -326,25 +328,31 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     // while(1)
     // ;
 
-    bootScreenInit(15);
-    bootScreenLazy(true);
+    // bootScreenInit(15);
+    // bootScreenLazy(true);
 
     keyboard_buffer_init();
 
-    bootScreenPaint("Настройка PS/2...");
     ps2_init();
 
-    bootScreenPaint("Настройка PS/2 Клавиатуры...");
-    keyboardInit();
+    ps2_keyboard_init();
 
 	if(ps2_channel2_okay) {
-	    bootScreenPaint("Настройка PS/2 Мыши...");
+	    // bootScreenPaint("Настройка PS/2 Мыши...");
 	    mouse_install();		
 	}
 
-    bootScreenPaint("Пост-настройка PS/2...");
+    // bootScreenPaint("Пост-настройка PS/2...");
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
+
+    while(1) {
+        char key = (char)getchar();
+        qemu_log("Key: %c (%d)", key, key);
+    }
+
+    while(1)
+        ;
 
     bootScreenPaint("PCI Setup...");
     pci_scan_everything();

@@ -111,8 +111,8 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/sys/bootscreen.c 
 	kernel/src/debug/hexview.c 
 	kernel/src/drv/video/vbe.c 
-	kernel/src/drv/input/keyboard.c 
-	kernel/src/drv/input/mouse.c 
+	kernel/src/drv/input/ps2_keyboard.c 
+	kernel/src/drv/input/ps2_mouse.c 
 	kernel/src/sys/syscalls.c 
 	kernel/src/sys/testing.c 
 	kernel/src/sys/trigger.c 

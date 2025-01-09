@@ -71,7 +71,7 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
     clean_tty_screen();
     tty_printf("Pavi - '%s' [%dx%d] => [%dx%d] (Loaded in: %u ms) (Press ESC to exit)", argv[1], pavi_tga_header.w, pavi_tga_header.h, nw, nh, end_load - start_load);
 
-    keyboardctl(KEYBOARD_ECHO, 0);
+    // keyboardctl(KEYBOARD_ECHO, 0);
 
     draw_rgb_image(pavi_view_buffer, nw, nh, 32, (int)(getScreenWidth() - nw) / 2, 16 + (int)(getScreenHeight() - nh) / 2);
 
@@ -87,7 +87,7 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
 
     clean_tty_screen();
 
-    keyboardctl(KEYBOARD_ECHO, 1);
+    // keyboardctl(KEYBOARD_ECHO, 1);
 
     kfree(pavi_image_buffer);
     kfree(pavi_view_buffer);

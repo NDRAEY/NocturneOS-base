@@ -26,9 +26,9 @@
 #define KEY_8           9
 #define KEY_9           10
 #define KEY_0           11
-#define KEY_CTRL        29
-#define KEY_ALT         56
-#define KEY_SHIFT       42
+#define KEY_LSHIFT (42)
+#define KEY_LCTRL  (29)
+#define KEY_LALT   (56)
 #define KEY_TAB         15
 #define KEY_ESC         1
 #define KEY_ENTER       28

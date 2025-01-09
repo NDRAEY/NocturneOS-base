@@ -104,7 +104,6 @@ void parallel_desktop_start() {
 
     qemu_log("Reached init...");    
     set_cursor_enabled(false);
-    keyboardctl(KEYBOARD_ECHO, false);
 
     log_window_manager_state();
 
@@ -248,6 +247,4 @@ void parallel_desktop_start() {
 
     tty_printf("Memory allocation info written to COM1 (debug) port!!!");
     log_window_manager_state();
-
-    keyboardctl(KEYBOARD_ECHO, true);
 }

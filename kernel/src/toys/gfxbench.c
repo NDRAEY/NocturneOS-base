@@ -20,7 +20,7 @@ uint32_t gfxbench(uint32_t argc, char* args[]) {
 
 	char* string = 0;
 
-	keyboardctl(KEYBOARD_ECHO, false);
+	// keyboardctl(KEYBOARD_ECHO, false);
 
 	while(1) {
 		if(getCharRaw() == KEY_ESC)
@@ -46,7 +46,7 @@ uint32_t gfxbench(uint32_t argc, char* args[]) {
 		frames++;
 	}
 
-	keyboardctl(KEYBOARD_ECHO, true);
+	// keyboardctl(KEYBOARD_ECHO, true);
 
 	return 0;
 }
