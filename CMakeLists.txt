@@ -210,7 +210,7 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2023-09-11")
+set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(
