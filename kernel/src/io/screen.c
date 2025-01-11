@@ -112,7 +112,7 @@ void init_vbe(multiboot_header_t *mboot) {
     // framebuffer_pitch = framebuffer_width * (framebuffer_bpp >> 3);
     framebuffer_size = framebuffer_height * framebuffer_pitch;
 
-    qemu_log("[VBE] [USING LEGACY INFO] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %x",
+    qemu_log("[VBE] [USING LEGACY INFO] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %p",
              mboot->framebuffer_width,
              mboot->framebuffer_height,
              mboot->framebuffer_pitch,

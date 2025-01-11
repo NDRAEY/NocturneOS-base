@@ -184,9 +184,9 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 
             qemu_note("DRIVE: %d", drive_num);
 
-            qemu_note("Serial: %s", serial);
-            qemu_note("Firmware version: %s", fwver);
-            qemu_note("Model name: %s", model_name);
+            qemu_note("Serial: %s", (char*)serial);
+            qemu_note("Firmware version: %s", (char*)fwver);
+            qemu_note("Model name: %s", (char*)model_name);
 
             // (drive_num) is an index (0, 1, 2, 3) of disk
             int disk_inx = dpm_reg(

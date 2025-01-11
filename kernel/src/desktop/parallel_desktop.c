@@ -1,13 +1,10 @@
 #include "desktop/render.h"
 #include "desktop/widget_button.h"
 #include "desktop/widget_label.h"
-#include "io/serial_port.h"
-#include "lib/stdlib.h"
 #include "drv/cmos.h"
 #include "drv/input/keyboard.h"
 #include "io/ports.h"
 #include "mem/vmm.h"
-#include "lib/sprintf.h"
 #include "desktop/widget_image.h"
 #include "sys/scheduler.h"
 #include "desktop/widget_progress.h"
@@ -211,7 +208,7 @@ void parallel_desktop_start() {
     qemu_log("Start...");
 
     for(;;) {
-        if(getCharRaw() == 129) {
+        if(keyboard_buffer_get_or_nothing() == 129) {
             gui_restore();
             break;
         }

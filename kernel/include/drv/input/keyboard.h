@@ -23,6 +23,7 @@ int gets_max(char *buffer, int length);
 extern void keyboard_buffer_init();
 extern void keyboard_buffer_put(uint32_t keycode);
 extern uint32_t keyboard_buffer_get();
+extern uint32_t keyboard_buffer_get_or_nothing();
 
 SAYORI_INLINE uint32_t getkey() {
     return keyboard_buffer_get();

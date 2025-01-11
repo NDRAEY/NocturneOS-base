@@ -235,7 +235,7 @@ uint32_t * new_page_directory() {
 	// Allocate a page (page directory is 4096 bytes)
 	uint32_t* dir = (uint32_t*)phys_alloc_single_page();
 
-	qemu_log("Allocated page directory at: %x", dir);
+	qemu_log("Allocated page directory at: %p", dir);
 
 	// Blank it (they can store garbage, so we need to blank it)
 	memset(dir, 0, 4096);
@@ -525,7 +525,7 @@ void init_paging() {
 
 	qemu_log("Allocating %d pages for kernel space...", (real_end / 4096) + 1);
 
-	for(int i = 0; i < (real_end / 4096) + 1; i++) {
+	for(size_t i = 0; i < (real_end / 4096) + 1; i++) {
 		// Note: if allocator returns 0, it's an error.
 		// But we don't care, because we're allocating pages for first time here.
 		phys_alloc_single_page();
@@ -535,7 +535,7 @@ void init_paging() {
 
 	kernel_page_directory = (physical_addr_t*)new_page_directory();
 
-	qemu_log("New page directory at: %x", kernel_page_directory);
+	qemu_log("New page directory at: %p", kernel_page_directory);
 
 	map_pages(kernel_page_directory, 0, 0, ALIGN(real_end, PAGE_SIZE), PAGE_WRITEABLE);
 

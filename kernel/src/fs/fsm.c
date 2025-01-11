@@ -156,7 +156,7 @@ void fsm_dump(FSM_FILE file){
 }
 
 size_t fsm_read(int FIndex, char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer){
-    if (fsm_debug) qemu_log("[FSM] [READ] F:%d | D:%d | N:%d | O:%d | C:%d",FIndex,DIndex,Name,Offset,Count);
+    if (fsm_debug) qemu_log("[FSM] [READ] F:%d | D:%d | N:`%s` | O:%d | C:%d",FIndex,DIndex,Name,Offset,Count);
 	if (G_FSM[FIndex].Ready == 0) return 0;
     if (fsm_debug) qemu_log("[FSM] [READ] GO TO DRIVER");
 	return G_FSM[FIndex].Read(DIndex,Name,Offset, Count, Buffer);

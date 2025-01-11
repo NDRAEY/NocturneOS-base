@@ -48,7 +48,7 @@ void animTextCursor();
 void tty_taskInit(){
     qemu_log("Starting task...");
     process_t* proc = get_current_proc();
-    qemu_log("Process at: %x", proc);
+    qemu_log("Process at: %p", proc);
     threadTTY01 = thread_create(proc,
 			   &animTextCursor,
 			   0x4000,

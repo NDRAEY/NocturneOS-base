@@ -23,6 +23,10 @@ impl KeyboardBuffer {
         self.buffer.push(character);
     }
 
+    pub fn get_raw(&mut self) -> Option<u32> {
+        self.buffer.pop()
+    }
+
     pub fn get(&mut self) -> u32 {
         while self.buffer.is_empty() {
             core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
@@ -57,4 +61,11 @@ pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
     v.get()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn keyboard_buffer_get_or_nothing() -> u32 {
+    let v = KEYBOARD_BUFFER.get_mut().unwrap();
+
+    v.get_raw().unwrap_or(0)
 }

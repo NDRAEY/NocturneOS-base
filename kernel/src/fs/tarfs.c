@@ -36,14 +36,17 @@ size_t fs_tarfs_read(const char Disk, const char* Path, size_t Offset, size_t Si
     TarFS_ROOT* initrd = (TarFS_ROOT*) dpm_metadata_read(Disk);
 
     for (int i = 1; i < initrd->Count; i++){
-		if (!strcmpn(initrd->Files[i].Name,Path))
+		if (!strcmpn(initrd->Files[i].Name,Path)) {
 			continue;
+        }
 
 		return dpm_read(Disk,0,initrd->Files[i].Addr+Offset, Size, Buffer);
 	}
 
-    if (tarfs_debug)
+    if (tarfs_debug) {
         qemu_log("[FSM] [TARFS] [READ] NO FOUND!!");
+    }
+
 	return 0;
 }
 
@@ -133,7 +136,7 @@ FSM_DIR* fs_tarfs_dir(const char Disk,const char* Path){
 	size_t CA = 0, CF = 0, CD = 0, CO = 0;
 	for (int i = 1; i < initrd->Count; i++){
 		//////////////////////////
-		//// Обращаю внимание, для за путь принимается сейчас R:\\Sayori\\
+		//// Обращаю внимание, для за путь принимается сейчас R:\Sayori
 		//// Если вам искать только файлы, то вот вариант
 		// char* zpath = pathinfo(initrd->Files[i].Name, PATHINFO_DIRNAME);
 		// qemu_log("[%d] %s",strcmpn(zpath,Path),zpath);
@@ -252,7 +255,7 @@ TarFS_ROOT* fs_tarfs_init(uint32_t in, uint32_t size, int Mode){
 		qemu_log("[%d] fix name:%s",strlen(tffs[currentInx].Name),tffs[currentInx].Name);
 		currentInx++;
 
-        if (tarfs_debug) qemu_log("[%x] Name: %s; Size: %d", file, file->Name, filesize);
+        if (tarfs_debug) qemu_log("[%p] Name: %s; Size: %d", file, file->Name, filesize);
 
 		pos = ALIGN(pos + sizeof(TarFS_Elem) + filesize, 512);
 		file = (TarFS_Elem*)(ptr + pos);
