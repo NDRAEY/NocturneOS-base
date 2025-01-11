@@ -67,6 +67,7 @@ void gets(char *buffer) { // TODO: Backspace
 
         if(ch == '\b') {
             *buf-- = 0;
+            tty_backspace();
             continue;
         }
 

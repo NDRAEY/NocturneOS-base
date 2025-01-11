@@ -245,6 +245,6 @@ void parallel_desktop_start() {
 
     clean_tty_screen();
 
-    tty_printf("Memory allocation info written to COM1 (debug) port!!!");
+    tty_printf("Memory allocation info written to COM1 (debug) port!!!\n");
     log_window_manager_state();
 }
