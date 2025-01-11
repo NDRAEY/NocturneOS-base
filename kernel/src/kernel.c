@@ -328,8 +328,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     // while(1)
     // ;
 
-    // bootScreenInit(15);
-    // bootScreenLazy(true);
+    bootScreenInit(15);
+    bootScreenLazy(true);
 
     keyboard_buffer_init();
 
@@ -345,14 +345,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     // bootScreenPaint("Пост-настройка PS/2...");
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
-
-    while(1) {
-        char key = (char)getchar();
-        qemu_log("Key: %c (%d)", key, key);
-    }
-
-    while(1)
-        ;
 
     bootScreenPaint("PCI Setup...");
     pci_scan_everything();
@@ -405,7 +397,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     bootScreenClose(0x000000, 0xFFFFFF);
     tty_set_bgcolor(COLOR_BG);
     
-    tty_printf("SayoriOS v%d.%d.%d\nДата компиляции: %s\n",
+    tty_printf("NocturneOS v%d.%d.%d\nДата компиляции: %s\n",
                VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
                __TIMESTAMP__                                   // Время окончания компиляции ядра
         );

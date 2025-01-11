@@ -52,75 +52,33 @@ int getCharRaw() {
     return lastKey;
 }
 
-int getIntKeyboardWait(){
-    bool kmutex = false;
-    mutex_get(&kmutex, true);
 
-    while(lastKey==0 || (lastKey & 0x80)) {}
-
-    mutex_release(&kmutex);
-    return lastKey;
-}
-
-void kbd_add_char(char *buf, char* key) {
-	if(kmode == 1 && curbuf != 0) {
-		if (!(lastKey == 0x1C || lastKey == 0x0E)) {
-			strcat(buf, key);
-			chartyped++;
-		}
-		
-		if(lastKey == 0x0E) { // BACKSPACE
-            if(chartyped > 0) {
-				tty_backspace();
-				chartyped--;
-				buf[chartyped] = 0;
-			}
-        }
-	} else if(kmode == 2) {
-		curbuf = key;
-	}
-}
 
 void gets(char *buffer) { // TODO: Backspace
-    // qemu_log("KMODE is: %d, curbuf at: %x", kmode, (int)((void*)curbuf));
+    char* buf = buffer;
 
-    kmode = 1;
-    curbuf = buffer;
+    while(1) {
+        uint32_t ch = getchar();
+        char* codes = (char*)&ch;
 
-    while(kmode == 1) {
-        if (lastKey == 0x9C) { // Enter key pressed
-            curbuf = 0;
-            lastKey = 0;
-            kmode = 0;
-            chartyped = 0;
+        if(ch == '\n') {
+            break;
         }
+
+        if(ch == '\b') {
+            *buf-- = 0;
+            continue;
+        }
+
+        if(ch > 255) {
+            *buf++ = codes[0];
+            *buf++ = codes[1];
+        } else {
+            *buf++ = codes[0];
+        }
+
+        tty_printf("%c", ch);
     }
-}
-
-// Limited version of gets.
-// Returns 0 if okay, returns 1 if you typed more than `length` keys.
-int gets_max(char *buffer, int length) { // TODO: Backspace
-    kmode = 1;
-    curbuf = buffer;
-
-    while(kmode == 1) {
-        if(chartyped >= length) {
-            curbuf = 0;
-            lastKey = 0;
-            kmode = 0;
-            chartyped = 0;
-            return 1;
-        }
-
-        if (lastKey == 0x9C) { // Enter key pressed
-            curbuf = 0;
-            lastKey = 0;
-            kmode = 0;
-            chartyped = 0;
-        }
-    }
-
-    return 0;
 }
 
 /**
@@ -142,7 +100,15 @@ uint32_t getchar() {
     while(1) {
         uint32_t key = getkey();
 
-        bool pressed = (key & 0x80);
+        bool pressed = (~key & 0x80);
+
+        // Can be simplified
+        if(pressed) {
+            keyboard_states |= (KEYBOARD_STATE_PRESSED);
+        } else {
+            keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
+        }
+
         uint32_t keycode = key & 0x7F;
 
         if(pressed) {
@@ -150,15 +116,12 @@ uint32_t getchar() {
                 keyboard_states |= (KEYBOARD_STATE_SHIFT);
                 continue;
             } else if(keycode == KEY_LCTRL) {
-                keyboard_states |= (KEYBOARD_STATE_CTRL);
+                keyboard_states ^= (KEYBOARD_STATE_CTRL);
                 continue;
             }
         } else {
             if(keycode == KEY_LSHIFT) {
                 keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-                continue;
-            } else if(keycode == KEY_LCTRL) {
-                keyboard_states |= (KEYBOARD_STATE_CTRL);
                 continue;
             } else {
                 if(key >= 256) {

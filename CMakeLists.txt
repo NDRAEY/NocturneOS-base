@@ -286,7 +286,7 @@ endif()
 
 add_custom_target(
 	clippy
-	COMMAND cargo +nightly-2023-04-11 clippy --target i686-unknown-none.json -Zbuild-std 
+    COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --target i686-unknown-none.json -Zbuild-std 
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
@@ -294,7 +294,7 @@ add_custom_target(
 
 add_custom_target(
 	fmt
-	COMMAND cargo +nightly-2023-04-11 fmt
+	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} fmt
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM

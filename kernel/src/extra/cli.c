@@ -692,12 +692,12 @@ void cli(){
 // 	T_CLI_KYB = RegTrigger(0x0001, &F_CLI_KYB);
 	
 //	clean_tty_screen();
-	_tty_printf("SayoriOS [Версия: v%d.%d.%d]\n",VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-	_tty_printf("(c) SayoriOS Team, 2023.\nДля дополнительной информации наберите \"help\".\n\n");
+	_tty_printf("NocturneOS [Версия: v%d.%d.%d]\n",VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	_tty_printf("(c) SayoriOS & NocturneOS Team, 2025.\nДля дополнительной информации наберите \"help\".\n\n");
 
 	punch();
 
-	char* input_buffer = kcalloc(1, 512);
+	char* input_buffer = kcalloc(1, 1024);
 	while(1) {
 		size_t memory_cur = system_heap.used_memory;
         	size_t memory_cnt_cur = system_heap.allocated_count;
@@ -706,13 +706,14 @@ void cli(){
 		tty_printf("%s>", G_CLI_PATH);
 		memset(input_buffer, 0, 512);
 
-		int result = gets_max(input_buffer, 512);
-
-        	if(result == 1) {
-            		tty_alert("\nMaximum 512 characters!\n");
-            		continue;
-        	}
-
+		/* int result =*/ gets(input_buffer);
+        tty_printf("\n");
+/*
+        if(result == 1) {
+                tty_alert("\nMaximum 512 characters!\n");
+                continue;
+        }
+*/
         	size_t len_cmd = strlen(input_buffer);
         	if (len_cmd == 0) {
             		continue;

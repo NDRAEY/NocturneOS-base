@@ -1,8 +1,9 @@
 #pragma once
 
-#define KEYBOARD_STATE_SHIFT (1 << 0)
-#define KEYBOARD_STATE_CTRL (1 << 1)
-#define KEYBOARD_STATE_ALT (1 << 2)
+#define KEYBOARD_STATE_PRESSED (1 << 0)
+#define KEYBOARD_STATE_SHIFT (1 << 1)
+#define KEYBOARD_STATE_CTRL (1 << 2)
+#define KEYBOARD_STATE_ALT (1 << 3)
 
 char* __getCharKeyboard(char* en_s,char* en_b,char* ru_s,char* ru_b);
 char* getCharKeyboard(int key, bool mode);
