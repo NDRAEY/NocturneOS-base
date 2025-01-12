@@ -16,7 +16,6 @@
 #include "mem/vmm.h"
 #include "lib/php/explode.h"
 #include "fs/fsm.h"
-#include "lib/php/str_replace.h"
 
 bool nvfs_debug = false;
 

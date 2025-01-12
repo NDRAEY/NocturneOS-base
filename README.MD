@@ -66,7 +66,20 @@ NocturneOS - это форк операционной системы SayoriOS.
 Для компиляции вам потребуется операционная система на базе ядра Linux или Windows (с WSL), в которой предустановлено ПО для разработки.Установить можно следующей командой:
 
 ```bash
-sudo apt-get install python3 gcc cmake ninja-build
+sudo apt-get install python3 gcc cmake ninja-build xorriso mtools
+```
+
+Система содержит мрдули написанные на языке программирования Rust, поэтому требуется установить компилятор Rust.
+
+Вы можете использовать компилятор из репозитория вашего дистрибутива, но рекомендуется использовать классический способ установки Rust:
+```bash
+curl https://sh.rustup.rs -sSf | sh
+```
+
+На данный момент используется версия Rust 1.77, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
+```bash
+rustup toolchain install nightly-2024-01-11
+rustup component add rust-src --toolchain nightly-2024-01-11-x86_64-unknown-linux-gnu
 ```
 
 Если вы планируете запускать эту систему в виртуальной машине, то ещё нужно установить QEMU:

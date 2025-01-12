@@ -23,7 +23,6 @@
 #include "fs/natfs.h"
 #include "net/stack.h"
 #include "drv/audio/hda.h"
-#include "lib/ttf_font.h"
 #include "sys/grub_modules.h"
 #include "drv/disk/mbr.h"
 #include "sys/file_descriptors.h"

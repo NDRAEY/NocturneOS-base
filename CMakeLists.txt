@@ -94,7 +94,6 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/fs/nvfs.c 
 	kernel/src/fs/natfs.c 
 	kernel/src/fs/tempfs.c 
-	kernel/src/lib/php/str_replace.c 
 	kernel/src/sys/scheduler.c 
 	kernel/src/lib/php/explode.c 
 	kernel/src/lib/php/pathinfo.c 
