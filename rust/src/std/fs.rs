@@ -7,8 +7,6 @@ use core::ffi::{c_void, CStr};
 use alloc::vec::Vec;
 use alloc::{str, vec};
 
-use crate::qemu_log;
-
 #[repr(C)]
 struct CFile {
     path: *const i8,
@@ -24,7 +22,7 @@ extern "C" {
     fn fclose(stream: *mut CFile);
     fn fsize(stream: *mut CFile) -> usize;
     fn fread(stream: *mut CFile, count: isize, size: usize, buffer: *mut c_void) -> i32;
-    fn fwrite(stream: *mut CFile, count: isize, size: usize, buffer: *const c_void) -> i32;
+    // fn fwrite(stream: *mut CFile, count: isize, size: usize, buffer: *const c_void) -> i32;
 }
 
 pub fn read_to_string(file_path: &str) -> Result<&str, &str> {

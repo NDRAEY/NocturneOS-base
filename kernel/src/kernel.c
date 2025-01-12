@@ -257,6 +257,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     
     drv_vbe_init(mboot);
 
+    qemu_log("FSM Init");
+    fsm_init();
+
     qemu_log("Registration of file system drivers...");
     fsm_reg("TARFS", 1, &fs_tarfs_read, &fs_tarfs_write, &fs_tarfs_info, &fs_tarfs_create, &fs_tarfs_delete,
             &fs_tarfs_dir, &fs_tarfs_label, &fs_tarfs_detect);

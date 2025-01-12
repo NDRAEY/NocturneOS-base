@@ -18,7 +18,7 @@
 #include "lib/math.h"
 #include "fmt/tga.h"
 #include "io/rgb_image.h"
-#include "lib/libstring/string.h"
+#include "string.h"
 #include "lib/php/pathinfo.h"
 
 size_t fs_fat32_read(char Disk, const char* Path, size_t Offset, size_t Size,void* Buffer){

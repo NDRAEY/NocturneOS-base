@@ -64,7 +64,7 @@ typedef int (*fsm_cmd_detect_t)(const char);
 typedef struct {
 	int Ready;					///< Загружена ли фс?
 	char Name[64];				///< Наименование драйвера
-	int Splash;					///< В какую сторону кинута палка?
+	int Slash;					///< В какую сторону кинута палка?
 	fsm_cmd_read_t Read;		///< Команда для чтения
 	fsm_cmd_write_t Write;		///< Команда для записи
 	fsm_cmd_info_t Info;		///< Команда для получения информации
@@ -77,7 +77,7 @@ typedef struct {
 	void* Reserved;				///< Можно в ОЗУ дописать доп.данные если требуется.
 } __attribute__((packed)) FSM; 
 
-
+void fsm_init();
 int fsm_getIDbyName(const char* Name);
 size_t fsm_read(int FIndex, char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer);
 size_t fsm_write(int FIndex, char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer);
