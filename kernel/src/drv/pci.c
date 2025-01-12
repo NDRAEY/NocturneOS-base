@@ -211,10 +211,12 @@ uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function) {
  * @param subclass Группа Б
  * @return Возращает классификацию устройства
  */
-const char *pci_get_device_type(uint8_t klass, uint8_t subclass) {
-    for (int i=0; pci_device_type_strings[i].name != nullptr; i++)
-        if (pci_device_type_strings[i].klass == klass && pci_device_type_strings[i].subclass == subclass)
+const char* pci_get_device_type(uint8_t klass, uint8_t subclass) {
+    for (size_t i = 0; pci_device_type_strings[i].name != nullptr; i++) {
+        if (pci_device_type_strings[i].klass == klass && pci_device_type_strings[i].subclass == subclass) {
             return pci_device_type_strings[i].name;
+        }
+    }        
 
     return nullptr;
 }
@@ -227,9 +229,10 @@ const char *pci_get_device_type(uint8_t klass, uint8_t subclass) {
  */
 const char *pci_get_vendor_name(uint16_t vendor) {
 	for (int i = 0; pci_vendor_name_strings[i].name != nullptr; i++) {
-		if(pci_vendor_name_strings[i].vendor == vendor)
+		if(pci_vendor_name_strings[i].vendor == vendor) {
 			return pci_vendor_name_strings[i].name;
-	}
+        }
+    }
 
 	return "unknown";
 }

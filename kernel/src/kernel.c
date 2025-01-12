@@ -64,36 +64,6 @@ void autoexec() {
     variable_write("VERNAME", VERNAME);
     variable_write("SUBVERSIONNAME", SUBVERSIONNAME);
     variable_write("VERSION", VERSION_STRING);
-
-/*
-    char* f = "R:\\autoexec.bat";
-    FILE* cat_file = fopen(f, "r");
-    if (!cat_file){
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("[AutoExec] Не удалось найти файл `%s`.\n",f);
-        return;
-    }
-
-    size_t filesize = fsize(cat_file);
-
-    uint8_t* buffer = kcalloc(1,filesize + 1);
-
-    fread(cat_file, 1, filesize, buffer);
-
-    qemu_log("'%s'", buffer);
-
-    BAT_T* token = bat_parse_string(buffer);
-    token->Debug = 0;
-    token->Echo = 1;
-    int ret = bat_runtime_exec(token);
-    qemu_warn("RETURN CODE: %d\n",ret);
-    bat_destroy(token);
-
-
-    fclose(cat_file);
-
-    kfree(buffer);
-    */
 }
 
 void __createRamDisk(){
@@ -467,14 +437,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     //	}
     
     ac97_init();
-    
-    /// Пример закругленных квадратов
-    // drawRoundedSquare(32,32, 128, 2, 0xFFFF0000, 0xFF0000FF);
-    // drawRoundedRectangle(32,32,128,16,4,0xFFFF0000, 0xFF0000FF);
-    // punch();
-    // while (1){}
-    /// КОНЕЦ ПРИМЕРА
-
     ahci_init();
 
     /// Обновим данные обо всех дисках
@@ -496,9 +458,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 // 
 // 	while(1);
 
-    tty_printf("CHECKING GFX\n");
     igfx_init();
-    tty_printf("OK\n");
 
 //    hda_init();
 	// void k();
@@ -509,10 +469,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 //    sleep_ms(1500);
 //    create_process(k, "process3", false, true);
 
-    tty_printf("AUTOEXEC\n");
     autoexec();
-    tty_printf("OK\n");
-
 
     rust_main();
 
