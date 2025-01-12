@@ -29,9 +29,10 @@ size_t used_phys_memory_size = 0;
 
 physical_addr_t* kernel_page_directory = 0;
 
-// Create 128 KB page bitmap for saving data about 4 GB space.
+// Create 512 KB page bitmap for saving data about 4 GB space.
 /// Карта занятых страниц
-uint8_t pages_bitmap[PAGE_BITMAP_SIZE] = {0};
+// uint8_t pages_bitmap[PAGE_BITMAP_SIZE] = {0};
+uint8_t* pages_bitmap = 0;
 
 bool paging_initialized = false;
 
@@ -508,7 +509,9 @@ void init_paging() {
 
     qemu_log("MODEND: %x; &MODEND: %x", grub_last_module_end, (size_t)&grub_last_module_end);
 
-	size_t real_end = (size_t)grub_last_module_end;
+	size_t real_end = (size_t)(grub_last_module_end + PAGE_BITMAP_SIZE);
+
+    pages_bitmap = (uint8_t*)grub_last_module_end;
 
 	size_t kernel_size = real_end - kernel_start;
 
@@ -555,8 +558,9 @@ void init_paging() {
 	uint32_t* pd = get_kernel_page_directory();
 
 	for(int i = 0; i < 1024; i++) {
-		if(pd[i] != 0)
+		if(pd[i] != 0) {
 			qemu_log("[%d]: %x", i, pd[i]);
+        }
 	}
 }
 
