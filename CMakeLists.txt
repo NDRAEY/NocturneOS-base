@@ -300,6 +300,14 @@ add_custom_target(
 	VERBATIM
 )
 
+add_custom_target(
+	doc
+	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} doc
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+	USES_TERMINAL
+	VERBATIM
+)
+
 
 add_custom_target(
     ramdisk
