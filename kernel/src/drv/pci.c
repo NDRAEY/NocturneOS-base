@@ -194,7 +194,7 @@ static struct {
  */
 inline uint8_t pci_get_subclass(uint8_t bus, uint8_t slot, uint8_t function) {
     /* Сдвигаем, чтобы оставить только нужные данные в переменной */
-    return (uint8_t) pci_read_confspc_word(bus, slot, function, 10);
+    return (uint8_t) pci_read32(bus, slot, function, 10) & 0xff;
 }
 
 /**
@@ -412,10 +412,12 @@ void pci_scan_everything() {
             uint16_t vendor = pci_get_vendor(bus, slot, func);
 
             if (vendor != 0xFFFF) {
-                clid = (pci_read32(bus, slot, func, 10) >> 8) & 0xffff;
-                sclid = pci_get_subclass(bus, slot, func);
-                hdrtype = pci_get_hdr_type(bus, slot, func);
-                device = pci_get_device(bus, slot, func);
+                clid = pci_read32(bus, slot, func, 0xB) & 0xff;
+                sclid = pci_read32(bus, slot, func, 0xA) & 0xff;
+                hdrtype = pci_read32(bus, slot, func, 0xE) & 0xff;
+                device = pci_read32(bus, slot, func, 0x2) & 0xffff;
+
+                qemu_log("Class ID: %d; Subclass ID: %d; Header type: %x; Vendor: %x; Device: %x", clid, sclid, hdrtype, device);
 
                 pci_device_t* dev = kcalloc(1, sizeof(pci_device_t));
                 dev->klass = clid;
@@ -435,7 +437,7 @@ void pci_scan_everything() {
                     vendor = pci_get_vendor(bus, slot, func);
 
                     if (vendor != 0xFFFF) {
-                        clid = (pci_read32(bus, slot, func, 10) >> 8) & 0xffff;
+                        clid = (pci_read32(bus, slot, func, 0x0B)) & 0xff;
                         sclid = pci_get_subclass(bus, slot, func);
                         device = pci_get_device(bus, slot, func);
 
