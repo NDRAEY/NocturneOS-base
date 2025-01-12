@@ -23,7 +23,7 @@ uint32_t gfxbench(uint32_t argc, char* args[]) {
 	// keyboardctl(KEYBOARD_ECHO, false);
 
 	while(1) {
-		if(getCharRaw() == KEY_ESC)
+		if(keyboard_buffer_get_or_nothing() == KEY_ESC)
 			break;
 
 		if(timestamp() - last_measurement >= 1000) {

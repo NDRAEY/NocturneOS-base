@@ -95,7 +95,7 @@ uint32_t dino_filemanager(int argc, char* argv[]) {
 	RegTrigger(TRIGGER_KEY_PRESSED, (trigger_cmd_t)dino_keyhandler);
 
 	while(1) {
-		int key = getCharRaw();
+		int key = keyboard_buffer_get_or_nothing();
 		if(key == KEY_ESC)
 			break;
 

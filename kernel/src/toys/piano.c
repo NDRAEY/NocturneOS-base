@@ -121,10 +121,10 @@ void piano() {
     clean_screen();
 
     set_cursor_enabled(false);
-    keyboardctl(KEYBOARD_ECHO, false);
+    // keyboardctl(KEYBOARD_ECHO, false);
 
     while(1) {
-        int key = getCharRaw();
+        int key = keyboard_buffer_get_or_nothing();
         if(key == 129 || key == 1) break;
 
         handle_key_piano(key);
@@ -136,5 +136,5 @@ void piano() {
 
     clean_screen();
     set_cursor_enabled(true);
-    keyboardctl(KEYBOARD_ECHO, true);
+    // keyboardctl(KEYBOARD_ECHO, true);
 }

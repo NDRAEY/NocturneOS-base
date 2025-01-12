@@ -169,12 +169,12 @@ uint32_t mala_draw(uint32_t argc, char* argv[]) {
     set_cursor_enabled(false);
 
     while(1) {
-        if(getCharRaw() == 1) {
+        if(keyboard_buffer_get_or_nothing() == 1) {
             mala_exit();
             break;
         }
 
-        if(getCharRaw() == 48) {
+        if(keyboard_buffer_get_or_nothing() == 48) {
             memset(buffer, 0xFF, buffer_size);
         }
 

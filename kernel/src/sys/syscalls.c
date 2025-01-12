@@ -13,6 +13,7 @@
 #include	"user/env.h"
 #include    "sys/file_descriptors.h"
 #include    <kernel.h>
+#include "io/keyboard.h"
 #include    <sys/trigger.h>
 
 syscall_fn_t* calls_table[NUM_CALLS] = {0};
@@ -99,7 +100,7 @@ size_t syscall_trigger_del(int index){
 }
 
 size_t syscall_getkey() {
-    return getCharRaw();
+    return keyboard_buffer_get_or_nothing();
 }
 
 size_t syscall_get_timer_ticks() {

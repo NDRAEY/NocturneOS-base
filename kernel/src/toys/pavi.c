@@ -76,7 +76,7 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
     punch();
 
     while(1) {
-        int key = getCharRaw();
+        int key = keyboard_buffer_get_or_nothing();
 
         if(key == KEY_ESC) {
             break;

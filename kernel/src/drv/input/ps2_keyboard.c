@@ -20,16 +20,6 @@ extern void tty_backspace();
 #include "drv/ps2.h"
 #include <lib/keymap.h>
 
-volatile int     lastKey = 0;            ///< Последний индекс клавиши
-
-uint8_t getPressReleaseKeyboard() {
-    return lastKey & 0x80; // if true -> Released / else - Pressed
-}
-
-int getCharRaw() {
-    return lastKey;
-}
-
 /**
  * @brief Обработчик клавиатуры
  */
@@ -37,9 +27,7 @@ void keyboardHandler(registers_t regs){
     uint32_t kbdstatus = inb(PS2_STATE_REG);
 
     if (kbdstatus & 0x01) {
-        lastKey = ps2_read();
-
-        keyboard_buffer_put(lastKey);
+        keyboard_buffer_put(ps2_read());
     }
 }
 
