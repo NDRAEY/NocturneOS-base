@@ -10,7 +10,6 @@
 #include <io/ports.h>
 #include <io/status_loggers.h>
 #include <lib/stdio.h>
-#include <lib/tui.h>
 #include <lib/pixel.h>
 
 /**

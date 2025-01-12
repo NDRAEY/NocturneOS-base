@@ -19,6 +19,16 @@
 
 bool nvfs_debug = false;
 
+SAYORI_INLINE void char_replace(char what, char which, char* string) {
+	int i = 0;
+	while (string[i] != '\0') {
+		if (string[i] == what) {
+			string[i] = which;
+		}
+		i++;
+	}
+}
+
 NVFS_DECINFO* nvfs_decode(const char* Name) {
 	NVFS_DECINFO* info = kcalloc(sizeof(NVFS_DECINFO), 1);
 	

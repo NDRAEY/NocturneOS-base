@@ -14,7 +14,7 @@ pub struct KeyboardBuffer {
 
 impl KeyboardBuffer {
     pub fn new() -> Self {
-        let buffer = vec![];
+        let buffer = Vec::<u32>::with_capacity(1024);
 
         KeyboardBuffer { buffer }
     }
@@ -29,6 +29,7 @@ impl KeyboardBuffer {
 
     pub fn get(&mut self) -> u32 {
         while self.buffer.is_empty() {
+            // Idk what this function does, but it works! (Not throwing polling away)
             core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
             unsafe { asm!("nop", options(nomem, nostack, preserves_flags)) };
         }

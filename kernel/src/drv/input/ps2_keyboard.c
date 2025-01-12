@@ -115,15 +115,8 @@ uint32_t getchar() {
         if(pressed) {
             if(keycode == KEY_LSHIFT) {
                 keyboard_states |= (KEYBOARD_STATE_SHIFT);
-                continue;
             } else if(keycode == KEY_LCTRL) {
                 keyboard_states ^= (KEYBOARD_STATE_CTRL);
-                continue;
-            }
-        } else {
-            if(keycode == KEY_LSHIFT) {
-                keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-                continue;
             } else {
                 if(key >= 256) {
                     qemu_err("Unknown key code: %d", key);
@@ -135,6 +128,10 @@ uint32_t getchar() {
                                     keyboard_layout[keycode] :
                                     shifted_keyboard_layout[keycode];
                 break;
+            }
+        } else {
+            if(keycode == KEY_LSHIFT) {
+                keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
             }
         }
     }
