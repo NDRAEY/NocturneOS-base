@@ -37,11 +37,11 @@ void keyboardHandler(registers_t regs){
 void ps2_keyboard_init() {
     uint8_t stat;
 
-    ps2_in_wait_until_empty();
+    // ps2_in_wait_until_empty();
 
-    outb(PS2_DATA_PORT, 0xf4);
+    // outb(PS2_DATA_PORT, 0xf4);
     
-    // ps2_write(0xf4);
+    ps2_write(0xf4);
     stat = ps2_read();
 
     if(stat != 0xfa) {
@@ -49,11 +49,11 @@ void ps2_keyboard_init() {
         return;
     }
 
-    ps2_in_wait_until_empty();
+    // ps2_in_wait_until_empty();
 
-    outb(PS2_DATA_PORT, 0xf0);
+    // outb(PS2_DATA_PORT, 0xf0);
 
-    // ps2_write(0xf0);
+    ps2_write(0xf0);
     stat = ps2_read();
 
     if(stat != 0xfa) {
@@ -61,10 +61,10 @@ void ps2_keyboard_init() {
         return;
     }
 
-    ps2_in_wait_until_empty();
+    // ps2_in_wait_until_empty();
 
-    outb(PS2_DATA_PORT, 0);
-    // ps2_write(0);
+    // outb(PS2_DATA_PORT, 0);
+    ps2_write(0);
     stat = ps2_read();
 
     if(stat != 0xfa) {
@@ -76,10 +76,10 @@ void ps2_keyboard_init() {
 
     qemu_note("SCANCODE SET: %d", scancode);
 
-    ps2_in_wait_until_empty();
+    // ps2_in_wait_until_empty();
 
-    outb(PS2_DATA_PORT, 0xf3);
-    // ps2_write(0xf3);
+    // outb(PS2_DATA_PORT, 0xf3);
+    ps2_write(0xf3);
     stat = ps2_read();
 
     if(stat != 0xfa) {
@@ -87,10 +87,10 @@ void ps2_keyboard_init() {
         return;
     }
 
-    ps2_in_wait_until_empty();
+    // ps2_in_wait_until_empty();
 
-    outb(PS2_DATA_PORT, 0);
-    // ps2_write(0);
+    // outb(PS2_DATA_PORT, 0);
+    ps2_write(0);
     stat = ps2_read();
 
     if(stat != 0xfa) {

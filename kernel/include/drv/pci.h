@@ -86,7 +86,6 @@ typedef struct {
 } pci_device_t;
 
 uint16_t pci_read_confspc_word(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset);
-uint8_t pci_get_class(uint8_t bus, uint8_t slot, uint8_t function);
 uint8_t pci_get_subclass(uint8_t bus, uint8_t slot, uint8_t function);
 uint8_t pci_get_hdr_type(uint8_t bus, uint8_t slot, uint8_t function);
 uint16_t pci_get_vendor(uint8_t bus, uint8_t slot, uint8_t function);

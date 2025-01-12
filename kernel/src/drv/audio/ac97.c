@@ -116,26 +116,15 @@ void ac97_init() {
 
     // Enable IO Busmastering
 
-    uint16_t command_register = pci_read_confspc_word(ac97_busnum, ac97_slot, ac97_func, 4);
-    qemu_log("Command register is: %x", command_register);
-
-    command_register |= 0x05;
-
-    qemu_log("Command register now is: %x", command_register);
-    pci_write(ac97_busnum, ac97_slot, ac97_func, 4, command_register);
+    pci_enable_bus_mastering(ac97_busnum, ac97_slot, ac97_func);
 
     // Get NAM and NABM adresses for port i/o.
 
-    native_audio_mixer = pci_read_confspc_word(ac97_busnum, ac97_slot, ac97_func, 0x10);  // BAR0
-    native_audio_bus_master = pci_read_confspc_word(ac97_busnum, ac97_slot, ac97_func, 0x14); // BAR1
+    native_audio_mixer = pci_read32(ac97_busnum, ac97_slot, ac97_func, 0x10) & 0xffff;  // BAR0
+    native_audio_bus_master = pci_read32(ac97_busnum, ac97_slot, ac97_func, 0x14) & 0xffff; // BAR1
 
-    // That's QEMU BUG?
-    native_audio_mixer--;
-    native_audio_bus_master--;
-
-    // uint8_t hdrtype = pci_get_hdr_type(ac97_busnum, ac97_slot, ac97_func);
-    // native_audio_mixer = pci_get_bar(hdrtype, ac97_busnum, ac97_slot, ac97_func, 0, ac97_bar0_type);  // BAR0
-    // native_audio_bus_master = pci_get_bar(hdrtype, ac97_busnum, ac97_slot, ac97_func, 1, ac97_bar1_type); // BAR1
+    native_audio_mixer &= ~0xf;
+    native_audio_bus_master &= ~0xf;
 
     qemu_log("NAM: %x; NABM: %x", native_audio_mixer, native_audio_bus_master);
 

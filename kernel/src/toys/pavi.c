@@ -17,7 +17,7 @@ void* pavi_view_buffer = 0;
 uint32_t pavi_view(uint32_t argc, char* argv[]) {
     memset(&pavi_tga_header, 0, sizeof pavi_tga_header);
 
-	if(argc < 1) {
+	if(argc < 2) {
 		tty_error("No arguments!\n");
 		return 1;
 	}

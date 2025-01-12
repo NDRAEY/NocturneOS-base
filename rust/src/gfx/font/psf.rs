@@ -1,4 +1,4 @@
-use crate::{gfx::set_pixel, qemu_log};
+use crate::gfx::set_pixel;
 
 extern "C" {
     static psf_h: u8;
@@ -42,21 +42,17 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
     let glyph_idx: u16 = psf1_rupatch(c);
     let raw_glyph: *const u8 = unsafe { psf1_get_glyph(glyph_idx) };
 
-    // qemu_log!("Height is: {}", unsafe{psf_h} as usize);
-
     if raw_glyph.is_null() {
         return;
     }
 
     let glyph = unsafe { core::slice::from_raw_parts(raw_glyph, psf_h as usize) };
 
-    // for let y = 0; y < _h; y+=1 {
-    for y in 0..unsafe{psf_h} as u32 {
-        let rposy = pos_y as u32 + y;
-        for x in 0..8 {
-            // if (glyph[y] & (1 << (8 - x))) {
-            if (glyph[y as usize] & mask[x]) != 0 {
-                unsafe { set_pixel((pos_x + x) as u32, rposy, color) };
+    for y in 0..unsafe{psf_h} as usize {
+        let rposy = pos_y as usize + y;
+        for (x, mask) in mask.iter().enumerate() {
+            if (glyph[y as usize] & mask) != 0 {
+                unsafe { set_pixel((pos_x + x) as u32, rposy as u32, color) };
             }
         }
     }
