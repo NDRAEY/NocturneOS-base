@@ -95,7 +95,6 @@ void mouse_parse_packet(const char *buf, uint8_t has_wheel, uint8_t has_5_button
 
 
 	if (mouse_b1 || mouse_b2 || mouse_b3 || (mouse_x != mouse_ox) || (mouse_y != mouse_oy)){
-		CallTrigger(0x0003,(void*)mouse_b1,(void*)mouse_b2,(void*)mouse_b3,(void*)mouse_x,(void*)mouse_y);
         mouse_ox = mouse_x;
         mouse_oy = mouse_y;
 	}
@@ -135,7 +134,6 @@ void mouse_handler(__attribute__((unused)) struct registers r) {
         if (mouse_y < 0) mouse_y = 0;
         if (mouse_x > (int) (getScreenWidth())) mouse_x = getScreenWidth();
         if (mouse_y > (int) (getScreenHeight())) mouse_y = getScreenHeight(); //-10;
-		CallTrigger(0x0002,(void*)mouse_x,(void*)mouse_y,0,0,0);
     }
 }
 

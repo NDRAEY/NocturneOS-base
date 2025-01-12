@@ -114,7 +114,7 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/drv/input/ps2_mouse.c 
 	kernel/src/sys/syscalls.c 
 	kernel/src/sys/testing.c 
-	kernel/src/sys/trigger.c 
+    # kernel/src/sys/trigger.c 
 	kernel/src/lib/rand.c 
 	kernel/src/drv/cmos.c 
 	kernel/src/drv/beeper.c 

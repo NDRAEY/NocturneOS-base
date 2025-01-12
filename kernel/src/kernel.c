@@ -351,8 +351,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     bootScreenPaint("Определение процессора...");
     detect_cpu(1);
     
-    bootScreenPaint("Конфигурация триггеров...");
-    triggersConfig();
+    // bootScreenPaint("Конфигурация триггеров...");
+    // triggersConfig();
     
     bootScreenPaint("Инициализация списка сетевых карт...");
     netcards_list_init();

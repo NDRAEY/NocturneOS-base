@@ -75,32 +75,8 @@ size_t syscall_tty_write(char* text) {
     return 0;
 }
 
-int syscall_trigger_reg(int type,trigger_cmd_t handler){
-    int init = RegTrigger(type,handler);
-    qemu_warn("[SysCall] [Triggers] REG -> I:%x | T:%x",init, type);
-    return init;
-}
-
-size_t syscall_trigger_on(int index){
-    qemu_warn("[SysCall] [Triggers] ON -> I:%x",index);
-    OnTrigger(index);
-    return 1;
-}
-
-size_t syscall_trigger_off(int index){
-    qemu_warn("[SysCall] [Triggers] OFF -> I:%x",index);
-    OffTrigger(index);
-    return 1;
-}
-
-size_t syscall_trigger_del(int index){
-    qemu_warn("[SysCall] [Triggers] Delete -> I:%x",index);
-    DeleteTrigger(index);
-    return 1;
-}
-
 size_t syscall_getkey() {
-    return keyboard_buffer_get_or_nothing();
+    return keyboard_buffer_get();
 }
 
 size_t syscall_get_timer_ticks() {
@@ -150,10 +126,6 @@ void init_syscalls(void){
     calls_table[6] = (syscall_fn_t *)file_descriptor_close;
     calls_table[7] = (syscall_fn_t *)file_descriptor_seek;
     calls_table[8] = (syscall_fn_t *)file_descriptor_tell;
-    calls_table[9] = (syscall_fn_t *)syscall_trigger_reg;
-    calls_table[10] = (syscall_fn_t *)syscall_trigger_on;
-    calls_table[11] = (syscall_fn_t *)syscall_trigger_off;
-    calls_table[12] = (syscall_fn_t *)syscall_trigger_del;
     calls_table[13] = (syscall_fn_t *)syscall_getkey;
     calls_table[14] = (syscall_fn_t *)syscall_get_timer_ticks;
     calls_table[15] = (syscall_fn_t *)syscall_sleep;
