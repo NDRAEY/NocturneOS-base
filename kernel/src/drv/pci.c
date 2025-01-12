@@ -184,56 +184,24 @@ static struct {
     {0, nullptr}
 };
 
-/**
- * @brief [PCI] Получение под-категории устройства
- *
- * @param bus  Шина
- * @param slot  Слот
- * @param function  Функция
- * @return uint8_t Подкатегория устройства
- */
-inline uint8_t pci_get_subclass(uint8_t bus, uint8_t slot, uint8_t function) {
-    /* Сдвигаем, чтобы оставить только нужные данные в переменной */
-    return (uint8_t) pci_read32(bus, slot, function, 10) & 0xff;
+SAYORI_INLINE uint8_t pci_get_class(uint8_t bus, uint8_t slot, uint8_t function) {
+    return (uint8_t)(pci_read32(bus, slot, function, 0xB) & 0xff);
 }
 
-/**
- * @brief [PCI] Получение HDR-тип устройства
- *
- * @param bus  Шина
- * @param slot  Слот
- * @param function  Функция
- * @return uint8_t HDR-тип
- */
-inline uint8_t pci_get_hdr_type(uint8_t bus, uint8_t slot, uint8_t function) {
-    /* Сдвигаем, чтобы оставить только нужные данные в переменной */
-    return (uint8_t) pci_read_confspc_word(bus, slot, function, 7);
+SAYORI_INLINE uint8_t pci_get_subclass(uint8_t bus, uint8_t slot, uint8_t function) {
+    return (uint8_t)(pci_read32(bus, slot, function, 0xA) & 0xff);
 }
 
-/**
- * @brief [PCI] Получение ID-поставщика
- *
- * @param bus  Шина
- * @param slot  Слот
- * @param function  Функция
- * @return ID-поставщика
- */
-inline uint16_t pci_get_vendor(uint8_t bus, uint8_t slot, uint8_t function) {
-    /* Сдвигаем, чтобы оставить только нужные данные в переменной */
-    return pci_read_confspc_word(bus, slot, function, 0);
+SAYORI_INLINE uint8_t pci_get_hdr_type(uint8_t bus, uint8_t slot, uint8_t function) {
+    return (uint8_t)(pci_read32(bus, slot, function, 0xE) & 0xff);
 }
 
-/**
- * @brief [PCI] Получение ID-Устройства
- *
- * @param bus  Шина
- * @param slot  Слот
- * @param function  Функция
- * @return ID-Устройства
- */
-inline uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function) {
-    /* Сдвигаем, чтобы оставить только нужные данные в переменной */
-    return pci_read_confspc_word(bus, slot, function, 2);
+SAYORI_INLINE uint16_t pci_get_vendor(uint8_t bus, uint8_t slot, uint8_t function) {
+    return (uint16_t)(pci_read32(bus, slot, function, 0) & 0xffff);
+}
+
+uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function) {
+    return (uint16_t)(pci_read32(bus, slot, function, 0x2) & 0xffff);
 }
 
 /**
@@ -417,7 +385,7 @@ void pci_scan_everything() {
                 hdrtype = pci_read32(bus, slot, func, 0xE) & 0xff;
                 device = pci_read32(bus, slot, func, 0x2) & 0xffff;
 
-                qemu_log("Class ID: %d; Subclass ID: %d; Header type: %x; Vendor: %x; Device: %x", clid, sclid, hdrtype, device);
+                qemu_log("Class ID: %d; Subclass ID: %d; Header type: %x; Vendor: %x; Device: %x", clid, sclid, hdrtype, vendor, device);
 
                 pci_device_t* dev = kcalloc(1, sizeof(pci_device_t));
                 dev->klass = clid;
@@ -425,21 +393,23 @@ void pci_scan_everything() {
                 dev->bus = bus;
                 dev->slot = slot;
                 dev->func = func;
-                dev->hdrtype = hdrtype | 0x80;
+                dev->hdrtype = hdrtype;
                 dev->vendor_id = vendor;
                 dev->device_id = device;
 
                 vector_push_back(pci_device_list, (size_t)dev);
             }
 
-            if ((hdrtype & 0x80) == 0) {
+            if (hdrtype & 0x80) {
                 for (func = 1; func < 8; func++) {
                     vendor = pci_get_vendor(bus, slot, func);
 
                     if (vendor != 0xFFFF) {
-                        clid = (pci_read32(bus, slot, func, 0x0B)) & 0xff;
-                        sclid = pci_get_subclass(bus, slot, func);
-                        device = pci_get_device(bus, slot, func);
+                        clid = pci_read32(bus, slot, func, 0xB) & 0xff;
+                        sclid = pci_read32(bus, slot, func, 0xA) & 0xff;
+                        device = pci_read32(bus, slot, func, 0x2) & 0xffff;
+
+                        qemu_log("- [%d] Class ID: %d; Subclass ID: %d; Header type: %x; Vendor: %x; Device: %x", func, clid, sclid, hdrtype, vendor, device);
 
                         pci_device_t* dev = kcalloc(1, sizeof(pci_device_t));
                         dev->klass = clid;
