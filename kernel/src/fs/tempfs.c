@@ -143,7 +143,7 @@ int fs_tempfs_func_writePackage(const char Disk, size_t Address, TEMPFS_PACKAGE*
     return (write == sizeof(TEMPFS_PACKAGE)?1:0);
 }
 
-size_t fs_tempfs_func_getIndexEntity(const char Disk, char* Path){
+size_t fs_tempfs_func_getIndexEntity(const char Disk, const char* Path){
     TEMPFS_Cache* __TCache__ = dpm_metadata_read(Disk);
     if (__TCache__ == 0 || __TCache__->Status != 1 || __TCache__->Boot->CountFiles <= 0){
         return -1;

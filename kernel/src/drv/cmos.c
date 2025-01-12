@@ -7,12 +7,11 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include "common.h"
 #include "io/ports.h"
 #include "drv/cmos.h"
 
 // FIXME: We need this?
-#define CURRENT_YEAR        2022    // Change this each year!
+#define CURRENT_YEAR        2025    // Change this each year!
  
 int32_t century_register = 0x00;     // Set by ACPI table parsing code if possible
  
@@ -51,7 +50,7 @@ int32_t get_update_in_progress_flag() {
 /**
  * @brief Получает регистр CMOS
  */
-unsigned char get_RTC_register(int32_t reg) {
+SAYORI_INLINE unsigned char get_RTC_register(int32_t reg) {
     outb(cmos_address, reg);
     return inb(cmos_data);
 }
@@ -82,7 +81,8 @@ void read_rtc() {
         last_year = cmos_year;
         last_century = cmos_century;
  
-        while (get_update_in_progress_flag());       // Make sure an update isn't in progress
+        while(get_update_in_progress_flag())
+            ;       // Make sure an update isn't in progress
 
 		cmos_second = get_RTC_register(0x00);
         cmos_minute = get_RTC_register(0x02);
@@ -125,7 +125,9 @@ void read_rtc() {
         cmos_year += cmos_century * 100;
     } else {
         cmos_year += (CURRENT_YEAR / 100) * 100;
-        if(cmos_year < CURRENT_YEAR) cmos_year += 100;
+        if(cmos_year < CURRENT_YEAR) { 
+            cmos_year += 100;
+        }
     }
 }
 

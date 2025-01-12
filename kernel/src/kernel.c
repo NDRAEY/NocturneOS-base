@@ -407,7 +407,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     }
     
     sayori_time_t time = get_time();
-    tty_printf("\nВремя: %d:%d:%d\n", time.hours, time.minutes, time.seconds);
+    tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);
     
     _tty_printf("Listing ATA disks:\n");
     ata_list();
