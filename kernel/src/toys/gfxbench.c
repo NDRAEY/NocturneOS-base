@@ -3,7 +3,7 @@
 //
 
 #include <common.h>
-#include "drv/input/keymap.h"
+#include "lib/keymap.h"
 #include "drv/input/keyboard.h"
 #include "io/screen.h"
 #include "sys/timer.h"

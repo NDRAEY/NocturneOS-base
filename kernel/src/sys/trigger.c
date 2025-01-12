@@ -13,7 +13,7 @@
 #include <io/status_loggers.h>
 #include <lib/stdio.h>
 #include <sys/trigger.h>
-#include <drv/input/keymap.h>
+#include <lib/keymap.h>
 #include "sys/scheduler.h"
 #include "sys/timer.h"
 

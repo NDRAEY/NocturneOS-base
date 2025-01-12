@@ -18,31 +18,9 @@ extern void tty_backspace();
 #include "drv/psf.h"
 #include "sys/isr.h"
 #include "drv/ps2.h"
-#include <drv/input/keymap.h>
+#include <lib/keymap.h>
 
 volatile int     lastKey = 0;            ///< Последний индекс клавиши
-volatile uint32_t keyboard_states = 0;
-
-static const char keyboard_layout[128] = {
-    0,   27,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,   'a', 's',
-    'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,   '\\', 'z', 'x', 'c', 'v',
-    'b', 'n', 'm', ',', '.', '/', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0
-};
-
-// Определяем таблицу символов для клавиш при зажатой клавише Shift
-static const char shifted_keyboard_layout[128] = {
-    0,   27,  '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b', '\t',
-    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,   'A', 'S',
-    'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0,   '|', 'Z', 'X', 'C', 'V',
-    'B', 'N', 'M', '<', '>', '?', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0
-};
-
-volatile char kmode = 0;
-volatile char* curbuf = 0;
-volatile uint32_t chartyped = 0;
 
 uint8_t getPressReleaseKeyboard() {
     return lastKey & 0x80; // if true -> Released / else - Pressed
@@ -50,36 +28,6 @@ uint8_t getPressReleaseKeyboard() {
 
 int getCharRaw() {
     return lastKey;
-}
-
-
-
-void gets(char *buffer) { // TODO: Backspace
-    char* buf = buffer;
-
-    while(1) {
-        uint32_t ch = getchar();
-        char* codes = (char*)&ch;
-
-        if(ch == '\n') {
-            break;
-        }
-
-        if(ch == '\b') {
-            *buf-- = 0;
-            tty_backspace();
-            continue;
-        }
-
-        if(ch > 255) {
-            *buf++ = codes[0];
-            *buf++ = codes[1];
-        } else {
-            *buf++ = codes[0];
-        }
-
-        tty_printf("%c", ch);
-    }
 }
 
 /**
@@ -95,49 +43,6 @@ void keyboardHandler(registers_t regs){
     }
 }
 
-uint32_t getchar() {
-    uint32_t character = 0;
-
-    while(1) {
-        uint32_t key = getkey();
-
-        bool pressed = (~key & 0x80);
-
-        // Can be simplified
-        if(pressed) {
-            keyboard_states |= (KEYBOARD_STATE_PRESSED);
-        } else {
-            keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
-        }
-
-        uint32_t keycode = key & 0x7F;
-
-        if(pressed) {
-            if(keycode == KEY_LSHIFT) {
-                keyboard_states |= (KEYBOARD_STATE_SHIFT);
-            } else if(keycode == KEY_LCTRL) {
-                keyboard_states ^= (KEYBOARD_STATE_CTRL);
-            } else {
-                if(key >= 256) {
-                    qemu_err("Unknown key code: %d", key);
-                    return 0;
-                }
-
-                // TODO: Multiple layouts
-                character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
-                                    keyboard_layout[keycode] :
-                                    shifted_keyboard_layout[keycode];
-                break;
-            }
-        } else {
-            if(keycode == KEY_LSHIFT) {
-                keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-            }
-        }
-    }
-    
-    return character;
-}
 /**
  * @brief Выполняет инициализацию клавиатуры
  */

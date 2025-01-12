@@ -199,6 +199,7 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
     kernel/src/lib/libvector/src/vector.c
     kernel/src/lib/libstring/src/string.c
     # kernel/src/lib/intrin.c
+	kernel/src/io/keyboard.c
 	kernel/src/kernel.c 
 )
 
