@@ -13,7 +13,7 @@
 #include <io/ports.h>
 #include <sys/variable.h>  
 
-#define VARIABLE_COUNT 64
+#define VARIABLE_COUNT 50
 
 VARIABLE G_VARIABLE[VARIABLE_COUNT] = {0};
 size_t C_VARIABLE = 0;
