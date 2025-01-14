@@ -408,7 +408,9 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 	size_t real_length = sector_count * drives[drive].block_size;
 
 	// TODO: Optimize to read without kmalloc
-	uint8_t* real_buf = kmalloc_common(real_length, PAGE_SIZE);
+	uint8_t* real_buf = kmalloc_common(real_length + PAGE_SIZE, PAGE_SIZE);
+
+    memset(real_buf, 0, real_length);
 
 	if(!drives[drive].is_packet) {
 		// Okay, ATA can only read 256 sectors (128 KB of memory) at one request, so subdivide our data to clusters to manage.
@@ -426,7 +428,10 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 
 //    hexview_advanced(real_buf, 512, 32, true, new_qemu_printf);
 
-	memcpy(buf, real_buf + (location % drives[drive].block_size), length);
+    void* source = real_buf + (location % drives[drive].block_size);
+
+    qemu_log("To %p, From: %p; Length: %d", buf, source, length);
+	memcpy(buf, source, length);
 
 	kfree(real_buf);
 

@@ -237,41 +237,22 @@ const char *pci_get_vendor_name(uint16_t vendor) {
 	return "unknown";
 }
 
-/**
- * @brief [PCI] ???
- *
- * @param hdrtype ???
- * @param bus  Шина
- * @param slot  Слот
- * @param func  Функция
- * @param bar_number Номер BAR от 0 до 5
- * @param bar_type Тип BAR
- *
- * @todo Необходимо добавить 64-бит реализацию
- *
- * @return uint32_t ???
- */
-uint32_t pci_get_bar(uint8_t hdrtype, uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, uint8_t *bar_type) {
-    if ((hdrtype & ~0x80) == 0) {
-        uint8_t off = bar_number * 2;
-        uint16_t bar_low  = pci_read_confspc_word(bus, slot, func, 0x10 + off);
-        uint16_t bar_high = pci_read_confspc_word(bus, slot, func, 0x10 + off + 1);
-        if ((bar_low & 1) == 0) {
-            if ((bar_low & ~0b110) == 0x00) // 32 бит. 64 бит нужно добавить!
-            {
-                uint32_t ret = (uint32_t) bar_low | (uint32_t) (bar_high << 16);
-                ret &= ~0b1111;
-                *bar_type = 0;
-                return ret;
-            }
-        }
-        if ((bar_low & 1) == 1) {
-            uint32_t ret = (uint32_t)bar_low | (uint32_t)(bar_high << 16);
-            ret &= ~0b11;
-            *bar_type = 1;
-            return ret;
-        }
+uint32_t pci_get_bar(uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, pci_bar_type_t* bar_type_out) {
+    size_t bar_offset = 0x10 + (bar_number * 0x4);
+    size_t data = pci_read32(bus, slot, func, bar_offset);
+    
+    pci_bar_type_t bar_type = (data & 0x1);
+
+    if(bar_type_out != NULL) {
+        *bar_type_out = bar_type;
     }
+
+    if(bar_type == MEMORY_BAR) {
+        return data & ~0xF;   // First 4 bits
+    } else {
+        return data & ~0b11;  // First 2 bits
+    }
+
     return 0;
 }
 
@@ -321,7 +302,7 @@ void pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass,
 }
 
 void pci_enable_bus_mastering(uint8_t bus, uint8_t slot, uint8_t func) {
-    uint16_t command_register = pci_read_confspc_word(bus, slot, func, 4);
+    uint16_t command_register = pci_read32(bus, slot, func, 4);
 
     command_register |= 0x05;
 

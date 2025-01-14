@@ -46,6 +46,11 @@
 #define PCI_BAR4 0x20
 #define PCI_BAR5 0x24
 
+typedef enum {
+	MEMORY_BAR,
+	IO_BAR
+} pci_bar_type_t;
+
 /**
  * @brief Структура устройства
  */
@@ -89,7 +94,7 @@ uint16_t pci_read_confspc_word(uint8_t bus, uint8_t slot, uint8_t function, uint
 uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function);
 const char *pci_get_device_type(uint8_t klass, uint8_t subclass);
 const char *pci_get_vendor_name(uint16_t vendor);
-uint32_t pci_get_bar(uint8_t hdrtype, uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, uint8_t *bar_type);
+uint32_t pci_get_bar(uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, pci_bar_type_t* bar_type_out);
 void pci_find_device(uint16_t vendor, uint16_t device, uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret);
 void pci_print_list();
 void pci_write(uint8_t bus, uint8_t slot, uint8_t func, uint32_t offset, uint32_t value);

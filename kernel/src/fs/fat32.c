@@ -214,6 +214,8 @@ void fs_fat32_read_entire_fat(char Disk) {
 
     desc->fat_table = kcalloc(1, desc->fat_size);
 
+    qemu_log("Allocated: %d bytes (%p - %x)", desc->fat_size, desc->fat_table, ((size_t)desc->fat_table) + desc->fat_size);
+
     dpm_read(Disk, 0, desc->fat_offset, desc->fat_size, desc->fat_table);
 }
 
