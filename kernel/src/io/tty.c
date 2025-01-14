@@ -37,8 +37,8 @@ bool stateTTY = true;					///< Статус, разрешен ли вывод т
 /////////////////////////////////
 
 // TODO: Move to things/cursor.c
-thread_t* threadTTY01;					///< Поток с анимацией курсора
-bool showAnimTextCursor = true;		///< Отображать ли анимацию курсора
+thread_t* threadTTY01 = nullptr;					///< Поток с анимацией курсора
+volatile bool showAnimTextCursor = true;		///< Отображать ли анимацию курсора
 void animTextCursor();
 ////////////////////////////////
 
@@ -290,7 +290,7 @@ void _tty_printf(const char *text, ...) {
  */
 void animTextCursor(){
     qemu_log("animTextCursor Work...");
-    bool vis = false;
+    volatile bool vis = false;
     int ox = 0, oy = 0;
 
     while(1) {
@@ -309,7 +309,7 @@ void animTextCursor(){
         }
 
 		punch();
-        sleep_ms(250);
+        sleep_ms(500);
     }
 
 	// So, it never quits

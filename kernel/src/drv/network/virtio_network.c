@@ -64,7 +64,7 @@ void vio_ntw_init(){
         qemu_ok("Detected VirtIO Network");
     }
 
-    uint32_t ret = pci_read_confspc_word(busnum, slot, func, 0x10);  // BAR0
+    uint32_t ret = pci_read32(busnum, slot, func, 0x10);  // BAR0
 
     // If bar type is 0 use memory-based access, use port-based otherwise.
     bar_type = ret & 0x1;

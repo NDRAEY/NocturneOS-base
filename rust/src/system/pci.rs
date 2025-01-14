@@ -4,7 +4,7 @@ static PCI_ADDRESS_PORT: u16 = 0xCF8;
 static PCI_DATA_PORT: u16 = 0xCFC;
 
 extern "C" {
-    fn pci_read_confspc_word(bus: u8, slot: u8, func: u8, offset: u8) -> u16;
+    // fn pci_read_confspc_word(bus: u8, slot: u8, func: u8, offset: u8) -> u16;
     fn pci_find_device(
         vendor: u16,
         device: u16,

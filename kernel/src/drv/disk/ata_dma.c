@@ -43,13 +43,15 @@ void ata_dma_init() {
 
     qemu_log("Enabling Busmastering");
 
-    uint16_t command_register = pci_read_confspc_word(ata_busnum, ata_slot, ata_func, 4);
-    command_register |= 0x05;
-    pci_write(ata_busnum, ata_slot, ata_func, 4, command_register);
+    // uint16_t command_register = pci_read_confspc_word(ata_busnum, ata_slot, ata_func, 4);
+    // command_register |= 0x05;
+    // pci_write(ata_busnum, ata_slot, ata_func, 4, command_register);
+
+	pci_enable_bus_mastering(ata_busnum, ata_slot, ata_func);
 
     qemu_log("Enabled Busmastering!!!");
 
-    ata_dma_bar4 = pci_read_confspc_word(ata_busnum, ata_slot, ata_func, 0x20);
+    ata_dma_bar4 = pci_read32(ata_busnum, ata_slot, ata_func, 0x20);
 
 	if(ata_dma_bar4 & 0x01) {
 		ata_dma_bar4 &= 0xfffffffc;

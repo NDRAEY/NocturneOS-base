@@ -106,7 +106,7 @@ void ahci_init() {
 	 // }
 
 	// Interrupts
-	ahci_irq = pci_read_confspc_word(ahci_busnum, ahci_slot, ahci_func, 0x3C) & 0xFF; // All 0xF PCI register
+	ahci_irq = pci_read32(ahci_busnum, ahci_slot, ahci_func, 0x3C) & 0xFF; // All 0xF PCI register
 	qemu_log("AHCI IRQ: %x (%d)", ahci_irq, ahci_irq);
 
 	register_interrupt_handler(32 + ahci_irq, ahci_irq_handler);

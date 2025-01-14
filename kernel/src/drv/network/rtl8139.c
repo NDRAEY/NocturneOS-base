@@ -79,7 +79,9 @@ void rtl8139_init() {
 
 	qemu_log("Enabled Bus Mastering for RTL8139!");
 
-	uint32_t ret = pci_read_confspc_word(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x10);  // BAR0
+	// uint32_t ret = pci_read_confspc_word(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x10);  // BAR0
+	uint32_t ret = pci_read32(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x10);  // BAR0
+
 
 	// If bar type is 0 use memory-based access, use port-based otherwise.
 	rtl8139_bar_type = ret & 0x1;
@@ -265,7 +267,8 @@ void rtl8139_init_interrupts() {
 	// Max latency 	Min Grant 	Interrupt PIN 	Interrupt Line 
 	//                                          ~~~~~~~~~~~~~~
 
-	uint32_t word = pci_read_confspc_word(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
+	uint32_t word = pci_read32(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
+	// uint32_t word = pci_read_confspc_word(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
 	rtl8139_irq = word & 0xff;
 
 	qemu_log("RTL8139 IRQ: %x", rtl8139_irq);

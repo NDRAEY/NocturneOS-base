@@ -68,7 +68,7 @@ void hda_init() {
     // Read memory base address
     hda_addr = pci_read32(hda_bus, hda_slot, hda_func, 0x10) & ~0b1111;
 
-    uint32_t word = pci_read_confspc_word(hda_bus, hda_slot, hda_func, 0x3C);  // All 0xF PCI register
+    uint32_t word = pci_read32(hda_bus, hda_slot, hda_func, 0x3C);  // All 0xF PCI register
     hda_irq = word & 0xff;
 
     pci_enable_bus_mastering(hda_bus, hda_slot, hda_func);
