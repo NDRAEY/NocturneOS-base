@@ -55,7 +55,8 @@ void sleep_ticks(uint32_t delay){
         if (current_ticks + delay < getTicks()){
             break;
         } else {
-        	__asm__ volatile("hlt");
+        	// __asm__ volatile("hlt");
+            yield();
         }
     }
 }

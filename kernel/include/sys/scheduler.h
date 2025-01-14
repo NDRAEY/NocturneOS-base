@@ -1,5 +1,4 @@
-#ifndef		SCHEDULER_H
-#define		SCHEDULER_H
+#pragma once
 
 #include	"common.h"
 #include	"lib/list.h"
@@ -121,4 +120,6 @@ int32_t spawn(const char *name, int argc, char* eargv[]);
 
 void scheduler_mode(bool on);
 
-#endif
+SAYORI_INLINE void yield() {
+    task_switch_v2_wrapper((registers_t){});
+}

@@ -75,9 +75,10 @@
 
 .global		task_switch_v2
 task_switch_v2:
-    cli
-
     pushf
+
+    cli
+    
     push %ebx
     push %esi
     push %edi

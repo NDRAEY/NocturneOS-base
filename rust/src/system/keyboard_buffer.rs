@@ -3,7 +3,7 @@ use core::cell::OnceCell;
 
 use alloc::vec::Vec;
 
-use crate::{qemu_err, qemu_ok};
+use crate::{qemu_err, qemu_log, qemu_ok};
 
 /// Global keyboard buffer (kernel-wide). Used everywhere.
 static mut KEYBOARD_BUFFER: OnceCell<KeyboardBuffer> = OnceCell::new();
@@ -36,7 +36,8 @@ impl KeyboardBuffer {
         while self.buffer.is_empty() {
             // Idk what this function does, but it works! (Not throwing polling away)
             core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
-            unsafe { asm!("nop", options(nomem, nostack, preserves_flags)) };
+            // unsafe { asm!("nop", options(nomem, nostack, preserves_flags)) };
+            super::scheduler::task_yield();
         }
 
         self.buffer.pop().unwrap()
@@ -44,7 +45,7 @@ impl KeyboardBuffer {
 }
 
 /// External function for C API that initializes the global keyboard buffer.
-/// 
+///
 /// # Safety:
 /// - Keyboard buffer MUST be called before others
 #[no_mangle]
@@ -69,6 +70,8 @@ pub unsafe extern "C" fn keyboard_buffer_init() {
 pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
+    // qemu_log!("Put: {}", character);
+
     v.push(character);
 }
 
@@ -81,12 +84,16 @@ pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
 pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
-    v.get()
+    let ch = v.get();
+
+    //qemu_log!("Got: {}", ch);
+
+    ch
 }
 
 /// External function for C API that gets a character from a buffer.
 /// This function returns 0 if no characters in the buffer to make it compatible with C API.
-/// 
+///
 /// # Safety:
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]

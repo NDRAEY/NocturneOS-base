@@ -40,7 +40,9 @@ netqueue_item_t* netstack_pop() {
 }
 
 netqueue_item_t* netstack_poll() {
-    while(system_network_incoming_queue->size == 0);
+    while(system_network_incoming_queue->size == 0) {
+		yield();
+	}
 
     return netstack_pop();
 }
