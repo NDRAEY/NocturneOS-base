@@ -186,7 +186,7 @@ pub fn pci_scan_everything() {
                 }
             }
 
-            if (hdrtype & 0x80) == 1 {
+            if (hdrtype & 0x80) != 0 {
                 for func in 1..8 {
                     vendor = pci_get_vendor(bus, slot, func);
 
