@@ -1,9 +1,8 @@
-use core::arch::asm;
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
 
-use crate::{qemu_err, qemu_log, qemu_ok};
+use crate::{qemu_err, qemu_ok};
 
 /// Global keyboard buffer (kernel-wide). Used everywhere.
 static mut KEYBOARD_BUFFER: OnceCell<KeyboardBuffer> = OnceCell::new();

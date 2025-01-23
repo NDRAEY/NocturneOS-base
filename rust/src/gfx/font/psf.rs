@@ -48,7 +48,7 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
 
     let glyph = unsafe { core::slice::from_raw_parts(raw_glyph, psf_h as usize) };
 
-    for y in 0..unsafe{psf_h} as usize {
+    for y in 0..unsafe { psf_h } as usize {
         let rposy = pos_y as usize + y;
         for (x, mask) in mask.iter().enumerate() {
             if (glyph[y as usize] & mask) != 0 {

@@ -1,6 +1,6 @@
 extern "C" {
     pub fn getTicks() -> usize;
-    pub fn getFrequency()  -> usize;
+    pub fn getFrequency() -> usize;
     pub fn sleep_ms(milliseconds: u32);
 }
 
