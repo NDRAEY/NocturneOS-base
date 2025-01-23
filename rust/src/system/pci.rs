@@ -153,8 +153,8 @@ pub fn pci_scan_everything() {
 
     let start_time = timestamp();
 
-    for bus in 0..255 {
-        for slot in 0..31 {
+    for bus in 0..=255 {
+        for slot in 0..=31 {
             let mut hdrtype: u8 = 0;
             let mut clid: u8 = 0;
             let mut sclid: u8 = 0;
@@ -172,15 +172,13 @@ pub fn pci_scan_everything() {
                     let dev = PCIDevice {
                         class: clid,
                         subclass: sclid,
-                        bus: bus,
-                        slot: slot,
+                        bus, slot,
                         function: 0,
                         header_type: hdrtype,
-                        vendor: vendor,
-                        device: device
+                        vendor, device
                     };
 
-                    qemu_log!("{:?}", &dev);
+                    // qemu_log!("{:?}", &dev);
 
                     PCI_DEVICES.get_mut().unwrap().push(dev);
                 }
@@ -207,7 +205,7 @@ pub fn pci_scan_everything() {
                                 device: device
                             };
 
-                            qemu_log!("{:?}", &dev);
+                            // qemu_log!("{:?}", &dev);
 
                             PCI_DEVICES.get_mut().unwrap().push(dev);
                         }
