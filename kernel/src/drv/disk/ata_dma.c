@@ -28,13 +28,9 @@ extern ata_drive_t drives[4];
 
 
 void ata_dma_init() {
-    pci_find_device(ATA_PCI_VEN, ATA_PCI_DEV, &ata_busnum, &ata_slot, &ata_func);
+    uint8_t result = pci_find_device(ATA_PCI_VEN, ATA_PCI_DEV, &ata_busnum, &ata_slot, &ata_func);
 
-    uint16_t devnum = pci_get_device(ata_busnum, ata_slot, ata_func);
-
-    qemu_log("ATA DMA ID: %d (%x)", devnum, devnum);
-
-    if(devnum == PCI_VENDOR_NO_DEVICE) {
+    if(!result) {
         qemu_log("ATA DMA not found!");
         return;
     }else{

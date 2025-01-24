@@ -51,13 +51,10 @@ void vio_ntw_init(){
     size_t transfer_buffer_phys;
 
 
-    pci_find_device(VIO_NET_VENDOR, VIO_NET_DEVICE,
+    uint8_t result =  pci_find_device(VIO_NET_VENDOR, VIO_NET_DEVICE,
                     &busnum, &slot, &func);
-    uint16_t devnum = pci_get_device(busnum, slot, func);
 
-    qemu_log("[VirtIO] [Network] ID: %d (%x)", devnum, devnum);
-
-    if(devnum == PCI_VENDOR_NO_DEVICE) {
+    if(!result) {
         qemu_err("[VirtIO] [Network] Error is not connected!");
         return;
     } else {

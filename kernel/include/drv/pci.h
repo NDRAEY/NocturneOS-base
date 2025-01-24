@@ -95,10 +95,10 @@ uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function);
 const char *pci_get_device_type(uint8_t klass, uint8_t subclass);
 const char *pci_get_vendor_name(uint16_t vendor);
 uint32_t pci_get_bar(uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, pci_bar_type_t* bar_type_out);
-void pci_find_device(uint16_t vendor, uint16_t device, uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret);
+uint8_t pci_find_device(uint16_t vendor, uint16_t device, uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret);
 void pci_print_list();
 void pci_write(uint8_t bus, uint8_t slot, uint8_t func, uint32_t offset, uint32_t value);
-void pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass, uint16_t *vendor_ret, uint16_t *deviceid_ret,
+uint8_t pci_find_device_by_class_and_subclass(uint16_t class, uint16_t subclass, uint16_t *vendor_ret, uint16_t *deviceid_ret,
 									  uint8_t *bus_ret, uint8_t *slot_ret, uint8_t *func_ret);
 void pci_enable_bus_mastering(uint8_t bus, uint8_t slot, uint8_t func);
 uint32_t pci_read32(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset);

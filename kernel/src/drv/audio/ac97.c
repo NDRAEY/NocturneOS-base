@@ -101,17 +101,13 @@ void ac97_set_play_sound(bool play) {
 
 void ac97_init() {
     // Find device
-    pci_find_device(AC97_VENDOR, AC97_DEVICE, &ac97_busnum, &ac97_slot, &ac97_func);
+    uint8_t result = pci_find_device(AC97_VENDOR, AC97_DEVICE, &ac97_busnum, &ac97_slot, &ac97_func);
 
-    const uint16_t devnum = pci_get_device(ac97_busnum, ac97_slot, ac97_func);
-
-    qemu_log("AC'97 ID: %d (%x)", devnum, devnum);
-
-    if(devnum == PCI_VENDOR_NO_DEVICE) {
-        qemu_log("AC'97 not connected!");
+    if(!result) {
+        qemu_err("AC'97 not connected!");
         return;
-    }else{
-        qemu_log("Detected AC'97");
+    } else {
+        qemu_ok("Detected AC'97");
     }
 
     // Enable IO Busmastering

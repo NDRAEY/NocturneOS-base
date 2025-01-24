@@ -118,8 +118,7 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/lib/rand.c 
 	kernel/src/drv/cmos.c 
 	kernel/src/drv/beeper.c 
-	kernel/src/user/env.c 
-	kernel/src/drv/pci.c 
+	kernel/src/user/env.c
 	kernel/src/gui/line.c 
 	kernel/src/gui/circle.c 
 	kernel/src/lib/math/exp.c 

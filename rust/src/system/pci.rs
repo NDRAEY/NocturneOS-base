@@ -108,10 +108,6 @@ static PCI_DEVICE_TYPE_STRINGS: [(u8, u8, &str); 89] = [
     (0x0D, 0x80, "Другой беспроводной контроллер"),
 ];
 
-extern "C" {
-    fn pci_get_device(bus: u8, slot: u8, function: u8) -> u16;
-}
-
 #[derive(Debug, Default)]
 pub struct PCIDevice {
     pub vendor: u16,
@@ -193,7 +189,7 @@ pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
     };
 
     unsafe {
-        pci_find_device(
+        let result: u8 = pci_find_device(
             vendor.into(),
             device.into(),
             &mut dev.bus,
@@ -201,9 +197,7 @@ pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
             &mut dev.function,
         );
 
-        let devid: u16 = pci_get_device(dev.bus, dev.slot, dev.function);
-
-        if devid == 0xffff {
+        if result == 0 {
             return None;
         }
     }
@@ -329,20 +323,22 @@ pub unsafe fn pci_find_device(
     bus_ret: *mut u8,
     slot_ret: *mut u8,
     func_ret: *mut u8,
-) {
+) -> u8 {
     for dev in PCI_DEVICES.get().unwrap() {
         if dev.vendor == vendor && dev.device == device {
             *bus_ret = dev.bus;
             *slot_ret = dev.slot;
             *func_ret = dev.function;
 
-            return;
+            return 1;
         }
     }
 
     *bus_ret = 0xff;
     *slot_ret = 0xff;
     *func_ret = 0xFF;
+
+    return 0;
 }
 
 #[no_mangle]
@@ -354,7 +350,7 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
     bus_ret: *mut u8,
     slot_ret: *mut u8,
     func_ret: *mut u8,
-) {
+) -> u8 {
     for dev in PCI_DEVICES.get().unwrap() {
         if dev.class == class && dev.subclass == subclass {
             *vendor_ret = dev.vendor;
@@ -364,12 +360,14 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
             *func_ret = dev.function;
         }
 
-        return;
+        return 1;
     }
 
     *bus_ret = 0xff;
     *slot_ret = 0xff;
     *func_ret = 0xff;
+
+    return 0;
 }
 
 #[no_mangle]

@@ -8,14 +8,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include <lib/stdio.h>
-#include <io/ports.h>
 #include <drv/pci.h>
-#include "io/tty.h"
-#include "../lib/libvector/include/vector.h"
-#include "mem/vmm.h"
-
-vector_t* pci_device_list = 0;
 
 /**
  * @brief [PCI] Поставщики устройств
@@ -57,26 +50,3 @@ vector_t* pci_device_list = 0;
 //     {0x1AF4, "Red Hat, Inc."},
 //     {0, nullptr}
 // };
-
-uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function) {
-    return (uint16_t)(pci_read32(bus, slot, function, 0x2) & 0xffff);
-}
-
-uint32_t pci_get_bar(uint8_t bus, uint8_t slot, uint8_t func, uint8_t bar_number, pci_bar_type_t* bar_type_out) {
-    size_t bar_offset = 0x10 + (bar_number * 0x4);
-    size_t data = pci_read32(bus, slot, func, bar_offset);
-    
-    pci_bar_type_t bar_type = (data & 0x1);
-
-    if(bar_type_out != NULL) {
-        *bar_type_out = bar_type;
-    }
-
-    if(bar_type == MEMORY_BAR) {
-        return data & ~0xF;   // First 4 bits
-    } else {
-        return data & ~0b11;  // First 2 bits
-    }
-
-    return 0;
-}

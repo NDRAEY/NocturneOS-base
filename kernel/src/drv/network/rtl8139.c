@@ -59,14 +59,10 @@ netcard_entry_t rtl8139_netcard = {
 void rtl8139_init() {
 	qemu_log("Initializing RTL8139...");
 
-	pci_find_device(RTL8139_VENDOR, RTL8139_DEVICE,
+	uint8_t result = pci_find_device(RTL8139_VENDOR, RTL8139_DEVICE,
 					&rtl8139_busnum, &rtl8139_slot, &rtl8139_func);
 
-	uint16_t devnum = pci_get_device(rtl8139_busnum, rtl8139_slot, rtl8139_func);
-
-	qemu_log("RTL8139 ID: %d (%x)", devnum, devnum);
-
-	if(devnum == PCI_VENDOR_NO_DEVICE) {
+	if(!result) {
 		qemu_log("RTL8139 is not connected!");
 		return;
 	} else {

@@ -38,12 +38,9 @@ uint8_t vmware_busnum, vmware_slot, vmware_func;
 void drv_video_vmware(){
    qemu_log("vmware: init");
 
-    pci_find_device(VMWARE_VENDORID, VMWARE_DEVICEID, &vmware_busnum, &vmware_slot, &vmware_func);
-    const uint16_t devnum = pci_get_device(vmware_busnum, vmware_slot, vmware_func);
+    uint8_t result = pci_find_device(VMWARE_VENDORID, VMWARE_DEVICEID, &vmware_busnum, &vmware_slot, &vmware_func);
 
-    qemu_log("VMWARE ID: %d (%x)", devnum, devnum);
-
-    if(devnum == PCI_VENDOR_NO_DEVICE) {
+    if(!result) {
         qemu_log("VMWARE VideoID not connected!");
         return;
     }else{
