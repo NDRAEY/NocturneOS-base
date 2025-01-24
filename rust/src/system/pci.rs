@@ -239,10 +239,11 @@ pub fn pci_get_vendor(bus: u8, slot: u8, function: u8) -> u16 {
 }
 
 #[no_mangle]
+#[allow(static_mut_refs)]
 pub fn pci_scan_everything() {
     unsafe {
         if PCI_DEVICES.get().is_none() {
-            PCI_DEVICES.set(Vec::new());
+            PCI_DEVICES.set(Vec::new()).unwrap();
         } else {
             PCI_DEVICES.get_mut().unwrap().clear();
         }
@@ -296,12 +297,10 @@ pub fn pci_scan_everything() {
                             let dev = PCIDevice {
                                 class: clid,
                                 subclass: sclid,
-                                bus: bus,
-                                slot: slot,
+                                bus, slot,
                                 function: func,
                                 header_type: hdrtype,
-                                vendor: vendor,
-                                device: device,
+                                vendor, device,
                             };
 
                             // qemu_log!("{:?}", &dev);

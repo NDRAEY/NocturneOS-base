@@ -58,22 +58,6 @@ vector_t* pci_device_list = 0;
 //     {0, nullptr}
 // };
 
-SAYORI_INLINE uint8_t pci_get_class(uint8_t bus, uint8_t slot, uint8_t function) {
-    return (uint8_t)(pci_read32(bus, slot, function, 0xB) & 0xff);
-}
-
-SAYORI_INLINE uint8_t pci_get_subclass(uint8_t bus, uint8_t slot, uint8_t function) {
-    return (uint8_t)(pci_read32(bus, slot, function, 0xA) & 0xff);
-}
-
-SAYORI_INLINE uint8_t pci_get_hdr_type(uint8_t bus, uint8_t slot, uint8_t function) {
-    return (uint8_t)(pci_read32(bus, slot, function, 0xE) & 0xff);
-}
-
-SAYORI_INLINE uint16_t pci_get_vendor(uint8_t bus, uint8_t slot, uint8_t function) {
-    return (uint16_t)(pci_read32(bus, slot, function, 0) & 0xffff);
-}
-
 uint16_t pci_get_device(uint8_t bus, uint8_t slot, uint8_t function) {
     return (uint16_t)(pci_read32(bus, slot, function, 0x2) & 0xffff);
 }

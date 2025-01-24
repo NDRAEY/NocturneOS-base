@@ -135,13 +135,6 @@ FSM_DIR* fs_tarfs_dir(const char Disk,const char* Path){
 
 	size_t CA = 0, CF = 0, CD = 0, CO = 0;
 	for (int i = 1; i < initrd->Count; i++){
-		//////////////////////////
-		//// Обращаю внимание, для за путь принимается сейчас R:\Sayori
-		//// Если вам искать только файлы, то вот вариант
-		// char* zpath = pathinfo(initrd->Files[i].Name, PATHINFO_DIRNAME);
-		// qemu_log("[%d] %s",strcmpn(zpath,Path),zpath);
-		//// Но мне такой вариант, не подходит, мне нужно еще и папки.
-		/////////////////////////
 		bool isPassed = fsm_isPathToFile(Path, initrd->Files[i].Name) == 1;
 
 		if (!isPassed)

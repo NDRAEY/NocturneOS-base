@@ -39,7 +39,7 @@ int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
 int G_CLI_H_KYB = 1;
 int G_CLI_CURINXD = 17;				///< Текущий диск
-char G_CLI_PATH[1024] = "R:\\Sayori\\";
+char G_CLI_PATH[1024] = "R:\\";
 
 typedef struct {
 	char* name;
