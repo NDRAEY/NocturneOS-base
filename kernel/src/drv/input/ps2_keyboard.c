@@ -10,7 +10,6 @@ extern void tty_backspace();
 
 #include <lib/string.h>
 #include <io/ports.h>
-#include <sys/trigger.h>
 #include "drv/input/keyboard.h"
 #include "sys/sync.h"
 #include "sys/timer.h"

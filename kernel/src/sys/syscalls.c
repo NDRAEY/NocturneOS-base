@@ -14,7 +14,6 @@
 #include    "sys/file_descriptors.h"
 #include    <kernel.h>
 #include "io/keyboard.h"
-#include    <sys/trigger.h>
 
 syscall_fn_t* calls_table[NUM_CALLS] = {0};
 

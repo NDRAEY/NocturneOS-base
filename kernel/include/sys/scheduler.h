@@ -36,7 +36,7 @@ typedef	volatile struct {
 	// 16
     size_t			threads_count;	/* Count of threads */
     // 20
-	bool			suspend;		/* Suspend flag */
+	uint32_t			suspend;		/* Suspend flag */
     // 24
 	uint32_t			pid;		/* Process ID (PID) */
     // 28
@@ -58,7 +58,7 @@ typedef volatile struct
     // 12
 	process_t*		process;			/* This thread's process */
     // 16
-	bool			suspend;			/* Suspend flag */
+	uint32_t			suspend;			/* Suspend flag */
     // 20
 	size_t			stack_size;			/* Size of thread's stack */
     // 24

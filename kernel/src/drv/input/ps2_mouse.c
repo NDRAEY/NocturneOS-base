@@ -8,7 +8,6 @@
  */
 
 #include <io/ports.h>
-#include <sys/trigger.h>
 #include <drv/input/mouse.h>
 #include "io/screen.h"
 #include "sys/isr.h"

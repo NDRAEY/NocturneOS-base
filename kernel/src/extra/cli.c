@@ -688,8 +688,6 @@ void cli(){
 	qemu_log("[CLI] Started...");
 	tty_set_bgcolor(0xFF000000);
 	tty_setcolor(0xFFFFFF);
-
-// 	T_CLI_KYB = RegTrigger(0x0001, &F_CLI_KYB);
 	
 //	clean_tty_screen();
 	_tty_printf("NocturneOS [Версия: v%d.%d.%d]\n",VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);

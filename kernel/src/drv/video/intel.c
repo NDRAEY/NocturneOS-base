@@ -120,7 +120,7 @@ void igfx_init() {
     tty_printf("WIDTH: %d; HEIGHT: %d\n", igfx_width, igfx_height);
 
 
-    asm volatile("cli");
+    __asm__ volatile("cli");
 
 
     // START
@@ -203,5 +203,5 @@ void igfx_init() {
 
 	tty_printf("Screen now tuned to: %dx%d;  Size: %d; BackFB: %x\n", igfx_width, igfx_height, framebuffer_size, back_framebuffer_addr);
 
-	asm volatile("sti");
+	__asm__ volatile("sti");
 }

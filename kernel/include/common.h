@@ -8,15 +8,14 @@
  */
 #pragma once
 
+#include <stdbool.h>
+
 #define		FALSE			0
 #define		TRUE			1
 
 #ifndef __cplusplus
 
-typedef enum {
-    false = 0,
-    true = 1
-} bool;
+// typedef _Bool bool;
 
 #define nullptr ((void*)0)
 #define NULL (0)
