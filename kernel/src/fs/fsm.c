@@ -21,7 +21,7 @@
 vector_t* fsm_entries = 0;
 
 int C_FSM = 0;
-bool fsm_debug = true;
+bool fsm_debug = false;
 
 void fsm_init() {
     fsm_entries = vector_new();

@@ -83,10 +83,10 @@ IRQ 14, 46
 IRQ 15, 47
 
 /* Вызов сервиса ОС */
-     .global isr80
+.global isr80
 isr80:
       push  $0
-      push  $80
+      push  $0x80
       pusha
       push  %ds
       mov   $0x10, %ax
