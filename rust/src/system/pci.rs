@@ -190,8 +190,8 @@ pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
 
     unsafe {
         let result: u8 = pci_find_device(
-            vendor.into(),
-            device.into(),
+            vendor,
+            device,
             &mut dev.bus,
             &mut dev.slot,
             &mut dev.function,
@@ -229,7 +229,7 @@ pub fn find_device_by_class_and_subclass(class: u8, subclass: u8) -> Option<PCID
 
 #[inline(always)]
 pub fn pci_get_vendor(bus: u8, slot: u8, function: u8) -> u16 {
-    return (pci_read32(bus, slot, function, 0) & 0xffff) as u16;
+    (pci_read32(bus, slot, function, 0) & 0xffff) as u16
 }
 
 #[no_mangle]
@@ -291,10 +291,12 @@ pub fn pci_scan_everything() {
                             let dev = PCIDevice {
                                 class: clid,
                                 subclass: sclid,
-                                bus, slot,
+                                bus,
+                                slot,
                                 function: func,
                                 header_type: hdrtype,
-                                vendor, device,
+                                vendor,
+                                device,
                             };
 
                             // qemu_log!("{:?}", &dev);
@@ -338,7 +340,7 @@ pub unsafe fn pci_find_device(
     *slot_ret = 0xff;
     *func_ret = 0xFF;
 
-    return 0;
+    0
 }
 
 #[no_mangle]
@@ -358,6 +360,8 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
             *bus_ret = dev.bus;
             *slot_ret = dev.slot;
             *func_ret = dev.function;
+
+            break;
         }
 
         return 1;
@@ -367,11 +371,11 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
     *slot_ret = 0xff;
     *func_ret = 0xff;
 
-    return 0;
+    0
 }
 
 #[no_mangle]
-pub unsafe fn pci_print_nth(
+pub fn pci_print_nth(
     class: u8,
     subclass: u8,
     bus: u8,
@@ -390,10 +394,9 @@ pub unsafe fn pci_print_nth(
         func,
         vendor,
         device,
-        PCI_DEVICE_TYPE_STRINGS
+        unsafe { PCI_DEVICE_TYPE_STRINGS }
             .iter()
-            .filter(|x| x.0 == class && x.1 == subclass)
-            .nth(0)
+            .find(|x| x.0 == class && x.1 == subclass)
             .unwrap_or(&(0, 0, "Unknown"))
             .2
     );
@@ -402,8 +405,8 @@ pub unsafe fn pci_print_nth(
         print!(" [Multifunc]");
     }
 
-    let bar0 = pci_read32(bus, slot, func, 0x10 + (0 * 4));
-    let bar1 = pci_read32(bus, slot, func, 0x10 + (1 * 4));
+    let bar0 = pci_read32(bus, slot, func, 0x10);
+    let bar1 = pci_read32(bus, slot, func, 0x10 + 4);
     let bar2 = pci_read32(bus, slot, func, 0x10 + (2 * 4));
     let bar3 = pci_read32(bus, slot, func, 0x10 + (3 * 4));
     let bar4 = pci_read32(bus, slot, func, 0x10 + (4 * 4));
@@ -418,8 +421,10 @@ pub unsafe fn pci_print_nth(
 }
 
 #[no_mangle]
-pub unsafe fn pci_print_list() {
-    for dev in PCI_DEVICES.get().unwrap() {
+pub fn pci_print_list() {
+    let devs = unsafe { PCI_DEVICES.get().unwrap() };
+
+    for dev in devs {
         pci_print_nth(
             dev.class,
             dev.subclass,

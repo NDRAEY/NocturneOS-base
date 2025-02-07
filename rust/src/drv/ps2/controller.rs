@@ -15,6 +15,10 @@ static mut ps2_channel1_okay: bool = false;
 #[allow(non_upper_case_globals)]
 static mut ps2_channel2_okay: bool = false;
 
+/// Reads configuration byte register from PCI CONTROLLER
+///
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 pub unsafe extern "C" fn ps2_read_configuration_byte() -> u8 {
     ps2_in_wait_until_empty();
@@ -23,6 +27,8 @@ pub unsafe extern "C" fn ps2_read_configuration_byte() -> u8 {
     return ps2_read();
 }
 
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 pub unsafe extern "C" fn ps2_write_configuration_byte(byte: u8) {
     ps2_in_wait_until_empty();
@@ -31,6 +37,8 @@ pub unsafe extern "C" fn ps2_write_configuration_byte(byte: u8) {
     ps2_write(byte);
 }
 
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 unsafe fn ps2_in_wait_until_empty() {
     while (inb(PS2_STATE_REG) & (1 << 1)) != 0 {
@@ -38,23 +46,32 @@ unsafe fn ps2_in_wait_until_empty() {
     }
 }
 
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 unsafe fn ps2_out_wait_until_full() {
     while (inb(PS2_STATE_REG) & 1) == 0 {}
 }
 
+/// Reads byte from PCI Controller
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 pub unsafe extern "C" fn ps2_read() -> u8 {
     ps2_out_wait_until_full();
     return inb(PS2_DATA_PORT);
 }
 
+/// # Safety
+/// It uses IO ports
 #[no_mangle]
 pub unsafe extern "C" fn ps2_write(byte: u8) {
     ps2_in_wait_until_empty();
     outb(PS2_DATA_PORT, byte);
 }
 
+/// # Safety
+/// It uses IO ports
 pub fn ps2_disable_first_device() {
     unsafe {
         ps2_in_wait_until_empty();
@@ -62,24 +79,32 @@ pub fn ps2_disable_first_device() {
     };
 }
 
+/// # Safety
+/// It uses IO ports
 pub unsafe fn ps2_disable_second_device() {
     ps2_in_wait_until_empty();
     outb(PS2_STATE_REG, 0xA7); // 2
 }
 
+/// # Safety
+/// It uses IO ports
 pub unsafe fn ps2_enable_first_device() {
     ps2_in_wait_until_empty();
     outb(PS2_STATE_REG, 0xAE); // 1
 }
 
+/// # Safety
+/// It uses IO ports
 pub unsafe fn ps2_enable_second_device() {
     ps2_in_wait_until_empty();
     outb(PS2_STATE_REG, 0xA8); // 2
 }
 
-pub unsafe fn ps2_flush() {
-    while inb(PS2_STATE_REG) & 1 != 0 {
-        inb(PS2_DATA_PORT);
+pub fn ps2_flush() {
+    unsafe {
+        while inb(PS2_STATE_REG) & 1 != 0 {
+            inb(PS2_DATA_PORT);
+        }
     }
 }
 

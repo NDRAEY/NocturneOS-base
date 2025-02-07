@@ -12,6 +12,12 @@ pub struct KeyboardBuffer {
     buffer: Vec<u32>,
 }
 
+impl Default for KeyboardBuffer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl KeyboardBuffer {
     /// Creates a new keyboard buffer instance.
     pub fn new() -> Self {
@@ -35,7 +41,6 @@ impl KeyboardBuffer {
         while self.buffer.is_empty() {
             // Idk what this function does, but it works! (Not throwing polling away)
             core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
-            // unsafe { asm!("nop", options(nomem, nostack, preserves_flags)) };
             super::scheduler::task_yield();
         }
 
@@ -45,7 +50,7 @@ impl KeyboardBuffer {
 
 /// External function for C API that initializes the global keyboard buffer.
 ///
-/// # Safety:
+/// # Safety
 /// - Keyboard buffer MUST be called before others
 #[no_mangle]
 #[allow(static_mut_refs)]
@@ -62,38 +67,30 @@ pub unsafe extern "C" fn keyboard_buffer_init() {
 
 /// External function for C API that puts a character into a buffer.
 ///
-/// # Safety:
+/// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
 #[allow(static_mut_refs)]
 pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
-    let v = KEYBOARD_BUFFER.get_mut().unwrap();
-
-    // qemu_log!("Put: {}", character);
-
-    v.push(character);
+    KEYBOARD_BUFFER.get_mut().unwrap().push(character);
 }
 
 /// External function for C API that gets a character from a buffer.
 ///
-/// # Safety:
+/// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
 #[allow(static_mut_refs)]
 pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
-    let ch = v.get();
-
-    //qemu_log!("Got: {}", ch);
-
-    ch
+    v.get()
 }
 
 /// External function for C API that gets a character from a buffer.
 /// This function returns 0 if no characters in the buffer to make it compatible with C API.
 ///
-/// # Safety:
+/// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
 #[allow(static_mut_refs)]

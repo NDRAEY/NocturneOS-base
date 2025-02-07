@@ -386,7 +386,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     
     if (is_rsdp){
         RSDPDescriptor* rsdp = rsdp_find();
-        qemu_log("RSDP at: %x", rsdp);
+        qemu_log("RSDP at: %p", rsdp);
 
         if(rsdp) {
 			acpi_scan_all_tables(rsdp->RSDTaddress);
