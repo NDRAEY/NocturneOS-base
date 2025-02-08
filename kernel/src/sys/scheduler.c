@@ -149,11 +149,15 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     void*	stack = nullptr;
     uint32_t	eflags;
 
+    qemu_log("Process at: %x", proc);
+    qemu_log("Stack size: %d", stack_size);
+    qemu_log("Entry point: %x", entry_point);
+    qemu_log("Suspend: %d", suspend);
+    qemu_log("Kernel: %d", kernel);
+    
+
         /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
-
-    /* Clear memory */
-    memset(tmp_thread, 0, sizeof(thread_t));
 
     /* Initialization of thread  */
     tmp_thread->id = next_thread_id++;
@@ -198,7 +202,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 }
 
 thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
-						bool kernel, bool suspend){
+						bool kernel, bool suspend) {
 	/* Disable all interrupts */
 	__asm__ volatile ("cli");
 
@@ -219,7 +223,7 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
  * @param thread - Поток
  * @param suspend - Вкл/выкл
  */
-void thread_suspend(thread_t* thread, bool suspend){
+void thread_suspend(thread_t* thread, bool suspend) {
 	thread->suspend = suspend;
 }
 

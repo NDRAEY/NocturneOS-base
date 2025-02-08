@@ -22,17 +22,17 @@ pub extern "C" fn psf1_rupatch(c: u16) -> u16 {
         t = 224;
     } else if sym == 1 {
         t = if hi == 0xd0 { 240 } else { 225 };
-    } else if sym >= 2 && sym <= 15 {
+    } else if (2..=15).contains(&sym) {
         t = 224 + sym;
     } else if sym == 16 {
         t = 128;
-    } else if sym >= 18 && sym <= 63 {
+    } else if (18..=63).contains(&sym) {
         t = 128 + (sym - 16);
     } else if sym == 17 {
         t = if hi == 0xd1 { 241 } else { 129 };
     }
 
-    return t;
+    t
 }
 
 #[no_mangle]
@@ -49,9 +49,9 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
     let glyph = unsafe { core::slice::from_raw_parts(raw_glyph, psf_h as usize) };
 
     for y in 0..unsafe { psf_h } as usize {
-        let rposy = pos_y as usize + y;
+        let rposy = pos_y + y;
         for (x, mask) in mask.iter().enumerate() {
-            if (glyph[y as usize] & mask) != 0 {
+            if (glyph[y] & mask) != 0 {
                 unsafe { set_pixel((pos_x + x) as u32, rposy as u32, color) };
             }
         }

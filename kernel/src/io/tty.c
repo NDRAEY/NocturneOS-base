@@ -202,6 +202,8 @@ void _tty_putchar(uint16_t c) {
         tty_pos_y += tty_off_pos_h;
     } else if (c == '\t') {
         tty_pos_x += 4 * tty_off_pos_h;
+    } else if(c == '\b') {
+        tty_backspace();
     } else if(c != '\n') {
         if (tty_pos_y + tty_off_pos_h >= (int) VESA_HEIGHT) {
             tty_scroll(1);
@@ -329,3 +331,7 @@ void clean_tty_screen() {
 
 	punch();
 } 
+
+void screen_update() {
+    punch();
+}

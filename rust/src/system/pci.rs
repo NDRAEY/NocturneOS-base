@@ -248,17 +248,15 @@ pub fn pci_scan_everything() {
     for bus in 0..=255 {
         for slot in 0..=31 {
             let mut hdrtype: u8 = 0;
-            let mut clid: u8 = 0;
-            let mut sclid: u8 = 0;
-            let mut device: u16 = 0;
 
             let mut vendor: u16 = pci_get_vendor(bus, slot, 0);
 
             if vendor != 0xFFFF {
-                clid = (pci_read32(bus, slot, 0, 0xB) & 0xff) as u8;
-                sclid = (pci_read32(bus, slot, 0, 0xA) & 0xff) as u8;
+                let clid: u8 = (pci_read32(bus, slot, 0, 0xB) & 0xff) as u8;
+                let sclid: u8 = (pci_read32(bus, slot, 0, 0xA) & 0xff) as u8;
+                let device: u16 = (pci_read32(bus, slot, 0, 0x2) & 0xffff) as u16;
+
                 hdrtype = (pci_read32(bus, slot, 0, 0xE) & 0xff) as u8;
-                device = (pci_read32(bus, slot, 0, 0x2) & 0xffff) as u16;
 
                 unsafe {
                     let dev = PCIDevice {
@@ -283,9 +281,9 @@ pub fn pci_scan_everything() {
                     vendor = pci_get_vendor(bus, slot, func);
 
                     if vendor != 0xFFFF {
-                        clid = (pci_read32(bus, slot, func, 0xB) & 0xff) as u8;
-                        sclid = (pci_read32(bus, slot, func, 0xA) & 0xff) as u8;
-                        device = (pci_read32(bus, slot, func, 0x2) & 0xffff) as u16;
+                        let clid = (pci_read32(bus, slot, func, 0xB) & 0xff) as u8;
+                        let sclid = (pci_read32(bus, slot, func, 0xA) & 0xff) as u8;
+                        let device = (pci_read32(bus, slot, func, 0x2) & 0xffff) as u16;
 
                         unsafe {
                             let dev = PCIDevice {

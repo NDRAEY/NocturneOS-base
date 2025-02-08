@@ -27,4 +27,14 @@ fn panic(_info: &PanicInfo) -> ! {
 #[inline(never)]
 pub extern "C" fn rust_main() {
     println!("Привет, {}!", "Rust");
+
+    // print!("Type> ");
+    // let result = io::input::read_to_string();
+    // println!("Result: '{}'", result);
+
+    crate::std::thread::spawn(move || {
+        for i in (1..=16) {
+            qemu_ok!("{}", i);
+        }
+    })
 }

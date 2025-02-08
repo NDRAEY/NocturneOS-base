@@ -53,6 +53,8 @@ uint32_t getDisplayBpp(){
 }
 
 void create_back_framebuffer() {
+    // back_framebuffer_addr = framebuffer_addr;
+
     qemu_log("^---- 1. Allocating");
     
     back_framebuffer_addr = (uint8_t*)kmalloc_common(framebuffer_size, PAGE_SIZE);
@@ -64,14 +66,6 @@ void create_back_framebuffer() {
 
 	bfb_mtrr_idx = find_free_mtrr();
     write_mtrr_size(bfb_mtrr_idx, phys_bfb, framebuffer_size, 1);
-
- //    map_pages(
- //            get_kernel_page_directory(),
- //            phys_bfb,
- //            (virtual_addr_t) back_framebuffer_addr,
- //            framebuffer_size,
- //            PAGE_WRITEABLE | PAGE_CACHE_DISABLE
-	// );
 
 	phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 	

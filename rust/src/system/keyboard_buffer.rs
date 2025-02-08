@@ -53,7 +53,7 @@ impl KeyboardBuffer {
 /// # Safety
 /// - Keyboard buffer MUST be called before others
 #[no_mangle]
-#[allow(static_mut_refs)]
+#[allow(static_mut_ref)]
 pub unsafe extern "C" fn keyboard_buffer_init() {
     match KEYBOARD_BUFFER.set(KeyboardBuffer::new()) {
         Ok(()) => {
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn keyboard_buffer_init() {
 /// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
-#[allow(static_mut_refs)]
+#[allow(static_mut_ref)]
 pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
     KEYBOARD_BUFFER.get_mut().unwrap().push(character);
 }
@@ -80,7 +80,7 @@ pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
 /// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
-#[allow(static_mut_refs)]
+#[allow(static_mut_ref)]
 pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
 /// # Safety
 /// - Keyboard buffer MUST be initialized before using this function
 #[no_mangle]
-#[allow(static_mut_refs)]
+#[allow(static_mut_ref)]
 pub unsafe extern "C" fn keyboard_buffer_get_or_nothing() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 

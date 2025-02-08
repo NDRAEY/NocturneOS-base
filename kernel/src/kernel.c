@@ -188,6 +188,7 @@ extern size_t BSS_end;
 
 extern void rust_main();
 extern void keyboard_buffer_init();
+extern void audio_system_init();
 extern void keyboard_buffer_put(uint32_t keycode);
 extern uint32_t keyboard_buffer_get();
 /*
@@ -256,6 +257,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     kHandlerCMD((char *) mboot->cmdline);
     
     drv_vbe_init(mboot);
+
+    qemu_log("Audio system init");
+    audio_system_init();
 
     qemu_log("FSM Init");
     fsm_init();

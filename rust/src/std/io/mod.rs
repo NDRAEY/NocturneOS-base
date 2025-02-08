@@ -5,7 +5,9 @@ use core::result;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
+pub mod input;
 pub mod rgb_image;
+pub mod screen;
 
 pub static PORT_COM1: u16 = 0x3f8;
 pub static PORT_COM2: u16 = 0x2F8;
@@ -105,20 +107,10 @@ impl fmt::Write for SerialWriter {
         let mut buffer = String::from(s);
         buffer.push('\x00');
         unsafe {
-            __com_writeString(self.port, buffer.as_str().as_bytes().as_ptr() as *const u8);
+            __com_writeString(self.port, buffer.as_bytes().as_ptr() as *const u8);
         }
         Ok(())
     }
 }
 
 pub type Result<T> = result::Result<T, ()>;
-
-// pub struct Error {
-//     pub kind: ErrorKind,
-// }
-
-// pub enum ErrorKind<T> {
-//     None,
-//     Unknown,
-//     Custom(T)
-// }

@@ -704,7 +704,7 @@ void cli(){
 		tty_printf("%s>", G_CLI_PATH);
 		memset(input_buffer, 0, 512);
 
-		/* int result =*/ gets(input_buffer);
+		gets(input_buffer);
         tty_printf("\n");
 /*
         if(result == 1) {

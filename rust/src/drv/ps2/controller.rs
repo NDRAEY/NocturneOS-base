@@ -24,7 +24,7 @@ pub unsafe extern "C" fn ps2_read_configuration_byte() -> u8 {
     ps2_in_wait_until_empty();
     outb(PS2_STATE_REG, 0x20);
 
-    return ps2_read();
+    ps2_read()
 }
 
 /// # Safety
@@ -59,7 +59,8 @@ unsafe fn ps2_out_wait_until_full() {
 #[no_mangle]
 pub unsafe extern "C" fn ps2_read() -> u8 {
     ps2_out_wait_until_full();
-    return inb(PS2_DATA_PORT);
+
+    inb(PS2_DATA_PORT)
 }
 
 /// # Safety
@@ -109,9 +110,9 @@ pub fn ps2_flush() {
 }
 
 fn ps2_test() -> Option<()> {
-    unsafe { ps2_in_wait_until_empty() };
-
     unsafe {
+        ps2_in_wait_until_empty();
+
         outb(PS2_STATE_REG, 0xAA);
     } // Test command
 
@@ -168,10 +169,12 @@ pub extern "C" fn ps2_init() {
 
     // Test second port
 
-    unsafe { ps2_in_wait_until_empty() };
-    unsafe { outb(PS2_STATE_REG, 0xA9) };
+    unsafe {
+        ps2_in_wait_until_empty();
+        outb(PS2_STATE_REG, 0xA9);
 
-    unsafe { ps2_out_wait_until_full() };
+        ps2_out_wait_until_full()
+    };
     result = unsafe { inb(PS2_DATA_PORT) };
 
     if result == 0x00 {

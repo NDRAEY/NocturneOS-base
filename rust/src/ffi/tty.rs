@@ -7,6 +7,7 @@ use alloc::string::String;
 
 extern "C" {
     fn _tty_puts(c: *const u8);
+    fn _tty_putchar(c: u16);
 }
 
 #[macro_export]
@@ -30,7 +31,7 @@ pub fn tty_puts(s: &str) {
     buffer.push('\x00');
 
     unsafe {
-        _tty_puts(buffer.as_str().as_bytes().as_ptr() as *const u8);
+        _tty_puts(buffer.as_bytes().as_ptr() as *const u8);
     }
 }
 
