@@ -154,7 +154,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     qemu_log("Entry point: %x", entry_point);
     qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
-    
 
         /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);

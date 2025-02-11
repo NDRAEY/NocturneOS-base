@@ -105,6 +105,14 @@ size_t syscall_exit(uint32_t status) {
 	}
 
 	blyat_fire();
+
+    return 0;
+}
+
+size_t syscall_screen_update() {
+    punch();
+
+    return 0;
 }
 
 /**
@@ -114,7 +122,7 @@ size_t syscall_exit(uint32_t status) {
  * @warning If every day goes like this; How do we survive?; We are working late on the night shift; To get peace of mind!
  */
 void init_syscalls(void){
-	register_interrupt_handler(0x80, &syscall_handler);
+	register_interrupt_handler(SYSCALL, &syscall_handler);
 
 	calls_table[0] = (syscall_fn_t *)syscall_env;
 	calls_table[1] = (syscall_fn_t *)syscall_memory_alloc;
@@ -133,6 +141,7 @@ void init_syscalls(void){
 	calls_table[18] = (syscall_fn_t *)syscall_memory_realloc;
 	calls_table[19] = (syscall_fn_t *)file_descriptor_write;
     calls_table[20] = (syscall_fn_t *)yield;
+    calls_table[21] = (syscall_fn_t *)syscall_screen_update;
 
 	qemu_ok("System calls initialized!");
 }

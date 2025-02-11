@@ -255,15 +255,7 @@ void rtl8139_receive_packet() {
 void rtl8139_init_interrupts() {
 	outw(rtl8139_io_base + IMR, 0x0005);
 
-	// https://wiki.osdev.org/PCI
-	//
-	// Offset 0x3C
-	//
-	// Bits 31-24 	Bits 23-16 	Bits 15-8   	Bits 7-0 
-	// Max latency 	Min Grant 	Interrupt PIN 	Interrupt Line 
-	//                                          ~~~~~~~~~~~~~~
-
-	uint32_t word = pci_read32(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
+    uint32_t word = pci_read32(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
 	// uint32_t word = pci_read_confspc_word(rtl8139_busnum, rtl8139_slot, rtl8139_func, 0x3C);  // All 0xF PCI register
 	rtl8139_irq = word & 0xff;
 

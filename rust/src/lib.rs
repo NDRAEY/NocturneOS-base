@@ -32,9 +32,9 @@ pub extern "C" fn rust_main() {
     // let result = io::input::read_to_string();
     // println!("Result: '{}'", result);
 
-    crate::std::thread::spawn(move || {
-        for i in (1..=16) {
-            qemu_ok!("{}", i);
-        }
-    })
+    // crate::std::thread::spawn(move || {
+    //     for i in (1..=16) {
+    //         qemu_ok!("{}", i);
+    //     }
+    // })
 }
