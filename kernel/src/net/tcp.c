@@ -53,6 +53,29 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 	return true;
 }
 
+// TODO: !!!
+uint16_t tcp_calculate_checksum(ETH_IPv4_PKG *packet) {
+	register size_t sum = 0;
+	unsigned short tcpLen = ntohs(packet->TotalLength) - (packet->HeaderLength << 2);
+	tcp_packet_t* tcp_packet = (tcp_packet_t*)(packet + 1);
+
+	uint32_t src = *(uint32_t*)&packet->Source;
+	uint32_t dst = *(uint32_t*)&packet->Destination;
+
+	sum += (src >> 16) & 0xFFFF;
+	sum += (src) & 0xFFFF;
+
+	sum += (dst >> 16) & 0xFFFF;
+	sum += (dst) & 0xFFFF;
+
+	sum += htons(6);
+	sum += htons(tcpLen);
+
+	
+
+	return ~sum;
+}
+
 void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	qemu_note("!!!!!!!!!!!!!!!!!!!!!!!! TCP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
@@ -88,21 +111,23 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
 
-	tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + 8, 1);
+	tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
 	memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
 
 	char* options = (char*)(sendable_packet) + sizeof(tcp_packet_t);
 
-	options[0] = 0x02;
-	options[1] = 0x04;
-	options[2] = 0xff;
-	options[3] = 0xd7;
-	options[4] = 0x04;
-	options[5] = 0x02;
-	options[6] = 0x01;
-	options[7] = 0x01;
+	// options[0] = 0x02;
+	// options[1] = 0x04;
+	// options[2] = 0xff;
+	// options[3] = 0xd7;
+	// options[4] = 0x04;
+	// options[5] = 0x02;
+	// options[6] = 0x01;
+	// options[7] = 0x01;
 
 	if(is_stage_1) {
+		qemu_note("== STAGE 1 ==");
+
 		tcp_connections[idx].seq = rand();
 		tcp_connections[idx].ack = sendable_packet->seq + 1;
 
@@ -115,9 +140,13 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		sendable_packet->source = dest;
 		sendable_packet->destination = src;
 
-		sendable_packet->doff = 7;
+		sendable_packet->doff = 5;
 
-		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 8, ETH_IPv4_HEAD_TCP);
+		sendable_packet->check = tcp_calculate_checksum((void*)((uint32_t)sendable_packet - sizeof(ETH_IPv4_PKG)));
+
+		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t), ETH_IPv4_HEAD_TCP);
+	} else {
+		qemu_note("== ANOTHER STAGE! ==");
 	}
 
 	kfree(sendable_packet);

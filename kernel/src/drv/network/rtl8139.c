@@ -31,15 +31,15 @@ uint8_t rtl8139_mac[6];
 uint8_t TSAD_array[4] = {0x20, 0x24, 0x28, 0x2C};
 uint8_t TSD_array[4] = {0x10, 0x14, 0x18, 0x1C};
 
-size_t rtl8139_current_tx_index = 0;
+volatile size_t rtl8139_current_tx_index = 0;
 
-void* rtl8139_transfer_buffer;
-size_t rtl8139_transfer_buffer_phys;
+volatile void* rtl8139_transfer_buffer;
+volatile size_t rtl8139_transfer_buffer_phys;
 
 void rtl8139_send_packet(void* data, size_t length);
 void rtl8139_receive_packet();
 
-bool rtl8139_in_irq = false;
+volatile bool rtl8139_in_irq = false;
 
 #define NETCARD_NAME ("RTL8139")
 
@@ -97,7 +97,7 @@ void rtl8139_init() {
 
 	rtl8139_init_buffer();
 
-	qemu_log("RTL8139 Physical buffer at: %x", rtl8139_phys_buffer);
+	qemu_log("RTL8139 Buffer at: [V%p, P%x]", rtl8139_virt_buffer, rtl8139_phys_buffer);
 
 	rtl8139_setup_rcr();
 	rtl8139_enable_rx_tx();
@@ -237,10 +237,11 @@ void rtl8139_receive_packet() {
 //	hexview_advanced((char *) packet_data, packet_length, 10, true, new_qemu_printf);
 
 	if(packet_header == HARDWARE_TYPE_ETHERNET) {
-		//netstack_push(&rtl8139_netcard, packet_data, packet_length);
-
 		qemu_note("Processing packet...");
-		ethernet_handle_packet(&rtl8139_netcard, (ethernet_frame_t *) packet_data, packet_length);
+		
+		netstack_transfer(&rtl8139_netcard, packet_data, packet_length);
+		//ethernet_handle_packet(&rtl8139_netcard, (ethernet_frame_t *) packet_data, packet_length);
+		
 		qemu_ok("Packet processing is finished!");
 	}
 

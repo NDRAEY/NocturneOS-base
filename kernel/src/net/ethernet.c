@@ -108,7 +108,7 @@ void ethernet_handle_packet(netcard_entry_t *card, ethernet_frame_t *packet, siz
     void* data = (void*)packet + sizeof(ethernet_frame_t);  // Get data
     size_t data_len = len - sizeof(ethernet_frame_t);  // Get length of data
     
-    qemu_log("Received Ethernet Packet!");
+    qemu_note("Received Ethernet Packet!");
     qemu_log("=> SRC[%x:%x:%x:%x:%x:%x]; DEST[%x:%x:%x:%x:%x:%x]; TYPE: %x",
 			 packet->src_mac[0],
 			 packet->src_mac[1],
