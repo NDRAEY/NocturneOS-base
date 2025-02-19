@@ -11,9 +11,12 @@ pub mod gfx;
 pub mod std;
 pub mod system;
 
+use alloc::{string::String, vec};
+use noct_alloc::Allocator;
 use std::io;
 
-use alloc::{string::String, vec};
+#[global_allocator]
+static ALLOCATOR: Allocator = noct_alloc::Allocator;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {

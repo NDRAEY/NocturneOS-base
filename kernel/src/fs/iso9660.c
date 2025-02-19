@@ -10,7 +10,6 @@
 #include <kernel.h>
 #include "portability.h"
 #include <io/ports.h>
-#include <../src/lib/elk/ext/jse_function.h>
 
 void __out_limit(char* pr, char* str, size_t count){
     char* buf = kcalloc(1, count+1);
@@ -51,7 +50,7 @@ void fs_iso9660_label(const char Disk, char* Label){
         memcpy(Label,"Unsupported disk",strlen("Unsupported disk"));
     } else {
         l[33] = 0;
-        jse_trim(l);
+        //jse_trim(l);
         memcpy(Label,l,strlen(l));
     }
     kfree(l);

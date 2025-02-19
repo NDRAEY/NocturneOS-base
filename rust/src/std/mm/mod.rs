@@ -1,5 +1,3 @@
-pub mod allocator;
-
 pub const PAGE_SIZE: u32 = 0x1000;
 pub const PAGE_PRESENT: u32 = 1 << 0;
 pub const PAGE_WRITEABLE: u32 = 1 << 1;

@@ -71,8 +71,6 @@ uint16_t tcp_calculate_checksum(ETH_IPv4_PKG *packet) {
 	sum += htons(6);
 	sum += htons(tcpLen);
 
-	
-
 	return ~sum;
 }
 

@@ -6,10 +6,15 @@ name = "nocturne"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [ "noct-alloc","noct-fs-sys"]
+
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.5.2"
 x86 = "0.52.0"
+noct-alloc = { path = "./noct-alloc" }
+noct-fs-sys = { path = "./noct-fs-sys" }
 
 [profile.release]
 panic = "abort"

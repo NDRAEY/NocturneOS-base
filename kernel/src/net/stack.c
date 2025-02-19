@@ -75,6 +75,8 @@ void netstack_processor_out() {
 			netqueue_item_t* item = (void*)vector_pop_back(system_network_outgoing_queue).element;
 			item->card->send_packet(item->data, item->length);
 		}
+
+        yield();
 	}
 }
 

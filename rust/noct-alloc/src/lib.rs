@@ -1,3 +1,7 @@
+#![no_std]
+
+extern crate alloc;
+
 use alloc::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
 
@@ -5,9 +9,6 @@ extern "C" {
     fn kmalloc_common(size: usize, align: usize) -> *mut c_void;
     fn kfree(ptr: *mut c_void);
 }
-
-#[global_allocator]
-static ALLOCATOR: Allocator = Allocator;
 
 pub struct Allocator;
 unsafe impl GlobalAlloc for Allocator {
