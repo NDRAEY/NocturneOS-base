@@ -104,7 +104,7 @@ size_t filemtime(const char* Path){
 bool is_readable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
-    if (file.CHMOD & FSM_CHMOD_READ) {
+    if (file.CHMOD & FSM_MOD_READ) {
         return true;
     }
     return false;
@@ -121,7 +121,7 @@ bool is_readable(const char* Path){
 bool is_writable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
-    if (file.CHMOD & FSM_CHMOD_WRITE) {
+    if (file.CHMOD & FSM_MOD_WRITE) {
         return true;
     }
     return false;
@@ -138,7 +138,7 @@ bool is_writable(const char* Path){
 bool is_executable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
-    if (file.CHMOD & FSM_CHMOD_EXEC) {
+    if (file.CHMOD & FSM_MOD_EXEC) {
         return true;
     }
     return false;
@@ -156,14 +156,14 @@ uint32_t fileperms(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
     uint32_t ret = 0;
-    if (file.CHMOD & FSM_CHMOD_READ) {
-        ret |= FSM_CHMOD_READ;
+    if (file.CHMOD & FSM_MOD_READ) {
+        ret |= FSM_MOD_READ;
     }
-    if (file.CHMOD & FSM_CHMOD_EXEC) {
-        ret |= FSM_CHMOD_EXEC;
+    if (file.CHMOD & FSM_MOD_EXEC) {
+        ret |= FSM_MOD_EXEC;
     }
-    if (file.CHMOD & FSM_CHMOD_WRITE) {
-        ret |= FSM_CHMOD_WRITE;
+    if (file.CHMOD & FSM_MOD_WRITE) {
+        ret |= FSM_MOD_WRITE;
     }
     return (ret * 100) + (ret * 10) + ret;
 }

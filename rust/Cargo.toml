@@ -7,14 +7,16 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [ "noct-alloc","noct-fs-sys"]
+members = [ "noct-alloc", "noct-vfs" ]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.5.2"
 x86 = "0.52.0"
 noct-alloc = { path = "./noct-alloc" }
+noct-vfs = { path = "./noct-vfs" }
 noct-fs-sys = { path = "./noct-fs-sys" }
+iso9660_simple = "0.1.2"
 
 [profile.release]
 panic = "abort"

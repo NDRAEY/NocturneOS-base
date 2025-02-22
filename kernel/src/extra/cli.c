@@ -24,16 +24,11 @@
 #include "sys/timer.h"
 #include "drv/disk/dpm.h"
 #include <fmt/tga.h>
-#include "sys/pixfmt.h"
-#include "io/rgb_image.h"
 #include <sys/cpuinfo.h>
 #include "../../include/lib/fileio.h"
 #include "sys/system.h"
 #include "debug/hexview.h"
 #include "lib/command_parser.h"
-
-//#include "../ports/eBat/eBat.h"
-//#include "../ports/eBat/eBatRuntime.h"
 
 int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
@@ -49,31 +44,6 @@ typedef struct {
 } CLI_CMD_ELEM;
 
 CLI_CMD_ELEM G_CLI_CMD[];
-
-// void F_CLI_KYB(void* data1,void* data2,void* data3,void* data4,void* data5){
-// 	if (G_CLI_H_KYB == 0) return;
-// 	qemu_log("[F_CLI_KYB] Key:%d | Pressed: %x",(int) data1, (int) data2);	
-// }
-
-//uint32_t CLI_CMD_GBA(uint32_t c, char* v[]){
-//    if (c == 0 || (c == 1 && (strcmpn(v[1],"/?")))){
-//        _tty_printf("Эмулятор GameBoy.\n");
-//        _tty_printf("Пример:\"GBA R:\\game.gb\".\n");
-//        _tty_printf("\n");
-//        return 1;
-//    }
-//    // gb game.gb
-//    tty_printf("%d\n", c);
-//
-//    for(int i = 0; i < c; i++) {
-//        tty_printf("#%d = %s\n", i, v[i]);
-//    }
-//
-//    gb_main(c, v);
-//
-//	return 1;
-//}
-
 
 uint32_t CLI_CMD_CLS(uint32_t c, char* v[]){
     clean_tty_screen();

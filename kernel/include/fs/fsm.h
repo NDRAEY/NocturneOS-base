@@ -2,10 +2,9 @@
 
 #include <common.h>
 
-#define FSM_CHMOD_EXEC               0x01  /// Права выполнения
-#define FSM_CHMOD_WRITE              0x02  /// Права записи
-#define FSM_CHMOD_READ               0x04  /// Права чтения
-#define FSM_CHMOD_SYS                0x08  /// Права системы
+#define FSM_MOD_EXEC               0x01  /// Права выполнения
+#define FSM_MOD_WRITE              0x02  /// Права записи
+#define FSM_MOD_READ               0x04  /// Права чтения
 
 typedef struct {
 	uint16_t year;	///< Год
@@ -17,7 +16,7 @@ typedef struct {
 } __attribute__((packed)) FSM_TIME;
 
 typedef struct {
-	int Ready;				///< Существует ли файл?
+	bool Ready;				///< Существует ли файл?
     char Name[1024];		///< Имя файла
     char Path[1024];		///< Путь файла
     int Mode;				///< Режим файла
@@ -28,7 +27,7 @@ typedef struct {
 } __attribute__((packed)) FSM_FILE;
 
 typedef struct {
-	int Ready;				///< Существует ли файл?
+	bool Ready;				///< Существует ли файл?
 	size_t Count;			///< Количество всего
 	size_t CountFiles;		///< Количество файлов
 	size_t CountDir;		///< Количество папок
@@ -57,12 +56,11 @@ typedef int (*fsm_cmd_delete_t)(const char,const char*,int);
 ///! Буква, Буфер
 typedef void (*fsm_cmd_label_t)(const char,char*);
 
-
 ///! Буква, Буфер
 typedef int (*fsm_cmd_detect_t)(const char);
 
 typedef struct {
-	int Ready;					///< Загружена ли фс?
+	bool Ready;					///< Загружена ли фс?
 	char Name[64];				///< Наименование драйвера
 	int Slash;					///< В какую сторону кинута палка?
 	fsm_cmd_read_t Read;		///< Команда для чтения
@@ -75,7 +73,7 @@ typedef struct {
 	fsm_cmd_label_t Label;		///< Команда для получения имени диска
 	fsm_cmd_detect_t Detect;	///< Команда для определения, предналежит ли диск к фс
 	void* Reserved;				///< Можно в ОЗУ дописать доп.данные если требуется.
-} __attribute__((packed)) FSM; 
+} __attribute__((packed)) FSM;
 
 void fsm_init();
 int fsm_getIDbyName(const char* Name);

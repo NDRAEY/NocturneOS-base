@@ -10,12 +10,7 @@
 
 #include <stdbool.h>
 
-#define		FALSE			0
-#define		TRUE			1
-
 #ifndef __cplusplus
-
-// typedef _Bool bool;
 
 #define nullptr ((void*)0)
 #define NULL (0)

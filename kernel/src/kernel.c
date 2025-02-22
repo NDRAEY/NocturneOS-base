@@ -271,8 +271,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
             &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
     fsm_reg("NatFS", 1, &fs_natfs_read, &fs_natfs_write, &fs_natfs_info, &fs_natfs_create, &fs_natfs_delete,
             &fs_natfs_dir, &fs_natfs_label, &fs_natfs_detect);
-    fsm_reg("ISO9660", 1, &fs_iso9660_read, &fs_iso9660_write, &fs_iso9660_info, &fs_iso9660_create, &fs_iso9660_delete,
-            &fs_iso9660_dir, &fs_iso9660_label, &fs_iso9660_detect);
     fsm_reg("TEMPFS", 1, &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
             &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
     fs_natfs_init();
