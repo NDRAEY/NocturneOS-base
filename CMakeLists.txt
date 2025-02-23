@@ -93,14 +93,12 @@ set(C_SRC
 	kernel/src/fs/fsm.c 
 	kernel/src/lib/time_conversion.c 
 	kernel/src/fs/nvfs.c 
-	kernel/src/fs/natfs.c 
 	kernel/src/fs/tempfs.c 
 	kernel/src/sys/scheduler.c 
 	kernel/src/lib/php/explode.c 
 	kernel/src/lib/php/pathinfo.c 
 	kernel/src/drv/psf.c 
 	kernel/src/sys/unwind.c 
-	kernel/src/fs/NatSuki.c 
 	kernel/src/drv/disk/initrd.c 
 	kernel/src/drv/disk/dpm.c 
 	kernel/src/lib/list.c 

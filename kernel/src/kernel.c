@@ -20,7 +20,6 @@
 #include "sys/mtrr.h"
 #include "net/ipv4.h"
 
-#include "fs/natfs.h"
 #include "net/stack.h"
 #include "drv/audio/hda.h"
 #include "sys/grub_modules.h"
@@ -114,13 +113,6 @@ void kHandlerCMD(char* cmd){
             } else {
                 qemu_log("\t Sorry, no support bootscreen mode!");
             }
-        }
-
-        if (strcmpn(out_data[0],"NatSuki-Login")){
-            __milla_setLogin(out_data[1]);
-        }
-        if (strcmpn(out_data[0],"NatSuki-Password")){
-            __milla_setPasswd(out_data[1]);
         }
         if (strcmpn(out_data[0],"ramdisk")){
             ramdisk_size = atoi(out_data[1]);
@@ -370,10 +362,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
                __TIMESTAMP__                                   // Время окончания компиляции ядра
         );
     tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
-    
-    if (__milla_getCode() != 0) {
-        tty_error("[ОШИБКА] [NatSuki] Не удалось выполнить инициализацию. Код ошибки: %d", __milla_getCode());
-    }
     
     sayori_time_t time = get_time();
     tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);
