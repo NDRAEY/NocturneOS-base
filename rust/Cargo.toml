@@ -18,6 +18,7 @@ noct-fsm-sys = { path = "./noct-fsm-sys" }
 noct-dpm-sys = { path = "./noct-dpm-sys" }
 noct-logger = { path = "./noct-logger" }
 iso9660_simple = "0.1.2"
+raw-cpuid = "11.4.0"
 
 [profile.release]
 panic = "abort"

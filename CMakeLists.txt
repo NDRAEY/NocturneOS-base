@@ -73,7 +73,7 @@ set(ASM_SRC kernel/asm/init.s
 	# kernel/asm/64bit_on_32bit.s
 )
 
-set(C_SRC 	kernel/src/sys/cpuinfo.c 
+set(C_SRC 
 	kernel/src/sys/cpu_isr.c 
 	kernel/src/sys/gdt.c 
 	kernel/src/sys/isr.c 

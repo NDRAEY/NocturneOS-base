@@ -14,7 +14,7 @@ pub mod system;
 use alloc::{boxed::Box, string::{String, ToString}, vec};
 use noct_alloc::Allocator;
 use noct_fsm_sys::headers::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TIME, FSM_TYPE_FILE};
-use noct_logger::*;
+pub use noct_logger::*;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

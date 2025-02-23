@@ -7,6 +7,19 @@
 
 size_t cputemp_calibrate_value = 0;
 
+size_t get_max_cpuid_count() {
+	uint32_t info[4] = {0};
+
+	cpuid(0x0,
+		  info[0],
+		  info[1],
+		  info[2],
+		  info[3]
+	);
+
+	return info[0];
+}
+
 /**
  * @brief Get CPU temperature sensor presence
  * @warning Works only on Intel (R) processors!

@@ -55,6 +55,16 @@ uint32_t CLI_CMD_CLS(uint32_t c, char *v[])
 
 uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
 {
+    size_t cpubrand_length = 0;
+
+    get_cpu_brand(NULL, &cpubrand_length);
+
+    qemu_log("Length is: %d", cpubrand_length);
+
+    char* cpubrand = kcalloc(1, cpubrand_length + 1);
+
+    get_cpu_brand(&cpubrand, NULL);
+    
     clean_tty_screen();
 
     setPosY(256);
@@ -65,7 +75,7 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
     tty_printf("\tOS:                      SayoriOS v%d.%d.%d\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
     tty_printf("\tДата сборки:             %s\n", __TIMESTAMP__);
     tty_printf("\tАрхитектура:             %s\n", ARCH_TYPE);
-    tty_printf("\tПроцессор:               %s\n", getNameBrand());
+    tty_printf("\tПроцессор:               %s\n", cpubrand);
 
     if (is_temperature_module_present())
     {
@@ -82,6 +92,9 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
     tty_printf("\tТики:                    %d\n", getTicks());
     tty_printf("\tЧастота таймера:         %d Гц\n", getFrequency());
     tty_printf("\tВремя с момента запуска: %f секунд\n", getUptime());
+
+    kfree(cpubrand);
+
     return 1;
 }
 
