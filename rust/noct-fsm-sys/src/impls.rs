@@ -1,7 +1,7 @@
 extern crate alloc;
 
-use alloc::boxed::Box;
-use core::ffi::{c_int, CStr};
+use alloc::{boxed::Box, string::String};
+use core::{cmp, ffi::{c_int, CStr}};
 use noct_logger::*;
 
 use crate::headers::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
@@ -15,8 +15,8 @@ impl FSM_FILE {
         typ: c_int,
         access: u32,
     ) -> Self {
-        let ptr = name.as_bytes().as_ptr() as *const i8;
-        let length = name.len();
+        let name_bytes = name.as_bytes();
+        let max_len = name_bytes.len().min(1024);
 
         let mut file = FSM_FILE {
             Ready: true,
@@ -24,23 +24,16 @@ impl FSM_FILE {
             Path: [0; 1024],
             Mode: mode,
             Size: size,
-            LastTime: if time.is_some() {
-                time.unwrap()
-            } else {
-                let a = [0u8; core::mem::size_of::<FSM_TIME>()];
-
-                unsafe { core::mem::transmute(a) }
-            },
+            LastTime: time.unwrap_or_else(|| unsafe {
+                core::mem::zeroed()
+            }),
             Type: typ,
             CHMOD: access,
         };
 
-        unsafe {
-            file.Name.as_mut_ptr().copy_from_nonoverlapping(ptr, length);
-
-            // file.Path[0] = b'/' as i8;
-            // file.Path.as_mut_ptr().add(1).copy_from(ptr, length);
-        };
+        for (i, &byte) in name_bytes.iter().take(max_len).enumerate() {
+            file.Name[i] = byte as i8;
+        }
 
         file
     }

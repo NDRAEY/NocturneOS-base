@@ -11,7 +11,7 @@ pub mod gfx;
 pub mod std;
 pub mod system;
 
-use alloc::{boxed::Box, string::String, vec};
+use alloc::{boxed::Box, string::{String, ToString}, vec};
 use noct_alloc::Allocator;
 use noct_fsm_sys::headers::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TIME, FSM_TYPE_FILE};
 use noct_logger::*;
@@ -99,8 +99,6 @@ pub extern "C" fn rust_main() {
             )]);
 
             let dir = FSM_DIR::with_files(files);
-
-            qemu_log!("{:#?}", out);
 
             *out = dir;
         }
