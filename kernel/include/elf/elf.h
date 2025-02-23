@@ -32,13 +32,13 @@
 /*-----------------------------------------------------------------------------
  *		Типы файлов
  *---------------------------------------------------------------------------*/
-#define		ET_NONE			0			///< Нет типа файла
-#define		ET_REL			1			///< Перемещаемый файл (Relocatable file)
-#define		ET_EXEC			2			///< Исполняемый файл (Executable file)
-#define		ET_DYN			3			///< Общий объектный файл (Shared object file)
-#define		ET_CORE			4			///< Файлы ядра
-#define		ET_LOPROC		0xFF00		///< Зависит от процессора
-#define		ET_HIPROC		0xFFFF		///< Зависит от процессора
+#define		ET_NONE			0			/// Нет типа файла
+#define		ET_REL			1			/// Перемещаемый файл (Relocatable file)
+#define		ET_EXEC			2			/// Исполняемый файл (Executable file)
+#define		ET_DYN			3			/// Общий объектный файл (Shared object file)
+#define		ET_CORE			4			/// Файлы ядра
+#define		ET_LOPROC		0xFF00		/// Зависит от процессора
+#define		ET_HIPROC		0xFFFF		/// Зависит от процессора
 
 /*-----------------------------------------------------------------------------
  * 		Типы архитектур
@@ -85,20 +85,20 @@ typedef		unsigned int		Elf32_Word;
  *---------------------------------------------------------------------------*/
 typedef	struct
 {
-	unsigned char	e_ident[EI_NIDENT];	///< Идентификационные данные ELF
-	Elf32_Half		e_type;				///< Тип объектного файла
-	Elf32_Half		e_mashine;			///< Тип архитектуры
-	Elf32_Word		e_version;			///< Версия объектного файла
-	Elf32_Addr		e_entry;			///< Точка входа в процесс
-	Elf32_Off		e_phoff;			///< Смещение заголовка программы
-	Elf32_Off		e_shoff;			///< Смещение заголовка таблицы разделов
-	Elf32_Word		e_flags;			///< Флаги, специфичные для процессора
-	Elf32_Half		e_ehsize;			///< Размер заголовка
-	Elf32_Half		e_phentsize;		///< Размер записи заголовка программы
-	Elf32_Half		e_phnum;			///< Количество записей заголовка программы
-	Elf32_Half		e_shentsize;		///< Размер записи заголовка раздела
-	Elf32_Half		e_shnum;			///< Количество записей в заголовке раздела
-	Elf32_Half		e_shstrndx;			///< ...
+	unsigned char	e_ident[EI_NIDENT];	/// Идентификационные данные ELF
+	Elf32_Half		e_type;				/// Тип объектного файла
+	Elf32_Half		e_mashine;			/// Тип архитектуры
+	Elf32_Word		e_version;			/// Версия объектного файла
+	Elf32_Addr		e_entry;			/// Точка входа в процесс
+	Elf32_Off		e_phoff;			/// Смещение заголовка программы
+	Elf32_Off		e_shoff;			/// Смещение заголовка таблицы разделов
+	Elf32_Word		e_flags;			/// Флаги, специфичные для процессора
+	Elf32_Half		e_ehsize;			/// Размер заголовка
+	Elf32_Half		e_phentsize;		/// Размер записи заголовка программы
+	Elf32_Half		e_phnum;			/// Количество записей заголовка программы
+	Elf32_Half		e_shentsize;		/// Размер записи заголовка раздела
+	Elf32_Half		e_shnum;			/// Количество записей в заголовке раздела
+	Elf32_Half		e_shstrndx;			/// ...
 } Elf32_Ehdr;
 
 /*-----------------------------------------------------------------------------
@@ -106,16 +106,16 @@ typedef	struct
  *---------------------------------------------------------------------------*/
 typedef	struct
 {
-	Elf32_Word	sh_name;		///< Указатель в таблице перемешивания заголовка раздела
-	Elf32_Word	sh_type;		///< Тип раздела
-	Elf32_Word	sh_flags;		///< Флаги атрибутов раздела
-	Elf32_Addr	sh_addr;		///< Виртуальный адрес раздела в образе процесса
-	Elf32_Off	sh_offset;		///< Смещение раздела в файле
-	Elf32_Word	sh_size;		///< Размер раздела
-	Elf32_Word	sh_link;		///< ...
-	Elf32_Word	sh_info;		///< Дополнительная информация
-	Elf32_Word	sh_addralign;	///< Добавление адреса раздела
-	Elf32_Word	sh_entsize;		///< ...
+	Elf32_Word	sh_name;		/// Указатель в таблице перемешивания заголовка раздела
+	Elf32_Word	sh_type;		/// Тип раздела
+	Elf32_Word	sh_flags;		/// Флаги атрибутов раздела
+	Elf32_Addr	sh_addr;		/// Виртуальный адрес раздела в образе процесса
+	Elf32_Off	sh_offset;		/// Смещение раздела в файле
+	Elf32_Word	sh_size;		/// Размер раздела
+	Elf32_Word	sh_link;		/// ...
+	Elf32_Word	sh_info;		/// Дополнительная информация
+	Elf32_Word	sh_addralign;	/// Добавление адреса раздела
+	Elf32_Word	sh_entsize;		/// ...
 
 } Elf32_Shdr;
 
@@ -124,23 +124,23 @@ typedef	struct
  *---------------------------------------------------------------------------*/
 typedef struct
 {
-	Elf32_Word	p_type;		///< Тип заголовка программы
-	Elf32_Off	p_offset;	///< Смещение заголовка программы
-	Elf32_Addr	p_vaddr;	///< Виртуальный адрес заголовка программы
-	Elf32_Addr	p_paddr;	///< Физический адрес заголовка программы
-	Elf32_Word	p_filesz;	///< Число байтов в сегменте файла
-	Elf32_Word	p_memsz;	///< ...
-	Elf32_Word	p_flags;	///< Флаги
-	Elf32_Word	p_align;	///< Отступ
+	Elf32_Word	p_type;		/// Тип заголовка программы
+	Elf32_Off	p_offset;	/// Смещение заголовка программы
+	Elf32_Addr	p_vaddr;	/// Виртуальный адрес заголовка программы
+	Elf32_Addr	p_paddr;	/// Физический адрес заголовка программы
+	Elf32_Word	p_filesz;	/// Число байтов в сегменте файла
+	Elf32_Word	p_memsz;	/// ...
+	Elf32_Word	p_flags;	/// Флаги
+	Elf32_Word	p_align;	/// Отступ
 } Elf32_Phdr;
 
 typedef struct elf_sections
 {
-	Elf32_Ehdr		elf_header;	///< ELF заголовок
-	Elf32_Shdr*		section;	///< Секции
-	Elf32_Phdr*		p_header;	///< Программный заголовок
+	Elf32_Ehdr		elf_header;	/// ELF заголовок
+	Elf32_Shdr*		section;	/// Секции
+	Elf32_Phdr*		p_header;	/// Программный заголовок
 
-	FILE*			file;		///< Ссылка на файл
+	FILE*			file;		/// Ссылка на файл
 } elf_t;
 
 elf_t* load_elf(const char* name);

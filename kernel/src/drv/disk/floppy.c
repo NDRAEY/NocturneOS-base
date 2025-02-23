@@ -32,8 +32,8 @@ static const char * drive_types[8] = {
     "unknown type",
     "unknown type"
 };
-static const char FLOPPY_DMABUFA[floppy_dmalen] __attribute__((aligned(0x8000)));	///< Буфер дискеты 1
-//static const char FLOPPY_DMABUFB[floppy_dmalen] __attribute__((aligned(0x8000)));	///< Буфер дискеты 2
+static const char FLOPPY_DMABUFA[floppy_dmalen] __attribute__((aligned(0x8000)));	/// Буфер дискеты 1
+//static const char FLOPPY_DMABUFB[floppy_dmalen] __attribute__((aligned(0x8000)));	/// Буфер дискеты 2
 volatile bool interrupted = false;
 
 floppy_t Floppy(int device){
@@ -90,16 +90,16 @@ static void _FloppyDMA(FloppyMode dir) {
         default: qemu_log("_FloppyDMA: invalid direction");
                  return; // not reached, please "mode user uninitialized"
     }
-	outb(0x0a, 0x06);		///< Выдаем маску для тян
-    outb(0x0c, 0xff);		///< Сброс триггера
-    outb(0x04, a.b[0]);		///<   - Младший байт адреса
-    outb(0x04, a.b[1]);		///<   - Старший байт адреса
-    outb(0x81, a.b[2]);		///<  Регистрация внешней страницы
-    outb(0x0c, 0xff);		///<  Сброс триггера
-    outb(0x05, c.b[0]);		///<   - Считать младший байт адреса
-    outb(0x05, c.b[1]);		///<   - Считать старший байт адреса
-    outb(0x0b, mode);		///<  Установить новый режим
-    outb(0x0a, 0x02);		///<  Забираем маску у тян
+	outb(0x0a, 0x06);		/// Выдаем маску для тян
+    outb(0x0c, 0xff);		/// Сброс триггера
+    outb(0x04, a.b[0]);		///   - Младший байт адреса
+    outb(0x04, a.b[1]);		///   - Старший байт адреса
+    outb(0x81, a.b[2]);		///  Регистрация внешней страницы
+    outb(0x0c, 0xff);		///  Сброс триггера
+    outb(0x05, c.b[0]);		///   - Считать младший байт адреса
+    outb(0x05, c.b[1]);		///   - Считать старший байт адреса
+    outb(0x0b, mode);		///  Установить новый режим
+    outb(0x0a, 0x02);		///  Забираем маску у тян
 }
 
 void _FloppyMotor(int device, int status){

@@ -81,7 +81,7 @@ FSM_FILE fs_fat32_info(char Disk, const char* Path) {
     return file;
 }
 
-FSM_DIR* fs_fat32_dir(char Disk, const char* Path) {
+void fs_fat32_dir(char Disk, const char* Path, FSM_DIR* out) {
     fat_description_t* desc = dpm_metadata_read(Disk);
 
     qemu_note("Given path is: %s", Path);
@@ -89,17 +89,16 @@ FSM_DIR* fs_fat32_dir(char Disk, const char* Path) {
 
     qemu_warn("Got cluster: %d", clust);
 
-    FSM_DIR *Dir = kcalloc(sizeof(FSM_DIR), 1);
+    // FSM_DIR *Dir = kcalloc(sizeof(FSM_DIR), 1);
 
     if(clust == 0) {
-        Dir->Ready = 0;
-        Dir->Count = 0;
-        Dir->CountFiles = 0;
-        Dir->CountDir = 0;
-        Dir->CountOther = 0;
-        Dir->Files = 0;
+        out->Ready = 0;
+        out->CountFiles = 0;
+        out->CountDir = 0;
+        out->CountOther = 0;
+        out->Files = 0;
 
-        return Dir;
+        return;// Dir;
     }
 
     FSM_FILE *Files = kcalloc(sizeof(FSM_FILE), 1);
@@ -161,14 +160,13 @@ FSM_DIR* fs_fat32_dir(char Disk, const char* Path) {
 
     kfree(cluster_data);
 
-    Dir->Ready = 1;
-    Dir->Count = file_count + directory_count;
-    Dir->CountFiles = file_count;
-    Dir->CountDir = directory_count;
-    Dir->CountOther = 0;
-    Dir->Files = Files;
+    out->Ready = 1;
+    out->CountFiles = file_count;
+    out->CountDir = directory_count;
+    out->CountOther = 0;
+    out->Files = Files;
 
-    return Dir;
+    // return Dir;
 }
 
 int fs_fat32_create(char Disk,const char* Path,int Mode){

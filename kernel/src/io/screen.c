@@ -8,15 +8,15 @@
 #include "mem/vmm.h"
 #include "sys/mtrr.h"
 
-uint8_t *framebuffer_addr = 0;				///< Точка монтирования
-uint32_t framebuffer_pitch;				///< Частота обновления экрана
-uint32_t framebuffer_bpp;				///< Глубина цвета экрана
-uint32_t framebuffer_width;				///< Длина экрана
-uint32_t framebuffer_height;			///< Высота экрана
-uint32_t framebuffer_size;				///< Кол-во пикселей
-uint8_t *back_framebuffer_addr = 0;		///< Позиция буфера экрана
-bool lazyDraw = true;					///< Включен ли режим ленивой прорисовки
-bool tty_oem_mode = false;				///< Режим работы
+uint8_t *framebuffer_addr = 0;				/// Точка монтирования
+uint32_t framebuffer_pitch;				/// Частота обновления экрана
+uint32_t framebuffer_bpp;				/// Глубина цвета экрана
+uint32_t framebuffer_width;				/// Длина экрана
+uint32_t framebuffer_height;			/// Высота экрана
+uint32_t framebuffer_size;				/// Кол-во пикселей
+uint8_t *back_framebuffer_addr = 0;		/// Позиция буфера экрана
+bool lazyDraw = true;					/// Включен ли режим ленивой прорисовки
+bool tty_oem_mode = false;				/// Режим работы
 
 size_t fb_mtrr_idx = 0;
 size_t bfb_mtrr_idx = 0;

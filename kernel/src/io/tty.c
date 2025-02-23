@@ -24,21 +24,21 @@
 //       default_console.c - TTY client
 
 // TODO: Keep here.
-volatile uint8_t tty_feedback = 1;		///< ...
-size_t tty_line_fill[1024];				///< ....
-uint32_t tty_pos_x = 0;						///< Позиция на экране по X
-uint32_t tty_pos_y = 0;						///< Позиция на экране по Y
-int32_t tty_off_pos_x = 8;					///< ...
-int32_t tty_off_pos_p = 0;					///< ...
-uint32_t tty_off_pos_h = 16;					///< ...
-uint32_t tty_text_color;				///< Текущий цвет шрифта
-uint32_t tty_bg_color;                  ///< Текущий задний фон
-bool stateTTY = true;					///< Статус, разрешен ли вывод текста через tty_printf
+volatile uint8_t tty_feedback = 1;		/// ...
+size_t tty_line_fill[1024];				/// ....
+uint32_t tty_pos_x = 0;						/// Позиция на экране по X
+uint32_t tty_pos_y = 0;						/// Позиция на экране по Y
+int32_t tty_off_pos_x = 8;					/// ...
+int32_t tty_off_pos_p = 0;					/// ...
+uint32_t tty_off_pos_h = 16;					/// ...
+uint32_t tty_text_color;				/// Текущий цвет шрифта
+uint32_t tty_bg_color;                  /// Текущий задний фон
+bool stateTTY = true;					/// Статус, разрешен ли вывод текста через tty_printf
 /////////////////////////////////
 
 // TODO: Move to things/cursor.c
-thread_t* threadTTY01 = nullptr;					///< Поток с анимацией курсора
-volatile bool showAnimTextCursor = true;		///< Отображать ли анимацию курсора
+thread_t* threadTTY01 = nullptr;					/// Поток с анимацией курсора
+volatile bool showAnimTextCursor = true;		/// Отображать ли анимацию курсора
 void animTextCursor();
 ////////////////////////////////
 

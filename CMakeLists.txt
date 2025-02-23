@@ -91,6 +91,7 @@ set(C_SRC 	kernel/src/sys/cpuinfo.c
 	kernel/src/io/tty.c 
 	kernel/src/fs/tarfs.c 
 	kernel/src/fs/fsm.c 
+	kernel/src/lib/time_conversion.c 
 	kernel/src/fs/nvfs.c 
 	kernel/src/fs/natfs.c 
 	kernel/src/fs/tempfs.c 

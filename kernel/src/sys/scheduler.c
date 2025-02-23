@@ -11,16 +11,16 @@
 #include	"io/ports.h"
 #include "mem/vmm.h"
 
-list_t process_list;			///< Список процессов
-list_t thread_list;				///< Список потоков
+list_t process_list;			/// Список процессов
+list_t thread_list;				/// Список потоков
 
-uint32_t next_pid = 0;			///< Следующий ID задачи (PID)
-uint32_t next_thread_id = 0;	///< Следующий ID потока
-bool multi_task = false;		///< Готова ли система к многозадачности
-process_t* kernel_proc = 0;		///< Обработчик процесса ядра
-thread_t* kernel_thread = 0;	///< Обработчик основного потока ядра
-process_t* current_proc = 0;	///< Текущий процесс
-thread_t* current_thread = 0;	///< Текущий поток
+uint32_t next_pid = 0;			/// Следующий ID задачи (PID)
+uint32_t next_thread_id = 0;	/// Следующий ID потока
+bool multi_task = false;		/// Готова ли система к многозадачности
+process_t* kernel_proc = 0;		/// Обработчик процесса ядра
+thread_t* kernel_thread = 0;	/// Обработчик основного потока ядра
+process_t* current_proc = 0;	/// Текущий процесс
+thread_t* current_thread = 0;	/// Текущий поток
 extern uint32_t init_esp;
 
 bool scheduler_working = true;

@@ -3,15 +3,15 @@
 #include <common.h>
 
 enum {
-	TGA_MODE_NO_IMG = 0,	///< No image data included.
-	TGA_MODE_UC_CMI = 1,	///< Uncompressed, color-mapped images.
-	TGA_MODE_UC_RGB = 2,	///< Uncompressed, RGB images.
-	TGA_MODE_UC_BWI = 3,	///< Uncompressed, black and white images.
-	TGA_MODE_RL_CMI = 9,	///< Runlength encoded color-mapped images.
-	TGA_MODE_RL_RGB = 10,	///< Runlength encoded RGB images.
-	TGA_MODE_CP_BWI = 11,	///< Compressed, black and white images.
-	TGA_MODE_CP_HDR = 32,	///< Compressed color-mapped data, using Huffman, Delta, and runlength encoding.
-	TGA_MODE_UC_PQR = 33,	///< Compressed color-mapped data, using Huffman, Delta, and runlength encoding.  4-pass quadtree-type process.
+	TGA_MODE_NO_IMG = 0,	/// No image data included.
+	TGA_MODE_UC_CMI = 1,	/// Uncompressed, color-mapped images.
+	TGA_MODE_UC_RGB = 2,	/// Uncompressed, RGB images.
+	TGA_MODE_UC_BWI = 3,	/// Uncompressed, black and white images.
+	TGA_MODE_RL_CMI = 9,	/// Runlength encoded color-mapped images.
+	TGA_MODE_RL_RGB = 10,	/// Runlength encoded RGB images.
+	TGA_MODE_CP_BWI = 11,	/// Compressed, black and white images.
+	TGA_MODE_CP_HDR = 32,	/// Compressed color-mapped data, using Huffman, Delta, and runlength encoding.
+	TGA_MODE_UC_PQR = 33,	/// Compressed color-mapped data, using Huffman, Delta, and runlength encoding.  4-pass quadtree-type process.
 };
 
 typedef struct {

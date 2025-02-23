@@ -27,103 +27,12 @@ void fsm_init() {
     fsm_entries = vector_new();
 }
 
-size_t fsm_DateConvertToUnix(FSM_TIME time) {
-    uint32_t seconds_per_day = 24 * 60 * 60;
-    size_t unix_time = 0;
-
-    // Подсчет количества дней с начала Unix эпохи
-    for (uint32_t year = 1970; year < time.year; year++) {
-        uint32_t days_in_year = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 366 : 365;
-        unix_time += days_in_year * seconds_per_day;
-    }
-
-    int8_t month_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if (time.year % 4 == 0 && (time.year % 100 != 0 || time.year % 400 == 0)) {
-        month_days[1] = 29;
-    }
-
-    // Добавление количества дней в текущем году
-    for (uint32_t month = 0; month < time.month - 1; month++) {
-        unix_time += month_days[month] * seconds_per_day;
-    }
-
-    // Добавление количества дней в текущем месяце
-    unix_time += (time.day - 1) * seconds_per_day;
-
-    // Добавление компонентов времени
-    unix_time += time.hour * 3600 + time.minute * 60 + time.second;
-
-    return unix_time;
-}
-
-
-void fsm_convertUnix(uint32_t unix_time, FSM_TIME* time) {
-	if (fsm_debug) qemu_log("[FSM] Convert unix: %d",unix_time);
-    uint32_t seconds_per_day = 24 * 60 * 60;
-    uint32_t days = unix_time / seconds_per_day;
-    
-    uint32_t years = 1970;
-    uint32_t month, day;
-    while (1) {
-        uint32_t days_in_year = (years % 4 == 0 && (years % 100 != 0 || years % 400 == 0)) ? 366 : 365;
-        if (days < days_in_year) {
-            break;
-        }
-        days -= days_in_year;
-        years++;
-    }
-    
-    int8_t month_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if (years % 4 == 0 && (years % 100 != 0 || years % 400 == 0)) {
-        month_days[1] = 29;
-    }
-    
-    uint32_t year_day = days;
-    for (month = 0; month < 12; month++) {
-        if (year_day < month_days[month]) {
-            break;
-        }
-        year_day -= month_days[month];
-    }
-    day = year_day + 1;
-    
-    // Вычисляем компоненты времени
-    uint32_t seconds = unix_time % seconds_per_day;
-    uint32_t hour = seconds / 3600;
-    uint32_t minute = (seconds % 3600) / 60;
-    uint32_t second = seconds % 60;
-	//qemu_log("%d.%d.%d %d:%d:%d",years, month, day, hour, minute, second);
-
-	time->year = years;
-	time->month = month;
-	time->day = day;
-	time->hour = hour;
-	time->minute = minute;
-	time->second = second;
-	//memcpy();
-	//qemu_log("%d.%d.%d %d:%d:%d", time->year, time->month, time->day, time->hour, time->minute, time->second);
-}
-
-char* fsm_timePrintable(FSM_TIME time){
-	char* btime = 0;
-
-	asprintf(&btime, "%04d.%02d.%02d %02d:%02d:%02d",
-		time.year,
-		time.month,
-		time.day,
-		time.hour,
-		time.minute,
-		time.second);
-
-	return btime;
-}
-
 int fsm_isPathToFile(const char* Path, const char* Name){
-	char* zpath = pathinfo(Name, PATHINFO_DIRNAME);					///< Получаем родительскую папку элемента
-	char* bpath = pathinfo(Name, PATHINFO_BASENAME);				///< Получаем имя файла (или пустоту если папка)
-	bool   isCheck1 = strcmpn(zpath,Path);				///< Проверяем совпадение путей
-	bool   isCheck2 = strlen(bpath) == 0;				///< Проверяем, что путе нет ничего лишнего (будет 0, если просто папка)
-	bool   isCheck3 = str_contains(Name, Path);	///< Проверяем наличие, вхождения путя
+	char* zpath = pathinfo(Name, PATHINFO_DIRNAME);					/// Получаем родительскую папку элемента
+	char* bpath = pathinfo(Name, PATHINFO_BASENAME);				/// Получаем имя файла (или пустоту если папка)
+	bool   isCheck1 = strcmpn(zpath,Path);				/// Проверяем совпадение путей
+	bool   isCheck2 = strlen(bpath) == 0;				/// Проверяем, что путе нет ничего лишнего (будет 0, если просто папка)
+	bool   isCheck3 = str_contains(Name, Path);	/// Проверяем наличие, вхождения путя
 	size_t c1 = str_cdsp2(Path,'\\');
 	size_t c2 = str_cdsp2(Name,'\\');
 	size_t c3 = str_cdsp2(Path,'/');
@@ -131,11 +40,8 @@ int fsm_isPathToFile(const char* Path, const char* Name){
 	
 	bool   isCheck4 = ((c2 - c1) == 1) && (c4 == c3);
 	bool   isCheck5 = ((c4 - c3) == 1) && (c2 == c1);
-/*	
-	qemu_log("[%d] [%d] [%d] [%d] [%d] %s", isCheck1, isCheck2, isCheck3, isCheck4, isCheck5, Name);
-	qemu_log(" |--- %d == %d",c1,c2);
-	qemu_log(" |--- %d == %d",c3,c4);*/
-	bool isPassed = ((isCheck1 && !isCheck2 && isCheck3) || (!isCheck1 && isCheck2 && isCheck3 && (isCheck4 || isCheck5)));
+
+    bool isPassed = ((isCheck1 && !isCheck2 && isCheck3) || (!isCheck1 && isCheck2 && isCheck3 && (isCheck4 || isCheck5)));
 
 	kfree(zpath);
 	kfree(bpath);
@@ -246,7 +152,7 @@ FSM_FILE fsm_info(int FIndex,const char DIndex, const char* Name){
     return fsm->Info(DIndex,Name);
 }
 
-FSM_DIR* fsm_dir(int FIndex, const char DIndex, const char* Name){
+void fsm_dir(int FIndex, const char DIndex, const char* Name, FSM_DIR* out) {
     if (fsm_debug) {
         qemu_log("[FSM] [DIR] F:%d | D:%d | N:%s",FIndex,DIndex,Name);
     }
@@ -258,20 +164,17 @@ FSM_DIR* fsm_dir(int FIndex, const char DIndex, const char* Name){
             qemu_log("[FSM] %d not ready", FIndex);
         }
 
-		FSM_DIR* dir = kmalloc(sizeof(FSM_DIR));
-		
-        return dir;
+		memset(out, 0, sizeof(FSM_DIR));
 	}
 
     FSM* fsm = (FSM*)res.element;
 
-	return fsm->Dir(DIndex, Name);
+    fsm->Dir(DIndex, Name, out);
 }
 
-void fsm_reg(const char* Name,int Slash,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cmd_info_t Info, fsm_cmd_create_t Create, fsm_cmd_delete_t Delete, fsm_cmd_dir_t Dir, fsm_cmd_label_t Label, fsm_cmd_detect_t Detect){
+void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cmd_info_t Info, fsm_cmd_create_t Create, fsm_cmd_delete_t Delete, fsm_cmd_dir_t Dir, fsm_cmd_label_t Label, fsm_cmd_detect_t Detect) {
     FSM* fsm = kcalloc(1, sizeof(FSM));
     fsm->Ready = 1;
-	fsm->Slash = Slash;
 	fsm->Read = Read;
 	fsm->Write = Write;
 	fsm->Info = Info;
@@ -283,20 +186,9 @@ void fsm_reg(const char* Name,int Slash,fsm_cmd_read_t Read, fsm_cmd_write_t Wri
 	memcpy(fsm->Name, Name, strlen(Name));
 
     vector_push_back(fsm_entries, (size_t)fsm);
+
+    qemu_ok("Registered filesystem: `%s`", Name);
 }
-
-int fsm_getMode(int FIndex){
-    vector_result_t res = vector_get(fsm_entries, FIndex);
-    
-	if (res.error) {
-        return 0;
-    }
-	
-    FSM* fsm = (FSM*)res.element;
-
-	return fsm->Slash;
-}
-
 
 void fsm_dpm_update(char Letter){
     const char* BLANK = "Unknown";

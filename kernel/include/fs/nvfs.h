@@ -4,12 +4,12 @@
 #include "fs/fsm.h"
 
 typedef struct {
-	bool Ready;				///< Готов к работе?
-	char Disk;				///< Индекс диска (который надо подставить)
-	char Path[1024];		///< Путь
-	bool Online;			///< В сети ли диск?
-	char FileSystem[64];	///< Название драйвера на диске
-	int DriverFS;			///< Загружен ли драйвер фс?
+	bool Ready;				/// Готов к работе?
+	char Disk;				/// Индекс диска (который надо подставить)
+	char Path[1024];		/// Путь
+	bool Online;			/// В сети ли диск?
+	char FileSystem[64];	/// Название драйвера на диске
+	int DriverFS;			/// Загружен ли драйвер фс?
 } __attribute__((packed)) NVFS_DECINFO;
 
 NVFS_DECINFO* nvfs_decode(const char* Name);

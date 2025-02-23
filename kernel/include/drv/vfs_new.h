@@ -2,17 +2,17 @@
 
 #include "common.h"
 
-#define FS_FILE         0x00              ///< Файл
-#define FS_DIRECTORY    0x01              ///< Папка
-#define FS_INVALID      0x02              ///< Невалидный файл
-#define FS_CHARDEVICE   0x03              ///< Символьное устройство (Пример: com,tty,speaker) (вид файла устройств обеспечивающий интерфейс к устройству с возможностью посимвольного обмена информацией.)
-#define FS_BLOCKDEVICE  0x04              ///< Блочное устройство (вид файла устройств обеспечивающий интерфейс к устройству в виде файла в файловой системе)
-#define FS_PIPE         0x05              ///< ???
-#define FS_SYMLINK      0x06              ///< Ссылка
-#define FS_MOUNTPOINT   0x08              ///< Точка монтирования
+#define FS_FILE         0x00              /// Файл
+#define FS_DIRECTORY    0x01              /// Папка
+#define FS_INVALID      0x02              /// Невалидный файл
+#define FS_CHARDEVICE   0x03              /// Символьное устройство (Пример: com,tty,speaker) (вид файла устройств обеспечивающий интерфейс к устройству с возможностью посимвольного обмена информацией.)
+#define FS_BLOCKDEVICE  0x04              /// Блочное устройство (вид файла устройств обеспечивающий интерфейс к устройству в виде файла в файловой системе)
+#define FS_PIPE         0x05              /// ???
+#define FS_SYMLINK      0x06              /// Ссылка
+#define FS_MOUNTPOINT   0x08              /// Точка монтирования
 
-#define VFS_TYPE_MOUNT_SEFS     0x0000    ///< Sayori Easy File System
-#define VFS_TYPE_MOUNT_NATSUKI  0xCAFE    ///< NatSuki File System
+#define VFS_TYPE_MOUNT_SEFS     0x0000    /// Sayori Easy File System
+#define VFS_TYPE_MOUNT_NATSUKI  0xCAFE    /// NatSuki File System
 
 typedef char* (*readChar_type_t)(uint32_t);
 typedef uint32_t (*read_type_t)(uint32_t,size_t,size_t,void *);
@@ -37,37 +37,37 @@ typedef void (*dirfree_type_t)(struct dirent*);
 
 typedef struct fs_node
 {
-   char name[128];                        ///< Имя файла.
-   char path[512];                        ///< Полный путь
-   uint32_t root;                         ///< Индекс папки
-   uint32_t mask;                         ///< Маска прав доступа.
-   uint32_t uid;                          ///< Пользователь, владеющий файлом.
-   uint32_t gid;                          ///< Группа, владеющая файлом.
-   uint32_t flags;                        ///< Включает тип нода. Смотрите определение #defines, приведенное выше.
-   uint32_t inode;                        ///< Зависит от устройства, позволяет файловой системе идентифицировать файлы.
-   uint32_t length;                       ///< Размер файла в байтах.
-   uint32_t impl;                         ///< Номер, зависящий от реализации.
-   readChar_type_t readChar;              ///< Функция FS - Полное чтение файла
-   read_type_t read;                      ///< Функция FS - Чтение файла с указанием параметров
-   write_type_t write;                    ///< Функция FS - Запись в файл
-   open_type_t open;                      ///< Функция FS - Функция для открытия файла (не исп)
-   close_type_t close;                    ///< Функция FS - Функция для закрытия файла (не исп)
-   readdir_type_t readDir;                ///< Функция FS - Функция для чтение папки (не исп)
-   countElemFolder_type_t getCountElemFolder;    ///< Функция FS - Функция для получения количества файлов в папке
-   findFile_type_t findFile;              ///< Функция FS - Функция для поиска файла
-   findFile_type_t findDir;               ///< Функция FS - Функция для поиска файла
-   getFileInfo_type_t getFileInfo;        ///< Функция FS - Функция для получения информации о файле (не исп) (старое)
-   getLengthFile_type_t getLengthFile;    ///< Функция FS - Функция для получения размера файла
-   getLengthFile_type_t getOffsetFile;    ///< Функция FS - Функция для получения позиции файла (отступ)
-   dirlist_type_t getListElem;            ///< Функция FS - Функция для получения списка файлов
+   char name[128];                        /// Имя файла.
+   char path[512];                        /// Полный путь
+   uint32_t root;                         /// Индекс папки
+   uint32_t mask;                         /// Маска прав доступа.
+   uint32_t uid;                          /// Пользователь, владеющий файлом.
+   uint32_t gid;                          /// Группа, владеющая файлом.
+   uint32_t flags;                        /// Включает тип нода. Смотрите определение #defines, приведенное выше.
+   uint32_t inode;                        /// Зависит от устройства, позволяет файловой системе идентифицировать файлы.
+   uint32_t length;                       /// Размер файла в байтах.
+   uint32_t impl;                         /// Номер, зависящий от реализации.
+   readChar_type_t readChar;              /// Функция FS - Полное чтение файла
+   read_type_t read;                      /// Функция FS - Чтение файла с указанием параметров
+   write_type_t write;                    /// Функция FS - Запись в файл
+   open_type_t open;                      /// Функция FS - Функция для открытия файла (не исп)
+   close_type_t close;                    /// Функция FS - Функция для закрытия файла (не исп)
+   readdir_type_t readDir;                /// Функция FS - Функция для чтение папки (не исп)
+   countElemFolder_type_t getCountElemFolder;    /// Функция FS - Функция для получения количества файлов в папке
+   findFile_type_t findFile;              /// Функция FS - Функция для поиска файла
+   findFile_type_t findDir;               /// Функция FS - Функция для поиска файла
+   getFileInfo_type_t getFileInfo;        /// Функция FS - Функция для получения информации о файле (не исп) (старое)
+   getLengthFile_type_t getLengthFile;    /// Функция FS - Функция для получения размера файла
+   getLengthFile_type_t getOffsetFile;    /// Функция FS - Функция для получения позиции файла (отступ)
+   dirlist_type_t getListElem;            /// Функция FS - Функция для получения списка файлов
    dirfree_type_t unlistElem;
-   charintData_type_t getDevName;            ///< Функция для получения имени устройства
-   char devName[512];                     ///< Имя устройства
-   getDeviceSize_type_t diskUsed;         ///< Сколько использовано места
-   getDeviceSize_type_t diskSpace;        ///< Сколько свободно места
-   getDeviceSize_type_t diskSize;         ///< Размер диска
-   list_type_t list;                      ///< Список
-   struct fs_node *ptr;                   ///< Используется для точек монтирования и символических ссылок.
+   charintData_type_t getDevName;            /// Функция для получения имени устройства
+   char devName[512];                     /// Имя устройства
+   getDeviceSize_type_t diskUsed;         /// Сколько использовано места
+   getDeviceSize_type_t diskSpace;        /// Сколько свободно места
+   getDeviceSize_type_t diskSize;         /// Размер диска
+   list_type_t list;                      /// Список
+   struct fs_node *ptr;                   /// Используется для точек монтирования и символических ссылок.
 } fs_node_t;
 
 /**
@@ -75,11 +75,11 @@ typedef struct fs_node
  */
 struct dirent
 {
-  char name[128];                       ///< Имя файла
-  uint32_t ino;                         ///< Номер inode. Требеся для POSIX.
-  uint8_t type;                         ///< Тип файла
-  uint8_t next;                         ///< Следующая позиция
-  size_t length;                      ///< Размер файла
+  char name[128];                       /// Имя файла
+  uint32_t ino;                         /// Номер inode. Требеся для POSIX.
+  uint8_t type;                         /// Тип файла
+  uint8_t next;                         /// Следующая позиция
+  size_t length;                      /// Размер файла
 };
 
 extern fs_node_t *fs_root; // The root of the filesystem.

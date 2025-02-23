@@ -15,13 +15,13 @@
 #include "lib/split.h"
 #include "io/tty.h"
 
-fs_node_t *nat_root = 0;                        ///< Ссылка на виртуальную фс
-bool    __milla_b_init = false;             ///< Milla готова к работе?
-char*   __milla_null = "null";              ///< Ответ, если Milla не готовa
-char*   __milla_buffer = 0;                 ///< Буфер
-char    __milla_login[256] = "SayoriOS";    ///< Логин для авторизации
-char    __milla_passwd[256] = "NatSuki";    ///< Пароль для авторизации
-int     __milla_return_code = 0;            ///< Код ошибки
+fs_node_t *nat_root = 0;                        /// Ссылка на виртуальную фс
+bool    __milla_b_init = false;             /// Milla готова к работе?
+char*   __milla_null = "null";              /// Ответ, если Milla не готовa
+char*   __milla_buffer = 0;                 /// Буфер
+char    __milla_login[256] = "SayoriOS";    /// Логин для авторизации
+char    __milla_passwd[256] = "NatSuki";    /// Пароль для авторизации
+int     __milla_return_code = 0;            /// Код ошибки
 
 void __milla_setLogin(char* login){
     memset(__milla_login,0,256);

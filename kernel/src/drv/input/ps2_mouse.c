@@ -13,22 +13,22 @@
 #include "sys/isr.h"
 #include "drv/ps2.h"
 
-uint8_t mouse_ready = 0;        ///< Готова ли мышь к работе
+uint8_t mouse_ready = 0;        /// Готова ли мышь к работе
 
-uint32_t mouse_x  = 0;           ///< Позиция мыши по X
-uint32_t mouse_y  = 0;           ///< Позиция мыши по Y
+uint32_t mouse_x  = 0;           /// Позиция мыши по X
+uint32_t mouse_y  = 0;           /// Позиция мыши по Y
 
 
-int32_t mouse_ox  = 0;           ///< Позиция мыши по X (старое значение)
-int32_t mouse_oy  = 0;           ///< Позиция мыши по Y (старое значение)
+int32_t mouse_ox  = 0;           /// Позиция мыши по X (старое значение)
+int32_t mouse_oy  = 0;           /// Позиция мыши по Y (старое значение)
 
-uint32_t mouse_b1 = 0;           ///< Левая кнопка мыши
-uint32_t mouse_b2 = 0;           ///< Правая кнопка мыши
-uint32_t mouse_b3 = 0;           ///< Средняя кнопка мыши
-uint32_t mouse_b4 = 0;           ///< ???
-uint32_t mouse_b5 = 0;           ///< ???
+uint32_t mouse_b1 = 0;           /// Левая кнопка мыши
+uint32_t mouse_b2 = 0;           /// Правая кнопка мыши
+uint32_t mouse_b3 = 0;           /// Средняя кнопка мыши
+uint32_t mouse_b4 = 0;           /// ???
+uint32_t mouse_b5 = 0;           /// ???
 
-int mouse_wheel = 0;            ///< После каждого чтения меняем на 0
+int mouse_wheel = 0;            /// После каждого чтения меняем на 0
 
 /**
  * @brief Структура данных пакета от мыши

@@ -19,6 +19,7 @@
 #include "drv/input/keyboard.h"
 #include "lib/php/explode.h"
 #include "fs/nvfs.h"
+#include "lib/time_conversion.h"
 #include "lib/list.h"
 #include "sys/scheduler.h"
 #include "sys/timer.h"
@@ -33,7 +34,7 @@
 int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
 int G_CLI_H_KYB = 1;
-int G_CLI_CURINXD = 17;				///< Текущий диск
+int G_CLI_CURINXD = 17;				/// Текущий диск
 char G_CLI_PATH[1024] = "R:\\";
 
 typedef struct {
@@ -247,14 +248,22 @@ uint32_t CLI_CMD_DIR(uint32_t c, char* v[]) {
     const char* path = (c == 1 ? G_CLI_PATH : v[1]);
 
 	FSM_DIR* Dir = nvfs_dir(path);
+    qemu_log("Ready is: %d",Dir->Ready);
+    qemu_log("Sizeof: %d", sizeof(FSM_DIR));
+
 	if (Dir->Ready != 1){
 		tty_printf("Ошибка %d! При чтении папки: %s\n",Dir->Ready, path);
         kfree(Dir);
         return 1;
 	} else {
-		tty_printf("Содержимое папки папки: %s\n\n", path);
+        qemu_log("> Count: %d; %d; %d", Dir->CountFiles, Dir->CountDir, Dir->CountOther);
+        qemu_log("> V%p", Dir->Files);
+        hexview_advanced(Dir, sizeof(FSM_DIR), 24, false, new_qemu_printf);
+
+		tty_printf("Содержимое папки: %s\n\n", path);
 		size_t Sizes = 0;
-		for (int i = 0; i < Dir->Count; i++){
+        size_t Count = Dir->CountDir + Dir->CountFiles + Dir->CountOther;
+		for (int i = 0; i < Count; i++) {
 			char* btime = fsm_timePrintable(Dir->Files[i].LastTime);
 			tty_printf("%s\t%s\t\t%s\n", 
 				btime,
@@ -264,7 +273,7 @@ uint32_t CLI_CMD_DIR(uint32_t c, char* v[]) {
 			Sizes += Dir->Files[i].Size;
 			kfree(btime);
 		}
-		tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir->CountFiles, Dir->CountDir, Dir->Count);
+		tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir->CountFiles, Dir->CountDir, Count);
 		tty_printf("Размер папки: %d мб. | %d кб. | %d б.\n", (Sizes != 0?(Sizes/1024/1024):0), (Sizes != 0?(Sizes/1024):0), Sizes);
 	}
 	/// Сначала чистим массив внутри массива

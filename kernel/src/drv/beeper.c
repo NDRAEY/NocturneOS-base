@@ -11,7 +11,7 @@
 #include <drv/beeper.h>
 #include <sys/timer.h>
 
-uint32_t config = 0;            ///< Корректировка
+uint32_t config = 0;            /// Корректировка
 
 /**
  * @brief Вопроизвести звук (квадратной формы волны)

@@ -10,18 +10,18 @@
 #include <io/ports.h>
 #include "io/tty.h"
 
-uint32_t theme = 0;					///< Текущая тема (0 или 1)
-uint32_t bgColorDark = 0x000000;	///< Цвет заднего фона для темной темы
-uint32_t txColorDark = 0x92D7D4;	///< Цвет текста для темной темы
-uint32_t bgColorLight = 0xD6D2D0;	///< Цвет заднего фона для светлой темы
-uint32_t txColorLight = 0x2D3C5D;	///< Цвет текста для светлой темы
-uint32_t maxStrLine = 0;			///< Максимальное количество символом на строку
-uint32_t maxHeightLine = 0;			///< Максимальное количество строк на экране
-bool lazy = false;					///< Ленивая прорисовка
-uint32_t curElem = 0;				///< Текущая позиция элемента
-uint32_t maxElem = 10;				///< Максимальное позиция элемента
-uint32_t mode = 0;  				///< Режим работы (0 - Обычный | 1 - Режим логирования)
-bool bs_logs = true;                ///< Включено ли логгирование этапов BootScreen
+uint32_t theme = 0;					/// Текущая тема (0 или 1)
+uint32_t bgColorDark = 0x000000;	/// Цвет заднего фона для темной темы
+uint32_t txColorDark = 0x92D7D4;	/// Цвет текста для темной темы
+uint32_t bgColorLight = 0xD6D2D0;	/// Цвет заднего фона для светлой темы
+uint32_t txColorLight = 0x2D3C5D;	/// Цвет текста для светлой темы
+uint32_t maxStrLine = 0;			/// Максимальное количество символом на строку
+uint32_t maxHeightLine = 0;			/// Максимальное количество строк на экране
+bool lazy = false;					/// Ленивая прорисовка
+uint32_t curElem = 0;				/// Текущая позиция элемента
+uint32_t maxElem = 10;				/// Максимальное позиция элемента
+uint32_t mode = 0;  				/// Режим работы (0 - Обычный | 1 - Режим логирования)
+bool bs_logs = true;                /// Включено ли логгирование этапов BootScreen
 
 /**
  * @brief Включить ленивую загрузку для BootScreen

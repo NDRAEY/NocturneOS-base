@@ -53,16 +53,16 @@ int fs_smfs_format(const char Disk){
 	qemu_log("FORMAT IS STARTING...");
 	
 	size_t read = 0,seek = 0;
-	int sizeFiles = ((sizeof(SMFS_Elements)) * MaxFiles); ////< 74 * 1024 = 
+	int sizeFiles = ((sizeof(SMFS_Elements)) * MaxFiles); //// 74 * 1024 = 
 	int freeSpa = ((IDisk.Size) - (sizeFiles) - (sizeof(SMFS_BOOT_SECTOR)));
 	int allPkg = (freeSpa / (sizeof(SMFS_PACKAGE)));
 	
 	qemu_log("[SMFS] Formatting FDA STARTED!");
-	qemu_log("[SMFS] DISK_SIZE = %d", (IDisk.Size));	///< 2097152
-	qemu_log("[SMFS] BOOT_SIZE = %d", (sizeof(SMFS_BOOT_SECTOR))); ///< 39
-	qemu_log("[SMFS] Max Elems = %d | %d", MaxFiles, sizeFiles); ///< 1024 | 75776
-	qemu_log("[SMFS] FREE SPA = %d", freeSpa); ///< (2021337)
-	qemu_log("[SMFS] Max Package = %d", allPkg);	///< 2021337 / 15 = мин. 134756 | макс. 1078048 байт 
+	qemu_log("[SMFS] DISK_SIZE = %d", (IDisk.Size));	/// 2097152
+	qemu_log("[SMFS] BOOT_SIZE = %d", (sizeof(SMFS_BOOT_SECTOR))); /// 39
+	qemu_log("[SMFS] Max Elems = %d | %d", MaxFiles, sizeFiles); /// 1024 | 75776
+	qemu_log("[SMFS] FREE SPA = %d", freeSpa); /// (2021337)
+	qemu_log("[SMFS] Max Package = %d", allPkg);	/// 2021337 / 15 = мин. 134756 | макс. 1078048 байт 
 	qemu_log("[SMFS] We overwrite on our own BOOT SECTOR");
 	
 	char oem[8] = {'S','A','Y','O','R','I','O','S'};

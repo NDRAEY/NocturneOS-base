@@ -13,9 +13,9 @@
 
 // FIXME: These variables gets rewritten to address 0 when
 //        user types 'cd /' in shell
-char* whoami    = "root";           ///< Имя пользователя
-char* hostname  = "oem";            ///< Имя устройства
-char* syspath   = "/";              ///< Путь по умолчанию
+char* whoami    = "root";           /// Имя пользователя
+char* hostname  = "oem";            /// Имя устройства
+char* syspath   = "/";              /// Путь по умолчанию
 /**
  * @brief Получить текущий путь
  *

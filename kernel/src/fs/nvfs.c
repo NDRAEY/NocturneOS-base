@@ -71,13 +71,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 		goto end;
 	}
 
-	int fgm = fsm_getMode(info->DriverFS);
-
-	if (fgm == 0){
-		char_replace(0x2F,0x5C,info->Path);
-	} else {
-		char_replace(0x5C,0x2F,info->Path);
-	}
+	char_replace(0x5C,0x2F,info->Path);
 
 	info->Ready = 1;
 
@@ -193,15 +187,16 @@ end:
 
 FSM_DIR* nvfs_dir(const char* Name){
 	NVFS_DECINFO* vinfo = nvfs_decode(Name);
+	
+	FSM_DIR* dir = kcalloc(sizeof(FSM_DIR), 1);
 
 	if (vinfo->Ready != 1) {
-		kfree(vinfo);
-		FSM_DIR* dir = kcalloc(sizeof(FSM_DIR), 1);
-		return dir;
+		goto end;
 	}
 
-	FSM_DIR* dir = fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path);
+	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
 	
+	end:
 	kfree(vinfo);
 	return dir;
 }

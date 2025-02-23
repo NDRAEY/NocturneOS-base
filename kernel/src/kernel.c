@@ -34,7 +34,7 @@
 
 #include <lib/pixel.h>
 
-#define INITRD_RW_SIZE (1474560) ///< Размер виртуального диска 1.44mb floppy
+#define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
 
 extern bool ps2_channel2_okay;
 
@@ -265,15 +265,15 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     fsm_init();
 
     qemu_log("Registration of file system drivers...");
-    fsm_reg("TARFS", 1, &fs_tarfs_read, &fs_tarfs_write, &fs_tarfs_info, &fs_tarfs_create, &fs_tarfs_delete,
+    fsm_reg("TARFS", &fs_tarfs_read, &fs_tarfs_write, &fs_tarfs_info, &fs_tarfs_create, &fs_tarfs_delete,
             &fs_tarfs_dir, &fs_tarfs_label, &fs_tarfs_detect);
-    fsm_reg("FAT32", 1, &fs_fat32_read, &fs_fat32_write, &fs_fat32_info, &fs_fat32_create, &fs_fat32_delete,
+    fsm_reg("FAT32", &fs_fat32_read, &fs_fat32_write, &fs_fat32_info, &fs_fat32_create, &fs_fat32_delete,
             &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
-    fsm_reg("NatFS", 1, &fs_natfs_read, &fs_natfs_write, &fs_natfs_info, &fs_natfs_create, &fs_natfs_delete,
-            &fs_natfs_dir, &fs_natfs_label, &fs_natfs_detect);
-    fsm_reg("TEMPFS", 1, &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
+    // fsm_reg("NatFS", &fs_natfs_read, &fs_natfs_write, &fs_natfs_info, &fs_natfs_create, &fs_natfs_delete,
+    //         &fs_natfs_dir, &fs_natfs_label, &fs_natfs_detect);
+    fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
             &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
-    fs_natfs_init();
+    // fs_natfs_init();
 
     grub_modules_init(mboot);
     

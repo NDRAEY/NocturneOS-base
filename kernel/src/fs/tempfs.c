@@ -591,19 +591,19 @@ FSM_FILE fs_tempfs_info(const char Disk, const char* Path){
     return file;
 }
 
-FSM_DIR* fs_tempfs_dir(const char Disk, const char* Path){
-    FSM_DIR* Dir = malloc(sizeof(FSM_DIR));
-    memset(Dir, 0, sizeof(FSM_DIR));
+void fs_tempfs_dir(const char Disk, const char* Path, FSM_DIR* out){
+    // FSM_DIR* Dir = malloc(sizeof(FSM_DIR));
+    // memset(Dir, 0, sizeof(FSM_DIR));
     tfs_log("[>] Get DIR: %s\n", Path);
     TEMPFS_BOOT* boot = fs_tempfs_func_getBootInfo(Disk);
     if (boot == NULL || fs_tempfs_func_checkSign(boot->Sign1, boot->Sign2) != 1) {
         tfs_log(" |--- Error sign 0x%x %d %d\n",boot , boot->Sign1, boot->Sign2);
-        return Dir;
+        return;// Dir;
     }
     FSM_FILE *Files = malloc(sizeof(FSM_FILE) * boot->CountFiles);
     if (Files == NULL) {
         tfs_log(" |--- Error malloc\n");
-        return Dir;
+        return;// Dir;
     }
     size_t offset = 512;
     size_t count = 0;
@@ -675,14 +675,13 @@ FSM_DIR* fs_tempfs_dir(const char Disk, const char* Path){
         tfs_log(" |     |     |--- Next!\n");
     }
 
-    Dir->Ready = 1;
-    Dir->Count = count;
-    Dir->CountFiles = CF;
-    Dir->CountDir = CD;
-    Dir->CountOther = 0;
-    Dir->Files = Files;
+    out->Ready = 1;
+    out->CountFiles = CF;
+    out->CountDir = CD;
+    out->CountOther = 0;
+    out->Files = Files;
 
-    return Dir;
+    // return Dir;
 }
 
 int fs_tempfs_create(const char Disk,const char* Path,int Mode){

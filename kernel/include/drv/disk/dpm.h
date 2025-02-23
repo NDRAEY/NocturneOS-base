@@ -2,28 +2,28 @@
 
 #include <common.h>
 
-#define DPM_ERROR_NO_MOUNT (-1)		///< Не удалось примонтировать устройство
-#define DPM_ERROR_NOT_READY (-2)    ///< Устройство не готово к работе
-#define DPM_ERROR_NO_READ (-3)		///< Не удалось прочитать файл
+#define DPM_ERROR_NO_MOUNT (-1)		/// Не удалось примонтировать устройство
+#define DPM_ERROR_NOT_READY (-2)    /// Устройство не готово к работе
+#define DPM_ERROR_NO_READ (-3)		/// Не удалось прочитать файл
 
 // disk, offset_h, offset_l, size, buffer
 // typedef int (*dpm_disk_rw_cmd)(size_t,size_t,size_t,void*);
 typedef size_t (*dpm_disk_rw_cmd)(size_t,uint64_t,uint64_t,size_t,void*);
 
 typedef struct {
-	bool Ready;				///< Устройство подключено? (1 - да | 0 - нет)
-    char Name[128];			///< Имя диск
-    char FileSystem[64];	///< Файловая система
-    int Status;				///< Режим устройства (0 - не обслуживает | 1 - Чтение/Запись | 2 - Только чтение)
-    size_t Size;			///< Размер диска (в байтах)
-    size_t Sectors;			///< Кол-во секторов
-    size_t SectorSize;		///< Размер секторов
-    int AddrMode;			///< Метод адрессации (0 - CHS | 1 - LBA | 2 - RAM | 3 - RW for FNC)
-    char Serial[16];		///< Серийный номер диска
-    void* Point;			///< Точка входа в оперативной памяти
-	void* Reserved;			///< Можно в ОЗУ дописать доп.данные если требуется.
-	dpm_disk_rw_cmd Read;	///< Команда для чтения данных
-	dpm_disk_rw_cmd Write;	///< Команда для записи данных
+	bool Ready;				/// Устройство подключено? (1 - да | 0 - нет)
+    char Name[128];			/// Имя диск
+    char FileSystem[64];	/// Файловая система
+    int Status;				/// Режим устройства (0 - не обслуживает | 1 - Чтение/Запись | 2 - Только чтение)
+    size_t Size;			/// Размер диска (в байтах)
+    size_t Sectors;			/// Кол-во секторов
+    size_t SectorSize;		/// Размер секторов
+    int AddrMode;			/// Метод адрессации (0 - CHS | 1 - LBA | 2 - RAM | 3 - RW for FNC)
+    char Serial[16];		/// Серийный номер диска
+    void* Point;			/// Точка входа в оперативной памяти
+	void* Reserved;			/// Можно в ОЗУ дописать доп.данные если требуется.
+	dpm_disk_rw_cmd Read;	/// Команда для чтения данных
+	dpm_disk_rw_cmd Write;	/// Команда для записи данных
 } __attribute__((packed)) DPM_Disk;
 
 // TODO: Save model, manufacturer, serial number, firmware version in that dpm structure.

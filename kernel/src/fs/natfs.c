@@ -78,7 +78,6 @@ FSM_DIR* fs_natfs_dir(const char Disk,const char* Path){
     //struct dirent* testFS = kcalloc(_m_d1, sizeof(struct dirent));
     if (_m_d1 == 0){
         Dir->Ready = 1;
-        Dir->Count = CA;
         Dir->CountFiles = CF;
         Dir->CountDir = CD;
         Dir->CountOther = CO;
@@ -126,7 +125,6 @@ FSM_DIR* fs_natfs_dir(const char Disk,const char* Path){
     kfree(listt);
 
     Dir->Ready = 1;
-    Dir->Count = CA;
     Dir->CountFiles = CF;
     Dir->CountDir = CD;
     Dir->CountOther = CO;

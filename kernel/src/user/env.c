@@ -18,18 +18,18 @@
 struct env system_environment = {0};
 
 void configure_env(){
-    system_environment.OS_VERSION_MAJOR = VERSION_MAJOR;                 ///< Версия ядра
-    system_environment.OS_VERSION_MINOR = VERSION_MINOR;                 ///< Пре-Релиз
-    system_environment.OS_VERSION_PATCH = VERSION_PATCH;                  ///< Патч
-    system_environment.DisplayAddress = getDisplayAddr();                     ///< Ссылка на виртуальный экран
-    system_environment.DisplayFrameBuffer_Address = getFrameBufferAddr();                     ///< Ссылка на виртуальный экран
-    system_environment.Display_W = getScreenWidth();                        ///< Длина экрана
-    system_environment.Display_H = getScreenHeight();                        ///< Высота экрана
-    system_environment.Display_B = getDisplayBpp();                        ///< Смещение экрана
-    system_environment.Display_P = getDisplayPitch();                        ///< Глубина экрана
-    system_environment.Display_S = getDisplaySize();                        ///< Размер буфера
-    system_environment.Ticks = getTicks();                            ///< Количество текущих тиков
-    system_environment.RAM_Install = phys_memory_size;                      ///< Установлено ОЗУ
-    system_environment.RAM_Used = used_phys_memory_size;                         ///< Использовано ОЗУ
-    system_environment.RAM_Free = phys_memory_size - used_phys_memory_size;                         ///< Свободно ОЗУ
+    system_environment.OS_VERSION_MAJOR = VERSION_MAJOR;                 /// Версия ядра
+    system_environment.OS_VERSION_MINOR = VERSION_MINOR;                 /// Пре-Релиз
+    system_environment.OS_VERSION_PATCH = VERSION_PATCH;                  /// Патч
+    system_environment.DisplayAddress = getDisplayAddr();                     /// Ссылка на виртуальный экран
+    system_environment.DisplayFrameBuffer_Address = getFrameBufferAddr();                     /// Ссылка на виртуальный экран
+    system_environment.Display_W = getScreenWidth();                        /// Длина экрана
+    system_environment.Display_H = getScreenHeight();                        /// Высота экрана
+    system_environment.Display_B = getDisplayBpp();                        /// Смещение экрана
+    system_environment.Display_P = getDisplayPitch();                        /// Глубина экрана
+    system_environment.Display_S = getDisplaySize();                        /// Размер буфера
+    system_environment.Ticks = getTicks();                            /// Количество текущих тиков
+    system_environment.RAM_Install = phys_memory_size;                      /// Установлено ОЗУ
+    system_environment.RAM_Used = used_phys_memory_size;                         /// Использовано ОЗУ
+    system_environment.RAM_Free = phys_memory_size - used_phys_memory_size;                         /// Свободно ОЗУ
 }

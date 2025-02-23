@@ -13,16 +13,16 @@
 #include <io/ports.h>
 #include <sys/cpuinfo.h>
 
-char brandAllName[128] = {0};                ///< Название процессора
+char brandAllName[128] = {0};                /// Название процессора
 
 
 #define tty_printf(M, ...)
 
-#define INTEL_MAGIC                     0x756e6547      ///< Ключ процессора Intel
-#define AMD_MAGIC                       0x68747541      ///< Ключ процессора AMD
-#define VMWARE_HYPERVISOR_MAGIC         0x564D5868      ///< Ключ гипервизора VMWare
-#define VMWARE_HYPERVISOR_PORT          0x5658          ///< Порт доступа данных к VMWare
-#define VMWARE_PORT_CMD_GETVERSION      10              ///< Версия управления VWMare
+#define INTEL_MAGIC                     0x756e6547      /// Ключ процессора Intel
+#define AMD_MAGIC                       0x68747541      /// Ключ процессора AMD
+#define VMWARE_HYPERVISOR_MAGIC         0x564D5868      /// Ключ гипервизора VMWare
+#define VMWARE_HYPERVISOR_PORT          0x5658          /// Порт доступа данных к VMWare
+#define VMWARE_PORT_CMD_GETVERSION      10              /// Версия управления VWMare
 
 
 #define VMWARE_PORT(cmd, eax, ebx, ecx, edx)                            \
@@ -106,7 +106,7 @@ char *Intel[] = {
     "Mobile Geniune Intel(R) processor",
     "Intel(R) Pentium(R) M processor",
     "Mobile Intel(R) Celeron(R) processor"
-}; ///< Лист-спецификаций Intel
+}; /// Лист-спецификаций Intel
 
 /**
  * @brief - Дополнительная таблица спецификаций Intel

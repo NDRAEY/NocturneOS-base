@@ -24,11 +24,11 @@ enum RTL8139_regs {
 
 // Ethernet II header (w/o VLAN 802.11Q tag)
 typedef struct {
-	uint16_t Header;		///< Заголовок (?)
-	uint16_t Size;			///< Размер пакета
-	char MAC_DEVICE[6];		///< Куда (на какой мак-устройства)
-	char MAC_SOURCE[6];		///< Источник (от какого мак-устройства)
-	uint16_t Type;			///< Тип источника
+	uint16_t Header;		/// Заголовок (?)
+	uint16_t Size;			/// Размер пакета
+	char MAC_DEVICE[6];		/// Куда (на какой мак-устройства)
+	char MAC_SOURCE[6];		/// Источник (от какого мак-устройства)
+	uint16_t Type;			/// Тип источника
 } __attribute__((packed)) EthernetPacked;
 
 void rtl8139_init();

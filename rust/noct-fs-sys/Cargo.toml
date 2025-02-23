@@ -1,7 +1,0 @@
-[package]
-name = "noct-fs-sys"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-noct-alloc = { path = "../noct-alloc" }
