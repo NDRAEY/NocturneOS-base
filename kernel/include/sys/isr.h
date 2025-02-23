@@ -2,6 +2,7 @@
 #define		ISR_H
 
 #include	"common.h"
+#include "sys/registers.h"
 
 #define		IRQ0	32
 #define		IRQ1	33

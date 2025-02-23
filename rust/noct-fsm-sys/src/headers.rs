@@ -10,29 +10,10 @@ pub const GB: u32 = 1073741824;
 pub const FSM_MOD_READ: u32 = 1;
 pub const FSM_MOD_WRITE: u32 = 2;
 pub const FSM_MOD_EXEC: u32 = 4;
+pub const FSM_TYPE_DIR: u32 = 5;
+pub const FSM_TYPE_FILE: u32 = 0;
 pub type size_t = u32;
 pub type ssize_t = i32;
-#[repr(C, packed)]
-#[derive(Debug, Copy, Clone)]
-pub struct registers {
-    pub ds: u32,
-    pub edi: u32,
-    pub esi: u32,
-    pub ebp: u32,
-    pub esp: u32,
-    pub ebx: u32,
-    pub edx: u32,
-    pub ecx: u32,
-    pub eax: u32,
-    pub int_num: u32,
-    pub err_code: u32,
-    pub eip: u32,
-    pub cs: u32,
-    pub eflags: u32,
-    pub useresp: u32,
-    pub ss: u32,
-}
-pub type registers_t = registers;
 #[repr(C, packed)]
 #[derive(Debug, Copy, Clone)]
 pub struct FSM_TIME {
@@ -62,7 +43,7 @@ pub struct FSM_DIR {
     pub CountFiles: size_t,
     pub CountDir: size_t,
     pub CountOther: size_t,
-    pub Files: *mut FSM_FILE,
+    pub Files: *const FSM_FILE,
 }
 pub type fsm_cmd_read_t = ::core::option::Option<
     unsafe extern "C" fn(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include	"common.h"
+#include    "sys/registers.h"
 #include	"lib/list.h"
 #include	"mem/pmm.h"
 

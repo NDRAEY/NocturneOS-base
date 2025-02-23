@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "sys/registers.h"
+
 void hda_init();
 void hda_reset();
 size_t hda_calculate_entries(size_t word);

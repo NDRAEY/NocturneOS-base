@@ -47,18 +47,6 @@ typedef	uint32_t		size_t;
 typedef	int32_t			ssize_t;
 #endif
 
-
-
-
-struct registers {
-    uint32_t	ds;
-    uint32_t	edi, esi, ebp, esp, ebx, edx, ecx, eax;
-    uint32_t	int_num, err_code;
-    uint32_t	eip, cs, eflags, useresp, ss;
-} __attribute__((packed));
-
-typedef	struct	registers	registers_t;
-
 // Use ON_NULLPTR macro to tell a user (developer) that he passed a nullptr
 #ifndef RELEASE
 #define ON_NULLPTR(ptr, code) \

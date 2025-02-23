@@ -148,11 +148,11 @@ void fs_fat32_dir(char Disk, const char* Path, FSM_DIR* out) {
         qemu_note("File: %s, Size: %d", Files[directory_count + file_count].Name, Files[directory_count + file_count].Size);
 
         if(file.advanced_info.attributes & ATTR_DIRECTORY) {
-            Files[directory_count + file_count].Type = 5;  // What an undocumented magic?
+            Files[directory_count + file_count].Type = FSM_TYPE_DIR;
 
             directory_count++;
         } else {
-            Files[directory_count + file_count].Type = 0;  // What an undocumented magic?
+            Files[directory_count + file_count].Type = FSM_TYPE_FILE;
 
             file_count++;
         }

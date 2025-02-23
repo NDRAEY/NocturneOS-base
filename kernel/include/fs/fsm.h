@@ -6,6 +6,9 @@
 #define FSM_MOD_WRITE 0x02u /// Права записи
 #define FSM_MOD_EXEC 0x04u  /// Права выполнения
 
+#define FSM_TYPE_DIR 5
+#define FSM_TYPE_FILE 0
+
 typedef struct
 {
 	uint16_t year;	/// Год
@@ -34,7 +37,7 @@ typedef struct
 	size_t CountFiles; /// Количество файлов
 	size_t CountDir;   /// Количество папок
 	size_t CountOther; /// Количество неизвестного типа файлов
-	FSM_FILE *Files;   /// Файлы и папки
+	const FSM_FILE *Files;   /// Файлы и папки
 } __attribute__((packed)) FSM_DIR;
 
 /// Буква, Название, откуда, сколько, буфер

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sys/registers.h"
 
 void keyboardHandler(registers_t regs);
 void* getCharKeyboardWait(bool use_int);

@@ -1,9 +1,10 @@
 [package]
-name = "noct-fsm-sys"
+name = "noct-logger"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-noct-logger = { path = "../noct-logger" }
+spin = "0.5.2"
+lazy_static = { version = "1.5.0", features = ["spin_no_std"] }

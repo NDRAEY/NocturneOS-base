@@ -9,6 +9,7 @@
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/isr.h"
+#include "sys/registers.h"
 #include "../../lib/libvector/include/vector.h"
 
 uint8_t hda_bus = 0,

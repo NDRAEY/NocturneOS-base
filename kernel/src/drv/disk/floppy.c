@@ -15,6 +15,7 @@
 #include "drv/disk/dpm.h"
 #include "io/tty.h"
 #include "sys/isr.h"
+#include "sys/registers.h"
 
 bool _FloppyDebug = false;
 

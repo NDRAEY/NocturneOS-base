@@ -2,6 +2,7 @@
 
 #include <common.h>
 #include <sys/timer.h>
+#include "sys/registers.h"
 
 #define PORT_COM1 0x3f8
 #define PORT_COM2 0x2F8
