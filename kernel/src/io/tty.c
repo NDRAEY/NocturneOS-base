@@ -195,11 +195,13 @@ void _tty_putchar(uint16_t c) {
         tty_line_fill[tty_pos_y] = tty_pos_x;
         tty_pos_x = 0;
 
+        tty_pos_y += tty_off_pos_h;
+        
         if ((tty_pos_y + tty_off_pos_h) >= (int) VESA_HEIGHT) {
             tty_scroll(1);
         }
-        
-        tty_pos_y += tty_off_pos_h;
+
+        punch();
     } else if (c == '\t') {
         tty_pos_x += 4 * tty_off_pos_h;
     } else if(c == '\b') {
