@@ -1,13 +1,9 @@
 extern crate alloc;
 
-use alloc::{boxed::Box, string::String};
-use core::{
-    cmp,
-    ffi::{c_int, CStr},
-};
-use noct_logger::*;
+use alloc::boxed::Box;
+use core::ffi::c_int;
 
-use crate::headers::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
+use crate::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
 
 impl FSM_FILE {
     pub fn with_data(

@@ -1,5 +1,6 @@
-use alloc::string::String;
-use alloc::vec::{self, Vec};
+use alloc::string::{String, ToString};
+use alloc::vec;
+use alloc::vec::Vec;
 
 use crate::{print, println};
 use crate::std::io::input::getchar;
@@ -12,7 +13,7 @@ struct ShellContext {
 impl ShellContext {
     fn new() -> Self {
         Self {
-            current_path: "R:\\".to_string()
+            current_path: "R:/".to_string()
         }
     }
 }
@@ -23,6 +24,10 @@ fn process_input() -> String {
     loop {
         let raw_ch = unsafe { getchar() };
         let ch = char::from_u32(raw_ch).unwrap();
+
+        if ch == '\0' {
+            continue;
+        }
 
         if ch == '\n' {
             break;
@@ -45,7 +50,7 @@ fn process_input() -> String {
 }
 
 #[no_mangle]
-pub fn new_nsh(argc: u32, argv: *const *const core::ffi::c_char) -> u32 {
+pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     let mut context = ShellContext::new();
 
     println!("Hello, world!");
@@ -62,21 +67,41 @@ pub fn new_nsh(argc: u32, argv: *const *const core::ffi::c_char) -> u32 {
         process_command(&mut context, raw_input);
     }
 
-    0
+    // Should be `0` but infinite loop broke my plans.
 }
 
 fn parse_commandline(raw_input: String) -> Vec<String> {
     let mut result = vec![];
     let mut current_command: String = String::new();
+    let mut collecting_raw = false;
 
-    for i in &raw_input {
-        // ...
+    for i in raw_input.chars() {
+        if !collecting_raw && i == ' ' {
+            if !current_command.is_empty() {
+                result.push(current_command.clone());
+                current_command.clear();
+            }
+            
+            continue;
+        }
+
+        if i == '\"' {
+            collecting_raw = !collecting_raw;
+        }
+
+        current_command.push(i);
+    }
+
+    if !current_command.is_empty() {
+        result.push(current_command.clone());
+        current_command.clear();
     }
 
     result
 }
 
-
 fn process_command(context: &mut ShellContext, raw_input: String) {
-    
+    let com = parse_commandline(raw_input);
+
+    println!("{:?}", com);
 }

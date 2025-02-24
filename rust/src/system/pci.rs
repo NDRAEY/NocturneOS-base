@@ -1,3 +1,6 @@
+#![allow(static_mut_ref)]
+#![allow(static_mut_refs)]
+
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
@@ -233,7 +236,6 @@ pub fn pci_get_vendor(bus: u8, slot: u8, function: u8) -> u16 {
 }
 
 #[no_mangle]
-#[allow(static_mut_refs)]
 pub fn pci_scan_everything() {
     unsafe {
         if PCI_DEVICES.get().is_none() {
@@ -392,7 +394,7 @@ pub fn pci_print_nth(
         func,
         vendor,
         device,
-        unsafe { PCI_DEVICE_TYPE_STRINGS }
+        PCI_DEVICE_TYPE_STRINGS
             .iter()
             .find(|x| x.0 == class && x.1 == subclass)
             .unwrap_or(&(0, 0, "Unknown"))

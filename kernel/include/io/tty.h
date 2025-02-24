@@ -16,8 +16,7 @@ void _tty_print(const char *format, va_list args);
 void _tty_printf(const char *text, ...);
 
 #define tty_print(format, args) _tty_print(format, args); punch()
-#define tty_puts(str) _tty_puts(str); punch()
-#define tty_putchar(c) _tty_putchar(c); punch()
+#define tty_puts(str) _tty_puts(str)//; punch()
 
 static inline void tty_printf(char *text, ...) {
     if (stateTTY){

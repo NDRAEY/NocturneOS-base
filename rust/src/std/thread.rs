@@ -51,7 +51,7 @@ extern "C" {
     ) -> *mut Thread;
 }
 
-pub fn spawn(f: fn() -> ()) {
+pub fn spawn(f: fn() -> ()) -> *mut Thread {
     let addr = f as usize;
 
     qemu_log!("Func: {:x}", addr);
@@ -60,12 +60,12 @@ pub fn spawn(f: fn() -> ()) {
         let proc = get_current_proc();
         qemu_log!("Proc: {:?}", proc);
 
-        let thread = thread_create(
+        thread_create(
             proc,
             addr, 
             64 << 10,
             true,
-            false);
+            false)
     }
     // f();
 }

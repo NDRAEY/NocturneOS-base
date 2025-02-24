@@ -8,7 +8,7 @@ fn main() {
     
     #[allow(deprecated)]
     let bindings = bindgen::Builder::default()
-        .header("../../kernel/include/drv/disk/dpm.h")
+        .header("../../kernel/include/fs/fsm.h")
         .clang_arg("-I../../kernel/include/")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .use_core()

@@ -35,7 +35,7 @@ int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
 int G_CLI_H_KYB = 1;
 int G_CLI_CURINXD = 17; /// Текущий диск
-char G_CLI_PATH[1024] = "R:\\";
+char G_CLI_PATH[1024] = "R:/";
 
 typedef struct
 {
@@ -325,10 +325,9 @@ uint32_t CLI_CMD_DIR(uint32_t c, char *v[])
         tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir->CountFiles, Dir->CountDir, Count);
         tty_printf("Размер папки: %d мб. | %d кб. | %d б.\n", (Sizes != 0 ? (Sizes / 1024 / 1024) : 0), (Sizes != 0 ? (Sizes / 1024) : 0), Sizes);
     }
-    /// Сначала чистим массив внутри массива
-    kfree(Dir->Files);
-    /// А потом только основной массив
-    kfree(Dir);
+    
+    nvfs_close_dir(Dir);
+    
     return 1;
 }
 

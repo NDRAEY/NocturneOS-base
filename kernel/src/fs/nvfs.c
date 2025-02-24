@@ -201,6 +201,15 @@ FSM_DIR* nvfs_dir(const char* Name){
 	return dir;
 }
 
+void nvfs_close_dir(FSM_DIR* dir) {
+	if(dir == NULL) {
+		return;
+	}
+
+	kfree(dir->Files);
+	kfree(dir);
+}
+
 /*
 
 void vnfs_test(){

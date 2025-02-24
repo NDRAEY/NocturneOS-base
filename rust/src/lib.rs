@@ -12,13 +12,9 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
-use alloc::{
-    boxed::Box,
-    string::{String, ToString},
-    vec,
-};
+use alloc::boxed::Box;
 use noct_alloc::Allocator;
-use noct_fsm_sys::headers::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TIME, FSM_TYPE_FILE};
+use noct_fsm_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
 pub use noct_logger::*;
 
 #[global_allocator]
@@ -41,43 +37,43 @@ pub extern "C" fn rust_main() {
 
     unsafe {
         unsafe extern "C" fn fun_read(
-            a: i8,
-            b: *const i8,
-            c: u32,
-            d: u32,
-            e: *mut core::ffi::c_void,
+            _a: i8,
+            _b: *const i8,
+            _c: u32,
+            _d: u32,
+            _e: *mut core::ffi::c_void,
         ) -> u32 {
             qemu_log!("Read!");
             todo!()
         }
 
         unsafe extern "C" fn fun_write(
-            a: i8,
-            b: *const i8,
-            c: u32,
-            d: u32,
-            e: *mut core::ffi::c_void,
+            _a: i8,
+            _b: *const i8,
+            _c: u32,
+            _d: u32,
+            _e: *mut core::ffi::c_void,
         ) -> u32 {
             qemu_log!("Write!");
             todo!()
         }
 
-        unsafe extern "C" fn fun_info(a: i8, b: *const i8) -> FSM_FILE {
+        unsafe extern "C" fn fun_info(_a: i8, _b: *const i8) -> FSM_FILE {
             qemu_log!("Info!");
             todo!()
         }
 
-        unsafe extern "C" fn fun_create(a: i8, b: *const i8, c: i32) -> i32 {
+        unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
             qemu_log!("Create!");
             todo!()
         }
 
-        unsafe extern "C" fn fun_delete(a: i8, b: *const i8, c: i32) -> i32 {
+        unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
             qemu_log!("Delete!");
             todo!()
         }
 
-        unsafe extern "C" fn fun_dir(a: i8, b: *const i8, out: *mut FSM_DIR) {
+        unsafe extern "C" fn fun_dir(_a: i8, _b: *const i8, out: *mut FSM_DIR) {
             let files = Box::new([
                 FSM_FILE::with_data(
                     "Ninjago lore.txt",
@@ -101,7 +97,7 @@ pub extern "C" fn rust_main() {
             *out = FSM_DIR::with_files(files);
         }
 
-        unsafe extern "C" fn fun_label(a: i8, b: *mut i8) {
+        unsafe extern "C" fn fun_label(_a: i8, b: *mut i8) {
             b.copy_from(FSNAME, 6);
             qemu_log!("Label!!");
         }
@@ -111,7 +107,7 @@ pub extern "C" fn rust_main() {
             1
         }
 
-        noct_fsm_sys::headers::fsm_reg(
+        noct_fsm_sys::fsm_reg(
             FSNAME,
             Some(fun_read),
             Some(fun_write),
@@ -123,7 +119,7 @@ pub extern "C" fn rust_main() {
             Some(fun_detect),
         );
 
-        noct_fsm_sys::headers::fsm_dpm_update(-1);
+        noct_fsm_sys::fsm_dpm_update(-1);
     }
 
     // print!("Type> ");

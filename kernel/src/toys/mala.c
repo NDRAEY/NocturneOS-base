@@ -117,10 +117,10 @@ void mala_control() {
     drawRect(0, 0, canvas_width, STATUSBAR_HEIGHT, 0x666666);
 
     draw_vga_str("Mala v0.2", 9, 16, 10, 0);
-    
+
     itoh(current_color, text_buffer);
     drawRect(100, 0, 2, STATUSBAR_HEIGHT, 0);
-    draw_vga_str(text_buffer, 6, 108, 10, 0);
+    draw_vga_str(text_buffer, strlen(text_buffer), 108, 10, 0);
 
     memset(text_buffer, 0, 16);
     itoa(cursor_pos_x, text_buffer);
