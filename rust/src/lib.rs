@@ -8,10 +8,15 @@ use core::panic::PanicInfo;
 pub mod audio;
 pub mod drv;
 pub mod gfx;
+pub mod shell;
 pub mod std;
 pub mod system;
 
-use alloc::{boxed::Box, string::{String, ToString}, vec};
+use alloc::{
+    boxed::Box,
+    string::{String, ToString},
+    vec,
+};
 use noct_alloc::Allocator;
 use noct_fsm_sys::headers::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TIME, FSM_TYPE_FILE};
 pub use noct_logger::*;
@@ -73,42 +78,36 @@ pub extern "C" fn rust_main() {
         }
 
         unsafe extern "C" fn fun_dir(a: i8, b: *const i8, out: *mut FSM_DIR) {
-            let files = Box::new([FSM_FILE::with_data(
-                "Ninjago lore.txt",
-                0,
-                1234,
-                None,
-                FSM_TYPE_FILE as _,
-                FSM_MOD_READ,
-            ),
-            FSM_FILE::with_data(
-                "Pokemon list.txt",
-                0,
-                1000,
-                None,
-                FSM_TYPE_FILE as _,
-                FSM_MOD_READ,
-            ),
-            FSM_FILE::with_data(
-                "WTF.txt",
-                0,
-                5678,
-                None,
-                FSM_TYPE_FILE as _,
-                FSM_MOD_READ,
-            )]);
+            let files = Box::new([
+                FSM_FILE::with_data(
+                    "Ninjago lore.txt",
+                    0,
+                    1234,
+                    None,
+                    FSM_TYPE_FILE as _,
+                    FSM_MOD_READ,
+                ),
+                FSM_FILE::with_data(
+                    "Pokemon list.txt",
+                    0,
+                    1000,
+                    None,
+                    FSM_TYPE_FILE as _,
+                    FSM_MOD_READ,
+                ),
+                FSM_FILE::with_data("WTF.txt", 0, 5678, None, FSM_TYPE_FILE as _, FSM_MOD_READ),
+            ]);
 
-            let dir = FSM_DIR::with_files(files);
-
-            *out = dir;
+            *out = FSM_DIR::with_files(files);
         }
 
         unsafe extern "C" fn fun_label(a: i8, b: *mut i8) {
             b.copy_from(FSNAME, 6);
             qemu_log!("Label!!");
         }
+
         unsafe extern "C" fn fun_detect(a: i8) -> i32 {
-            qemu_log!("Detect!");
+            qemu_log!("Detect! {}", char::from_u32(a as u32).unwrap());
             1
         }
 

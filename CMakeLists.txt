@@ -207,12 +207,12 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
+#set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(
        OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target i686-unknown-none.json -Zbuild-std 
+       COMMAND cargo rustc --target i686-unknown-none.json -Zbuild-std -Znext-lockfile-bump
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."
        DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
@@ -230,7 +230,7 @@ else()
 
 add_custom_command(
        OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target i686-unknown-none.json -Zbuild-std --release
+       COMMAND cargo rustc --target i686-unknown-none.json -Zbuild-std -Znext-lockfile-bump --release
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."
        DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
@@ -283,7 +283,7 @@ endif()
 
 add_custom_target(
 	clippy
-    COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --target i686-unknown-none.json -Zbuild-std 
+    COMMAND cargo clippy --target i686-unknown-none.json -Zbuild-std 
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
@@ -291,7 +291,7 @@ add_custom_target(
 
 add_custom_target(
 	fmt
-	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} fmt
+	COMMAND cargo fmt
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
@@ -299,7 +299,7 @@ add_custom_target(
 
 add_custom_target(
 	doc
-	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} doc
+	COMMAND cargo doc
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM

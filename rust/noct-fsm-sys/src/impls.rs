@@ -1,7 +1,10 @@
 extern crate alloc;
 
 use alloc::{boxed::Box, string::String};
-use core::{cmp, ffi::{c_int, CStr}};
+use core::{
+    cmp,
+    ffi::{c_int, CStr},
+};
 use noct_logger::*;
 
 use crate::headers::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
@@ -24,9 +27,7 @@ impl FSM_FILE {
             Path: [0; 1024],
             Mode: mode,
             Size: size,
-            LastTime: time.unwrap_or_else(|| unsafe {
-                core::mem::zeroed()
-            }),
+            LastTime: time.unwrap_or_else(|| unsafe { core::mem::zeroed() }),
             Type: typ,
             CHMOD: access,
         };
@@ -57,9 +58,7 @@ impl FSM_DIR {
             }
         }
 
-        let boxed = Box::new(files);
-
-        let ptr = Box::leak(boxed).as_ptr();
+        let ptr = Box::leak(files).as_ptr();
 
         let dir = FSM_DIR {
             Ready: true,

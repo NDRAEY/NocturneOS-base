@@ -662,6 +662,7 @@ uint32_t pavi_view(uint32_t, char **);
 // uint32_t minesweeper(uint32_t, char**);
 uint32_t shell_diskctl(uint32_t, char **);
 uint32_t calendar(uint32_t, char **);
+uint32_t new_nsh(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
     {"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
@@ -697,6 +698,7 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
     {"HEX", "hex", CLI_CMD_HEX, "Show hex data"},
     {"ST", "st", CLI_SPAWN_TEST, "spawn test"},
+    {"NSH", "nsh", new_nsh, "New NSH"},
     {nullptr, nullptr, nullptr}};
 
 int cli_handler_ebat(int argc, char **argv)
