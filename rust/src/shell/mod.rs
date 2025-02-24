@@ -1,8 +1,21 @@
 use alloc::string::String;
+use alloc::vec::{self, Vec};
 
 use crate::{print, println};
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
+
+struct ShellContext {
+    current_path: String
+}
+
+impl ShellContext {
+    fn new() -> Self {
+        Self {
+            current_path: "R:\\".to_string()
+        }
+    }
+}
 
 fn process_input() -> String {
     let mut input = String::with_capacity(16);
@@ -33,6 +46,8 @@ fn process_input() -> String {
 
 #[no_mangle]
 pub fn new_nsh(argc: u32, argv: *const *const core::ffi::c_char) -> u32 {
+    let mut context = ShellContext::new();
+
     println!("Hello, world!");
     unsafe { screen_update() };
 
@@ -43,8 +58,25 @@ pub fn new_nsh(argc: u32, argv: *const *const core::ffi::c_char) -> u32 {
         let raw_input = process_input();
 
         print!("\n");
-        println!("`{}`", raw_input);
+
+        process_command(&mut context, raw_input);
     }
 
     0
+}
+
+fn parse_commandline(raw_input: String) -> Vec<String> {
+    let mut result = vec![];
+    let mut current_command: String = String::new();
+
+    for i in &raw_input {
+        // ...
+    }
+
+    result
+}
+
+
+fn process_command(context: &mut ShellContext, raw_input: String) {
+    
 }
