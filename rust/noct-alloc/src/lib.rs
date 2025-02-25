@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use alloc::alloc::{GlobalAlloc, Layout};
+use alloc::{alloc::{GlobalAlloc, Layout}, borrow::ToOwned};
 use core::ffi::c_void;
 
 extern "C" {
@@ -18,6 +18,7 @@ unsafe impl GlobalAlloc for Allocator {
         if ptr.is_null() {
             panic!("Failed to allocate memory");
         }
+
         ptr as *mut u8
     }
 

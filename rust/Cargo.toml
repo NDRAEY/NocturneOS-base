@@ -17,6 +17,7 @@ noct-alloc = { path = "./noct-alloc" }
 noct-fsm-sys = { path = "./noct-fsm-sys" }
 noct-dpm-sys = { path = "./noct-dpm-sys" }
 noct-logger = { path = "./noct-logger" }
+noct-path = { path = "./noct-path" }
 iso9660_simple = "0.1.2"
 raw-cpuid = "11.4.0"
 
