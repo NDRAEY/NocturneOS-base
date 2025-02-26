@@ -23,8 +23,6 @@ syscall_fn_t* calls_table[NUM_CALLS] = {0};
  * @param regs - Регистр
  */
 void syscall_handler(volatile registers_t regs) {
-//	qemu_log("syscall: %d", regs.eax);
-
 	if (regs.eax >= NUM_CALLS) {
         qemu_err("Invalid system call: %d!", regs.eax);
 
@@ -33,6 +31,13 @@ void syscall_handler(volatile registers_t regs) {
     }
 
 	syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
+
+    if(entry_point == NULL) {
+        qemu_err("System call is not defined right now: %d", regs.eax);
+
+        __asm__ volatile("movl %0, %%eax" :: "r"(0));
+        return;
+    }
 
 	regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
 
