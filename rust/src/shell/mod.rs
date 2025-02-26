@@ -6,14 +6,16 @@ use crate::{print, println};
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
 
+use noct_path::Path;
+
 struct ShellContext {
-    current_path: String
+    current_path: Path
 }
 
 impl ShellContext {
     fn new() -> Self {
         Self {
-            current_path: "R:/".to_string()
+            current_path: Path::from_path("R:/").unwrap()
         }
     }
 }

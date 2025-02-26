@@ -3,7 +3,6 @@
 extern crate alloc;
 
 use alloc::{string::{String, ToString}, vec::Vec};
-use noct_logger::qemu_log;
 
 #[derive(Debug, Clone)]
 pub struct Path {
@@ -20,19 +19,13 @@ impl Path {
         }
     }
 
-    pub fn from_path(path: &str) -> Self {
-        Path {
+    pub fn from_path(path: &str) -> Option<Self> {
+        Some(Path {
             buffer: path.to_string()
-        }
+        })
     }
 
-    // pub fn apply(&mut self, path: &str) {
-        // ...
-    // }
-
-    pub fn parent(&mut self) -> &Self {
-        // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
-        
+    fn sep(&self) -> Vec<&str> {
         let mut stems: Vec<&str> = Vec::new();
 
         for i in self.buffer.split("/") {
@@ -41,11 +34,50 @@ impl Path {
             }
         }
 
+        stems
+    }
+
+    pub fn apply(&mut self, path: &str) -> &mut Self {
+        let mut stems: Vec<&str> = Vec::new();
+
+        for i in path.split("/") {
+            if !i.is_empty() {
+                stems.push(i);
+            }
+        }
+
+        for i in &stems {
+            if i == &".." {
+                let sep = self.sep();
+                self.buffer = sep[..sep.len() - 1].join("/") + "/";
+            } else if i == &"." {
+                // Do nothing
+            } else {
+                self.buffer += &(String::from(*i) + "/");
+            }
+        }
+
+        self
+    }
+
+    pub fn parent(&mut self) -> &mut Self {
+        // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
+        
+        // IDK why it doesn't work, it gives random string array.
+        let stems = self.sep();
+
         if stems.len() == 1 {
+            self.buffer = stems.join("/") + "/";
+
             return self;
         }
 
-        let finpath = stems[..stems.len() - 1].join("/");
+        let mut finpath = stems[..stems.len() - 1].join("/");
+
+        // If resulting path leads to root, we need to add some slash
+        if finpath.len() == 2 {
+            finpath += "/";
+        }
 
         self.buffer = finpath;
 

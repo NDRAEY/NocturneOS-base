@@ -63,7 +63,7 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
 
     char* cpubrand = kcalloc(1, cpubrand_length + 1);
 
-    get_cpu_brand(&cpubrand, NULL);
+    get_cpu_brand(cpubrand, NULL);
     
     clean_tty_screen();
 

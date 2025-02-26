@@ -123,13 +123,11 @@ pub extern "C" fn rust_main() {
     //     noct_fsm_sys::fsm_dpm_update(-1);
     // }
 
-    let mut p = Path::from_path("R:/1/2/3/");
+    let mut p = Path::from_path("R:/").unwrap();
     qemu_log!("{:?}", p);
-    qemu_log!("{:?}", p.parent());
-    qemu_log!("{:?}", p.parent());
-    qemu_log!("{:?}", p.parent());
-    qemu_log!("{:?}", p.parent());
-    qemu_log!("{:?}", p.parent());
+
+    p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
+    qemu_log!("{:?}", p);
 
     // crate::std::thread::spawn(move || {
     //     for i in (1..=16) {
