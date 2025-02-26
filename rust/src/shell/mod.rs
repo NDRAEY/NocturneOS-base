@@ -1,21 +1,32 @@
 use alloc::string::{String, ToString};
 use alloc::vec;
 use alloc::vec::Vec;
+use noct_logger::qemu_err;
 
-use crate::{print, println};
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
+use crate::{print, println};
 
 use noct_path::Path;
 
-struct ShellContext {
-    current_path: Path
+pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
+
+const COMMANDS: &[(&str, ShellCommand)] = &[("test", |ctx, a| {
+    println!("This is a test command!");
+    Ok(())
+}), ("test2", |ctx, a| {
+    println!("This is an another test command!");
+    Ok(())
+})];
+
+pub struct ShellContext {
+    current_path: Path,
 }
 
 impl ShellContext {
     fn new() -> Self {
         Self {
-            current_path: Path::from_path("R:/").unwrap()
+            current_path: Path::from_path("R:/").unwrap(),
         }
     }
 }
@@ -41,9 +52,9 @@ fn process_input() -> String {
             }
             continue;
         }
-                
+
         input.push(ch);
-        
+
         print!("{}", ch);
         unsafe { screen_update() };
     }
@@ -72,7 +83,7 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     // Should be `0` but infinite loop broke my plans.
 }
 
-fn parse_commandline(raw_input: String) -> Vec<String> {
+fn parse_commandline(raw_input: &str) -> Vec<String> {
     let mut result = vec![];
     let mut current_command: String = String::new();
     let mut collecting_raw = false;
@@ -83,7 +94,7 @@ fn parse_commandline(raw_input: String) -> Vec<String> {
                 result.push(current_command.clone());
                 current_command.clear();
             }
-            
+
             continue;
         }
 
@@ -103,7 +114,30 @@ fn parse_commandline(raw_input: String) -> Vec<String> {
 }
 
 fn process_command(context: &mut ShellContext, raw_input: String) {
-    let com = parse_commandline(raw_input);
+    let com = parse_commandline(&raw_input);
 
-    println!("{:?}", com);
+    if com.is_empty() {
+        return;
+    }
+
+    let (command, arguments) = (&com[0], if com.len() > 1 { &com[1..] } else { &[] });
+
+    let object = COMMANDS.iter().filter(|x| x.0 == command).last();
+
+    match object {
+        Some(descriptor) => {
+            let args: Vec<&str> = arguments.iter().map(String::as_str).collect();
+
+            let status = descriptor.1(context, args.as_slice());
+
+            if let Err(err) = status {
+                qemu_err!("Command `{:?}` did not exited successfully!!! (code: {})", command, err);
+            }
+        },
+        None => {
+            // TODO: Find a program and run it. (If possible)
+        }
+    }
+
+    println!("Command: `{}`, Arguments: {:?}", command, arguments);
 }
