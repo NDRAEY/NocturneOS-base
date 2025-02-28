@@ -14,7 +14,7 @@ pub mod system;
 
 use alloc::boxed::Box;
 use noct_alloc::Allocator;
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
+use noct_fs_sys::{file::File, nvfs_close_dir, FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
 pub use noct_logger::*;
 use noct_path::Path;
 
@@ -123,11 +123,27 @@ pub extern "C" fn rust_main() {
     //     noct_fsm_sys::fsm_dpm_update(-1);
     // }
 
-    let mut p = Path::from_path("R:/").unwrap();
-    qemu_log!("{:?}", p);
+    // let mut p = Path::from_path("R:/").unwrap();
+    // qemu_log!("{:?}", p);
 
-    p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
-    qemu_log!("{:?}", p);
+    // p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
+    // qemu_log!("{:?}", p);
+
+    unsafe {
+        let name = b"R:/\0";
+        let pr = noct_fs_sys::nvfs_dir(name.as_ptr() as *const _);
+        let fc = (*pr).CountDir + (*pr).CountFiles + (*pr).CountOther;
+        let files = core::slice::from_raw_parts((*pr).Files, fc as usize);
+
+        for nr in (0..fc) {
+            let rf = &files[nr as usize];
+            let file = File::from_fsm(rf);
+
+            qemu_log!("{:?}", file);
+        }
+
+        nvfs_close_dir(pr);
+    }
 
     // crate::std::thread::spawn(move || {
     //     for i in (1..=16) {

@@ -88,3 +88,9 @@ impl Path {
         &self.buffer
     }
 }
+
+impl ToString for Path {
+    fn to_string(&self) -> String {
+        self.buffer.clone()
+    }
+}

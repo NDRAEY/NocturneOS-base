@@ -9,15 +9,15 @@ use crate::{print, println};
 
 use noct_path::Path;
 
-pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
+pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 
-const COMMANDS: &[(&str, ShellCommand)] = &[("test", |ctx, a| {
+const COMMANDS: &[(&str, ShellCommand, Option<&str>)] = &[("test", |ctx, a| {
     println!("This is a test command!");
     Ok(())
-}), ("test2", |ctx, a| {
+}, None), ("test2", |ctx, a| {
     println!("This is an another test command!");
     Ok(())
-})];
+}, None)];
 
 pub struct ShellContext {
     current_path: Path,
@@ -126,9 +126,7 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
 
     match object {
         Some(descriptor) => {
-            let args: Vec<&str> = arguments.iter().map(String::as_str).collect();
-
-            let status = descriptor.1(context, args.as_slice());
+            let status = descriptor.1(context, arguments);
 
             if let Err(err) = status {
                 qemu_err!("Command `{:?}` did not exited successfully!!! (code: {})", command, err);

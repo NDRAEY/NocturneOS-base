@@ -6,4 +6,8 @@
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
+extern crate alloc;
+
 pub mod impls;
+pub mod dir;
+pub mod file;
