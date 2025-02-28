@@ -22,7 +22,7 @@ jobs:
           curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
 
       - name: Step 1.2 - Install toolchain
-        run: rustup toolchain install nightly-2023-04-11 && rustup component add rust-src --toolchain nightly-2023-04-11-x86_64-unknown-linux-gnu
+        run: rustup toolchain install nightly-2024-01-11 && rustup component add rust-src --toolchain nightly-2024-01-11-x86_64-unknown-linux-gnu
 
       - name: Step 2 - Configuring the kernel
         run: bash tools/build/make_builds.sh

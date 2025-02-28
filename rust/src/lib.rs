@@ -14,7 +14,7 @@ pub mod system;
 
 use alloc::boxed::Box;
 use noct_alloc::Allocator;
-use noct_fsm_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
+use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
 pub use noct_logger::*;
 use noct_path::Path;
 

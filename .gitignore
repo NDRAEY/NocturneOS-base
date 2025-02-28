@@ -10,7 +10,6 @@
 *.vhd
 *.tmp
 *.pcap
-.vscode/
 *.d
 /rust/target
 /rust/Cargo.lock
