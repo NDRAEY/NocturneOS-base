@@ -1,6 +1,6 @@
 extern crate alloc;
 
-use alloc::boxed::Box;
+use alloc::{boxed::Box, format, string::String};
 use core::ffi::c_int;
 
 use crate::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
@@ -65,5 +65,13 @@ impl FSM_DIR {
         };
 
         dir
+    }
+}
+
+impl FSM_TIME {
+    pub fn format(&self) -> String {
+        let yr = self.year;
+
+        format!("{}.{}.{} {}:{}:{}", self.day, self.month, yr, self.hour, self.minute, self.second)
     }
 }

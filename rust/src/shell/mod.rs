@@ -1,4 +1,4 @@
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use noct_logger::qemu_err;
@@ -9,15 +9,14 @@ use crate::{print, println};
 
 use noct_path::Path;
 
-pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
+pub mod dir;
 
-const COMMANDS: &[(&str, ShellCommand, Option<&str>)] = &[("test", |ctx, a| {
-    println!("This is a test command!");
-    Ok(())
-}, None), ("test2", |ctx, a| {
-    println!("This is an another test command!");
-    Ok(())
-}, None)];
+pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
+pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
+
+static COMMANDS: &[ShellCommandEntry] = &[
+    dir::DIR_COMMAND_ENTRY
+];
 
 pub struct ShellContext {
     current_path: Path,

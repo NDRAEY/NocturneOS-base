@@ -1,13 +1,10 @@
-use core::ops::Index;
-
-use alloc::{str, string::String, vec::Vec};
-use noct_logger::qemu_log;
+use alloc::{string::String, vec::Vec};
 
 use crate::FSM_FILE;
 
 #[derive(Debug)]
 pub struct File {
-    file: FSM_FILE,
+    pub file: FSM_FILE,
     pub name: String
 }
 

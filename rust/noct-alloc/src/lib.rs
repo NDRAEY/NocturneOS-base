@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use alloc::{alloc::{GlobalAlloc, Layout}, borrow::ToOwned};
+use alloc::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
 
 extern "C" {

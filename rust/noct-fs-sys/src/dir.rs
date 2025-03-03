@@ -1,6 +1,6 @@
 use alloc::string::{String, ToString};
 
-use crate::{file::File, nvfs_close_dir, nvfs_dir, FSM_FILE};
+use crate::{file::File, nvfs_close_dir, nvfs_dir};
 
 #[derive(Debug)]
 pub struct Directory {
@@ -9,7 +9,7 @@ pub struct Directory {
 }
 
 impl Directory {
-    pub fn from_path<PathPattern: ToString>(path: PathPattern) -> Option<Self> {
+    pub fn from_path<PathPattern: ToString>(path: &PathPattern) -> Option<Self> {
         let mut st = path.to_string();
         st.push('\0');
 

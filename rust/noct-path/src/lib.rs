@@ -28,7 +28,7 @@ impl Path {
     fn sep(&self) -> Vec<&str> {
         let mut stems: Vec<&str> = Vec::new();
 
-        for i in self.buffer.split("/") {
+        for i in self.buffer.split('/') {
             if !i.is_empty() {
                 stems.push(i);
             }

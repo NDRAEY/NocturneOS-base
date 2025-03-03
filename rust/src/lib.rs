@@ -12,11 +12,8 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
-use alloc::boxed::Box;
 use noct_alloc::Allocator;
-use noct_fs_sys::{file::File, nvfs_close_dir, FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE};
 pub use noct_logger::*;
-use noct_path::Path;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -27,8 +24,6 @@ fn panic(_info: &PanicInfo) -> ! {
     qemu_println!("{}", _info);
     loop {}
 }
-
-const FSNAME: *const i8 = b"LOLFS\0".as_ptr() as _;
 
 /// Main entry point for testing.
 #[no_mangle]
@@ -128,12 +123,6 @@ pub extern "C" fn rust_main() {
 
     // p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
     // qemu_log!("{:?}", p);
-
-    let dir = noct_fs_sys::dir::Directory::from_path("R:/aa").unwrap();
-
-    for file in dir {
-        qemu_note!("{}", file.name);
-    }
 
     // crate::std::thread::spawn(move || {
     //     for i in (1..=16) {
