@@ -147,7 +147,7 @@ int fs_tarfs_detect(const char Disk)
 	return (int)isTarFS;
 }
 
-bool fs_tarfs_dir_probe(const char Disk, const char* Path) {
+uint8_t fs_tarfs_dir_probe(const char Disk, const char* Path) {
 	TarFS_ROOT *initrd = dpm_metadata_read(Disk);
 	size_t pathlen = strlen(Path);
 
@@ -160,14 +160,16 @@ bool fs_tarfs_dir_probe(const char Disk, const char* Path) {
 			if(strncmp(name, Path, pathlen) == 0) {
 				char end = *(name + pathlen);
 
-				if(end == 0 || end == '/') {
-					return true;
+				if(end == 0) {
+					return TARFS_ELEM_TYPE_FILE;
+				} else if(end == '/') {
+					return TARFS_ELEM_TYPE_DIR;
 				}
 			}
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 void fs_tarfs_dir(const char Disk, const char *Path, FSM_DIR *out)
@@ -177,8 +179,9 @@ void fs_tarfs_dir(const char Disk, const char *Path, FSM_DIR *out)
 	// FSM_DIR *Dir = kcalloc(sizeof(FSM_DIR), 1);
 	TarFS_ROOT *initrd = dpm_metadata_read(Disk); // noalloc
 
-	bool ok = fs_tarfs_dir_probe(Disk, Path);
-	if(!ok) {
+	uint8_t type = fs_tarfs_dir_probe(Disk, Path);
+
+	if(type == 0) {
 		out->Ready = 0;
 		return;
 	}

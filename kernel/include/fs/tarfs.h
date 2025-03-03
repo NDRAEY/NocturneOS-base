@@ -9,6 +9,7 @@
 #define TARFS_ELEM_TYPE_DIR 53       /// Папка
 #define TARFS_ELEM_TYPE_PIPE 54      /// Канал (FIFO)
 
+
 /**
  * @brief Структура файла
  */
