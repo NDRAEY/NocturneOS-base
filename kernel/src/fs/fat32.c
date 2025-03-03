@@ -705,29 +705,6 @@ int fs_fat32_detect(char Disk) {
         fs_fat32_scan_directory(Disk, 2);
         qemu_warn("END SCANNING ROOT DIRECTORY");
 
-//        FSM_FILE inf = fs_fat32_info('C', "fight.tga");
-//
-//        char* temp = kcalloc(1, inf.Size);
-//        char* pix = kcalloc(1, 6 * MB);
-//        char* pix2 = kcalloc(1, 4 * MB);
-//
-//        fs_fat32_read(Disk, "fight.tga", 0, inf.Size, temp);
-//
-//        tga_extract_pixels_from_data(temp, pix);
-//
-//        size_t origw = 800, origh = 1245;
-//        size_t targw = 400, targh = 600;
-//
-//        scale_rgb_image(pix, origw, origh, targw, targh, 1, pix2);
-//
-//        draw_rgb_image(pix2, targw, targh, 32, 0, 0);
-//
-//        kfree(temp);
-//        kfree(pix);
-//        kfree(pix2);
-//
-//        while(1);
-
         return 1;
     }
 
