@@ -10,6 +10,7 @@ use crate::{print, println};
 use noct_path::Path;
 
 pub mod dir;
+pub mod cls;
 pub mod cd;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
@@ -17,6 +18,7 @@ pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 
 static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
+    cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY
 ];
 
