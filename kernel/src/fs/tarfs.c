@@ -147,12 +147,42 @@ int fs_tarfs_detect(const char Disk)
 	return (int)isTarFS;
 }
 
+bool fs_tarfs_dir_probe(const char Disk, const char* Path) {
+	TarFS_ROOT *initrd = dpm_metadata_read(Disk);
+	size_t pathlen = strlen(Path);
+
+	for (int i = 0; i < initrd->Count; i++)
+	{
+		const char* name = initrd->Files[i].Name;
+		size_t len = strlen(name);
+
+		if(len >= pathlen) {
+			if(strncmp(name, Path, pathlen) == 0) {
+				char end = *(name + pathlen);
+
+				if(end == 0 || end == '/') {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 void fs_tarfs_dir(const char Disk, const char *Path, FSM_DIR *out)
 {
 	if (tarfs_debug)
 		qemu_log("[FSM] [TarFS] [Info] Disk:%d | Path:%s", Disk, Path);
 	// FSM_DIR *Dir = kcalloc(sizeof(FSM_DIR), 1);
 	TarFS_ROOT *initrd = dpm_metadata_read(Disk); // noalloc
+
+	bool ok = fs_tarfs_dir_probe(Disk, Path);
+	if(!ok) {
+		out->Ready = 0;
+		return;
+	}
+
 	FSM_FILE *Files = kcalloc(sizeof(FSM_FILE), initrd->Count);
 
 	size_t CA = 0, CF = 0, CD = 0, CO = 0;

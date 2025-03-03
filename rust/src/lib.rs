@@ -129,7 +129,7 @@ pub extern "C" fn rust_main() {
     // p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
     // qemu_log!("{:?}", p);
 
-    let dir = noct_fs_sys::dir::Directory::from_path("R:/");
+    let dir = noct_fs_sys::dir::Directory::from_path("R:/aa").unwrap();
 
     for file in dir {
         qemu_note!("{}", file.name);

@@ -5,20 +5,25 @@ use crate::{file::File, nvfs_close_dir, nvfs_dir, FSM_FILE};
 #[derive(Debug)]
 pub struct Directory {
     path: String,
-    nvfs_ptr: *mut crate::FSM_DIR
+    nvfs_ptr: *mut crate::FSM_DIR,
 }
 
 impl Directory {
-    pub fn from_path<PathPattern: ToString>(path: PathPattern) -> Self {
+    pub fn from_path<PathPattern: ToString>(path: PathPattern) -> Option<Self> {
         let mut st = path.to_string();
         st.push('\0');
 
         let pr = unsafe { nvfs_dir(st.as_ptr() as *const _) };
+        let data = unsafe { *pr };
 
-        Self {
-            path: st,
-            nvfs_ptr: pr
+        if data.Ready == false {
+            return None;
         }
+
+        Some(Self {
+            path: st,
+            nvfs_ptr: pr,
+        })
     }
 }
 
@@ -32,7 +37,7 @@ impl Drop for Directory {
 
 pub struct DirectoryIter {
     dir: Directory,
-    index: usize
+    index: usize,
 }
 
 impl Iterator for DirectoryIter {
@@ -43,7 +48,7 @@ impl Iterator for DirectoryIter {
         let len = dir.CountDir + dir.CountFiles + dir.CountOther;
 
         let files = unsafe { core::slice::from_raw_parts(dir.Files, len as _) };
- 
+
         if self.index >= files.len() {
             return None;
         }
@@ -63,7 +68,7 @@ impl IntoIterator for Directory {
     fn into_iter(self) -> Self::IntoIter {
         DirectoryIter {
             dir: self,
-            index: 0
+            index: 0,
         }
     }
 }
