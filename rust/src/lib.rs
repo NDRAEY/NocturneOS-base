@@ -129,20 +129,10 @@ pub extern "C" fn rust_main() {
     // p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
     // qemu_log!("{:?}", p);
 
-    unsafe {
-        let name = b"R:/\0";
-        let pr = noct_fs_sys::nvfs_dir(name.as_ptr() as *const _);
-        let fc = (*pr).CountDir + (*pr).CountFiles + (*pr).CountOther;
-        let files = core::slice::from_raw_parts((*pr).Files, fc as usize);
+    let dir = noct_fs_sys::dir::Directory::from_path("R:/");
 
-        for nr in (0..fc) {
-            let rf = &files[nr as usize];
-            let file = File::from_fsm(rf);
-
-            qemu_log!("{:?}", file);
-        }
-
-        nvfs_close_dir(pr);
+    for file in dir {
+        qemu_note!("{}", file.name);
     }
 
     // crate::std::thread::spawn(move || {

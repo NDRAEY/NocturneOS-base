@@ -12,12 +12,8 @@ pub struct File {
 }
 
 impl File {
-    pub fn from_fsm(f: &FSM_FILE) -> Self {
-        let file = *f ;
-
-        let lsi = file.Name.binary_search(&0).unwrap();
-
-        qemu_log!("LSI: {}", lsi);
+    pub fn from_fsm(file: FSM_FILE) -> Self {
+        let lsi = file.Name.iter().position(|&a| a == 0).unwrap();
 
         let name_raw = &file.Name[..lsi];
         let prep: Vec<u8> = name_raw.iter().map(|a| *a as u8).collect();

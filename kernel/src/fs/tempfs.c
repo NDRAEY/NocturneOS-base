@@ -111,7 +111,7 @@ int fs_tempfs_tcache_update(const char Disk){
             tfs_log(" |     |     |     |--- Path: %s", __TCache__->Files[inx].Path);
             tfs_log(" |     |     |     |--- Size: %d", __TCache__->Files[inx].Size);
             tfs_log(" |     |     |     |--- Type: %s", (__TCache__->Files[inx].Type == TEMPFS_ENTITY_TYPE_FOLDER?"Folder":"File"));
-            //tfs_log(" |     |     |     |--- Date: %s\n", Files[count].LastTime);
+            tfs_log(" |     |     |     |--- Date: %s\n", Files[count].LastTime);
             tfs_log(" |     |     |     |--- CHMOD: 0x%x\n", __TCache__->Files[inx].CHMOD);
             tfs_log(" |     |     |--- Next!\n");
             inx++;
