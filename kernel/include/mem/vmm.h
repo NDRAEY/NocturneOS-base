@@ -50,3 +50,5 @@ SAYORI_INLINE void* kcalloc(size_t size, size_t amount) {
 
 	return x;
 }
+
+void heap_dump();

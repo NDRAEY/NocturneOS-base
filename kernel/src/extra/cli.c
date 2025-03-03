@@ -455,6 +455,8 @@ uint32_t CLI_MEMINFO(uint32_t argc, char *argv[])
     tty_printf("    %u записей\n", system_heap.allocated_count);
     tty_printf("    Используется: %u байт (%u MB)\n", system_heap.used_memory, system_heap.used_memory / MB);
 
+    heap_dump();
+
     return 0;
 }
 

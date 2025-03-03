@@ -145,23 +145,6 @@ void kHandlerCMD(char* cmd){
 }
 
 /**
- * @brief Монтирует виртуальный диск с файловой системой Sayori Easy File System
- *
- * @param irdst - Точка монтирования
- * @param irded - Конец точки монтирования
- */
-
-void initrd_sefs(size_t irdst, size_t irded){
-    if (initRD){
-        return;
-    }
-
-    qemu_log("[InitRD] [SEFS] Initialization of the virtual disk. The SEFS virtual file system is used.");
-    qemu_log("[InitRD] [SEFS] The virtual disk space is located at address %x.", irdst);
-    qemu_log("[InitRD] [SEFS] The virtual disk space is ends at %x.", irded);
-}
-
-/**
  * @brief Точка входа в ядро
  *
  * @param multiboot_header_t mboot - Информация MultiBoot
@@ -180,8 +163,6 @@ extern size_t BSS_end;
 extern void rust_main();
 extern void keyboard_buffer_init();
 extern void audio_system_init();
-extern void keyboard_buffer_put(uint32_t keycode);
-extern uint32_t keyboard_buffer_get();
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -260,11 +241,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
             &fs_tarfs_dir, &fs_tarfs_label, &fs_tarfs_detect);
     fsm_reg("FAT32", &fs_fat32_read, &fs_fat32_write, &fs_fat32_info, &fs_fat32_create, &fs_fat32_delete,
             &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
-    // fsm_reg("NatFS", &fs_natfs_read, &fs_natfs_write, &fs_natfs_info, &fs_natfs_create, &fs_natfs_delete,
-    //         &fs_natfs_dir, &fs_natfs_label, &fs_natfs_detect);
     fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
             &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
-    // fs_natfs_init();
 
     grub_modules_init(mboot);
     
@@ -324,13 +302,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     bootScreenPaint("Настройка FDT...");
     file_descriptors_init();
 
-    char* btitle = 0;
-
-    asprintf(&btitle, "Создание виртуального диска (%u kb.)...", ramdisk_size/1024);
-
-    bootScreenPaint(btitle);
-    kfree(btitle);
-
     __createRamDisk();
     
     bootScreenPaint("Настройка системных вызовов...");
@@ -387,10 +358,6 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     }
     
     tty_printf("Processors: %d\n", system_processors_found);
-
-    // FIXME: WOW! We can write into 0!
-    //	*((volatile int*)0) = 0x12345678;
-    //	qemu_log("Data: %x", *((volatile int*)0));
     
     if (test_network) {
         _tty_printf("Listing network cards:\n");
@@ -403,7 +370,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
             _tty_printf("\tName: %s\n", entry->name);
             entry->get_mac_addr(mac_buffer);
     
-            _tty_printf("\tMAC address: %v:%v:%v:%v:%v:%v\n",
+            _tty_printf("\tMAC address: %x:%x:%x:%x:%x:%x\n",
                         mac_buffer[0],
                         mac_buffer[1],
                         mac_buffer[2],
