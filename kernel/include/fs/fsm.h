@@ -44,16 +44,16 @@ typedef struct
 typedef size_t (*fsm_cmd_read_t)(const char letter, const char *name, size_t offset, size_t count, void *buffer);
 
 /// Буква, Название, куда, сколько, буфер
-typedef size_t (*fsm_cmd_write_t)(const char letter, const char *, size_t, size_t, void *);
+typedef size_t (*fsm_cmd_write_t)(const char letter, const char *path, size_t offset, size_t count, const void *buffer);
 
 /// Буква, Название
-typedef FSM_FILE (*fsm_cmd_info_t)(const char letter, const char *);
+typedef FSM_FILE (*fsm_cmd_info_t)(const char letter, const char *path);
 
 /// Буква, Название
 typedef void (*fsm_cmd_dir_t)(const char letter, const char *, FSM_DIR *out);
 
 /// Буква, Название, Тип (0 - файл | 1 - папка)
-typedef int (*fsm_cmd_create_t)(const char letter, const char *, int);
+typedef int (*fsm_cmd_create_t)(const char letter, const char *path, int type);
 
 /// Буква, Название, Тип (0 - файл | 1 - папка)
 typedef int (*fsm_cmd_delete_t)(const char letter, const char *path, int);

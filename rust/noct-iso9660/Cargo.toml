@@ -1,0 +1,9 @@
+[package]
+name = "noct-iso9660"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iso9660_simple = "0.1.2"
+noct-fs-sys = { path = "../noct-fs-sys" }
+noct-logger = { path = "../noct-logger" }

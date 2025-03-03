@@ -7,7 +7,7 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [ "noct-alloc", "noct-dpm-sys", "noct-fs-sys", "noct-logger", "noct-path"]
+members = [ "noct-alloc", "noct-dpm-sys", "noct-fs-sys", "noct-iso9660", "noct-logger", "noct-path"]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
@@ -18,7 +18,7 @@ noct-fs-sys = { path = "./noct-fs-sys" }
 noct-dpm-sys = { path = "./noct-dpm-sys" }
 noct-logger = { path = "./noct-logger" }
 noct-path = { path = "./noct-path" }
-iso9660_simple = "0.1.2"
+noct-iso9660 = { path = "./noct-iso9660" }
 raw-cpuid = "11.4.0"
 
 [profile.release]

@@ -1,3 +1,4 @@
+#![allow(unknown_lints)]
 #![allow(static_mut_ref)]
 #![allow(static_mut_refs)]
 
