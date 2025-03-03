@@ -2,9 +2,10 @@
 
 extern crate alloc;
 
-use alloc::{boxed::Box, format, vec::Vec};
+use alloc::{string::String, vec::Vec};
+use iso9660_simple::helpers::{self, get_directory_entry_by_path};
 use noct_dpm_sys::Disk;
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_FILE, FSM_TYPE_DIR};
+use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
 use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
@@ -20,31 +21,99 @@ impl iso9660_simple::Read for ThatDisk {
     }
 }
 
-unsafe extern "C" fn fun_read(
-    _a: i8,
-    _b: *const i8,
-    _c: u32,
-    _d: u32,
-    _e: *mut core::ffi::c_void,
-) -> u32 {
-    qemu_log!("Read!");
-    todo!()
+fn raw_ptr_to_string(ptr: *const i8) -> String {
+    let rpath = unsafe {
+        core::slice::from_raw_parts(ptr as *const u8, {
+            let mut ln = 0;
+
+            loop {
+                let byte = ptr.add(ln).read_volatile();
+
+                if byte == 0 {
+                    break;
+                }
+
+                ln += 1;
+            }
+
+            ln
+        })
+    };
+
+    return String::from_utf8(rpath.to_vec()).unwrap();
 }
 
-unsafe extern "C" fn fun_write(
-    _a: i8,
-    _b: *const i8,
-    _c: u32,
-    _d: u32,
-    _e: *const core::ffi::c_void,
+unsafe extern "C" fn fun_read(
+    letter: i8,
+    path: *const i8,
+    offset: u32,
+    count: u32,
+    buffer: *mut i8,
 ) -> u32 {
+    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
+
+    let rpath = raw_ptr_to_string(path);
+
+    let entry = get_directory_entry_by_path(&mut fl, &rpath);
+
+    if entry.is_none() {
+        return 0;
+    }
+
+    let entries = entry.unwrap();
+
+    let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
+
+    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let rd = dev.read(
+        0,
+        ((entries.record.lba.lsb * 2048) + offset) as u64,
+        count as usize,
+        outbuf,
+    );
+
+    qemu_log!("Read!");
+
+    rd as _
+}
+
+unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const i8) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_info(_a: i8, _b: *const i8) -> FSM_FILE {
-    qemu_log!("Info!");
-    todo!()
+unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
+    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
+
+    let rpath = raw_ptr_to_string(path);
+
+    qemu_note!("Path: {:?}", &rpath);
+
+    let entry = get_directory_entry_by_path(&mut fl, &rpath);
+
+    qemu_note!("Data: {:?}", &entry);
+
+    if entry.is_none() {
+        return core::mem::zeroed();
+    }
+
+    let entry = entry.unwrap();
+    let ftype = if entry.is_folder() {
+        FSM_TYPE_DIR
+    } else {
+        FSM_TYPE_FILE
+    };
+
+    FSM_FILE::with_data(
+        entry.name,
+        0,
+        entry.record.data_length.lsb,
+        None,
+        ftype as _,
+        FSM_MOD_READ,
+    )
 }
 
 unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
@@ -69,50 +138,23 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
         qemu_println!("{}", i.name);
     }
 
-    let files: Vec<FSM_FILE> = root.iter().map(|elem| {
-        FSM_FILE::with_data(
-            elem.name.clone(),
-            0,
-            elem.record.data_length.lsb,
-            None,
-            if elem.is_folder() {
-                FSM_TYPE_DIR
-            } else {
-                FSM_TYPE_FILE
-            } as _,
-            FSM_MOD_READ,
-        )
-    }).collect();
-
-    // let files = Box::new([
-    //     FSM_FILE::with_data(
-    //         "Ninjago lore.txt",
-    //         0,
-    //         1234,
-    //         None,
-    //         FSM_TYPE_FILE as _,
-    //         FSM_MOD_READ,
-    //     ),
-    //     FSM_FILE::with_data(
-    //         "Pokemon list.txt",
-    //         0,
-    //         1000,
-    //         None,
-    //         FSM_TYPE_FILE as _,
-    //         FSM_MOD_READ,
-    //     ),
-    //     FSM_FILE::with_data(
-    //         format!(
-    //             "Youre listing !{}!.txt",
-    //             char::from_u32(letter as u32).unwrap()
-    //         ),
-    //         0,
-    //         5678,
-    //         None,
-    //         FSM_TYPE_FILE as _,
-    //         FSM_MOD_READ,
-    //     ),
-    // ]);
+    let files: Vec<FSM_FILE> = root
+        .iter()
+        .map(|elem| {
+            FSM_FILE::with_data(
+                elem.name.clone(),
+                0,
+                elem.record.data_length.lsb,
+                None,
+                if elem.is_folder() {
+                    FSM_TYPE_DIR
+                } else {
+                    FSM_TYPE_FILE
+                } as _,
+                FSM_MOD_READ,
+            )
+        })
+        .collect();
 
     let files = files.into_boxed_slice();
 
