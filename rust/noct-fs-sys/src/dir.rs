@@ -25,6 +25,12 @@ impl Directory {
             nvfs_ptr: pr,
         })
     }
+
+    pub fn is_accessible<PathPattern: ToString>(path: &PathPattern) -> bool {
+        let dir = Directory::from_path(path);
+        
+        dir.is_some()
+    }
 }
 
 impl Drop for Directory {

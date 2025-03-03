@@ -10,12 +10,14 @@ use crate::{print, println};
 use noct_path::Path;
 
 pub mod dir;
+pub mod cd;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 
 static COMMANDS: &[ShellCommandEntry] = &[
-    dir::DIR_COMMAND_ENTRY
+    dir::DIR_COMMAND_ENTRY,
+    cd::CD_COMMAND_ENTRY
 ];
 
 pub struct ShellContext {
@@ -65,11 +67,11 @@ fn process_input() -> String {
 pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     let mut context = ShellContext::new();
 
-    println!("Hello, world!");
+    println!("nsh v0.1.0\n");
     unsafe { screen_update() };
 
     loop {
-        print!("> ");
+        print!("{}> ", context.current_path.as_str());
         unsafe { screen_update() };
 
         let raw_input = process_input();

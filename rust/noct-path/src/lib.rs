@@ -49,7 +49,10 @@ impl Path {
         for i in &stems {
             if i == &".." {
                 let sep = self.sep();
-                self.buffer = sep[..sep.len() - 1].join("/") + "/";
+
+                if sep.len() > 1 {
+                    self.buffer = sep[..sep.len() - 1].join("/") + "/";
+                }
             } else if i == &"." {
                 // Do nothing
             } else {

@@ -14,6 +14,7 @@ pub mod system;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
+use noct_path::Path;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -120,6 +121,7 @@ pub extern "C" fn rust_main() {
 
     // let mut p = Path::from_path("R:/").unwrap();
     // qemu_log!("{:?}", p);
+    // qemu_log!("{:?}", p.apply(".."));
 
     // p.apply("1/2/../3/.././4/5/6"); // 1/4/5/6
     // qemu_log!("{:?}", p);
