@@ -7,6 +7,17 @@ enable_language(C ASM)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;ReleaseOptimized;ReleaseOptimizedSSE" CACHE STRING "Available configurations" FORCE)
 
+set(VALID_ARCHITECTURES "x86" "x86_64")
+
+if(NOT NOCTURNE_ARCH)
+  set(NOCTURNE_ARCH "x86")
+endif()
+
+list(FIND VALID_ARCHITECTURES "${NOCTURNE_ARCH}" __INDEX)
+if(__INDEX EQUAL -1)
+  message(FATAL_ERROR "Invalid architecture: ${NOCTURNE_ARCH}. Accepted values are: ${VALID_ARCHITECTURES}")
+endif()
+
 option(NOCTURNE_USE_CLANG "Use Clang compiler for building" OFF)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "LANG=en_US.UTF-8 ${COMMAND}")
