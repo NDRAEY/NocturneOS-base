@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-iso9660_simple = "0.1.2"
+iso9660_simple = "0.1.5"
+noct-dpm-sys = { path = "../noct-dpm-sys" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }

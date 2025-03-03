@@ -18,6 +18,7 @@ pub static PORT_COM7: u16 = 0x5E8;
 pub static PORT_COM8: u16 = 0x4E8;
 
 lazy_static! {
+    // pub static QEMU: SerialWriter = SerialWriter { port: PORT_COM1 };
     pub static ref QEMU: Mutex<SerialWriter> = Mutex::new(SerialWriter { port: PORT_COM1 });
 }
 
@@ -27,6 +28,7 @@ extern "C" {
 
 #[doc(hidden)]
 pub fn _print_qemu(args: fmt::Arguments) {
+    // QEMU.write_fmt(args).unwrap();
     QEMU.lock().write_fmt(args).unwrap();
 }
 

@@ -13,6 +13,7 @@ pub mod std;
 pub mod system;
 
 use noct_alloc::Allocator;
+use noct_dpm_sys::get_disk;
 pub use noct_logger::*;
 use noct_path::Path;
 
@@ -21,8 +22,8 @@ static ALLOCATOR: Allocator = noct_alloc::Allocator;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
+    qemu_err!("{}", _info);
     println!("{}", _info);
-    qemu_println!("{}", _info);
     loop {}
 }
 

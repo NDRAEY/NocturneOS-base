@@ -1,19 +1,20 @@
 extern crate alloc;
 
-use alloc::{boxed::Box, format, string::String};
+use alloc::{boxed::Box, format, string::{String, ToString}};
 use core::ffi::c_int;
 
 use crate::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
 
 impl FSM_FILE {
-    pub fn with_data(
-        name: &str,
+    pub fn with_data<T: ToString>(
+        name: T,
         mode: core::ffi::c_int,
         size: size_t,
         time: Option<FSM_TIME>,
         typ: c_int,
         access: u32,
     ) -> Self {
+        let name = name.to_string();
         let name_bytes = name.as_bytes();
         let max_len = name_bytes.len().min(1024);
 

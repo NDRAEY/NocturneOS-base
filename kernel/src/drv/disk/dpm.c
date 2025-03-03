@@ -35,7 +35,7 @@ int dpm_searchFreeIndex(int Index) {
 	return -1;
 }
 
-void dpm_fnc_write(char Letter, dpm_disk_rw_cmd Read, dpm_disk_rw_cmd Write) {
+void dpm_fnc_write(char Letter, dpm_disk_read_cmd Read, dpm_disk_write_cmd Write) {
 	int Index = Letter - 65;
 
 	Index = (Index > 32 ? Index - 32 : Index);
@@ -80,7 +80,7 @@ void dpm_metadata_write(char Letter, uint32_t Addr){
  * 
  * @return Кол-во прочитанных байт
  */
-size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, void *Buffer){
+size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, char *Buffer){
 	int Index = Letter - 65;
 
 	Index = (Index > 32 ? Index - 32 : Index);
@@ -121,7 +121,7 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
  * 
  * @return size_t - Кол-во записанных байт
  */
-size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, char* Buffer){
+size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const char* Buffer){
 	int Index = Letter - 65;
 
 	Index = (Index > 32 ? Index - 32 : Index);
