@@ -117,7 +117,7 @@ uint32_t CLI_CMD_DISKPART(uint32_t c, char *v[])
 
 uint32_t CLI_CMD_CAT(uint32_t c, char *v[])
 {
-    if (c == 0 || (c == 1 && (strcmpn(v[1], "/?"))))
+    if (c == 0 || (c == 1 && (strcmp(v[1], "/?") == 0)))
     {
         _tty_printf("Данная программа выводит содержимое файла.\n");
         _tty_printf("Пример:\"CAT R:\\Sayori\\motd\".\n");
@@ -367,7 +367,7 @@ uint32_t CLI_CMD_RUN(uint32_t c, char *v[])
 
 uint32_t CLI_CMD_ECHO(uint32_t c, char *v[])
 {
-    if (c == 1 && (strcmpn(v[1], "/?")))
+    if (c == 1 && (strcmp(v[1], "/?") == 0))
     {
         _tty_printf("Данная команда выводит сообщение на экран, а также переменные.\n");
         _tty_printf("\n");

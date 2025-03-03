@@ -330,7 +330,7 @@ TarFS_File tarfs_infoFile(TarFS_ROOT *r, const char *name)
 {
 	for (int i = 1; i < r->Count; i++)
 	{
-		if (!strcmpn(r->Files[i].Name, name))
+		if (strcmp(r->Files[i].Name, name))
 			continue;
 		return r->Files[i];
 	}

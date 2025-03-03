@@ -2,6 +2,8 @@
     "files.associations": {
         "bitset": "c",
         "algorithm": "c",
-        "format": "c"
+        "format": "c",
+        "ports.h": "c",
+        "env.h": "c"
     }
 }

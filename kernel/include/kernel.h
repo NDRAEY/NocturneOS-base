@@ -1,16 +1,12 @@
 #pragma		once
 
 #include <common.h>
-
 #include <version.h>
-
 #include <stdarg.h>
 
 #if USE_SSE
 #include <emmintrin.h>
 #endif
-
-#include "config.h"
 
 #include "lib/string.h"
 #include "lib/stdlib.h"
@@ -40,7 +36,6 @@
 #include <io/status_loggers.h>
 #include <io/tty.h>
 
-#include <drv/vfs_new.h>
 #include <drv/input/keyboard.h>
 #include <drv/input/mouse.h>
 
