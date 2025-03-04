@@ -13,9 +13,7 @@ pub mod std;
 pub mod system;
 
 use noct_alloc::Allocator;
-use noct_dpm_sys::get_disk;
 pub use noct_logger::*;
-use noct_path::Path;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -26,8 +24,6 @@ fn panic(_info: &PanicInfo) -> ! {
     println!("{}", _info);
     loop {}
 }
-
-extern { fn fs_iso9660_init(); }
 
 /// Main entry point for testing.
 #[no_mangle]

@@ -48,7 +48,7 @@ void init_task_manager(void){
 	kernel_proc->page_dir = kernel_page_directory;
 	kernel_proc->list_item.list = nullptr;
 	kernel_proc->threads_count = 1;
-	strcpy(kernel_proc->name, "Kernel");
+	strcpy((char*)kernel_proc->name, "Kernel");
 	kernel_proc->suspend = false;
 
 	list_add(&process_list, &kernel_proc->list_item);

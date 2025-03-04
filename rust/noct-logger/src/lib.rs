@@ -108,7 +108,7 @@ impl fmt::Write for SerialWriter {
         let mut buffer = String::from(s);
         buffer.push('\x00');
         unsafe {
-            __com_writeString(self.port, buffer.as_bytes().as_ptr() as *const u8);
+            __com_writeString(self.port, buffer.as_ptr());
         }
         Ok(())
     }

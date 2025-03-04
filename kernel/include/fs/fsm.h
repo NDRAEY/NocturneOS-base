@@ -83,7 +83,7 @@ typedef struct
 void fsm_init();
 int fsm_getIDbyName(const char *Name);
 size_t fsm_read(int FIndex, char DIndex, const char *Name, size_t Offset, size_t Count, void *Buffer);
-size_t fsm_write(int FIndex, char DIndex, const char *Name, size_t Offset, size_t Count, void *Buffer);
+size_t fsm_write(int FIndex, char DIndex, const char *Name, size_t Offset, size_t Count, const void *Buffer);
 FSM_FILE fsm_info(int FIndex, char DIndex, const char *Name);
 void fsm_reg(const char *Name, fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cmd_info_t Info, fsm_cmd_create_t Create, fsm_cmd_delete_t Delete, fsm_cmd_dir_t Dir, fsm_cmd_label_t Label, fsm_cmd_detect_t Detect);
 int fsm_delete(int FIndex, char DIndex, const char *Name, int Mode);

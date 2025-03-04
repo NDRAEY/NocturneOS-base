@@ -48,10 +48,10 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
 
     let glyph = unsafe { core::slice::from_raw_parts(raw_glyph, psf_h as usize) };
 
-    for y in 0..unsafe { psf_h } as usize {
+    for (y, row) in glyph.iter().enumerate().take(unsafe { psf_h } as usize) {
         let rposy = pos_y + y;
         for (x, mask) in mask.iter().enumerate() {
-            if (glyph[y] & mask) != 0 {
+            if (row & mask) != 0 {
                 unsafe { set_pixel((pos_x + x) as u32, rposy as u32, color) };
             }
         }

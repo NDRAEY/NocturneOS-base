@@ -72,6 +72,7 @@ void ps2_keyboard_init() {
     }
 
     size_t scancode = ps2_read() & 0b11;
+    (void)scancode;
 
     qemu_note("SCANCODE SET: %d", scancode);
 

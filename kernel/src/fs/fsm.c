@@ -119,7 +119,7 @@ int fsm_delete(int FIndex, const char DIndex, const char* Name, int Mode) {
 	return fsm->Delete(DIndex, Name, Mode);
 }
 
-size_t fsm_write(int FIndex, const char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer){
+size_t fsm_write(int FIndex, const char DIndex, const char* Name, size_t Offset, size_t Count, const void* Buffer){
     vector_result_t res = vector_get(fsm_entries, FIndex);
 	
     if (res.error) {
@@ -139,7 +139,9 @@ FSM_FILE fsm_info(int FIndex,const char DIndex, const char* Name){
     vector_result_t res = vector_get(fsm_entries, FIndex);
 
 	if (res.error) {
-        if (fsm_debug) qemu_log("[FSM] [INFO] READY == 0");
+        if (fsm_debug) {
+            qemu_log("[FSM] [INFO] READY == 0");
+        }
 		return (FSM_FILE){};
 	}
     

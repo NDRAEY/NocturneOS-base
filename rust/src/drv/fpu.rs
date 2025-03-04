@@ -5,7 +5,7 @@ static mut FPU_INITIALIZED: bool = false;
 /// Возвращает статус FPU
 #[no_mangle]
 pub extern "C" fn fpu_is_initialized() -> bool {
-    return unsafe { FPU_INITIALIZED };
+    unsafe { FPU_INITIALIZED }
 }
 
 /// Для инициализации FPU

@@ -40,7 +40,7 @@ impl Path {
     pub fn apply(&mut self, path: &str) -> &mut Self {
         let mut stems: Vec<&str> = Vec::new();
 
-        for i in path.split("/") {
+        for i in path.split('/') {
             if !i.is_empty() {
                 stems.push(i);
             }

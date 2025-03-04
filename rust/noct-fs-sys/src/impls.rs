@@ -57,15 +57,13 @@ impl FSM_DIR {
 
         let ptr = Box::leak(files).as_ptr();
 
-        let dir = FSM_DIR {
+        FSM_DIR {
             Ready: true,
             CountFiles: files_c,
             CountDir: dirs,
             CountOther: other,
             Files: ptr as *mut FSM_FILE,
-        };
-
-        dir
+        }
     }
 }
 

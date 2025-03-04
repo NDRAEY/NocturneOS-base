@@ -30,7 +30,7 @@ pub fn tty_puts(s: &str) {
     buffer.push('\0');
 
     unsafe {
-        _tty_puts(buffer.as_str().as_bytes().as_ptr());
+        _tty_puts(buffer.as_bytes().as_ptr());
     }
 }
 

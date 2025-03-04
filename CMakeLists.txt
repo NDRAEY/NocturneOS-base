@@ -314,7 +314,7 @@ endif()
 
 add_custom_target(
 	clippy
-    COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --target i686-unknown-none.json -Zbuild-std 
+    COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --target ${RUST_TARGET} ${RUST_FLAGS}
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM

@@ -59,7 +59,8 @@ SAYORI_INLINE unsigned char get_RTC_register(int32_t reg) {
  * @brief Считывает время с CMOS
  */
 void read_rtc() {
-    while (get_update_in_progress_flag());          // Make sure an update isn't in progress
+    while (get_update_in_progress_flag())
+        ;          // Make sure an update isn't in progress
 
 	cmos_second = get_RTC_register(0x00);
     cmos_minute = get_RTC_register(0x02);

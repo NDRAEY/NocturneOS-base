@@ -16,7 +16,7 @@ impl Directory {
         let pr = unsafe { nvfs_dir(st.as_ptr() as *const _) };
         let data = unsafe { *pr };
 
-        if data.Ready == false {
+        if !data.Ready {
             return None;
         }
 

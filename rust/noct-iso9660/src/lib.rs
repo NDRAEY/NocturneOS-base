@@ -3,7 +3,7 @@
 extern crate alloc;
 
 use alloc::{string::String, vec::Vec};
-use iso9660_simple::helpers::{self, get_directory_entry_by_path};
+use iso9660_simple::helpers::get_directory_entry_by_path;
 use noct_dpm_sys::Disk;
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
 use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
@@ -40,7 +40,7 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
         })
     };
 
-    return String::from_utf8(rpath.to_vec()).unwrap();
+    String::from_utf8(rpath.to_vec()).unwrap()
 }
 
 unsafe extern "C" fn fun_read(

@@ -362,10 +362,8 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
             *slot_ret = dev.slot;
             *func_ret = dev.function;
 
-            break;
+            return 1;
         }
-
-        return 1;
     }
 
     *bus_ret = 0xff;
