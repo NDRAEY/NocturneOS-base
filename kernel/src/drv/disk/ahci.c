@@ -339,10 +339,6 @@ void ahci_irq_handler() {
             uint32_t port_interrupt_status = port->interrupt_status;
 
             port->interrupt_status = port_interrupt_status;
-
-            // if(port_interrupt_status == 0) {
-            //     continue;
-            // }
         }
     }
 }

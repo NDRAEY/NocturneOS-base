@@ -219,11 +219,13 @@ add_executable(${KERNEL} ${SRC})
 # Rust
 
 set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
+set(RUST_TARGET "i686-unknown-none.json")
+set(RUST_FLAGS -Zbuild-std -Znext-lockfile-bump)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(
        OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target i686-unknown-none.json -Zbuild-std -Znext-lockfile-bump
+       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS}
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."
        DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
@@ -237,11 +239,29 @@ add_dependencies(${KERNEL} rs)
 
 target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
 
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+
+add_custom_command(
+       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a" "fake.a"
+       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile release_no_opt
+       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+       COMMENT "Building Rust files..."
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+       USES_TERMINAL
+       VERBATIM
+)
+
+add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+add_dependencies(${KERNEL} rs)
+
+target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+
 else()
 
 add_custom_command(
        OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target i686-unknown-none.json -Zbuild-std -Znext-lockfile-bump --release
+       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --release
        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
        COMMENT "Building Rust files..."
        DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"

@@ -37,8 +37,8 @@ uint8_t* pages_bitmap = 0;
 bool paging_initialized = false;
 
 /**
- * @brief Выделяет одну страницу физической памяти (4096 байт)
- * @return Физический адрес страницы
+ * @brief Allocates a single page (4096 bytes)
+ * @return Physical address of page
  */
 physical_addr_t phys_alloc_single_page() {
 	if(used_phys_memory_size >= phys_memory_size) {
@@ -241,32 +241,9 @@ uint32_t * new_page_directory() {
 	// Blank it (they can store garbage, so we need to blank it)
 	memset(dir, 0, 4096);
 
-//	uint32_t page_table = phys_alloc_single_page();
-//
-//	dir[PD_INDEX((uint32_t)dir)] = page_table | 3;
-//
-//	((uint32_t*)page_table)[PT_INDEX((uint32_t)dir)] = (uint32_t)dir | 3;
-
-	dir[1023] = (uint32_t)dir | 3;
-
-//	for(int i = 0; i < 1024; i++) {
-//		uint32_t addr = phys_alloc_single_page();
-//		uint32_t* pt = (uint32_t*)addr;
-//
-//		for(int j = 0; j < 1024; j++) {
-//			pt[j] = 0;
-//		}
-//
-//		dir[i] = addr | 3;
-//
-//		((uint32_t*)(dir[PD_INDEX(addr)] & ~0x3ff))[PT_INDEX(addr)] = addr | 3;
-//	}
-
 	qemu_log("Blanked directory.");
-//	qemu_log("================ Mapping a page directory");
-
-	// Self-map page
-//	map_single_page(dir, (uint32_t)dir, (uint32_t)dir, PAGE_WRITEABLE);
+	
+	dir[1023] = (uint32_t)dir | 3;
 
 	qemu_log("================ Page directory is ready.");
 

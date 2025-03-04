@@ -847,11 +847,8 @@ int fs_tempfs_detect(const char Disk){
 void fs_tempfs_format(const char Disk){
     tfs_log("\n[>] Formatting for TempFS has started...\n");
     /// Создаем данные для записи
-    TEMPFS_BOOT* boot = malloc(sizeof(TEMPFS_BOOT));
-    TEMPFS_ENTITY* tmp = malloc(sizeof(TEMPFS_ENTITY));
-    /// Заполняем данные нулями
-    memset(boot, 0, sizeof(TEMPFS_BOOT));
-    memset(tmp, 0, sizeof(TEMPFS_ENTITY));
+    TEMPFS_BOOT* boot = calloc(1, sizeof(TEMPFS_BOOT));
+    TEMPFS_ENTITY* tmp = calloc(1,sizeof(TEMPFS_ENTITY));
 
     /// Заполняем базовую информацию
     boot->Sign1 = 0x7246;
@@ -896,8 +893,8 @@ void fs_tempfs_format(const char Disk){
     tmp->CHMOD |= TEMPFS_CHMOD_READ | TEMPFS_CHMOD_WRITE | TEMPFS_CHMOD_SYS; /// Ставим биты, чтения, записи и системы
     tmp->Status = TEMPFS_ENTITY_STATUS_READY;
     tmp->Type   = TEMPFS_ENTITY_TYPE_FOLDER;
-    memcpy(tmp->Name, "/", strlen("/"));
-    memcpy(tmp->Path, "/", strlen("/"));
+    memcpy(tmp->Name, "/", 1);
+    memcpy(tmp->Path, "/", 1);
     memcpy(tmp->Owner, "root", strlen("root"));
 
     int root_write = fs_tempfs_func_writeEntity(Disk, 0, tmp);
