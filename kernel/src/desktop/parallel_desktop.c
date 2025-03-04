@@ -117,7 +117,7 @@ void parallel_desktop_start() {
 
     qemu_log("Root window! at %x", root_window);
 
-    Widget_t* wallpaper = new_widget_image("R:\\Sayori\\bg.tga");
+    Widget_t* wallpaper = new_widget_image("R:/ParallelData/background.tga");
     window_add_widget(root_window, wallpaper);
 
     qemu_log("Wallpaper for it...");

@@ -16,18 +16,9 @@
 heap_t system_heap;
 bool vmm_debug = false;
 
-// size_t pmm_alloc_and_map(size_t* page_dir, size_t virtual_addr, size_t bytes) {
-//	size_t count = (bytes + 1) / PAGE_SIZE;
-//	size_t pages = phys_alloc_multi_pages(count);
-//
-//	map_pages(page_dir, pages, virtual_addr, bytes, PAGE_WRITEABLE);
-//
-//	return pages;
-// }
-
 size_t pmm_alloc_and_map_self(size_t *page_dir, size_t bytes)
 {
-	size_t count = (bytes + 1) / PAGE_SIZE;
+	size_t count = ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE;
 	size_t pages = phys_alloc_multi_pages(count);
 
 	map_pages(page_dir, pages, pages, bytes, PAGE_WRITEABLE);
@@ -115,7 +106,7 @@ void *alloc_no_map(size_t size, size_t align)
 			system_heap.memory[i + 1].address = curend;
 			system_heap.memory[i + 1].length = size;
 
-			mem = (void *)system_heap.memory[i + 1].address;
+			mem = (void *)curend;
 
 			goto ok;
 		}
@@ -163,8 +154,9 @@ void free_no_map(void *ptr)
 		}
 	}
 
-	if (!found)
+	if (!found) {
 		return;
+  }
 
 	system_heap.used_memory -= system_heap.memory[i].length;
 
@@ -273,7 +265,7 @@ struct heap_entry *heap_get_block_ref(size_t address)
 	{
 		if (system_heap.memory[i].address == address)
 		{
-			return &(system_heap.memory[i]);
+			return system_heap.memory + i;
 		}
 	}
 
