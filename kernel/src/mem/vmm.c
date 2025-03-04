@@ -192,14 +192,15 @@ void *kmalloc_common(size_t size, size_t align)
 
 	for (size_t i = 0; i <= ALIGN(size, 4096); i += PAGE_SIZE)
 	{
+		size_t curaddr = reg_addr + i;
 		size_t region = phys_get_page_data(get_kernel_page_directory(),
-										   reg_addr); // is allocated region there?
+										   curaddr); // is allocated region there?
 
 		if (!region)
 		{
 			if (vmm_debug)
 			{
-				qemu_warn("Region is not yet mapped: %x", reg_addr);
+				qemu_warn("Region is not yet mapped: %x", curaddr);
 			}
 
 			size_t page = phys_alloc_single_page();
@@ -211,7 +212,7 @@ void *kmalloc_common(size_t size, size_t align)
 
 			map_single_page(get_kernel_page_directory(),
 							page,
-							reg_addr,
+							curaddr,
 							PAGE_WRITEABLE);
 
 			if (vmm_debug)
@@ -223,11 +224,9 @@ void *kmalloc_common(size_t size, size_t align)
 		{
 			if (vmm_debug)
 			{
-				qemu_warn("Already mapped: %x (Size: %d)", reg_addr, size);
+				qemu_warn("Already mapped: %x (Size: %d)", curaddr, size);
 			}
 		}
-
-		reg_addr += PAGE_SIZE;
 	}
 
 	if (vmm_debug)
@@ -244,8 +243,6 @@ bool vmm_is_page_used_by_entries(size_t address)
 	{
 		size_t start = system_heap.memory[i].address & ~0xfff;
 		size_t end = ALIGN(system_heap.memory[i].address + system_heap.memory[i].length, PAGE_SIZE);
-
-		//		qemu_log("[%x => %x] %x => %x", system_heap.memory[i].address, system_heap.memory[i].address + system_heap.memory[i].length, start, end);
 
 		if (address >= start && address < end)
 		{
