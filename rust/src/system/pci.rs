@@ -385,7 +385,7 @@ pub fn pci_print_nth(
     func: u8,
 ) {
     print!(
-        "{}:{}:{}:{}.{}: {:x}:{:x} -> {}",
+        "- {}:{}:{}:{}.{}: {:x}:{:x} -> {}",
         class,
         subclass,
         bus,
@@ -412,7 +412,7 @@ pub fn pci_print_nth(
     let bar5 = pci_read32(bus, slot, func, 0x10 + (5 * 4));
 
     print!(
-        "\nAddresses: [{:x}, {:x}, {:x}, {:x}, {:x}, {:x}]",
+        "\n  Addresses: [{:08x}, {:08x}, {:08x}, {:08x}, {:08x}, {:08x}]",
         bar0, bar1, bar2, bar3, bar4, bar5
     );
 

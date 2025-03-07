@@ -9,6 +9,7 @@
 #include "sys/scheduler.h"
 #include "desktop/widget_progress.h"
 #include "sys/timer.h"
+#include "lib/sprintf.h"
 
 extern Window_t* focused;
 

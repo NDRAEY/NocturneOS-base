@@ -96,6 +96,8 @@ impl Heap<'_> {
             return None;
         }
 
+        qemu_note!("{}", offset);
+
         // Two cases: no alignment offset vs. offset required.
         if offset == 0 {
             // No offset needed; behave like the simple split.
@@ -122,6 +124,7 @@ impl Heap<'_> {
             // 2. The allocated block starting at aligned address with size `size`.
             // 3. Possibly a remainder free block if there's extra space.
             let remainder = block.size - offset - size;
+            qemu_note!("Remainder: {}", remainder);
             if remainder > 0 {
                 // Need to insert two extra entries: one for the allocated block and one for the remainder.
                 // Shift entries starting at idx+1 by 2.
@@ -195,6 +198,7 @@ impl Heap<'_> {
         let len = self.metazone.len();
 
         for i in 0..len {
+            qemu_note!("[{}; {}] {:?}", size, alignment, &self.metazone[i]);
             if self.metazone[i].is_used == false {
                 if let Some(x) = self.split_idx(size, alignment, i) {
                     return Some(self.metazone[x].address);
@@ -203,7 +207,21 @@ impl Heap<'_> {
         }
 
         None
-    }     
+    }
+
+    pub fn free_no_unmap(&mut self, address: usize) -> Result<(), ()> {
+        let len = self.metazone.len();
+
+        for i in 0..len {
+            qemu_note!("{} ? {}", self.metazone[i].address, address);
+            if self.metazone[i].address == address {
+                self.metazone[i].is_used = false;
+                return Ok(());
+            }
+        }
+
+        Err(())
+    }
 
     pub fn shift_entries_to_right(&mut self, idx: usize) {
         for i in (idx..self.total_entries).rev() {
