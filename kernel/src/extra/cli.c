@@ -346,7 +346,6 @@ uint32_t CLI_CMD_RUN(uint32_t c, char *v[])
 
     if (!elf_exec)
     {
-        fclose(elf_exec);
         tty_error("\"%s\" не является внутренней или внешней\n командой, исполняемой программой или пакетным файлом.\n", path);
         return 2;
     }

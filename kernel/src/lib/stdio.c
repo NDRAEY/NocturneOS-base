@@ -183,7 +183,7 @@ FILE* fopen_binmode(const char* filename, size_t mode) {
        // Получаем тип открытого файла
        FSM_FILE finfo = nvfs_info(filename);
        if (finfo.Ready == 0 || mode == 0) {
-        //kfree(file);
+        kfree(file);
         qemu_err("Failed to open file: %s (Exists: %d; FMODE: %d)",
                        filename,
                        finfo.Ready,

@@ -43,6 +43,14 @@ void vmm_init()
 
 	qemu_log("CAPACITY: %d", system_heap.capacity);
 	qemu_log("MEMORY AT: %x", (size_t)system_heap.memory);
+
+	// void* al1 = kmalloc_common(16, 1);
+	// void* al2 = kmalloc_common(16, 1);
+	// void* al3 = kmalloc_common(16, 1);
+	// void* al4 = kmalloc_common(16, 1);
+	// void* al5 = kmalloc_common(16, 1);
+
+	// qemu_log("%x %x %x %x %x", al1, al2, al3, al4, al5);
 }
 
 void heap_dump()
@@ -73,9 +81,13 @@ void *alloc_no_map(size_t size, size_t align)
 {
 	void *mem = 0;
 
+	int bestindex = 0;
+	size_t bestsize = 0xFFFFFFFF;
+	size_t bestaddress = 0;
+
 	if (system_heap.allocated_count == 0)
 	{
-		mem = (void *)system_heap.start;
+		bestaddress = system_heap.start;
 
 		system_heap.memory[0].address = system_heap.start;
 		system_heap.memory[0].length = size;
@@ -89,6 +101,44 @@ void *alloc_no_map(size_t size, size_t align)
 		while (1)
 			;
 	}
+
+	// for (int i = 0; i < system_heap.allocated_count; i++)
+	// {
+	// 	struct heap_entry cur = system_heap.memory[i];
+	// 	struct heap_entry next = system_heap.memory[i + 1];
+
+	// 	size_t curend = cur.address + cur.length;
+
+	// 	if (align)
+	// 	{
+	// 		curend = ALIGN(curend, align);
+	// 	}
+
+	// 	if (next.address == 0)
+	// 	{
+	// 		system_heap.memory[i + 1].address = curend;
+	// 		system_heap.memory[i + 1].length = size;
+
+	// 		mem = (void *)curend;
+
+	// 		goto ok;
+	// 	}
+	// 	else if (curend + size <= next.address)
+	// 	{
+	// 		// Ok!
+
+	// 		for (size_t j = system_heap.allocated_count; j > i; j--)
+	// 		{
+	// 			system_heap.memory[j] = system_heap.memory[j - 1];
+	// 		}
+
+	// 		mem = (void *)(curend);
+	// 		system_heap.memory[i + 1].address = curend;
+	// 		system_heap.memory[i + 1].length = size;
+
+	// 		goto ok;
+	// 	}
+	// }
 
 	for (int i = 0; i < system_heap.allocated_count; i++)
 	{
@@ -104,11 +154,9 @@ void *alloc_no_map(size_t size, size_t align)
 
 		if (next.address == 0)
 		{
-			system_heap.memory[i + 1].address = curend;
-			system_heap.memory[i + 1].length = size;
-
-			mem = (void *)curend;
-
+			bestaddress = curend;
+			bestindex = i + 1;
+			
 			goto ok;
 		}
 		else if (curend + size <= next.address)
@@ -120,15 +168,22 @@ void *alloc_no_map(size_t size, size_t align)
 				system_heap.memory[j] = system_heap.memory[j - 1];
 			}
 
-			mem = (void *)(curend);
-			system_heap.memory[i + 1].address = curend;
-			system_heap.memory[i + 1].length = size;
+			size_t nextaddr = curend + size;
+
+			if (nextaddr < bestsize) {
+				bestaddress = curend;
+				bestindex = i + 1;
+			}
 
 			goto ok;
 		}
 	}
+	ok:
 
-ok:
+	system_heap.memory[bestindex].address = bestaddress;
+	system_heap.memory[bestindex].length = size;
+
+	mem = (void *)bestaddress;
 
 	system_heap.allocated_count++;
 	system_heap.used_memory += size;
@@ -181,7 +236,7 @@ void *kmalloc_common(size_t size, size_t align)
 		return 0;
 	}
 
-	size_t reg_addr = (size_t)allocated & ~0xfff;
+	size_t reg_addr = (size_t)allocated & ~0xfffu;
 
 	for (size_t i = 0; i <= ALIGN(size, 4096); i += PAGE_SIZE)
 	{
