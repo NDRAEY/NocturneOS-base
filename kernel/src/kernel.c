@@ -50,8 +50,8 @@ void kHandlerCMD(char *);
 void autoexec()
 {
     variable_write("HOSTNAME", "SAYORISOUL");
-    variable_write("SYSTEMROOT", "R:\\Sayori\\");
-    variable_write("TEMP", "T:\\");
+    variable_write("SYSTEMROOT", "R:/Sayori/");
+    variable_write("TEMP", "T:/");
     variable_write("USERNAME", "OEM");
     variable_write("BUILDUSER", "OEM");
     variable_write("BUILDDATA", __TIMESTAMP__);
@@ -277,7 +277,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     kernel_start_time = getTicks();
 
     mtrr_init();
-    text_init("R:\\Sayori\\Fonts\\UniCyrX-ibm-8x16.psf");
+    text_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
     // /Sayori/Fonts/UniCyrX-ibm-8x16.psf
 
     qemu_log("Initializing the virtual video memory manager...");
@@ -458,7 +458,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     tty_printf("System initialized everything at: %.2f seconds.\n", (double)(getTicks() - kernel_start_time) / getFrequency());
 
     // char* args[] = {};
-    // spawn("R:\\hellors", 0, args);
+    // spawn("R:/hellors", 0, args);
 
     cli();
 

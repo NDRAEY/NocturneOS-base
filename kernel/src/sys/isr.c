@@ -29,6 +29,11 @@ void irq_handler(registers_t regs){
 
     if (interrupt_handlers[regs.int_num] != 0){
         isr_t handler = interrupt_handlers[regs.int_num];
+
+        if(!handler) {
+            return;
+        }
+
         handler(regs);
     }
 }

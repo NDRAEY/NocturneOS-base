@@ -19,4 +19,6 @@ int nvfs_delete(const char* Name, int Mode);
 size_t nvfs_write(const char* Name, size_t Offset, size_t Count, const void *Buffer);
 FSM_FILE nvfs_info(const char* Name);
 FSM_DIR* nvfs_dir(const char* Name);
+void nvfs_dir_v2(const char* Name, FSM_DIR* out);
 void nvfs_close_dir(FSM_DIR* dir);
+void nvfs_close_dir_v2(FSM_DIR* dir);

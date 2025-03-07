@@ -3,7 +3,7 @@
 
 extern crate alloc;
 
-use core::{cell::OnceCell, panic::PanicInfo};
+use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
 
 pub mod audio;
 pub mod drv;
@@ -23,6 +23,9 @@ static ALLOCATOR: Allocator = noct_alloc::Allocator;
 fn panic(_info: &PanicInfo) -> ! {
     qemu_err!("{}", _info);
     println!("{}", _info);
+    unsafe {
+        asm!("hlt");
+    }
     loop {}
 }
 
@@ -47,17 +50,17 @@ pub extern "C" fn rust_main() {
     //     }
     // })
 
-    unsafe { GLOBAL_KERNEL_HEAP.set(Heap::with_entry_count(0x500_0000, 1024, 1024)) }.unwrap();
-    let mut heap: &mut Heap<'_> = unsafe { GLOBAL_KERNEL_HEAP.get_mut().unwrap() };
+    // unsafe { GLOBAL_KERNEL_HEAP.set(Heap::with_entry_count(0x500_0000, 1024, 1024)) }.unwrap();
+    // let mut heap: &mut Heap<'_> = unsafe { GLOBAL_KERNEL_HEAP.get_mut().unwrap() };
     
-    let block1 = heap.alloc_no_map(0x12, 1).unwrap();
-    let block2 = heap.alloc_no_map(6, 16).unwrap();
+    // let block1 = heap.alloc_no_map(0x12, 1).unwrap();
+    // let block2 = heap.alloc_no_map(6, 16).unwrap();
 
-    heap.free_no_unmap(block2).unwrap();
+    // heap.free_no_unmap(block2).unwrap();
 
-    let block3 = heap.alloc_no_map(6, 16).unwrap();
+    // let block3 = heap.alloc_no_map(6, 16).unwrap();
 
-    qemu_note!("{:x} ({:x} = {:x})", block1, block2, block3);
+    // qemu_note!("{:x} ({:x} = {:x})", block1, block2, block3);
 
     // let x = unsafe { GLOBAL_KERNEL_HEAP.get().unwrap() };
 

@@ -37,7 +37,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	qemu_log("Decoding name: %s (%x)", Name, Name);
 
 	// Is path header valid?
-	bool is_valid_delim = struntil(Name, ':') == 1 && (struntil(Name, '\\') == 2 || struntil(Name, '/') == 2);
+	bool is_valid_delim = struntil(Name, ':') == 1 && (struntil(Name, '/') == 2);
 
 	if (!is_valid_delim) {
 		goto end;
@@ -46,7 +46,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	// Disk is always first letter of the path.
 	info->Disk = Name[0];
 
-	qemu_log("Disk: %d", info->Disk);
+	qemu_log("Disk: %c", info->Disk);
 
 
 	// Now cut a rest of path with trailing \ (or /)
@@ -190,15 +190,33 @@ FSM_DIR* nvfs_dir(const char* Name){
 	
 	FSM_DIR* dir = kcalloc(sizeof(FSM_DIR), 1);
 
-	if (vinfo->Ready != 1) {
+	if (!vinfo->Ready) {
 		goto end;
 	}
 
 	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
+
+	new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
 	
 	end:
 	kfree(vinfo);
 	return dir;
+}
+
+void nvfs_dir_v2(const char* Name, FSM_DIR* dir) {
+	NVFS_DECINFO* vinfo = nvfs_decode(Name);
+	
+	if (!vinfo->Ready) {
+		dir->Ready = 0;
+		goto end;
+	}
+
+	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
+
+	new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
+	
+	end:
+	kfree(vinfo);
 }
 
 void nvfs_close_dir(FSM_DIR* dir) {
@@ -209,6 +227,15 @@ void nvfs_close_dir(FSM_DIR* dir) {
 	kfree(dir->Files);
 	kfree(dir);
 }
+
+void nvfs_close_dir_v2(FSM_DIR* dir) {
+	if(dir == NULL) {
+		return;
+	}
+
+	kfree(dir->Files);
+}
+
 
 /*
 

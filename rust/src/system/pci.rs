@@ -416,7 +416,7 @@ pub fn pci_print_nth(
         bar0, bar1, bar2, bar3, bar4, bar5
     );
 
-    println!("");
+    println!();
 }
 
 #[no_mangle]

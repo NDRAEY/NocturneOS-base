@@ -1,5 +1,6 @@
 use alloc::string::{String, ToString};
-use noct_fs_sys::FSM_TYPE_DIR;
+use noct_fs_sys::{file::File, FSM_TYPE_DIR};
+use noct_logger::qemu_note;
 
 use crate::println;
 
@@ -19,6 +20,8 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
 
     let dir = noct_fs_sys::dir::Directory::from_path(&path);
 
+    // qemu_note!("{:?}", dir);
+
     if dir.is_none() {
         println!("`{}` read error", path);
         return Err(1);
@@ -28,7 +31,7 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
 
     println!("Listing directory: `{}`\n", path);
 
-    for file in dir {
+    for file in &dir {
         let fdatetime = file.file.LastTime;
         let ftype = file.file.Type;
         let fsize = file.file.Size;

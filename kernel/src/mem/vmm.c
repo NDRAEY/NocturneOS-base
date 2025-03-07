@@ -173,6 +173,7 @@ void free_no_map(void *ptr)
 
 void *kmalloc_common(size_t size, size_t align)
 {
+	size += 16;
 	void *allocated = alloc_no_map(size, align);
 
 	if (!allocated)
