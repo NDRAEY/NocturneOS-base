@@ -9,9 +9,10 @@
 // Charmander - a new virtual memory manager by NDRAEY (c) 2023
 // for SayoriOS
 
-#include "../../include/mem/vmm.h"
-#include "../../include/mem/pmm.h"
+#include "mem/vmm.h"
+#include "mem/pmm.h"
 #include "io/ports.h"
+#include "lib/math.h"
 
 heap_t system_heap;
 bool vmm_debug = false;
@@ -173,7 +174,6 @@ void free_no_map(void *ptr)
 
 void *kmalloc_common(size_t size, size_t align)
 {
-	size += 16;
 	void *allocated = alloc_no_map(size, align);
 
 	if (!allocated)
@@ -329,6 +329,29 @@ void kfree(void *ptr)
 	//	qemu_ok("OK!");
 }
 
+#ifdef LAZY_KREALLOC
+void *krealloc(void *ptr, size_t memory_size)
+{
+	if(!ptr) {
+		return 0;
+	}
+
+	struct heap_entry *block = heap_get_block_ref((size_t)ptr);
+	if (!block) {
+		return 0;
+	}
+
+	void* newptr = kmalloc(memory_size);
+
+	if(!newptr) {
+		return 0;
+	}
+
+	memcpy(newptr, ptr, MIN(memory_size, block->length));
+
+	return newptr;
+}
+#else
 void *krealloc(void *ptr, size_t memory_size)
 {
 	if (!ptr)
@@ -452,6 +475,7 @@ void *krealloc(void *ptr, size_t memory_size)
 
 	return (void *)block->address;
 }
+#endif
 
 /**
  * @brief Копирует адресное пространство ядра в новое адресное пространство

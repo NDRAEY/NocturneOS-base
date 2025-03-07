@@ -296,37 +296,37 @@ uint32_t CLI_CMD_DIR(uint32_t c, char *v[])
 {
     const char *path = (c == 1 ? G_CLI_PATH : v[1]);
 
-    FSM_DIR *Dir = nvfs_dir(path);
-    qemu_log("Ready is: %d", Dir->Ready);
-    qemu_log("Sizeof: %d", sizeof(FSM_DIR));
+    FSM_DIR Dir = {};
 
-    if (Dir->Ready != 1)
+    nvfs_dir_v2(path, &Dir);
+
+    if (!Dir.Ready)
     {
-        tty_printf("Ошибка %d! При чтении папки: %s\n", Dir->Ready, path);
-        kfree(Dir);
+        tty_printf("Ошибка при чтении папки: %s\n", path);
         return 1;
     }
-    else
+    
+    tty_printf("Содержимое папки: %s\n\n", path);
+    
+    size_t Sizes = 0;
+    size_t Count = Dir.CountDir + Dir.CountFiles + Dir.CountOther;
+    
+    for (int i = 0; i < Count; i++)
     {
-        tty_printf("Содержимое папки: %s\n\n", path);
-        size_t Sizes = 0;
-        size_t Count = Dir->CountDir + Dir->CountFiles + Dir->CountOther;
-        for (int i = 0; i < Count; i++)
-        {
-            char *btime = fsm_timePrintable(Dir->Files[i].LastTime);
-            tty_printf("%s     %s    [%8d bytes]\t%s\n",
-                       btime,
-                       (Dir->Files[i].Type == FSM_TYPE_DIR ? "<ПАПКА>" : "<ФАЙЛ> "),
-                       Dir->Files[i].Size,
-                       Dir->Files[i].Name);
-            Sizes += Dir->Files[i].Size;
-            kfree(btime);
-        }
-        tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir->CountFiles, Dir->CountDir, Count);
-        tty_printf("Размер папки: %d мб. | %d кб. | %d б.\n", (Sizes != 0 ? (Sizes / 1024 / 1024) : 0), (Sizes != 0 ? (Sizes / 1024) : 0), Sizes);
+        char *btime = fsm_timePrintable(Dir.Files[i].LastTime);
+        tty_printf("%s     %s    [%8d bytes]\t%s\n",
+                    btime,
+                    (Dir.Files[i].Type == FSM_TYPE_DIR ? "<ПАПКА>" : "<ФАЙЛ> "),
+                    Dir.Files[i].Size,
+                    Dir.Files[i].Name);
+        Sizes += Dir.Files[i].Size;
+        kfree(btime);
     }
     
-    nvfs_close_dir(Dir);
+    tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir.CountFiles, Dir.CountDir, Count);
+    tty_printf("Размер папки: %d мб. | %d кб. | %d б.\n", (Sizes != 0 ? (Sizes / 1024 / 1024) : 0), (Sizes != 0 ? (Sizes / 1024) : 0), Sizes);
+    
+    nvfs_close_dir_v2(&Dir);
     
     return 1;
 }

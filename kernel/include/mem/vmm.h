@@ -9,7 +9,7 @@
 #include <common.h>
 #include "lib/string.h"
 
-// #define kfree_debug(ptr) do { qemu_note("FREE BLOCK (%x) at %s:%d", ptr, __FILE__, __LINE__); kfree(ptr); } while(0);
+// #define LAZY_KREALLOC
 
 struct heap_entry {
 	size_t address;
@@ -34,7 +34,7 @@ void* kmalloc_common(size_t size, size_t align)  __attribute__((__malloc__)) __a
 
 SAYORI_INLINE void* kmalloc(size_t size) {
 //	return kmalloc_common(size, sizeof(size_t));  // Alignment, blyad
-	return kmalloc_common(size, 0);
+	return kmalloc_common(size, 1);
 }
 
 void* krealloc(void* ptr, size_t memory_size);
