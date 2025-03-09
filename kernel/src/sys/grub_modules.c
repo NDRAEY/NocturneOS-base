@@ -33,13 +33,13 @@ void grub_modules_init(multiboot_header_t* hdr) {
     for (size_t i = 0; i < hdr->mods_count; i++) {
         multiboot_module_t *mod = module_list + i;
 
-        size_t mod_size = mod->mod_end - mod->mod_start;
+        // size_t mod_size = mod->mod_end - mod->mod_start;
 
         qemu_log("[kModules] Found module #%d. (Start: %x | End: %x | Size: %d); CMD: %s (at %x)",
                  i,
                  mod->mod_start,
                  mod->mod_end,
-                 mod_size,
+                 mod->mod_end - mod->mod_start,
                  (char*)mod->cmdline,
                  (size_t)mod->cmdline
         );

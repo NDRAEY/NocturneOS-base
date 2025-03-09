@@ -11,12 +11,12 @@
 
 typedef struct
 {
-	uint16_t year;	/// Год
-	uint8_t month;	/// Месяц
-	uint8_t day;	/// День
-	uint8_t hour;	/// Час
-	uint8_t minute; /// Минуты
-	uint8_t second; /// Секунды
+	uint16_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t second;
 } __attribute__((packed)) FSM_TIME;
 
 typedef struct

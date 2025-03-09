@@ -31,8 +31,8 @@ extern DPM_Disk DPM_Disks[32];
 
 void *dpm_metadata_read(char Letter);
 void dpm_metadata_write(char Letter, uint32_t Addr);
-size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, char *Buffer);
-size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const char *Buffer);
+size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, uint8_t *Buffer);
+size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const uint8_t *Buffer);
 int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t Sectors, size_t SectorSize, int AddrMode, char *Serial, void *Point);
 DPM_Disk dpm_info(char Letter);
 int dpm_unmount(char Letter, bool FreeReserved);

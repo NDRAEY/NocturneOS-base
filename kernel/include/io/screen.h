@@ -99,7 +99,24 @@ size_t getPixel(int32_t x, int32_t y);
  * @param y - позиция по y
  * @param color - цвет
  */
-void set_pixel(uint32_t x, uint32_t y, uint32_t color);
+inline static __attribute__((always_inline)) void set_pixel(uint32_t x, uint32_t y, uint32_t color) {
+	#ifndef RELEASE
+	if (x >= VESA_WIDTH ||
+		y >= VESA_HEIGHT) {
+		return;
+	}
+	#endif
+	uint8_t* pixels = back_framebuffer_addr + (x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch;
+
+    //*((uint16_t*)pixels) = color & 0xffff;
+	pixels[0] = color & 0xff;
+	pixels[1] = (color >> 8) & 0xff;
+	pixels[2] = (color >> 16) & 0xff;
+
+    /*if(framebuffer_bpp == 32) {
+        pixels[3] = (color >> 24) & 0xff;
+    }*/
+}
 inline static __attribute__((always_inline)) void set_pixel4x1(uint32_t x, uint32_t y, uint32_t color) {
 	uint8_t* pixels = back_framebuffer_addr + (x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch;
 

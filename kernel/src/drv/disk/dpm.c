@@ -85,7 +85,7 @@ void dpm_metadata_write(char Letter, uint32_t Addr)
  *
  * @return Кол-во прочитанных байт
  */
-size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, char *Buffer)
+size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, uint8_t *Buffer)
 {
 	int Index = Letter - 65;
 
@@ -142,7 +142,7 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
  *
  * @return size_t - Кол-во записанных байт
  */
-size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const char *Buffer)
+size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const uint8_t *Buffer)
 {
 	int Index = Letter - 65;
 

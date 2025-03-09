@@ -71,6 +71,6 @@ impl FSM_TIME {
     pub fn format(&self) -> String {
         let yr = self.year;
 
-        format!("{}.{}.{} {}:{}:{}", self.day, self.month, yr, self.hour, self.minute, self.second)
+        format!("{:02}.{:02}.{:04} {:02}:{:02}:{:02}", self.day, self.month, yr, self.hour, self.minute, self.second)
     }
 }
