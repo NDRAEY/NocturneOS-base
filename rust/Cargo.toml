@@ -21,6 +21,7 @@ noct-path = { path = "./noct-path" }
 noct-iso9660 = { path = "./noct-iso9660" }
 noct-screen = { path = "./noct-screen" }
 raw-cpuid = "11.4.0"
+zeraus = { git = "https://github.com/NDRAEY/zeraus", version = "0.1.0", features = ["no_std"] }
 
 [profile.release]
 panic = "abort"
