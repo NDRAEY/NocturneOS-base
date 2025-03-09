@@ -1,9 +1,0 @@
-[package]
-name = "noct-zeraora"
-description = "New heap implementation"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-noct-physmem = { path = "../noct-physmem" }
-noct-logger = { path = "../noct-logger" }

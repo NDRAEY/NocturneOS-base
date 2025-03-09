@@ -11,10 +11,10 @@ pub mod gfx;
 pub mod shell;
 pub mod std;
 pub mod system;
+pub mod nd;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
-use noct_zeraora::Heap;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -23,13 +23,13 @@ static ALLOCATOR: Allocator = noct_alloc::Allocator;
 fn panic(_info: &PanicInfo) -> ! {
     qemu_err!("{}", _info);
     println!("{}", _info);
+
     unsafe {
         asm!("hlt");
     }
+    
     loop {}
 }
-
-static mut GLOBAL_KERNEL_HEAP: OnceCell<noct_zeraora::Heap> = OnceCell::new();
 
 /// Main entry point for testing.
 #[no_mangle]
@@ -49,20 +49,6 @@ pub extern "C" fn rust_main() {
     //         qemu_ok!("{}", i);
     //     }
     // })
-
-    // unsafe { GLOBAL_KERNEL_HEAP.set(Heap::with_entry_count(0x500_0000, 1024, 1024)) }.unwrap();
-    // let mut heap: &mut Heap<'_> = unsafe { GLOBAL_KERNEL_HEAP.get_mut().unwrap() };
-    
-    // let block1 = heap.alloc_no_map(0x12, 1).unwrap();
-    // let block2 = heap.alloc_no_map(6, 16).unwrap();
-
-    // heap.free_no_unmap(block2).unwrap();
-
-    // let block3 = heap.alloc_no_map(6, 16).unwrap();
-
-    // qemu_note!("{:x} ({:x} = {:x})", block1, block2, block3);
-
-    // let x = unsafe { GLOBAL_KERNEL_HEAP.get().unwrap() };
 
     noct_iso9660::fs_iso9660_init();
 }

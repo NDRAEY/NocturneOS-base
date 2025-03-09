@@ -22,11 +22,7 @@ char label_for_fps[8] = {0};
 void make_time_string(char* out) {
     sayori_time_t time = get_time();
 
-    uint8_t h = time.hours;
-    uint8_t m = time.minutes;
-    uint8_t s = time.seconds;
-
-    sprintf(out, "%02d:%02d:%02d", h, m, s);
+    sprintf(out, "%02d:%02d:%02d", time.hours, time.minutes, time.seconds);
 }
 
 void shutdown_system_activity_real() {
@@ -85,13 +81,16 @@ void shutdown_system_activity_real() {
     }
 
     shutdown();
+
+  while(1)
+    ;
 }
 
 void shutdown_system_activity() {
     thread_create(
         get_current_proc(),
         shutdown_system_activity_real,
-        512,
+        0x1000,
         true,
         false
     );

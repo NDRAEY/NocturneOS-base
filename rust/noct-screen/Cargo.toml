@@ -1,0 +1,14 @@
+[package]
+name = "noct-screen"
+version = "0.1.0"
+edition = "2021"
+
+build = "build.rs"
+
+
+[dependencies]
+noct-logger = { path = "../noct-logger" }
+
+
+[build-dependencies]
+bindgen = "0.71.1"

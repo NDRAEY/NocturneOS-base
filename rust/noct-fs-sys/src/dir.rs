@@ -88,11 +88,11 @@ impl Iterator for DirectoryIter<'_> {
             return None;
         }
 
-        let a = self.dir.files[self.index];
+        let a = &self.dir.files[self.index];
 
         self.index += 1;
 
-        Some(File::from_fsm(a))
+        Some(File::from_fsm(*a))
     }
 }
 

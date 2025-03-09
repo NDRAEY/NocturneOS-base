@@ -274,3 +274,25 @@ void rect_copy(int x, int y, int width, int height) {
         dest += framebuffer_pitch;
     }
 }
+
+/**
+ * @brief Вывод одного пикселя на экран
+ *
+ * @param x - позиция по x
+ * @param y - позиция по y
+ * @param color - цвет
+ */
+void set_pixel(uint32_t x, uint32_t y, uint32_t color) {
+	#ifndef RELEASE
+	if (x >= VESA_WIDTH ||
+		y >= VESA_HEIGHT) {
+		return;
+	}
+	#endif
+
+	uint8_t* pixels = back_framebuffer_addr + (x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch;
+
+	pixels[0] = color & 0xff;
+	pixels[1] = (color >> 8) & 0xff;
+	pixels[2] = (color >> 16) & 0xff;
+}

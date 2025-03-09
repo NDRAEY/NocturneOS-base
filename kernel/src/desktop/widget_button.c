@@ -9,14 +9,6 @@ void destroy_widget_button(Widget_t* widget);
 void widget_button_renderer(struct Widget* this, struct Window* container) {
     Widget_Button_t* this_object = (Widget_Button_t*)(this->custom_widget_data);
     
-    /*
-    qemu_log("DATA: W: %d H: %d X: %d Y: %d COLOR: %x LABEL_COLOR: %x LABEL_ADDRESS: %x",
-                this->width, this->height,
-                this->x, this->y,
-                this_object->color, this_object->label_color,
-                this_object->label);*/
-    // qemu_log("WIDGET AT: %x; IT's DATA: %x", this, this->custom_widget_data);
-
     draw_rectangle(this->x, this->y, this->width, this->height, 0);
     draw_rectangle(this->x-1, this->y-1, this->width+1, this->height+1, 0);
     draw_filled_rectangle(
