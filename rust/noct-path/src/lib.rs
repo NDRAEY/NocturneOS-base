@@ -87,6 +87,10 @@ impl Path {
         self
     }
 
+    pub fn as_string(&self) -> &String {
+        &self.buffer
+    }
+
     pub fn as_str(&self) -> &str {
         &self.buffer
     }

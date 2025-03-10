@@ -1,6 +1,8 @@
+use alloc::borrow::ToOwned;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
+use elf::endian::AnyEndian;
 use noct_logger::qemu_err;
 
 use crate::std::io::input::getchar;
@@ -9,9 +11,9 @@ use crate::{print, println};
 
 use noct_path::Path;
 
-pub mod dir;
-pub mod cls;
 pub mod cd;
+pub mod cls;
+pub mod dir;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -19,7 +21,8 @@ pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
-    cd::CD_COMMAND_ENTRY
+    cd::CD_COMMAND_ENTRY,
+    ("help", help, Some("Prints help message")),
 ];
 
 pub struct ShellContext {
@@ -32,6 +35,14 @@ impl ShellContext {
             current_path: Path::from_path("R:/").unwrap(),
         }
     }
+}
+
+fn help(_ctx: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+    for i in COMMANDS {
+        println!("{:12} - {}", i.0, i.2.unwrap_or("No help at this moment"));
+    }
+
+    Ok(())
 }
 
 fn process_input() -> String {
@@ -132,11 +143,35 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
             let status = descriptor.1(context, arguments);
 
             if let Err(err) = status {
-                qemu_err!("Command `{:?}` did not exited successfully!!! (code: {})", command, err);
+                qemu_err!(
+                    "Command `{:?}` did not exited successfully!!! (code: {})",
+                    command,
+                    err
+                );
             }
-        },
+        }
         None => {
-            // TODO: Find a program and run it. (If possible)
+            let path = context.current_path.as_string().clone() + command;
+            let file = crate::std::fs::File::open(&path);
+
+            match file {
+                Ok(mut file) => {
+                    let mut data = [0u8; 512];
+                    file.read(&mut data).unwrap();
+
+                    match elf::file::parse_ident::<AnyEndian>(&data) {
+                        Ok(_) => {
+                            todo!("Run ELF file");
+                        }
+                        Err(_) => {
+                            println!("{}: not an ELF file", path);
+                        }
+                    }
+                }
+                Err(_error) => {
+                    println!("{}: command not found", command);
+                }
+            }
         }
     }
 

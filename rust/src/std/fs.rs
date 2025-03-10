@@ -3,6 +3,7 @@
 use alloc::ffi::CString;
 use alloc::string::String;
 use core::ffi::{c_void, CStr};
+use core::ptr;
 
 use alloc::vec::Vec;
 use alloc::{str, vec};
@@ -74,6 +75,18 @@ impl File {
             raw_file: file,
             path: String::from(path),
         })
+    }
+
+    pub fn read(&mut self, buf: &mut [u8]) -> Result<(), &str> {
+        let size = buf.len();
+        let ptr = buf.as_mut_ptr() as *mut c_void;
+        let data = unsafe { fread(self.raw_file, 1, size, ptr) };
+
+        if (data as usize) != size {
+            return Err("Not enough data received");
+        }
+
+        Ok(())
     }
 
     pub fn read_to_string(&mut self, buf: &mut String) -> Result<(), &str> {
