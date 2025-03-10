@@ -104,6 +104,7 @@ double atan(double x);
 double sqrt(double x);
 double cbrt(double x);
 double modf(double value, double* intPart);
+float fmodf(float x, float y);
 // static inline double sqrt(double x) {
 //    return pow(x, 0.5);
 // }

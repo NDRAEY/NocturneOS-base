@@ -9,8 +9,8 @@ double modf(double value, double* intPart) {
 }
 
 double fmod(double dividend, double divisor) {
-    if (divisor == 0) {
-        return 0.0;
+    if (divisor == 0.0) {
+        return NAN;
     }
 
     double quotient = dividend / divisor;
@@ -19,4 +19,20 @@ double fmod(double dividend, double divisor) {
 
     double result = fractionalPart * divisor;
     return result;
+}
+
+float fmodf(float x, float y) {
+    if (y == 0.0f) {
+        // Handle division by zero (return NaN as per standard)
+        return NAN;
+    }
+
+    // Calculate the quotient as an integer
+    float quotient = x / y;
+    int intPart = (int) quotient; // Integer part
+
+    // Calculate the remainder
+    float remainder = (x - intPart) * y;
+
+    return remainder;
 }
