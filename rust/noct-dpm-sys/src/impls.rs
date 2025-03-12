@@ -9,7 +9,7 @@ impl Disk {
     pub fn read(&self, offset_high: u64, offset_low: u64, size: usize, out: &mut [u8]) -> usize {
         unsafe {
             dpm_read(
-                self.letter as i8,
+                self.letter as _,
                 offset_high,
                 offset_low,
                 size as _,
@@ -21,7 +21,7 @@ impl Disk {
     pub fn write(&self, offset_high: u64, offset_low: u64, size: usize, out: &[u8]) -> usize {
         unsafe {
             dpm_write(
-                self.letter as i8,
+                self.letter as _,
                 offset_high,
                 offset_low,
                 size as _,

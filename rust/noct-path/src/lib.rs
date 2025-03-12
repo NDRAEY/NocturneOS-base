@@ -4,6 +4,9 @@ extern crate alloc;
 
 use alloc::{string::{String, ToString}, vec::Vec};
 
+#[cfg(test)]
+pub mod tests;
+
 #[derive(Debug, Clone)]
 pub struct Path {
     buffer: String,
