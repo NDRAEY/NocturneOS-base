@@ -7,6 +7,7 @@ use noct_logger::qemu_err;
 
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
+use crate::system::run_elf_file::run;
 use crate::{print, println};
 
 use noct_path::Path;
@@ -161,7 +162,8 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
 
                     match elf::file::parse_ident::<AnyEndian>(&data) {
                         Ok(_) => {
-                            todo!("Run ELF file");
+                            // todo!("Run ELF file");
+                            run(path.as_str(), &com);
                         }
                         Err(_) => {
                             println!("{}: not an ELF file", path);

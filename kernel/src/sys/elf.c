@@ -115,7 +115,7 @@ int32_t run_elf_file(const char *name, int argc, char* eargv[]) {
 			get_kernel_page_directory(),
 			addrto,
 			phdr->p_vaddr,
-			pagecount * 4096,
+			pagecount * PAGE_SIZE,
 			(PAGE_PRESENT | PAGE_USER | PAGE_WRITEABLE) // 0x07
 		);
 
