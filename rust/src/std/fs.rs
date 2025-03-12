@@ -23,7 +23,21 @@ extern "C" {
     fn fclose(stream: *mut CFile);
     fn fsize(stream: *mut CFile) -> usize;
     fn fread(stream: *mut CFile, count: isize, size: usize, buffer: *mut c_void) -> i32;
-    // fn fwrite(stream: *mut CFile, count: isize, size: usize, buffer: *const c_void) -> i32;
+
+    fn mkdir(path: *const i8) -> bool;
+}
+
+pub fn make_directory(path: &str) -> Result<(), &str> {
+    let mut path_string = String::from(path);
+    path_string.push('\0');
+
+    let result = unsafe { mkdir(path_string.as_bytes().as_ptr() as *const _) };
+
+    if result {
+        Ok(())
+    } else {
+        Err("Failed to create directory.")
+    }
 }
 
 pub fn read_to_string(file_path: &str) -> Result<&str, &str> {

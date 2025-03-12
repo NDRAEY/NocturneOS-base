@@ -15,6 +15,7 @@ use noct_path::Path;
 pub mod cd;
 pub mod cls;
 pub mod dir;
+pub mod mkdir;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -23,6 +24,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY,
+    mkdir::MKDIR_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 
