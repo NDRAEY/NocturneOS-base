@@ -665,7 +665,7 @@ uint32_t calendar(uint32_t, char **);
 uint32_t new_nsh(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
-    {"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
+/**/    {"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
     // {"CALENDAR", "calendar", calendar, "Календарь"},
     {"CAT", "cat", CLI_CMD_CAT, "Выводит содержимое файла на экран"},
     {"ECHO", "echo", CLI_CMD_ECHO, "Выводит сообщение на экран."},

@@ -1,6 +1,5 @@
 use alloc::string::{String, ToString};
-use noct_fs_sys::{file::File, FSM_TYPE_DIR};
-use noct_logger::qemu_note;
+use noct_fs_sys::FSM_TYPE_DIR;
 
 use crate::println;
 

@@ -1,5 +1,3 @@
-use core::str::FromStr;
-
 use alloc::string::String;
 use noct_fs_sys::dir::Directory;
 

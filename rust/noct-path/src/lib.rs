@@ -41,6 +41,19 @@ impl Path {
     }
 
     pub fn apply(&mut self, path: &str) -> &mut Self {
+        if path.len() >= 3 {
+            let letter = path.chars().nth(0).unwrap();
+            let delim = &path[1..=2];
+
+            if letter.is_alphabetic() && delim == ":/" {
+                self.buffer = path.to_string();
+
+                self.remove_trailing();
+                
+                return self;
+            }
+        }
+
         let mut stems: Vec<&str> = Vec::new();
 
         for i in path.split('/') {
@@ -63,9 +76,17 @@ impl Path {
             }
         }
 
+        self.remove_trailing();
+
         self
     }
 
+    fn remove_trailing(&mut self) {
+        while (self.buffer.chars().last().unwrap() == '/') && (self.buffer.len() > 3) {
+            self.buffer.pop();
+        }
+    }
+    
     pub fn parent(&mut self) -> &mut Self {
         // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
         

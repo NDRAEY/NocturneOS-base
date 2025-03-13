@@ -1,7 +1,7 @@
 use alloc::string::{String, ToString};
-use noct_logger::{qemu_log, qemu_note, qemu_println};
+use noct_logger::qemu_note;
 
-use crate::{file::File, nvfs_close_dir_v2, nvfs_dir, nvfs_dir_v2, FSM_DIR, FSM_FILE};
+use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, FSM_DIR, FSM_FILE};
 
 #[derive(Debug)]
 pub struct Directory<'a> {
