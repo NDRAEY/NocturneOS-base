@@ -81,32 +81,29 @@ FSM_FILE fs_tarfs_info(const char Disk, const char *Path)
 
 	for (int i = 1; i < initrd->Count; i++)
 	{
-		// qemu_log("[%d] '%s' != '%s'",strcmp(initrd->Files[i].Name,Path),initrd->Files[i].Name,Path);
-		if (!strcmpn(initrd->Files[i].Name, Path))
+		// qemu_log("[%d] '%s' != '%s'", strcmp(initrd->Files[i].Name, Path), initrd->Files[i].Name, Path);
+
+		if (strcmp(initrd->Files[i].Name, Path) != 0)
+		{
 			continue;
-		//		file->Ready = 1;
-		file.Ready = 1;
+		}
+
 		char *zpath = pathinfo(initrd->Files[i].Name, PATHINFO_DIRNAME);
-		// qemu_log("[%d] zpath: %s",strlen(zpath),zpath);
-		//        memcpy(file->Path,zpath,strlen(zpath));
-		//        memcpy(file->Name,initrd->Files[i].Name,strlen(initrd->Files[i].Name));
-		//        file->Mode = 'r';
-		//        file->Size = initrd->Files[i].Size;
-		//        file->Type = initrd->Files[i].Type - 48;
 
 		memcpy(file.Path, zpath, strlen(zpath));
 		memcpy(file.Name, initrd->Files[i].Name, strlen(initrd->Files[i].Name));
+
+		file.Ready = true;
 		file.CHMOD = (initrd->Files[i].Type == 48 ? FSM_MOD_READ | FSM_MOD_EXEC : FSM_MOD_READ);
 		file.Mode = 'r';
 		file.Size = initrd->Files[i].Size;
 		file.Type = initrd->Files[i].Type - 48;
 
 		kfree(zpath);
-		// return dpm_read(Disk,initrd->Files[i].Addr+Offset,Size,Buffer);
+
 		break;
 	}
 
-	//	return file[0];
 	return file;
 }
 
@@ -131,38 +128,40 @@ int fs_tarfs_detect(const char Disk)
 
 	bool isTarFS = ((Buffer[0] != 0x75 || Buffer[1] != 0x73 || Buffer[2] != 0x74 || Buffer[3] != 0x61 || Buffer[4] != 0x72) ? false : true);
 	if (tarfs_debug)
+	{
 		qemu_log("[0] = %x", Buffer[0]);
-	if (tarfs_debug)
 		qemu_log("[1] = %x", Buffer[1]);
-	if (tarfs_debug)
 		qemu_log("[2] = %x", Buffer[2]);
-	if (tarfs_debug)
 		qemu_log("[3] = %x", Buffer[3]);
-	if (tarfs_debug)
 		qemu_log("[4] = %x", Buffer[4]);
-	if (tarfs_debug)
 		qemu_log("[TarFS] is: %d", isTarFS);
-
+	}
 	kfree(Buffer);
 	return (int)isTarFS;
 }
 
-uint8_t fs_tarfs_dir_probe(const char Disk, const char* Path) {
+uint8_t fs_tarfs_dir_probe(const char Disk, const char *Path)
+{
 	TarFS_ROOT *initrd = dpm_metadata_read(Disk);
 	size_t pathlen = strlen(Path);
 
 	for (int i = 0; i < initrd->Count; i++)
 	{
-		const char* name = initrd->Files[i].Name;
+		const char *name = initrd->Files[i].Name;
 		size_t len = strlen(name);
 
-		if(len >= pathlen) {
-			if(strncmp(name, Path, pathlen) == 0) {
+		if (len >= pathlen)
+		{
+			if (strncmp(name, Path, pathlen) == 0)
+			{
 				char end = *(name + pathlen);
 
-				if(end == 0) {
+				if (end == 0)
+				{
 					return TARFS_ELEM_TYPE_FILE;
-				} else if(end == '/') {
+				}
+				else if (end == '/')
+				{
 					return TARFS_ELEM_TYPE_DIR;
 				}
 			}
@@ -174,14 +173,16 @@ uint8_t fs_tarfs_dir_probe(const char Disk, const char* Path) {
 
 void fs_tarfs_dir(const char Disk, const char *Path, FSM_DIR *out)
 {
-	if (tarfs_debug)
+	if (tarfs_debug) {
 		qemu_log("[FSM] [TarFS] [Info] Disk:%d | Path:%s", Disk, Path);
-	// FSM_DIR *Dir = kcalloc(sizeof(FSM_DIR), 1);
+	}
+
 	TarFS_ROOT *initrd = dpm_metadata_read(Disk); // noalloc
 
 	uint8_t type = fs_tarfs_dir_probe(Disk, Path);
 
-	if(type == 0) {
+	if (type == 0)
+	{
 		out->Ready = 0;
 		return;
 	}
@@ -237,8 +238,6 @@ void fs_tarfs_dir(const char Disk, const char *Path, FSM_DIR *out)
 	out->CountDir = CD;
 	out->CountOther = CO;
 	out->Files = Files;
-
-	// return Dir;
 }
 
 size_t fs_tarfs_countFiles(const uint32_t in)
