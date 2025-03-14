@@ -100,7 +100,6 @@ set(C_SRC
 	kernel/src/lib/split.c 
 	kernel/src/io/screen.c 
 	kernel/src/io/tty.c 
-	kernel/src/fs/tarfs.c 
 	kernel/src/fs/fsm.c 
 	kernel/src/lib/time_conversion.c 
 	kernel/src/fs/nvfs.c 
@@ -147,6 +146,7 @@ set(C_SRC
 	kernel/src/sys/cpuid.c	
 	kernel/src/drv/disk/ata.c 
 	kernel/src/drv/disk/atapi.c 
+	kernel/src/drv/disk/memdisk.c 
 	kernel/src/sys/cputemp.c	
 	kernel/src/net/endianess.c 
 	kernel/src/net/cards.c 

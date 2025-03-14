@@ -160,7 +160,11 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
 
     let fl = tarfs::TarFS::from_device(device);
 
-    if fl.is_some() { 1 } else { 0 }
+    let result = if fl.is_some() { 1 } else { 0 };
+
+    qemu_note!("{:#?}", fl.unwrap().list());
+
+    result
 }
 
 #[no_mangle]

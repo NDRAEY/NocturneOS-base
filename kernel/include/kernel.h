@@ -54,9 +54,7 @@
 #include <fs/fsm.h>
 
 #include <fs/milla.h>
-#include <fs/tarfs.h>
 #include <fs/fat32.h>
-#include <fs/iso9660.h>
 #include <fs/nvfs.h>
 #include <fs/tempfs.h>
 

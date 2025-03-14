@@ -276,6 +276,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     grub_modules_init(mboot);
 
+    fsm_dpm_update(-1);
+
     kernel_start_time = getTicks();
 
     mtrr_init();
