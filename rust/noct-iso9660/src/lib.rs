@@ -73,8 +73,6 @@ unsafe extern "C" fn fun_read(
         outbuf,
     );
 
-    qemu_log!("Read!");
-
     rd as _
 }
 
@@ -89,11 +87,7 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let rpath = raw_ptr_to_string(path);
 
-    qemu_note!("Path: {:?}", &rpath);
-
     let entry = get_directory_entry_by_path(&mut fl, &rpath);
-
-    qemu_note!("Data: {:?}", &entry);
 
     if entry.is_none() {
         return FSM_FILE::missing();

@@ -127,10 +127,6 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let data = fl.list_by_path_shallow(&path).unwrap();
 
-    for i in &data {
-        qemu_println!("{}", i.name);
-    }
-
     let files: Vec<FSM_FILE> = data
         .iter()
         .map(|elem| {
@@ -160,11 +156,7 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
 
     let fl = tarfs::TarFS::from_device(device);
 
-    let result = if fl.is_some() { 1 } else { 0 };
-
-    qemu_note!("{:#?}", fl.unwrap().list());
-
-    result
+    if fl.is_some() { 1 } else { 0 }
 }
 
 #[no_mangle]
