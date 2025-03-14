@@ -33,7 +33,7 @@ int initrd_tarfs(uint32_t start, uint32_t end) {
 
 // 	qemu_log("dpm_metadata_read:%x ",dpm_metadata_read('R'));
 // 
- 	dpm_reg('R', "RamDisk", "TARFS", 2, initrd_size, 0, 0, 2, "TAR0-FSV1", initrd_data);
+ 	dpm_reg('R', "RamDisk", "TARFS2", 2, initrd_size, 0, 0, 2, "TAR0-FSV1", initrd_data);
 	dpm_metadata_write('R', (uint32_t) l_initrd);
 
 

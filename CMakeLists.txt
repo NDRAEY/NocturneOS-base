@@ -340,7 +340,7 @@ add_custom_target(
 
 add_custom_target(
     ramdisk
-    COMMAND tar cvf ${ISO_DIR}/ramdisk ramdisk/
+    COMMAND tar cvf ${ISO_DIR}/ramdisk -C ramdisk/ .
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS copy_kernel
 )

@@ -13,6 +13,8 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+pub use noct_tarfs;
+
 use noct_alloc::Allocator;
 pub use noct_logger::*;
 use zeraus::{

@@ -1,0 +1,10 @@
+[package]
+name = "noct-tarfs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tarfs = { version = "0.1.2", default-features = false }
+noct-dpm-sys = { path = "../noct-dpm-sys" }
+noct-fs-sys = { path = "../noct-fs-sys" }
+noct-logger = { path = "../noct-logger" }

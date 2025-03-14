@@ -35,6 +35,20 @@ impl FSM_FILE {
 
         file
     }
+
+    pub fn missing() -> Self {
+        // `core::mem::zeroed`?
+        FSM_FILE {
+            Ready: false,
+            Name: [0; 1024],
+            Path: [0; 1024],
+            Mode: 0,
+            Size: 0,
+            LastTime: unsafe { core::mem::zeroed() },
+            Type: 0,
+            CHMOD: 0,
+        }
+    }
 }
 
 impl FSM_DIR {
