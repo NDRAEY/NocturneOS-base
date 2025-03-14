@@ -56,23 +56,12 @@ void tty_taskInit(){
 			   false);
 }
 
-/**
- * @brief Инициализация системы для печати через шрифты
- */
-void tty_fontConfigurate(){
-    qemu_log("[tFC] Configurate...");
-    qemu_log("\t[TTY Configurator] Using default PSF fonts");
+void tty_fontConfigurate() {
     tty_off_pos_x = 8;
     tty_off_pos_p = 0;
     tty_off_pos_h = 16;
-	qemu_log("TTY_OFF_POS_X: %d; TTY_OFF_POS_P: %d; TTY_OFF_POS_H: %d", tty_off_pos_x, tty_off_pos_p, tty_off_pos_h);
 }
 
-/**
- * @brief Меняет состояние печати через printf
- *
- * @param state - Включить или выключить печать
- */
 void tty_changeState(bool state){
     stateTTY = state;
 }
