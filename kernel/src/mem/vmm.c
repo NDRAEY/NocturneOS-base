@@ -593,3 +593,11 @@ void vmm_debug_switch(bool enable)
 {
 	vmm_debug = enable;
 }
+
+size_t heap_allocated_count() {
+	return system_heap.allocated_count;
+}
+
+size_t heap_used_memory() {
+	return system_heap.used_memory;
+}

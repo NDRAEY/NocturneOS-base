@@ -16,6 +16,9 @@ pub mod cls;
 pub mod dir;
 pub mod mkdir;
 pub mod cat;
+pub mod pci;
+pub mod parallel_desktop;
+pub mod meminfo;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -26,6 +29,8 @@ static COMMANDS: &[ShellCommandEntry] = &[
     cd::CD_COMMAND_ENTRY,
     mkdir::MKDIR_COMMAND_ENTRY,
     cat::CAT_COMMAND_ENTRY,
+    parallel_desktop::PD_COMMAND_ENTRY,
+    meminfo::MEMINFO_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 

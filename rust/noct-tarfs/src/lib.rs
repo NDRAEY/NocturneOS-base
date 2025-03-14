@@ -83,8 +83,6 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    qemu_note!("Gave path: {:?}", &path);
-
     let entry = fl.find_file(&path);
 
     if entry.is_none() {
@@ -161,7 +159,6 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
 
 #[no_mangle]
 pub extern "C" fn fs_tarfs_register() {
-    qemu_note!("Reg?");
     unsafe {
         noct_fs_sys::fsm_reg(
             FSNAME.as_ptr() as *const _,

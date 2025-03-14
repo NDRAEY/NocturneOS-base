@@ -64,15 +64,11 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
     char* cpubrand = kcalloc(1, cpubrand_length + 1);
 
     get_cpu_brand(cpubrand, NULL);
-    
-    clean_tty_screen();
 
-    setPosY(256);
-
-    tty_printf("SayoriOS by SayoriOS Team (pimnik98 and NDRAEY)\n\n");
+    tty_printf("NocturneOS by SayoriOS & NocturneOS Team (pimnik98 and NDRAEY)\n\n");
 
     tty_printf("Системная информация:\n");
-    tty_printf("\tOS:                      SayoriOS v%d.%d.%d\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+    tty_printf("\tOS:                      NocturneOS v%d.%d.%d '%s'\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_NAME);
     tty_printf("\tДата сборки:             %s\n", __TIMESTAMP__);
     tty_printf("\tАрхитектура:             %s\n", ARCH_TYPE);
     tty_printf("\tПроцессор:               %s\n", cpubrand);
@@ -445,19 +441,6 @@ uint32_t mala_draw(uint32_t argc, char *argv[]);
 uint32_t pci_print_list(uint32_t argc, char *argv[]);
 // uint32_t pavi_view(uint32_t argc, char* argv[]);
 uint32_t rust_command(uint32_t argc, char *argv[]);
-uint32_t CLI_MEMINFO(uint32_t argc, char *argv[])
-{
-    tty_printf("Физическая:\n");
-    tty_printf("    Используется: %u байт (%u MB)\n", used_phys_memory_size, used_phys_memory_size / MB);
-    tty_printf("    Свободно: %u байт (%u MB)\n", phys_memory_size - used_phys_memory_size, (phys_memory_size - used_phys_memory_size) / MB);
-    tty_printf("Виртуальная:\n");
-    tty_printf("    %u записей\n", system_heap.allocated_count);
-    tty_printf("    Используется: %u байт (%u MB)\n", system_heap.used_memory, system_heap.used_memory / MB);
-
-    heap_dump();
-
-    return 0;
-}
 
 uint32_t proc_list(uint32_t argc, char *argv[])
 {
@@ -665,27 +648,18 @@ uint32_t calendar(uint32_t, char **);
 uint32_t new_nsh(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
-/**/    {"CLS", "cls", CLI_CMD_CLS, "Очистка экрана"},
     // {"CALENDAR", "calendar", calendar, "Календарь"},
-    {"CAT", "cat", CLI_CMD_CAT, "Выводит содержимое файла на экран"},
     {"ECHO", "echo", CLI_CMD_ECHO, "Выводит сообщение на экран."},
-    {"DIR", "dir", CLI_CMD_DIR, "Выводит список файлов и папок."},
     {"DISKCTL", "diskctl", shell_diskctl, "Управление ATA-дисками"},
     {"DISKPART", "diskpart", CLI_CMD_DISKPART, "Список дисков Disk Partition Manager"},
-    //    {"GBA", "gba", CLI_CMD_GBA, "GameBoy Emulator"},
-    {"HELP", "help", CLI_CMD_HELP, "Выводит справочную информацию о командах SayoriOS (CLI)."},
     {"SET", "set", CLI_CMD_SET, "Показывает, указывает и удаляет переменные среды SayoriOS"},
     {"NET", "net", CLI_CMD_NET, "Информация об сетевых устройствах"},
     {"GFXBENCH", "gfxbench", gfxbench, "Тестирование скорости фреймбуфера"},
-    {"MEMINFO", "meminfo", CLI_MEMINFO, "Информация об оперативной памяти"},
     {"MINIPLAY", "miniplay", miniplay, "WAV-проиграватель"},
-    {"DESKTOP", "desktop", parallel_desktop_start, "Рабочий стол"},
     {"MALA", "mala", mala_draw, "Нарисовать рисунок"},
     // {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
     {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
     {"PAVI", "pavi", pavi_view, "Программа для просмотра изображений"},
-    {"PCI", "pci", pci_print_list, "Список PCI устройств"},
-    // {"RS", "rs", rust_command, "Rust command"},
     {"PROC", "proc", proc_list, "Список процессов"},
     {"SYSINFO", "sysinfo", CLI_CMD_SYSINFO, "Информация о системе"},
     {"TOUCH", "touch", CLI_CMD_TOUCH, "Создать файл"},
