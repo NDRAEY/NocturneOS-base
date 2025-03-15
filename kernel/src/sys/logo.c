@@ -20,5 +20,5 @@ Y88b  d88P 888  888 Y88b 888 Y88..88P 888     888 Y88b. .d88P Y88b  d88P   |   G
                          888                                               |   %s\n \
                     Y8b d88P                                               |   %s\n \
                      \"Y88P\"                                                |   %s\n \
-\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERNAME, __TIMESTAMP__,"","","");
+\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_NAME, __TIMESTAMP__,"","","");
 }
