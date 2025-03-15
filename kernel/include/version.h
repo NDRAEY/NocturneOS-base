@@ -4,7 +4,7 @@
 #define VERSION_MINOR   3        /// Пре-релиз
 #define VERSION_PATCH   5        /// Патч
 #define ARCH_TYPE       "i386"   /// Архитектура
-#define VERNAME         "Soul"   /// Имя версии (изменяется вместе с минорной части версии)
+#define VERSION_NAME         "Soul"   /// Имя версии (изменяется вместе с минорной части версии)
 
 
 // Макрос для создания версии как строки
