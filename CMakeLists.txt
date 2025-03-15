@@ -219,9 +219,9 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
+set(RUST_COMPILER_TOOLCHAIN "nightly-2025-01-11")
 set(RUST_TARGET "i686-unknown-none.json")
-set(RUST_FLAGS -Zbuild-std -Znext-lockfile-bump)
+set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(

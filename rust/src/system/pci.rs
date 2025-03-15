@@ -1,7 +1,3 @@
-#![allow(unknown_lints)]
-#![allow(static_mut_ref)]
-#![allow(static_mut_refs)]
-
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;

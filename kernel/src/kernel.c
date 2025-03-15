@@ -59,7 +59,7 @@ void autoexec()
     variable_write("VERSION_MINOR", TOSTRING(VERSION_MINOR));
     variable_write("VERSION_PATCH", TOSTRING(VERSION_PATCH));
     variable_write("ARCH_TYPE", ARCH_TYPE);
-    variable_write("VERNAME", VERNAME);
+    variable_write("VERSION_NAME", VERSION_NAME);
     variable_write("VERSION", VERSION_STRING);
 }
 
