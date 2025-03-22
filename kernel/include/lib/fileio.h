@@ -1,5 +1,7 @@
-#ifndef SAYORIOS_FILEIO_H
-#define SAYORIOS_FILEIO_H
+#pragma once
+
+#include <common.h>
+
 bool is_file(const char* Path);
 bool is_dir(const char* Path);
 bool file_exists(const char* Path);
@@ -13,4 +15,3 @@ bool touch(const char* Path);
 bool mkdir(const char* Path);
 bool unlink(const char* Path);
 bool rmdir(const char* Path);
-#endif //SAYORIOS_FILEIO_H

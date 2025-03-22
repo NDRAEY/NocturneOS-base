@@ -8,14 +8,13 @@
  */
 #include  "sys/timer.h"
 #include  "sys/isr.h"
-/* #include  "sys/scheduler.h" */
 #include  "drv/fpu.h"
 #include  "io/ports.h"
 #include "sys/scheduler.h"
 
 extern bool scheduler_working;
 
-size_t tick = 0;                /* Количество тиков */
+volatile size_t tick = 0;                /* Количество тиков */
 size_t frequency = CLOCK_FREQ;  /* Частота */
 
 /**
@@ -24,7 +23,7 @@ size_t frequency = CLOCK_FREQ;  /* Частота */
  * @return size_t - Количество тиков с момента старта
  */
 size_t getTicks(){
-    return tick;
+    return (size_t)tick;
 }
 
 double getUptime() {

@@ -112,17 +112,13 @@ inline static __attribute__((always_inline)) void set_pixel(uint32_t x, uint32_t
 	pixels[1] = (color >> 8) & 0xff;
 	pixels[2] = (color >> 16) & 0xff;
 }
+
 inline static __attribute__((always_inline)) void set_pixel4x1(uint32_t x, uint32_t y, uint32_t color) {
 	uint8_t* pixels = back_framebuffer_addr + (x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch;
 
-    //*((uint16_t*)pixels) = color & 0xffff;
 	pixels[0] = pixels[4] = pixels[8] = pixels[12] = color & 0xff;
 	pixels[1] = pixels[5] = pixels[9] = pixels[13] = (color >> 8) & 0xff;
 	pixels[2] = pixels[6] = pixels[10] = pixels[14] = (color >> 16) & 0xff;
-
-    /*if(framebuffer_bpp == 32) {
-        pixels[3] = (color >> 24) & 0xff;
-    }*/
 }
 
 /**

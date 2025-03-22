@@ -6,7 +6,7 @@ use alloc::{string::String, vec::Vec};
 use iso9660_simple::helpers::get_directory_entry_by_path;
 use noct_dpm_sys::Disk;
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
+use noct_logger::{qemu_err, qemu_log, qemu_println};
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"LOLFS\0";

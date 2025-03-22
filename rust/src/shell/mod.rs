@@ -7,6 +7,7 @@ use noct_logger::qemu_err;
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
 use crate::system::run_elf_file::run;
+use crate::system::version::version;
 use crate::{print, println};
 
 use noct_path::Path;
@@ -14,11 +15,15 @@ use noct_path::Path;
 pub mod cd;
 pub mod cls;
 pub mod dir;
-pub mod mkdir;
 pub mod cat;
 pub mod pci;
 pub mod parallel_desktop;
 pub mod meminfo;
+pub mod mala;
+pub mod pavi;
+pub mod miniplay;
+pub mod file_ops;
+pub mod reboot;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -27,10 +32,18 @@ static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY,
-    mkdir::MKDIR_COMMAND_ENTRY,
+    file_ops::CREATE_DIR_COMMAND_ENTRY,
+    file_ops::CREATE_FILE_COMMAND_ENTRY,
+    file_ops::CREATE_DIR_COMMAND_ENTRY,
+    file_ops::REMOVE_FILE_COMMAND_ENTRY,
     cat::CAT_COMMAND_ENTRY,
     parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,
+    pci::PCI_COMMAND_ENTRY,
+    mala::MALA_COMMAND_ENTRY,
+    pavi::PAVI_COMMAND_ENTRY,
+    miniplay::MINIPLAY_COMMAND_ENTRY,
+    reboot::REBOOT_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 
@@ -54,7 +67,7 @@ fn help(_ctx: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
     Ok(())
 }
 
-fn process_input() -> String {
+fn process_input(_context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
     loop {
@@ -89,14 +102,19 @@ fn process_input() -> String {
 pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     let mut context = ShellContext::new();
 
-    println!("nsh v0.1.0\n");
+    let ver = version();
+
+    println!("NocturneOS [Версия: v{}.{}.{}]", ver.0, ver.1, ver.2);
+    println!("(c) SayoriOS & NocturneOS Team, 2025.");
+    println!("Для дополнительной информации наберите \"help\".");
+
     unsafe { screen_update() };
 
     loop {
         print!("{}> ", context.current_path.as_str());
         unsafe { screen_update() };
 
-        let raw_input = process_input();
+        let raw_input = process_input(&mut context);
 
         print!("\n");
 
@@ -145,7 +163,7 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
 
     let (command, arguments) = (&com[0], if com.len() > 1 { &com[1..] } else { &[] });
 
-    let object = COMMANDS.iter().filter(|x| x.0 == command).last();
+    let object = COMMANDS.iter().filter(|x| x.0 == command).next_back();
 
     match object {
         Some(descriptor) => {

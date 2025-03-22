@@ -120,6 +120,30 @@ size_t syscall_screen_update() {
     return 0;
 }
 
+size_t syscall_mmap(size_t physical, size_t virtual, size_t size, size_t flags) {
+    size_t pagedir = get_current_proc()->page_dir_virt;
+
+    map_pages((void*)pagedir, physical, virtual, size, flags);
+
+    return 1;
+}
+
+size_t syscall_munmap(size_t virtual, size_t size) {
+    size_t pagedir = get_current_proc()->page_dir_virt;
+
+    unmap_pages_overlapping((void*)pagedir, virtual, size);
+    
+    return 1;
+}
+
+size_t syscall_temperature() {
+    if(is_temperature_module_present()) {
+        return get_cpu_temperature();
+    }
+
+    return 0xFFFFFFFF;
+}
+
 /**
  * @brief Инициализация системных вызовов
  * 
@@ -147,6 +171,9 @@ void init_syscalls(void){
 	calls_table[19] = (syscall_fn_t *)file_descriptor_write;
     calls_table[20] = (syscall_fn_t *)yield;
     calls_table[21] = (syscall_fn_t *)syscall_screen_update;
+    calls_table[22] = (syscall_fn_t *)syscall_mmap;
+    calls_table[23] = (syscall_fn_t *)syscall_munmap;
+    calls_table[24] = (syscall_fn_t *)syscall_temperature;
 
 	qemu_ok("System calls initialized!");
 }

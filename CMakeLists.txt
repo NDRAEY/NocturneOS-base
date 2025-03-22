@@ -27,7 +27,7 @@ set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11 -Werror=return-type")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z noexecstack")
 
 
@@ -159,7 +159,8 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	kernel/src/extra/cli.c 
+	# kernel/src/extra/cli.c 
+	kernel/src/extra/plain_runner.c
 	kernel/src/sys/variable.c	
 	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
@@ -192,14 +193,13 @@ set(C_SRC
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
 	# kernel/src/toys/minesweeper.c 
-	kernel/src/toys/calendar.c 
 	kernel/src/toys/diskctl.c 
 	kernel/src/lib/utf_conversion.c 
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
 	kernel/src/net/stack.c 
 	kernel/src/toys/pavi.c 
-	kernel/src/drv/audio/hda.c 
+	# kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
 	kernel/src/sys/lapic.c 
@@ -219,64 +219,104 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2024-01-11")
+set(RUST_COMPILER_TOOLCHAIN "nightly-2025-01-11")
 set(RUST_TARGET "i686-unknown-none.json")
-set(RUST_FLAGS -Zbuild-std -Znext-lockfile-bump)
+set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
+set(RUST_TARGET_TRIPLE "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
+set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TARGET_TRIPLE}/bin/src/cargo")
+set(RUST_SRC_PATH "~/.rustup/toolchains/${RUST_TARGET_TRIPLE}/lib/rustlib/src/rust/library/Cargo.lock")
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+# This command will install specified toolchain.
+
+# add_custom_command(
+#        OUTPUT ${RUST_CARGO_PATH}
+#        COMMAND rustup toolchain install ${RUST_COMPILER_TOOLCHAIN}
+#        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+#        COMMENT "Installing `${RUST_COMPILER_TOOLCHAIN}` toolchain..."
+#        USES_TERMINAL
+#        VERBATIM
+# )
+
+# add_custom_target(rustup_toolchain ALL DEPENDS ${RUST_CARGO_PATH})
+# add_dependencies(${KERNEL} rustup_toolchain)
+
+############################
+
+
+# This command will install a `rust-src` for specified toolchain.
+
 add_custom_command(
-       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS}
-       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
-       COMMENT "Building Rust files..."
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+       OUTPUT ${RUST_SRC_PATH}
+       COMMAND rustup component add rust-src --toolchain ${RUST_TARGET_TRIPLE}
+       WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+       COMMENT "Installing `rust-src` for ${RUST_TARGET_TRIPLE} toolchain..."
+	#    DEPENDS rustup_toolchain
        USES_TERMINAL
        VERBATIM
 )
 
-add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
-add_dependencies(${KERNEL} rs)
+add_custom_target(rustup_src ALL DEPENDS ${RUST_SRC_PATH})
+add_dependencies(${KERNEL} rustup_src)
 
-target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+#############################
+
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
+		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS}
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+		COMMENT "Building Rust files..."
+		DEPENDS ${RUST_SRC_PATH}
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+		USES_TERMINAL
+		VERBATIM
+	)
+
+	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+	add_dependencies(${KERNEL} rs)
+
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
 
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 
-add_custom_command(
-       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile release_no_opt
-       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
-       COMMENT "Building Rust files..."
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
-       USES_TERMINAL
-       VERBATIM
-)
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a" "fake.a"
+		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile release_no_opt
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+		COMMENT "Building Rust files..."
+		DEPENDS ${RUST_SRC_PATH}
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+		USES_TERMINAL
+		VERBATIM
+	)
 
-add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
-add_dependencies(${KERNEL} rs)
+	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+	add_dependencies(${KERNEL} rs)
 
-target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
 
 else()
 
-add_custom_command(
-       OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
-       COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --release
-       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
-       COMMENT "Building Rust files..."
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
-       DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
-       USES_TERMINAL
-       VERBATIM
-)
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
+		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --release
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+		COMMENT "Building Rust files..."
+		DEPENDS ${RUST_SRC_PATH}
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"
+		DEPENDS "${CMAKE_SOURCE_DIR}/rust/Cargo.toml"
+		USES_TERMINAL
+		VERBATIM
+	)
 
-add_custom_target(rs
-					DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
-add_dependencies(${KERNEL} rs)
+	add_custom_target(rs DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
+	add_dependencies(${KERNEL} rs)
 
-target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
-
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
 endif()
 
 # Targets

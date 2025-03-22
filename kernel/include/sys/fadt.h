@@ -1,11 +1,24 @@
 #pragma once
 
+#include <common.h>
+
+typedef struct
+{
+  uint8_t AddressSpace;
+  uint8_t BitWidth;
+  uint8_t BitOffset;
+  uint8_t AccessSize;
+  uint32_t AddressLow;
+  uint32_t AddressHigh;
+} __attribute__((packed)) GenericAddressStructure;
+
 struct FADT {
-    uint32_t FirmwareCtrl;
+  uint32_t FirmwareCtrl;
     uint32_t Dsdt;
- 
+
+    // field used in ACPI 1.0; no longer in use, for compatibility only
     uint8_t  Reserved;
- 
+
     uint8_t  PreferredPowerManagementProfile;
     uint16_t SCI_Interrupt;
     uint32_t SMI_CommandPort;
@@ -38,4 +51,29 @@ struct FADT {
     uint8_t  DayAlarm;
     uint8_t  MonthAlarm;
     uint8_t  Century;
+
+    // reserved in ACPI 1.0; used since ACPI 2.0+
+    uint16_t BootArchitectureFlags;
+
+    uint8_t  Reserved2;
+    uint32_t Flags;
+
+    // 12 byte structure; see below for details
+    GenericAddressStructure ResetReg;
+
+    uint8_t  ResetValue;
+    uint8_t  Reserved3[3];
+  
+    // 64bit pointers - Available on ACPI 2.0+
+    uint64_t                X_FirmwareControl;
+    uint64_t                X_Dsdt;
+
+    GenericAddressStructure X_PM1aEventBlock;
+    GenericAddressStructure X_PM1bEventBlock;
+    GenericAddressStructure X_PM1aControlBlock;
+    GenericAddressStructure X_PM1bControlBlock;
+    GenericAddressStructure X_PM2ControlBlock;
+    GenericAddressStructure X_PMTimerBlock;
+    GenericAddressStructure X_GPE0Block;
+    GenericAddressStructure X_GPE1Block;
 } __attribute__((packed));

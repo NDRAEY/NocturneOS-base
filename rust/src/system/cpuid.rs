@@ -8,7 +8,7 @@ pub unsafe extern "C" fn get_cpu_brand(output: *mut core::ffi::c_char, length: *
     let id = CpuId::default();
     let binding = id.get_processor_brand_string().unwrap();
     let brand = binding.as_str();
-    let len = brand.as_bytes().len();
+    let len = brand.len();
 
     if !length.is_null() {
         *length = len;

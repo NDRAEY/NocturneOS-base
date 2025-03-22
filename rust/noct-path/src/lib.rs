@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+use core::fmt::Display;
+
 use alloc::{string::{String, ToString}, vec::Vec};
 
 #[cfg(test)]
@@ -82,7 +84,7 @@ impl Path {
     }
 
     fn remove_trailing(&mut self) {
-        while (self.buffer.chars().last().unwrap() == '/') && (self.buffer.len() > 3) {
+        while self.buffer.ends_with('/') && (self.buffer.len() > 3) {
             self.buffer.pop();
         }
     }
@@ -120,8 +122,8 @@ impl Path {
     }
 }
 
-impl ToString for Path {
-    fn to_string(&self) -> String {
-        self.buffer.clone()
+impl Display for Path {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str(&self.buffer)
     }
 }

@@ -31,6 +31,13 @@
 
 #include <lib/pixel.h>
 
+size_t VERSION_MAJOR = 0;    /// Версия ядра
+size_t VERSION_MINOR = 3;    /// Пре-релиз
+size_t VERSION_PATCH = 5;    /// Патч
+
+char* OS_ARCH = "i386";      /// Архитектура
+char* VERSION_NAME = "Soul"; /// Имя версии (изменяется вместе с минорной части версии)
+
 #define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
 
 extern bool ps2_channel2_okay;
@@ -55,12 +62,8 @@ void autoexec()
     variable_write("USERNAME", "OEM");
     variable_write("BUILDUSER", "OEM");
     variable_write("BUILDDATA", __TIMESTAMP__);
-    variable_write("VERSION_MAJOR", TOSTRING(VERSION_MAJOR));
-    variable_write("VERSION_MINOR", TOSTRING(VERSION_MINOR));
-    variable_write("VERSION_PATCH", TOSTRING(VERSION_PATCH));
-    variable_write("ARCH_TYPE", ARCH_TYPE);
+    variable_write("ARCH_TYPE", OS_ARCH);
     variable_write("VERSION_NAME", VERSION_NAME);
-    variable_write("VERSION", VERSION_STRING);
 }
 
 void __createRamDisk()
@@ -189,6 +192,9 @@ extern void fs_tarfs_register();
 extern void rust_main();
 extern void keyboard_buffer_init();
 extern void audio_system_init();
+
+void new_nsh();
+
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -428,20 +434,6 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     // vio_ntw_init();
 
-    // 	size_t hwstart = timestamp();
-    //
-    // 	for(int i = 0, sh = getScreenHeight(); i < sh; i+=20) {
-    // 		for(int j = 0, sw = getScreenWidth(); j < sw; j+=20) {
-    // 			draw_filled_rectangle(j, i, 20, 20, rand());
-    // 		}
-    // 	}
-    //
-    // 	qemu_note("Program finished generating rects in %d ms", hwstart);
-    //
-    // 	punch();
-    //
-    // 	while(1);
-
     igfx_init();
 
     //    hda_init();
@@ -463,11 +455,21 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     // char* args[] = {};
     // spawn("R:/hellors", 0, args);
 
-    cli();
+    // void sysidle();
+    // thread_create(get_current_proc(), sysidle, 0x100, true, false);
+
+    new_nsh();
 
     while (1)
         ;
 }
+
+// void sysidle() {
+//     while(1) {
+//         __asm__ volatile("nop");
+//         __asm__ volatile("hlt");
+//     }
+// }
 
 // void k() {
 //     for(int i = 0; i < 10; i++) {

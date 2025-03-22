@@ -1,15 +1,7 @@
 {
-    "files.associations": {
-        "bitset": "c",
-        "algorithm": "c",
-        "format": "c",
-        "ports.h": "c",
-        "env.h": "c",
-        "array": "c",
-        "hash_map": "c",
-        "string_view": "c",
-        "initializer_list": "c",
-        "ranges": "c",
-        "span": "c"
-    }
+    "git.repositoryScanIgnoredFolders": [
+        "node_modules",
+        "rust/target",
+        "ramdisk/"
+    ]
 }
