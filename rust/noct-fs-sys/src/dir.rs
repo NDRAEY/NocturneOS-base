@@ -102,7 +102,7 @@ impl<'a> IntoIterator for &'a Directory<'_> {
 
     fn into_iter(self) -> Self::IntoIter {
         DirectoryIter {
-            dir: &self,
+            dir: self,
             index: 0,
         }
     }

@@ -10,7 +10,7 @@ pub fn cat(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     let filepath = &args[0];
 
     let mut fullpath = context.current_path.clone();
-    fullpath.apply(&filepath);
+    fullpath.apply(filepath);
 
     let path = fullpath.as_str().to_string();
     

@@ -163,7 +163,7 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
 
     let (command, arguments) = (&com[0], if com.len() > 1 { &com[1..] } else { &[] });
 
-    let object = COMMANDS.iter().filter(|x| x.0 == command).last();
+    let object = COMMANDS.iter().filter(|x| x.0 == command).next_back();
 
     match object {
         Some(descriptor) => {
