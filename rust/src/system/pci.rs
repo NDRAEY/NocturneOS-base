@@ -1,6 +1,9 @@
+#![allow(static_mut_refs)]
+
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
+use spin::RwLock;
 use x86::io::{inl, outl};
 
 use crate::{print, println, qemu_log};
@@ -10,7 +13,7 @@ use super::timer::timestamp;
 static PCI_ADDRESS_PORT: u16 = 0xCF8;
 static PCI_DATA_PORT: u16 = 0xCFC;
 
-static mut PCI_DEVICES: OnceCell<Vec<PCIDevice>> = OnceCell::new();
+static mut PCI_DEVICES: OnceCell<RwLock<Vec<PCIDevice>>> = OnceCell::new();
 
 static PCI_DEVICE_TYPE_STRINGS: [(u8, u8, &str); 89] = [
     (0x00, 0x00, "Неизвестное устройство"),
@@ -235,11 +238,10 @@ pub fn pci_get_vendor(bus: u8, slot: u8, function: u8) -> u16 {
 #[no_mangle]
 pub fn pci_scan_everything() {
     unsafe {
-        if PCI_DEVICES.get().is_none() {
-            PCI_DEVICES.set(Vec::new()).unwrap();
-        } else {
-            PCI_DEVICES.get_mut().unwrap().clear();
-        }
+        let devices = PCI_DEVICES.get_or_init(|| RwLock::new(Vec::new()));
+
+        let mut guard = devices.write();
+        guard.clear();
     }
 
     let start_time = timestamp();
@@ -271,7 +273,7 @@ pub fn pci_scan_everything() {
 
                     // qemu_log!("{:?}", &dev);
 
-                    PCI_DEVICES.get_mut().unwrap().push(dev);
+                    PCI_DEVICES.get_mut().unwrap().write().push(dev);
                 }
             }
 
@@ -298,7 +300,7 @@ pub fn pci_scan_everything() {
 
                             // qemu_log!("{:?}", &dev);
 
-                            PCI_DEVICES.get_mut().unwrap().push(dev);
+                            PCI_DEVICES.get_mut().unwrap().write().push(dev);
                         }
                     }
                 }
@@ -311,7 +313,7 @@ pub fn pci_scan_everything() {
     qemu_log!("PCI scan end in {} ms", elapsed);
 
     unsafe {
-        qemu_log!("Found {} devices", PCI_DEVICES.get().unwrap().len());
+        qemu_log!("Found {} devices", PCI_DEVICES.get().unwrap().read().len());
     }
 }
 
@@ -323,7 +325,7 @@ pub unsafe fn pci_find_device(
     slot_ret: *mut u8,
     func_ret: *mut u8,
 ) -> u8 {
-    for dev in PCI_DEVICES.get().unwrap() {
+    for dev in PCI_DEVICES.get().unwrap().read().iter() {
         if dev.vendor == vendor && dev.device == device {
             *bus_ret = dev.bus;
             *slot_ret = dev.slot;
@@ -350,7 +352,7 @@ pub unsafe fn pci_find_device_by_class_and_subclass(
     slot_ret: *mut u8,
     func_ret: *mut u8,
 ) -> u8 {
-    for dev in PCI_DEVICES.get().unwrap() {
+    for dev in PCI_DEVICES.get().unwrap().read().iter() {
         if dev.class == class && dev.subclass == subclass {
             *vendor_ret = dev.vendor;
             *deviceid_ret = dev.device;
@@ -417,9 +419,9 @@ pub fn pci_print_nth(
 
 #[no_mangle]
 pub fn pci_print_list() {
-    let devs = unsafe { PCI_DEVICES.get().unwrap() };
+    let devs = unsafe { PCI_DEVICES.get().unwrap().read() };
 
-    for dev in devs {
+    for dev in devs.iter() {
         pci_print_nth(
             dev.class,
             dev.subclass,

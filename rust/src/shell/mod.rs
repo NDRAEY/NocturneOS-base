@@ -31,6 +31,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     cat::CAT_COMMAND_ENTRY,
     parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,
+    pci::PCI_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 

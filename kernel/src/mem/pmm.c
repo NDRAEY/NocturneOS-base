@@ -505,7 +505,7 @@ void init_paging() {
 
 	qemu_log("Allocating %d pages for kernel space...", (real_end / 4096) + 1);
 
-	for(size_t i = 0; i < (real_end / 4096) + 1; i++) {
+	for(size_t i = 0; i < ALIGN(real_end, 4096) / 4096; i++) {
 		// Note: if allocator returns 0, it's an error.
 		// But we don't care, because we're allocating pages for first time here.
 		phys_alloc_single_page();

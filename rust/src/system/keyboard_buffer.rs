@@ -1,5 +1,6 @@
-use core::cell::OnceCell;
+#![allow(static_mut_refs)]
 
+use core::cell::OnceCell;
 use alloc::vec::Vec;
 
 use crate::{qemu_err, qemu_ok};
@@ -44,7 +45,7 @@ impl KeyboardBuffer {
             super::scheduler::task_yield();
         }
 
-        self.buffer.pop().unwrap()
+        self.get_raw().unwrap()
     }
 }
 
@@ -53,7 +54,6 @@ impl KeyboardBuffer {
 /// # Safety
 /// - Keyboard buffer MUST be called before others
 #[no_mangle]
-#[allow(static_mut_ref)]
 pub unsafe extern "C" fn keyboard_buffer_init() {
     match KEYBOARD_BUFFER.set(KeyboardBuffer::new()) {
         Ok(()) => {
@@ -84,6 +84,7 @@ pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
 pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
+    // We actually read, but `get()` mutates buffer so we use `write()`
     v.get()
 }
 

@@ -108,6 +108,7 @@ size_t create_process(void* entry_point, char name[256], bool suspend, bool is_k
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
 
     proc->page_dir = phys;
+    proc->page_dir_virt = (size_t)virt;
 
     qemu_log("FINISHED!");
 
