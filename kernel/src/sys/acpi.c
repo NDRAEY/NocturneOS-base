@@ -55,7 +55,7 @@ bool acpi_checksum_sdt(ACPISDTHeader *tableHeader) {
     return sum == 0;
 }
 
-ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, char signature[4]) {
+ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, char* signature) {
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
 
     map_pages_overlapping(
@@ -73,7 +73,7 @@ ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, char signature
     for(uint32_t i = 0; i < sdt_count; i++) {
         ACPISDTHeader* entry = (ACPISDTHeader*)(rsdt_end[i]);
 
-        if(strncmp(entry->Signature, signature, 4) == 0) {
+        if(memcmp(entry->Signature, signature, 4) == 0) {
             return entry;
         }
     }
@@ -154,7 +154,7 @@ void find_facp(size_t rsdt_addr) {
     }
 
     qemu_log("OEMID: %s", rsdt->OEMID);
-    qemu_log("Length: %d entries", rsdt->Length);
+    qemu_log("Length: %d bytes", rsdt->Length);
 
     uint32_t sdt_count = (rsdt->Length - sizeof(ACPISDTHeader)) / sizeof(uint32_t);
 
@@ -167,16 +167,31 @@ void find_facp(size_t rsdt_addr) {
     if(!pre_fadt) {
         qemu_log("FADT not found...");
         return;
+    } else {
+      qemu_log("FADT found at: %x (With length: %d bytes) (struct is: %d bytes long)", pre_fadt, pre_fadt->Length, sizeof(struct FADT));
+    qemu_log("Revision: %x", pre_fadt->Revision);
     }
 
     struct FADT* fadt = (struct FADT*)(pre_fadt + 1);  // It skips SDT header
+  //
+    //hexview_advanced(fadt, pre_fadt->Length - 36, 24, false, new_qemu_printf);
 
 //    map_single_page(get_kernel_page_directory(), (virtual_addr_t) fadt, (virtual_addr_t) fadt, PAGE_WRITEABLE);
 
-    qemu_log("Century: %d", fadt->Century);
+    qemu_log("DSDT: %x", fadt->Dsdt);
     qemu_log("SMI port: %x", fadt->SMI_CommandPort);
     qemu_log("Enable Command: %x", fadt->AcpiEnable);
+    qemu_log("FirmwareControl: %x", fadt->FirmwareCtrl);
+    qemu_log("Century: %d", fadt->Century);
+    qemu_log("ResetReg: %x", fadt->ResetReg.AddressLow);
+    qemu_log("ResetReg: %x", fadt->ResetReg.AddressHigh);
+    qemu_log("ResetReg AS: %d", fadt->ResetReg.AddressSpace);
+    qemu_log("ResetValue: %x", fadt->ResetValue);
     qemu_log("TODO: Write 'Enable Command' to 'SMI Port' using `outb()` func");
+
+    //uint32_t reset_reg = fadt->ResetReg.AddressHigh;
+    //map_single_page(get_kernel_page_directory(), reset_reg, reset_reg, PAGE_WRITEABLE);
+    //*(uint8_t*)reset_reg = fadt->ResetValue;
 
     qemu_log("Found FADT!");
 

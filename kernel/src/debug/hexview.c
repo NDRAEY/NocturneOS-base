@@ -13,12 +13,12 @@ void hexview_advanced(void *buffer, size_t length, size_t width, bool relative, 
 
 	for(size_t i = 0; i < length; i += width) {
         if(relative)
-            printer_func("%08v: ", i);
+            printer_func("%08x: ", i);
         else
-            printer_func("%08v: ", cbuf + i);
+            printer_func("%08x: ", cbuf + i);
 
         for(int j = 0; j < (length - i < width ? length - i : width); j++) {
-            printer_func("%02v ", ((char)*(cbuf + i + j)) & 0xFF);
+            printer_func("%02x ", ((char)*(cbuf + i + j)) & 0xFF);
         }
 
         printer_func("\n");
