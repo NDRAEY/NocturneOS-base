@@ -14,7 +14,6 @@ use noct_path::Path;
 pub mod cd;
 pub mod cls;
 pub mod dir;
-pub mod mkdir;
 pub mod cat;
 pub mod pci;
 pub mod parallel_desktop;
@@ -22,6 +21,7 @@ pub mod meminfo;
 pub mod mala;
 pub mod pavi;
 pub mod miniplay;
+pub mod file_ops;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -30,7 +30,10 @@ static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY,
-    mkdir::MKDIR_COMMAND_ENTRY,
+    file_ops::CREATE_DIR_COMMAND_ENTRY,
+    file_ops::CREATE_FILE_COMMAND_ENTRY,
+    file_ops::CREATE_DIR_COMMAND_ENTRY,
+    file_ops::REMOVE_FILE_COMMAND_ENTRY,
     cat::CAT_COMMAND_ENTRY,
     parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,

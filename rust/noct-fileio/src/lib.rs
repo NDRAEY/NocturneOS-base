@@ -89,3 +89,29 @@ pub fn size(path: &str) -> usize {
 
     size as _
 }
+
+pub fn remove_file(path: &str) -> Option<()> {
+    let mut fpath = String::from(path);
+    fpath.push('\0');
+
+    let rpath = fpath.as_ptr();
+
+    let result = unsafe {
+        unlink(rpath as *const _)
+    };
+
+    if result { Some(()) } else { None }
+}
+
+pub fn remove_directory(path: &str) -> Option<()> {
+    let mut fpath = String::from(path);
+    fpath.push('\0');
+
+    let rpath = fpath.as_ptr();
+
+    let result = unsafe {
+        rmdir(rpath as *const _)
+    };
+
+    if result { Some(()) } else { None }
+}

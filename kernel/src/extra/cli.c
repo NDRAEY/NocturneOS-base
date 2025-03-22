@@ -33,7 +33,6 @@
 
 int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
-int G_CLI_H_KYB = 1;
 int G_CLI_CURINXD = 17; /// Текущий диск
 char G_CLI_PATH[1024] = "R:/";
 
@@ -46,12 +45,6 @@ typedef struct
 } CLI_CMD_ELEM;
 
 CLI_CMD_ELEM G_CLI_CMD[];
-
-uint32_t CLI_CMD_CLS(uint32_t c, char *v[])
-{
-    clean_tty_screen();
-    return 1;
-}
 
 uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
 {
@@ -108,222 +101,6 @@ uint32_t CLI_CMD_DISKPART(uint32_t c, char *v[])
 
     _tty_printf("\n");
     // clean_tty_screen();
-    return 1;
-}
-
-uint32_t CLI_CMD_CAT(uint32_t c, char *v[])
-{
-    if (c == 0 || (c == 1 && (strcmp(v[1], "/?") == 0)))
-    {
-        _tty_printf("Данная программа выводит содержимое файла.\n");
-        _tty_printf("Пример:\"CAT R:\\Sayori\\motd\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-    FILE *cat_file = fopen(v[1], "r");
-    if (!cat_file)
-    {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("[CMD] [CAT] Не удалось найти файл `%s`. Проверьте правильность введенного вами пути.\n", v[1]);
-        return 2;
-    }
-
-    size_t filesize = fsize(cat_file);
-
-    uint8_t *buffer = kcalloc(1, filesize + 1);
-
-    fread(cat_file, 1, filesize, buffer);
-
-    tty_printf("%s", buffer);
-
-    fclose(cat_file);
-
-    kfree(buffer);
-    return 1;
-}
-
-uint32_t CLI_CMD_DEL(uint32_t c, char *v[])
-{
-    if (c == 0 || (c == 1 && (strcmpn(v[1], "/?"))))
-    {
-        _tty_printf("Удаление файла\n");
-        _tty_printf("Пример:\"DEL T:\\Sayori\\tmp.log\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-
-    bool res = unlink(v[1]);
-
-    if (!res)
-    {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("Не удалось удалить файл, возможно файл не найден или у вас недостаточно прав для его удаления.\n");
-        return 1;
-    }
-    return 0;
-}
-
-uint32_t CLI_CMD_RMDIR(uint32_t c, char *v[])
-{
-    if (c == 0 || (c == 1 && (strcmpn(v[1], "/?"))))
-    {
-        _tty_printf("Удаление папки\n");
-        _tty_printf("Пример:\"RMDIR T:\\Sayori\\\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-
-    bool res = rmdir(v[1]);
-
-    if (!res)
-    {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("Не удалось удалить папку, возможно папка не найдена или у вас недостаточно прав для её удаления.\n");
-        return 1;
-    }
-    return 0;
-}
-
-uint32_t CLI_CMD_TOUCH(uint32_t c, char *v[])
-{
-    if (c == 0 || (c == 1 && (strcmpn(v[1], "/?"))))
-    {
-        _tty_printf("Создание файла\n");
-        _tty_printf("Пример:\"TOUCH T:\\Sayori\\tmp.log\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-
-    bool res = touch(v[1]);
-
-    if (!res)
-    {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("Не удалось создать файл, возможно файл уже существует или у вас недостаточно прав для её создания в этой папке.\n");
-        return 1;
-    }
-    return 0;
-}
-
-uint32_t CLI_CMD_MKDIR(uint32_t c, char *v[])
-{
-    if (c == 0 || (c == 1 && (strcmpn(v[1], "/?"))))
-    {
-        _tty_printf("Создание папки\n");
-        _tty_printf("Пример:\"TOUCH T:\\Sayori\\\".\n");
-        _tty_printf("\n");
-        return 1;
-    }
-
-    bool res = mkdir(v[1]);
-
-    if (!res)
-    {
-        tty_setcolor(COLOR_ERROR);
-        tty_printf("Не удалось создать папка, возможно папка уже существует или у вас недостаточно прав для её создания в этой папке.\n");
-        return 1;
-    }
-    return 0;
-}
-
-uint32_t CLI_CMD_SET(uint32_t c, char *v[])
-{
-    if (c == 1 && (strcmpn(v[1], "/?")))
-    {
-        _tty_printf("Для получения данных переменной введите \"SET ПЕРЕМЕННАЯ\".\n");
-        _tty_printf("Для установки переменной введите \"SET ПЕРЕМЕННАЯ=ЗНАЧЕНИЕ\".\n");
-        _tty_printf("Для удаления переменной введите \"SET ПЕРЕМЕННАЯ=\".\n\n");
-
-        _tty_printf("\n");
-        return 1;
-    }
-    if (c == 0)
-    {
-        VARIABLE *s = variable_list("");
-        for (size_t i = 0; i < 512; i++)
-        {
-            if (s[i].Ready != 1)
-                break;
-            _tty_printf("%s=%s\n", s[i].Key, s[i].Value);
-        }
-        kfree(s);
-    }
-    else
-    {
-        uint32_t pc = str_cdsp2(v[1], '=');
-        char **out = explode(v[1], '=');
-
-        if (pc != 1)
-        {
-            /// Поиск переменной
-            qemu_log("[Режим поиска] %s", v[1]);
-            VARIABLE *s = variable_list(v[1]);
-            for (size_t i = 0; i < 512; i++)
-            {
-                if (s[i].Ready != 1)
-                    break;
-                _tty_printf("%s=%s\n", s[i].Key, s[i].Value);
-            }
-            kfree(s);
-        }
-        else if (out[1] == NULL || strlen(out[1]) == 0)
-        {
-            qemu_log("[Режим удаления] %s", out[0]);
-            variable_write(out[0], "");
-        }
-        else if (out[1] != NULL)
-        {
-            qemu_log("[Режим изменения] %s", out[0]);
-            variable_write(out[0], out[1]);
-        }
-
-        // 		Почему-то не работает, а должно
-        // 		for (int d = 0; d <= out;d++){
-        // 			kfree(out[d]);
-        // 		}
-        kfree(out);
-    }
-    punch();
-
-    return 0;
-}
-
-uint32_t CLI_CMD_DIR(uint32_t c, char *v[])
-{
-    const char *path = (c == 1 ? G_CLI_PATH : v[1]);
-
-    FSM_DIR Dir = {};
-
-    nvfs_dir_v2(path, &Dir);
-
-    if (!Dir.Ready)
-    {
-        tty_printf("Ошибка при чтении папки: %s\n", path);
-        return 1;
-    }
-    
-    tty_printf("Содержимое папки: %s\n\n", path);
-    
-    size_t Sizes = 0;
-    size_t Count = Dir.CountDir + Dir.CountFiles + Dir.CountOther;
-    
-    for (int i = 0; i < Count; i++)
-    {
-        char *btime = fsm_timePrintable(Dir.Files[i].LastTime);
-        tty_printf("%s     %s    [%8d bytes]\t%s\n",
-                    btime,
-                    (Dir.Files[i].Type == FSM_TYPE_DIR ? "<ПАПКА>" : "<ФАЙЛ> "),
-                    Dir.Files[i].Size,
-                    Dir.Files[i].Name);
-        Sizes += Dir.Files[i].Size;
-        kfree(btime);
-    }
-    
-    tty_printf("\nФайлов: %d | Папок: %d | Всего: %d\n", Dir.CountFiles, Dir.CountDir, Count);
-    tty_printf("Размер папки: %d мб. | %d кб. | %d б.\n", (Sizes != 0 ? (Sizes / 1024 / 1024) : 0), (Sizes != 0 ? (Sizes / 1024) : 0), Sizes);
-    
-    nvfs_close_dir_v2(&Dir);
-    
     return 1;
 }
 
@@ -657,10 +434,6 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
     {"PROC", "proc", proc_list, "Список процессов"},
     {"SYSINFO", "sysinfo", CLI_CMD_SYSINFO, "Информация о системе"},
-    {"TOUCH", "touch", CLI_CMD_TOUCH, "Создать файл"},
-    {"DEL", "DEL", CLI_CMD_DEL, "Удалить файл"},
-    {"MKDIR", "mkdir", CLI_CMD_MKDIR, "Создать папку"},
-    {"RMDIR", "rmdir", CLI_CMD_RMDIR, "Удалить папку"},
     {"REBOOT", "reboot", CLI_CMD_REBOOT, "Перезагрузка"},
     {"RD", "rd", CLI_RD, "Чтение данных с диска"},
     {"SPAWN", "spawn", CLI_SPAWN, "spawn a new process"},
