@@ -23,6 +23,7 @@ pub mod mala;
 pub mod pavi;
 pub mod miniplay;
 pub mod file_ops;
+pub mod reboot;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -42,6 +43,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     mala::MALA_COMMAND_ENTRY,
     pavi::PAVI_COMMAND_ENTRY,
     miniplay::MINIPLAY_COMMAND_ENTRY,
+    reboot::REBOOT_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 
