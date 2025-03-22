@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "noct-alloc", "noct-dpm-sys", "noct-fs-sys", "noct-iso9660", "noct-logger", "noct-path", "noct-physmem", "noct-screen" , "noct-tarfs"]
+members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs-sys", "noct-iso9660", "noct-logger", "noct-path", "noct-physmem", "noct-screen" , "noct-tarfs"]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
@@ -25,6 +25,7 @@ raw-cpuid = "11.4.0"
 zeraus = { git = "https://github.com/NDRAEY/zeraus", version = "0.1.0", default-features = false, features = ["no_std"] }
 elf = { version = "0.7.4", default-features = false }
 noct-tarfs = { path = "./noct-tarfs" }
+noct-fileio = { path = "./noct-fileio" }
 
 [profile.release]
 panic = "abort"

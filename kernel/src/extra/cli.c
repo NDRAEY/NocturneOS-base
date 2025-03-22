@@ -664,8 +664,8 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"REBOOT", "reboot", CLI_CMD_REBOOT, "Перезагрузка"},
     {"RD", "rd", CLI_RD, "Чтение данных с диска"},
     {"SPAWN", "spawn", CLI_SPAWN, "spawn a new process"},
-    {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
     {"HEX", "hex", CLI_CMD_HEX, "Show hex data"},
+    {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
     {"ST", "st", CLI_SPAWN_TEST, "spawn test"},
     {"NSH", "nsh", new_nsh, "New NSH"},
     {nullptr, nullptr, nullptr}};
