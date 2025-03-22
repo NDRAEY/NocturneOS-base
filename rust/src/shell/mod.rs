@@ -7,6 +7,7 @@ use noct_logger::qemu_err;
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
 use crate::system::run_elf_file::run;
+use crate::system::version::version;
 use crate::{print, println};
 
 use noct_path::Path;
@@ -64,7 +65,7 @@ fn help(_ctx: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
     Ok(())
 }
 
-fn process_input() -> String {
+fn process_input(_context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
     loop {
@@ -99,14 +100,19 @@ fn process_input() -> String {
 pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     let mut context = ShellContext::new();
 
-    println!("nsh v0.1.0\n");
+    let ver = version();
+
+    println!("NocturneOS [Версия: v{}.{}.{}]", ver.0, ver.1, ver.2);
+    println!("(c) SayoriOS & NocturneOS Team, 2025.");
+    println!("Для дополнительной информации наберите \"help\".");
+
     unsafe { screen_update() };
 
     loop {
         print!("{}> ", context.current_path.as_str());
         unsafe { screen_update() };
 
-        let raw_input = process_input();
+        let raw_input = process_input(&mut context);
 
         print!("\n");
 

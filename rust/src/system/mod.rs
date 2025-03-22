@@ -6,3 +6,4 @@ pub mod timer;
 pub mod cpuid;
 pub mod run_elf_file;
 pub mod mem;
+pub mod version;

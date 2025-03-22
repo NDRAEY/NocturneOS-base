@@ -78,7 +78,7 @@ impl File {
         let mut file_path_string = String::from(path);
         file_path_string.push('\0');
 
-        let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), b"r\0".as_ptr()) };
+        let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"r".as_ptr() as _) };
 
         if file.is_null() {
             return Err(());

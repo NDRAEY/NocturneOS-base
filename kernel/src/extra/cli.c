@@ -63,7 +63,7 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
     tty_printf("Системная информация:\n");
     tty_printf("\tOS:                      NocturneOS v%d.%d.%d '%s'\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_NAME);
     tty_printf("\tДата сборки:             %s\n", __TIMESTAMP__);
-    tty_printf("\tАрхитектура:             %s\n", ARCH_TYPE);
+    tty_printf("\tАрхитектура:             %s\n", OS_ARCH);
     tty_printf("\tПроцессор:               %s\n", cpubrand);
 
     if (is_temperature_module_present())
@@ -363,30 +363,6 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {nullptr, nullptr, nullptr}
 };
 
-int cli_handler_ebat(int argc, char **argv)
-{
-    qemu_note("[RUNTIME] [System] [EXEC] Count: %d\n", argc);
-    int ret = 0;
-    bool found = false;
-
-    for (size_t i = 0; G_CLI_CMD[i].name != nullptr; i++)
-    {
-        if (strcmpn(G_CLI_CMD[i].name, argv[0]) || strcmpn(G_CLI_CMD[i].alias, argv[0]))
-        {
-            ret = G_CLI_CMD[i].funcv(argc, argv);
-            found = true;
-            break;
-        }
-    }
-
-    if (!found)
-    {
-        ret = CLI_CMD_RUN(argc, argv);
-    }
-
-    return ret;
-}
-
 void cli_handler(const char *ncmd)
 {
     set_cursor_enabled(0);
@@ -428,7 +404,6 @@ void cli()
     tty_set_bgcolor(0xFF000000);
     tty_setcolor(0xFFFFFF);
 
-    //	clean_tty_screen();
     _tty_printf("NocturneOS [Версия: v%d.%d.%d]\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
     _tty_printf("(c) SayoriOS & NocturneOS Team, 2025.\nДля дополнительной информации наберите \"help\".\n\n");
 

@@ -199,7 +199,7 @@ set(C_SRC
 	kernel/src/net/tcp.c 
 	kernel/src/net/stack.c 
 	kernel/src/toys/pavi.c 
-	kernel/src/drv/audio/hda.c 
+	# kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
 	kernel/src/sys/lapic.c 
