@@ -90,7 +90,6 @@ uint32_t CLI_CMD_SYSINFO(uint32_t c, char *v[])
 uint32_t CLI_CMD_DISKPART(uint32_t c, char *v[])
 {
     _tty_printf("Список примонтированных дисков:\n");
-    //    fsm_dpm_update(-1);
     for (int i = 0; i < 26; i++)
     {
         DPM_Disk dpm = dpm_info(i + 65);
@@ -100,7 +99,6 @@ uint32_t CLI_CMD_DISKPART(uint32_t c, char *v[])
     }
 
     _tty_printf("\n");
-    // clean_tty_screen();
     return 1;
 }
 
@@ -137,87 +135,9 @@ uint32_t CLI_CMD_RUN(uint32_t c, char *v[])
     return 0;
 }
 
-uint32_t CLI_CMD_ECHO(uint32_t c, char *v[])
-{
-    if (c == 1 && (strcmp(v[1], "/?") == 0))
-    {
-        _tty_printf("Данная команда выводит сообщение на экран, а также переменные.\n");
-        _tty_printf("\n");
-        return 1;
-    }
-    for (int i = 1; i <= c; i++)
-    {
-        /// Сначало переформируем все в переменные в текст
-        size_t len_v = strlen(v[i]);
-        size_t len_e = len_v - 1;
-        if (v[i][0] == '%' && v[i][len_e] == '%')
-        {
-            char *tmp_ve = kmalloc(len_v);
-            substr(tmp_ve, v[i], 1, len_e - 1);
-            char *tmp_dv = variable_read(tmp_ve);
-            kfree(tmp_ve);
-            if (tmp_dv != NULL)
-            {
-                _tty_printf("%s", tmp_dv);
-                continue;
-            }
-        }
-        // if (str_contains(v[i],""))
-        if (strcmpn(v[i], "%DATE%") || strcmpn(v[i], "%date%"))
-        {
-            _tty_printf("2023-01-01");
-        }
-        else if (strcmpn(v[i], "%CD%") || strcmpn(v[i], "%cd%") || strcmpn(v[i], "%path%") || strcmpn(v[i], "%PATH%"))
-        {
-            _tty_printf("%s", G_CLI_PATH);
-        }
-        else if (strcmpn(v[i], "%RANDOM%") || strcmpn(v[i], "%random%"))
-        {
-            /// Магии не будет - я хз как у нас тут работает рандом
-            _tty_printf("%u", rand());
-        }
-        else if (strcmpn(v[i], "%TIME%") || strcmpn(v[i], "%time%"))
-        {
-            _tty_printf("%s", "12:34");
-        }
-        else
-        {
-            _tty_printf("%s ", v[i]);
-        }
-    }
-    _tty_printf("\n");
-    return 1;
-}
-
-uint32_t CLI_CMD_HELP(__attribute__((unused)) uint32_t c, __attribute__((unused)) char *v[])
-{
-    _tty_printf("Для получения дополнительной информации, наберите \"команда /?\", если справка по команде есть, она будет отображена.\n\n");
-    size_t hlp_padding = 11;
-    for (size_t i = 0; G_CLI_CMD[i].name != nullptr; i++)
-    {
-        _tty_printf("%s", G_CLI_CMD[i].name);
-        for (size_t j = 0; j < hlp_padding - strlen(G_CLI_CMD[i].name); j++)
-        {
-            _tty_printf(" ");
-        }
-        _tty_printf(" | %s\n", G_CLI_CMD[i].helpstring);
-    }
-
-    punch();
-
-    return 1;
-}
-
-// Pimnik98, don't being thirsty
 
 uint32_t gfxbench(uint32_t argc, char *args[]);
-uint32_t miniplay(uint32_t argc, char *args[]);
 uint32_t CLI_CMD_NET(uint32_t c, char **v);
-uint32_t parallel_desktop_start(uint32_t argc, char *args[]);
-uint32_t mala_draw(uint32_t argc, char *argv[]);
-uint32_t pci_print_list(uint32_t argc, char *argv[]);
-// uint32_t pavi_view(uint32_t argc, char* argv[]);
-uint32_t rust_command(uint32_t argc, char *argv[]);
 
 uint32_t proc_list(uint32_t argc, char *argv[])
 {
@@ -428,7 +348,7 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     // {"CALENDAR", "calendar", calendar, "Календарь"},
     {"DISKCTL", "diskctl", shell_diskctl, "Управление ATA-дисками"},
     {"DISKPART", "diskpart", CLI_CMD_DISKPART, "Список дисков Disk Partition Manager"},
-    {"NET", "net", CLI_CMD_NET, "Информация об сетевых устройствах"},
+    {"NET", "net", CLI_CMD_NET, "Информация о сетевых устройствах"},
     {"GFXBENCH", "gfxbench", gfxbench, "Тестирование скорости фреймбуфера"},
     // {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
     {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
@@ -439,9 +359,9 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"SPAWN", "spawn", CLI_SPAWN, "spawn a new process"},
     {"HEX", "hex", CLI_CMD_HEX, "Show hex data"},
     {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
-    {"ST", "st", CLI_SPAWN_TEST, "spawn test"},
     {"NSH", "nsh", new_nsh, "New NSH"},
-    {nullptr, nullptr, nullptr}};
+    {nullptr, nullptr, nullptr}
+};
 
 int cli_handler_ebat(int argc, char **argv)
 {
@@ -526,12 +446,7 @@ void cli()
 
         gets(input_buffer);
         tty_printf("\n");
-        /*
-                if(result == 1) {
-                        tty_alert("\nMaximum 512 characters!\n");
-                        continue;
-                }
-        */
+
         size_t len_cmd = strlen(input_buffer);
         if (len_cmd == 0)
         {
@@ -541,24 +456,7 @@ void cli()
         size_t current_time = timestamp();
         qemu_log("cmd: %s", input_buffer);
 
-        /////////////////////////////////////
-
-        // int preprocessor = 0;
-
-        // if (preprocessor == 0){
         cli_handler(input_buffer);
-        // } else {
-        //     BAT_T* token = bat_parse_string(input_buffer);
-        //     token->Debug = 0;
-        //     token->Echo = 1;
-        //     int ret = bat_runtime_exec(token);
-        //     qemu_warn("RETURN CODE: %d\n",ret);
-        //     bat_destroy(token);
-        // }
-        ////////////////////////////////////
-
-        //
-        // tty_printf("\n");
 
         ssize_t delta = (int)system_heap.used_memory - (int)memory_cur;
         ssize_t delta_blocks = (int)system_heap.allocated_count - (int)memory_cnt_cur;

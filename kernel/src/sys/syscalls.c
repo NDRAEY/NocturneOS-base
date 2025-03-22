@@ -136,6 +136,14 @@ size_t syscall_munmap(size_t virtual, size_t size) {
     return 1;
 }
 
+size_t syscall_temperature() {
+    if(is_temperature_module_present()) {
+        return get_cpu_temperature();
+    }
+
+    return 0xFFFFFFFF;
+}
+
 /**
  * @brief Инициализация системных вызовов
  * 
@@ -165,6 +173,7 @@ void init_syscalls(void){
     calls_table[21] = (syscall_fn_t *)syscall_screen_update;
     calls_table[22] = (syscall_fn_t *)syscall_mmap;
     calls_table[23] = (syscall_fn_t *)syscall_munmap;
+    calls_table[24] = (syscall_fn_t *)syscall_temperature;
 
 	qemu_ok("System calls initialized!");
 }
