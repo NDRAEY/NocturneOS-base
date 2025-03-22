@@ -229,17 +229,17 @@ set(RUST_SRC_PATH "~/.rustup/toolchains/${RUST_TARGET_TRIPLE}/lib/rustlib/src/ru
 
 # This command will install specified toolchain.
 
-add_custom_command(
-       OUTPUT ${RUST_CARGO_PATH}
-       COMMAND rustup toolchain install ${RUST_COMPILER_TOOLCHAIN}
-       WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
-       COMMENT "Installing `${RUST_COMPILER_TOOLCHAIN}` toolchain..."
-       USES_TERMINAL
-       VERBATIM
-)
+# add_custom_command(
+#        OUTPUT ${RUST_CARGO_PATH}
+#        COMMAND rustup toolchain install ${RUST_COMPILER_TOOLCHAIN}
+#        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+#        COMMENT "Installing `${RUST_COMPILER_TOOLCHAIN}` toolchain..."
+#        USES_TERMINAL
+#        VERBATIM
+# )
 
-add_custom_target(rustup_toolchain ALL DEPENDS ${RUST_CARGO_PATH})
-add_dependencies(${KERNEL} rustup_toolchain)
+# add_custom_target(rustup_toolchain ALL DEPENDS ${RUST_CARGO_PATH})
+# add_dependencies(${KERNEL} rustup_toolchain)
 
 ############################
 
@@ -251,7 +251,7 @@ add_custom_command(
        COMMAND rustup component add rust-src --toolchain ${RUST_TARGET_TRIPLE}
        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
        COMMENT "Installing `rust-src` for ${RUST_TARGET_TRIPLE} toolchain..."
-	   DEPENDS rustup_toolchain
+	#    DEPENDS rustup_toolchain
        USES_TERMINAL
        VERBATIM
 )
