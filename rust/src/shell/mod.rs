@@ -19,6 +19,9 @@ pub mod cat;
 pub mod pci;
 pub mod parallel_desktop;
 pub mod meminfo;
+pub mod mala;
+pub mod pavi;
+pub mod miniplay;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -32,6 +35,9 @@ static COMMANDS: &[ShellCommandEntry] = &[
     parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,
     pci::PCI_COMMAND_ENTRY,
+    mala::MALA_COMMAND_ENTRY,
+    pavi::PAVI_COMMAND_ENTRY,
+    miniplay::MINIPLAY_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 

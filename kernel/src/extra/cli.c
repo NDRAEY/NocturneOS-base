@@ -649,17 +649,12 @@ uint32_t new_nsh(uint32_t, char**);
 
 CLI_CMD_ELEM G_CLI_CMD[] = {
     // {"CALENDAR", "calendar", calendar, "Календарь"},
-    {"ECHO", "echo", CLI_CMD_ECHO, "Выводит сообщение на экран."},
     {"DISKCTL", "diskctl", shell_diskctl, "Управление ATA-дисками"},
     {"DISKPART", "diskpart", CLI_CMD_DISKPART, "Список дисков Disk Partition Manager"},
-    {"SET", "set", CLI_CMD_SET, "Показывает, указывает и удаляет переменные среды SayoriOS"},
     {"NET", "net", CLI_CMD_NET, "Информация об сетевых устройствах"},
     {"GFXBENCH", "gfxbench", gfxbench, "Тестирование скорости фреймбуфера"},
-    {"MINIPLAY", "miniplay", miniplay, "WAV-проиграватель"},
-    {"MALA", "mala", mala_draw, "Нарисовать рисунок"},
     // {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
     {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
-    {"PAVI", "pavi", pavi_view, "Программа для просмотра изображений"},
     {"PROC", "proc", proc_list, "Список процессов"},
     {"SYSINFO", "sysinfo", CLI_CMD_SYSINFO, "Информация о системе"},
     {"TOUCH", "touch", CLI_CMD_TOUCH, "Создать файл"},
