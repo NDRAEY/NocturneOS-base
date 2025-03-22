@@ -159,7 +159,8 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	kernel/src/extra/cli.c 
+	# kernel/src/extra/cli.c 
+	kernel/src/extra/plain_runner.c
 	kernel/src/sys/variable.c	
 	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
@@ -192,7 +193,6 @@ set(C_SRC
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
 	# kernel/src/toys/minesweeper.c 
-	kernel/src/toys/calendar.c 
 	kernel/src/toys/diskctl.c 
 	kernel/src/lib/utf_conversion.c 
 	kernel/src/sys/file_descriptors.c 
