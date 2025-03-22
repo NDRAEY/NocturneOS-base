@@ -5,9 +5,8 @@ extern crate alloc;
 use alloc::{string::{String, ToString}, vec::Vec};
 use noct_dpm_sys::Disk;
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
+use noct_logger::{qemu_err, qemu_log, qemu_note};
 
-const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"TARFS2\0";
 
 struct ThatDisk(Disk);

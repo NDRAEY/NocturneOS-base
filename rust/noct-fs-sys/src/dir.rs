@@ -96,7 +96,7 @@ impl Iterator for DirectoryIter<'_> {
     }
 }
 
-impl<'a, 'b> IntoIterator for &'a Directory<'b> {
+impl<'a> IntoIterator for &'a Directory<'_> {
     type Item = File;
     type IntoIter = DirectoryIter<'a>;
 
