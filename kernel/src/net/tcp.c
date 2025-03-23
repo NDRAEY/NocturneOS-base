@@ -53,32 +53,64 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 	return true;
 }
 
+typedef struct {
+    uint32_t src_addr;
+    uint32_t dst_addr;
+    uint8_t reserved;
+    uint8_t protocol;
+    uint16_t tcp_length;
+} __attribute__((packed)) ipv4_pseudo_header_t;
+
+uint16_t checksum(void *data, size_t len) {
+    uint32_t sum = 0;
+    uint16_t *ptr = (uint16_t *)data;
+
+    while (len > 1) {
+        sum += *ptr++;
+        len -= 2;
+    }
+
+    // If odd byte left, pad with zero
+    if (len > 0) {
+        sum += *((uint8_t *)ptr);
+    }
+
+    // Fold 32-bit sum to 16-bit
+    while (sum >> 16) {
+        sum = (sum & 0xFFFF) + (sum >> 16);
+    }
+
+    return (uint16_t)(~sum);  // One's complement
+}
+
 // TODO: !!!
-uint16_t tcp_calculate_checksum(ETH_IPv4_PKG *packet) {
-	register size_t sum = 0;
-	unsigned short tcpLen = ntohs(packet->TotalLength) - (packet->HeaderLength << 2);
-	tcp_packet_t* tcp_packet = (tcp_packet_t*)(packet + 1);
+uint16_t tcp_calculate_checksum(uint32_t src_addr, uint32_t dst_addr, tcp_packet_t *tcp_packet, uint16_t tcp_length) {
+    ipv4_pseudo_header_t pseudo_header;
+    pseudo_header.src_addr = src_addr;
+    pseudo_header.dst_addr = dst_addr;
+    pseudo_header.reserved = 0;
+    pseudo_header.protocol = 6; // TCP protocol number
+    pseudo_header.tcp_length = htons(tcp_length);
 
-	uint32_t src = *(uint32_t*)&packet->Source;
-	uint32_t dst = *(uint32_t*)&packet->Destination;
+    size_t buffer_size = sizeof(ipv4_pseudo_header_t) + tcp_length;
+    uint8_t *buffer = kmalloc(buffer_size);
+    if (!buffer) {
+        return 0; // Handle allocation failure
+    }
 
-	sum += (src >> 16) & 0xFFFF;
-	sum += (src) & 0xFFFF;
+    memcpy(buffer, &pseudo_header, sizeof(ipv4_pseudo_header_t));
+    memcpy(buffer + sizeof(ipv4_pseudo_header_t), tcp_packet, tcp_length);
 
-	sum += (dst >> 16) & 0xFFFF;
-	sum += (dst) & 0xFFFF;
-
-	sum += htons(6);
-	sum += htons(tcpLen);
-
-	return ~sum;
+    uint16_t check = checksum(buffer, buffer_size);
+    kfree(buffer);
+    return check;
 }
 
 void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	qemu_note("!!!!!!!!!!!!!!!!!!!!!!!! TCP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-	ETH_IPv4_PKG *ipv4 = (ETH_IPv4_PKG *)((size_t)packet - sizeof(ETH_IPv4_PKG));
-	size_t data_payload_size = ipv4->TotalLength - sizeof(ETH_IPv4_PKG);
+	ipv4_packet_t *ipv4 = (ipv4_packet_t *)((size_t)packet - sizeof(ipv4_packet_t));
+	size_t data_payload_size = ipv4->TotalLength - sizeof(ipv4_packet_t);
 
 	qemu_log("Data payload size: %d", data_payload_size);
 
@@ -108,44 +140,84 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	bool is_stage_2 = !packet->syn && packet->ack && !packet->psh && !packet->fin;
 	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
-
-	tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
-	memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
-
-	char* options = (char*)(sendable_packet) + sizeof(tcp_packet_t);
-
-	// options[0] = 0x02;
-	// options[1] = 0x04;
-	// options[2] = 0xff;
-	// options[3] = 0xd7;
-	// options[4] = 0x04;
-	// options[5] = 0x02;
-	// options[6] = 0x01;
-	// options[7] = 0x01;
-
 	if(is_stage_1) {
 		qemu_note("== STAGE 1 ==");
 
+		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
+		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));	
+
 		tcp_connections[idx].seq = rand();
-		tcp_connections[idx].ack = sendable_packet->seq + 1;
-
+		tcp_connections[idx].ack = packet->seq + 1; // Use the received packet's seq (host order)
+	
 		sendable_packet->ack = 1;
-		sendable_packet->seq = ntohl(tcp_connections[idx].seq);  // it's rand();
-		sendable_packet->ack_seq = ntohl(tcp_connections[idx].ack);
-
-		uint16_t dest = ntohs(sendable_packet->destination);
-		uint16_t src = ntohs(sendable_packet->source);
-		sendable_packet->source = dest;
-		sendable_packet->destination = src;
-
-		sendable_packet->doff = 5;
-
-		sendable_packet->check = tcp_calculate_checksum((void*)((uint32_t)sendable_packet - sizeof(ETH_IPv4_PKG)));
-
+		sendable_packet->syn = 1; // Ensure SYN is set in response
+		sendable_packet->seq = htonl(tcp_connections[idx].seq);
+		sendable_packet->ack_seq = htonl(tcp_connections[idx].ack);
+	
+		uint16_t dest_port = sendable_packet->destination;
+		uint16_t src_port = sendable_packet->source;
+		sendable_packet->source = ntohs(dest_port);
+		sendable_packet->destination = ntohs(src_port);
+	
+		sendable_packet->doff = 5; // Header length (5 * 4 = 20 bytes)
+	
+		// Calculate checksum with correct IPs and TCP length
+		uint32_t src_ip, dst_ip;
+		memcpy(&src_ip, ipv4->Destination, 4); // Server's IP (from received packet's destination)
+		memcpy(&dst_ip, ipv4->Source, 4);      // Client's IP (from received packet's source)
+		uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
+	
+		sendable_packet->check = 0; // Reset checksum before calculation
+		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length);
+	
 		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t), ETH_IPv4_HEAD_TCP);
+
+		kfree(sendable_packet);
+	} else if(is_stage_2) {
+		qemu_note("Stage 2");
+
+		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + 7, 1);
+		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
+
+		char* data = (char*)(sendable_packet + 1);
+
+		memcpy(data, "Hello!\n", 7);
+
+		tcp_connections[idx].seq = packet->ack_seq;
+		tcp_connections[idx].ack = packet->seq;
+	
+		sendable_packet->psh = 1;
+		sendable_packet->ack = 1;
+		sendable_packet->syn = 0;
+		sendable_packet->seq = htonl(tcp_connections[idx].seq);
+		sendable_packet->ack_seq = htonl(tcp_connections[idx].ack);
+	
+		uint16_t dest_port = sendable_packet->destination;
+		uint16_t src_port = sendable_packet->source;
+		sendable_packet->source = ntohs(dest_port);
+		sendable_packet->destination = ntohs(src_port);
+	
+		sendable_packet->doff = 5; // Header length (5 * 4 = 20 bytes)
+	
+		// Calculate checksum with correct IPs and TCP length
+		uint32_t src_ip, dst_ip;
+		memcpy(&src_ip, ipv4->Destination, 4); // Server's IP (from received packet's destination)
+		memcpy(&dst_ip, ipv4->Source, 4);      // Client's IP (from received packet's source)
+		uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
+	
+		sendable_packet->check = 0; // Reset checksum before calculation
+		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length + 7);
+	
+		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 7, ETH_IPv4_HEAD_TCP);
+
+		kfree(sendable_packet);
 	} else {
 		qemu_note("== ANOTHER STAGE! ==");
+		qemu_note("== ANOTHER STAGE! ==");
+		qemu_note("== ANOTHER STAGE! ==");
+		qemu_note("== ANOTHER STAGE! ==");
+		while(1);
 	}
 
-	kfree(sendable_packet);
+	qemu_log("Finished handling");
 }

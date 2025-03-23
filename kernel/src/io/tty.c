@@ -25,7 +25,6 @@
 
 // TODO: Keep here.
 volatile uint8_t tty_feedback = 1;		/// ...
-size_t tty_line_fill[1024];				/// ....
 uint32_t tty_pos_x = 0;						/// Позиция на экране по X
 uint32_t tty_pos_y = 0;						/// Позиция на экране по Y
 int32_t tty_off_pos_x = 8;					/// ...
@@ -181,7 +180,6 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
  */
 void _tty_putchar(uint16_t c) {
     if ((tty_pos_x + tty_off_pos_x) >= (int) VESA_WIDTH || c == '\n') {
-        tty_line_fill[tty_pos_y] = tty_pos_x;
         tty_pos_x = 0;
 
         tty_pos_y += tty_off_pos_h;
@@ -215,7 +213,7 @@ void tty_backspace() {
         if (tty_pos_y >= tty_off_pos_h) {
             tty_pos_y -= tty_off_pos_h;
         }
-        tty_pos_x = tty_line_fill[tty_pos_y];
+        tty_pos_x -= 1;
     } else {
         tty_pos_x -= tty_off_pos_x;
     }

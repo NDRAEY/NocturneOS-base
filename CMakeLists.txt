@@ -159,9 +159,7 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	# kernel/src/extra/cli.c 
 	kernel/src/extra/plain_runner.c
-	kernel/src/sys/variable.c	
 	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
 	kernel/src/toys/gfxbench.c 

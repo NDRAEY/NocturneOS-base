@@ -24,7 +24,7 @@ typedef struct {
     uint16_t window;
     uint16_t check;
     uint16_t urg_ptr;
-} tcp_packet_t;
+} __attribute__((packed)) tcp_packet_t;
 
 typedef enum {
 	TCP_NONE,

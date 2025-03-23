@@ -15,7 +15,7 @@
 #include "net/tcp.h"
 
 void ipv4_handle_packet(netcard_entry_t *card, char *packet, size_t packet_size) {
-	ETH_IPv4_PKG* ipv4_pkt = (ETH_IPv4_PKG*)packet;
+	ipv4_packet_t* ipv4_pkt = (ipv4_packet_t*)packet;
 
 	ipv4_pkt->TotalLength = ntohs(ipv4_pkt->TotalLength);
 
@@ -25,7 +25,7 @@ void ipv4_handle_packet(netcard_entry_t *card, char *packet, size_t packet_size)
 	qemu_log("  |--- TotalLength: %x", ipv4_pkt->TotalLength);
 	qemu_log("  |--- ID: %x", ipv4_pkt->ID);
 	qemu_log("  |--- Flags: %x", ipv4_pkt->Flags);
-	qemu_log("  |--- TimeLife: %x", ipv4_pkt->TimeLife);
+	qemu_log("  |--- TimeLife: %x", ipv4_pkt->TimeToLife);
 	qemu_log("  |--- Protocol: %x", ipv4_pkt->Protocol);
 	qemu_log("  |--- Checksum: %x", ipv4_pkt->Checksum);
 	qemu_log("  |--- Source: %d.%d.%d.%d", ipv4_pkt->Source[0], ipv4_pkt->Source[1], ipv4_pkt->Source[2], ipv4_pkt->Source[3]);
@@ -45,26 +45,26 @@ void ipv4_handle_packet(netcard_entry_t *card, char *packet, size_t packet_size)
 	arp_lookup_add(eth_frame->src_mac, ipv4_pkt->Source);
 
 	if (ipv4_pkt->Protocol == ETH_IPv4_HEAD_UDP) {
-		udp_handle_packet(card, (udp_packet_t *) (packet + sizeof(ETH_IPv4_PKG)));
+		udp_handle_packet(card, (udp_packet_t *) (packet + sizeof(ipv4_packet_t)));
 	} else if(ipv4_pkt->Protocol == ETH_IPv4_HEAD_ICMPv4) {
 		qemu_err("ICMP not implemented!");
 
-		icmp_handle_packet(card, packet + sizeof(ETH_IPv4_PKG));
+		icmp_handle_packet(card, packet + sizeof(ipv4_packet_t));
 	} else if(ipv4_pkt->Protocol == ETH_IPv4_HEAD_TCP) {
        		qemu_note("HANDLING TCP!");
 
-        	tcp_handle_packet(card, (tcp_packet_t*)(packet + sizeof(ETH_IPv4_PKG)));
+        	tcp_handle_packet(card, (tcp_packet_t*)(packet + sizeof(ipv4_packet_t)));
 	} else {
 		qemu_log("  | |--- Header: [%x] %s", ipv4_pkt->Protocol, "Unknown");
-		qemu_log("  | |--- RAW: %d bytes", packet_size - sizeof(ETH_IPv4_PKG));
+		qemu_log("  | |--- RAW: %d bytes", packet_size - sizeof(ipv4_packet_t));
 		qemu_log("  | |");
 	}
 }
 
-uint16_t ipv4_checksum(ETH_IPv4_PKG* packet) {
+uint16_t ipv4_checksum(ipv4_packet_t* packet) {
 	// Treat the packet header as a 2-byte-integer array
 	// Sum all integers up and flip all bits
-	size_t array_size = sizeof(ETH_IPv4_PKG) / 2;
+	size_t array_size = sizeof(ipv4_packet_t) / 2;
 	uint16_t* array = (uint16_t*)packet;
 	uint32_t sum = 0;
 
@@ -80,8 +80,8 @@ uint16_t ipv4_checksum(ETH_IPv4_PKG* packet) {
 }
 
 void ipv4_send_packet(netcard_entry_t *card, uint8_t dest_ip[4], const void *data, size_t size, uint8_t protocol) {
-	ETH_IPv4_PKG* ipv4_pkt = kcalloc(1, sizeof(ETH_IPv4_PKG) + size);
-	char* pkt_data = (char*)ipv4_pkt + sizeof(ETH_IPv4_PKG);
+	ipv4_packet_t* ipv4_pkt = kcalloc(1, sizeof(ipv4_packet_t) + size);
+	char* pkt_data = (char*)ipv4_pkt + sizeof(ipv4_packet_t);
 
 	qemu_log("IP send: %d bytes", size);
 
@@ -90,8 +90,8 @@ void ipv4_send_packet(netcard_entry_t *card, uint8_t dest_ip[4], const void *dat
 	memcpy(ipv4_pkt->Destination, dest_ip, 4);
 	memcpy(ipv4_pkt->Source, card->ipv4_addr, 4);
 	ipv4_pkt->Flags = 0; // No fragment
-	ipv4_pkt->TimeLife = 64;
-	ipv4_pkt->TotalLength = htons(sizeof(ETH_IPv4_PKG) + size);
+	ipv4_pkt->TimeToLife = 64;
+	ipv4_pkt->TotalLength = htons(sizeof(ipv4_packet_t) + size);
 	ipv4_pkt->Protocol = protocol;
 	ipv4_pkt->Checksum = 0;
 	ipv4_pkt->ID = 0;
@@ -115,9 +115,9 @@ void ipv4_send_packet(netcard_entry_t *card, uint8_t dest_ip[4], const void *dat
 		goto end;
 	}
 
-	qemu_log("Total IP packet size: %d", sizeof(ETH_IPv4_PKG) + size);
+	qemu_log("Total IP packet size: %d", sizeof(ipv4_packet_t) + size);
 
-	ethernet_send_packet(card, dest_mac, (uint8_t *) ipv4_pkt, sizeof(ETH_IPv4_PKG) + size, ETHERNET_TYPE_IPV4);
+	ethernet_send_packet(card, dest_mac, (uint8_t *) ipv4_pkt, sizeof(ipv4_packet_t) + size, ETHERNET_TYPE_IPV4);
 
 	end:
 
