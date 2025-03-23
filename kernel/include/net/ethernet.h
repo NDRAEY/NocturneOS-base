@@ -111,20 +111,19 @@ typedef struct {
 	uint16_t TotalLength;
 	uint16_t ID;
 	uint16_t Flags;
-	uint8_t TimeLife;
+	uint8_t TimeToLife;
 	uint8_t Protocol;
 	uint16_t Checksum;
 	uint8_t Source[4];
 	uint8_t Destination[4];
-} __attribute__((packed)) ETH_IPv4_PKG;	/// 20 байт // NDRAEY: PKT is not PKG!
-
+} __attribute__((packed)) ipv4_packet_t;
 
 typedef struct {
   uint16_t SourcePort;
   uint16_t DestinationPort;
   uint16_t Length;
   uint16_t CheckSum;
-} __attribute__((packed)) ETH_UDP_PKG;	/// 8 байт
+} __attribute__((packed)) ETH_UDP_PKT;	/// 8 байт
 
 
 typedef struct {

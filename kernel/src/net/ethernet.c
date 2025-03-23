@@ -34,13 +34,13 @@ void ethernet_dump(void* data, size_t size, uint16_t type){
 			qemu_log("  | |");
 
 		} else if (ipv6->NextHead == ETH_IPv6_HEAD_UDP){
-			ETH_UDP_PKG* udp = (ETH_UDP_PKG*)(pkg + sizeof(ETH_IPv6_PKG));
+			ETH_UDP_PKT* udp = (ETH_UDP_PKT*)(pkg + sizeof(ETH_IPv6_PKG));
 			qemu_log("  | |--- Header: [%x] %s", ipv6->NextHead, "UDP");
 			qemu_log("  | |--- SourcePort: %d",udp->SourcePort);
 			qemu_log("  | |--- DestinationPort: %d",udp->DestinationPort);
 			qemu_log("  | |--- Length: %d",udp->Length);
 			qemu_log("  | |--- CheckSum: %x",udp->CheckSum);
-			qemu_log("  | |--- RAW: %d bytes", size - sizeof(ETH_IPv6_PKG)  - sizeof(ETH_UDP_PKG));
+			qemu_log("  | |--- RAW: %d bytes", size - sizeof(ETH_IPv6_PKG)  - sizeof(ETH_UDP_PKT));
 			qemu_log("  | |");
 
 		} else {
