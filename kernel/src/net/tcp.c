@@ -140,24 +140,12 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	bool is_stage_2 = !packet->syn && packet->ack && !packet->psh && !packet->fin;
 	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
-
-	tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
-	memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
-
-	char* options = (char*)(sendable_packet) + sizeof(tcp_packet_t);
-
-	// options[0] = 0x02;
-	// options[1] = 0x04;
-	// options[2] = 0xff;
-	// options[3] = 0xd7;
-	// options[4] = 0x04;
-	// options[5] = 0x02;
-	// options[6] = 0x01;
-	// options[7] = 0x01;
-
 	if(is_stage_1) {
 		qemu_note("== STAGE 1 ==");
-	
+
+		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
+		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));	
+
 		tcp_connections[idx].seq = rand();
 		tcp_connections[idx].ack = packet->seq + 1; // Use the received packet's seq (host order)
 	
@@ -183,6 +171,46 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length);
 	
 		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t), ETH_IPv4_HEAD_TCP);
+
+		kfree(sendable_packet);
+	} else if(is_stage_2) {
+		qemu_note("Stage 2");
+
+		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + 7, 1);
+		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
+
+		char* data = (char*)(sendable_packet + 1);
+
+		memcpy(data, "Hello!\n", 7);
+
+		tcp_connections[idx].seq = packet->ack_seq;
+		tcp_connections[idx].ack = packet->seq;
+	
+		sendable_packet->psh = 1;
+		sendable_packet->ack = 1;
+		sendable_packet->syn = 0;
+		sendable_packet->seq = htonl(tcp_connections[idx].seq);
+		sendable_packet->ack_seq = htonl(tcp_connections[idx].ack);
+	
+		uint16_t dest_port = sendable_packet->destination;
+		uint16_t src_port = sendable_packet->source;
+		sendable_packet->source = ntohs(dest_port);
+		sendable_packet->destination = ntohs(src_port);
+	
+		sendable_packet->doff = 5; // Header length (5 * 4 = 20 bytes)
+	
+		// Calculate checksum with correct IPs and TCP length
+		uint32_t src_ip, dst_ip;
+		memcpy(&src_ip, ipv4->Destination, 4); // Server's IP (from received packet's destination)
+		memcpy(&dst_ip, ipv4->Source, 4);      // Client's IP (from received packet's source)
+		uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
+	
+		sendable_packet->check = 0; // Reset checksum before calculation
+		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length + 7);
+	
+		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 7, ETH_IPv4_HEAD_TCP);
+
+		kfree(sendable_packet);
 	} else {
 		qemu_note("== ANOTHER STAGE! ==");
 		qemu_note("== ANOTHER STAGE! ==");
@@ -190,8 +218,6 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		qemu_note("== ANOTHER STAGE! ==");
 		while(1);
 	}
-
-	kfree(sendable_packet);
 
 	qemu_log("Finished handling");
 }
