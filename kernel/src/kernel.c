@@ -51,20 +51,7 @@ bool initRD = false;
 size_t kernel_start_time = 0;
 size_t ramdisk_size = INITRD_RW_SIZE;
 
-void jse_file_getBuff(char *buf);
 void kHandlerCMD(char *);
-
-void autoexec()
-{
-    variable_write("HOSTNAME", "SAYORISOUL");
-    variable_write("SYSTEMROOT", "R:/Sayori/");
-    variable_write("TEMP", "T:/");
-    variable_write("USERNAME", "OEM");
-    variable_write("BUILDUSER", "OEM");
-    variable_write("BUILDDATA", __TIMESTAMP__);
-    variable_write("ARCH_TYPE", OS_ARCH);
-    variable_write("VERSION_NAME", VERSION_NAME);
-}
 
 void __createRamDisk()
 {
@@ -444,8 +431,6 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     //    create_process(k, "process2", false, true);
     //    sleep_ms(1500);
     //    create_process(k, "process3", false, true);
-
-    autoexec();
 
     rust_main();
 
