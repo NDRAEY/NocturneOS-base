@@ -144,6 +144,24 @@ size_t syscall_temperature() {
     return 0xFFFFFFFF;
 }
 
+size_t syscall_mouse(uint32_t* out_x, uint32_t* out_y, uint32_t* flags) {
+    uint32_t x = mouse_get_x();
+    uint32_t y = mouse_get_y();
+
+    uint32_t fl = ((uint32_t)mouse_get_b1() << 0) 
+    | ((uint32_t)mouse_get_b2() << 1) 
+    | ((uint32_t)mouse_get_b3() << 2) 
+    | ((uint32_t)mouse_get_b4() << 3) 
+    | ((uint32_t)mouse_get_b5() << 4);
+
+    *out_x = x;
+    *out_y = y;
+    *flags = fl;
+
+    return 0;
+}
+
+
 /**
  * @brief Инициализация системных вызовов
  * 
@@ -174,6 +192,7 @@ void init_syscalls(void){
     calls_table[22] = (syscall_fn_t *)syscall_mmap;
     calls_table[23] = (syscall_fn_t *)syscall_munmap;
     calls_table[24] = (syscall_fn_t *)syscall_temperature;
+    calls_table[25] = (syscall_fn_t *)syscall_mouse;
 
 	qemu_ok("System calls initialized!");
 }
