@@ -68,8 +68,6 @@ void sleep_ticks(uint32_t delay){
 void sleep_ms(uint32_t milliseconds) {
     uint32_t needticks = milliseconds * frequency;
     sleep_ticks(needticks / 1000);
-
-    /* (milliseconds * frequency + 500) / 1000 */
 }
 
 /**

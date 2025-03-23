@@ -23,15 +23,6 @@ RSDPDescriptor* rsdp_find() {
 
     RSDPDescriptor* rsdp = (RSDPDescriptor*)saddr;
 
-    // WORKS!
-    //
-    // char* a;
-    // asprintf(&a, "RSDP sig: %.8s", rsdp->signature);
-    // qemu_log("%s", a);
-    // kfree(a);
-    //
-    // RSD PTR 
-
     qemu_log("RSDP sig: %.8s", rsdp->signature);
     qemu_log("RSDP checksum: %d", rsdp->checksum);
     qemu_log("RSDP OEMID: %s", rsdp->OEMID);
