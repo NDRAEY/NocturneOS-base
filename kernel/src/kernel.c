@@ -440,8 +440,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     // char* args[] = {};
     // spawn("R:/hellors", 0, args);
 
-    // void sysidle();
-    // thread_create(get_current_proc(), sysidle, 0x100, true, false);
+//    void sysidle();
+//    thread_create(get_current_proc(), sysidle, 0x100, true, false);
 
     new_nsh();
 
@@ -449,12 +449,14 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
         ;
 }
 
-// void sysidle() {
-//     while(1) {
-//         __asm__ volatile("nop");
-//         __asm__ volatile("hlt");
-//     }
-// }
+/*
+void sysidle() {
+    while(1) {
+        __asm__ volatile("hlt");
+      yield();
+    }
+}
+*/
 
 // void k() {
 //     for(int i = 0; i < 10; i++) {
