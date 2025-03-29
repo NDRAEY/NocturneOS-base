@@ -13,7 +13,9 @@ pub fn pavi(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> 
     let mut args = Vec::from(_args);
     args.insert(0, String::from("pavi"));
 
-    let ptrs: Vec<*const u8> = args.iter().map(|x| x.as_str().as_ptr()).collect();
+    let fixed_strings: Vec<String> = args.iter().map(|x| x.clone() + "\0").collect();
+
+    let ptrs: Vec<*const u8> = fixed_strings.iter().map(|x| x.as_str().as_ptr()).collect();
     let ptr = ptrs.as_ptr();
 
     unsafe { pavi_view(ptrs.len() as _, ptr as *const *const _) };

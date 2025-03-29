@@ -3,21 +3,14 @@
 extern crate alloc;
 
 use alloc::{string::{String, ToString}, vec::Vec};
-use noct_dpm_sys::Disk;
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
 use noct_logger::{qemu_err, qemu_log, qemu_note};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
-struct ThatDisk(Disk);
+pub mod disk_device;
 
-impl tarfs::io::Read for ThatDisk {
-    fn read(&mut self, position: usize, size: usize, buffer: &mut [u8]) -> Option<()> {
-        self.0.read(0, position as u64, size, buffer);
-
-        Some(())
-    }
-}
+impl tarfs::Device for disk_device::DiskDevice {}
 
 fn raw_ptr_to_string(ptr: *const i8) -> String {
     let rpath = unsafe {
@@ -57,7 +50,7 @@ unsafe extern "C" fn fun_read(
     buffer: *mut i8,
 ) -> u32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = ThatDisk(dev);
+    let device = disk_device::DiskDevice::new(dev);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
@@ -76,7 +69,7 @@ unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *con
 
 unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = ThatDisk(dev);
+    let device = disk_device::DiskDevice::new(dev);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
@@ -84,7 +77,7 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let entry = fl.find_file(&path);
 
-    if entry.is_none() {
+    if entry.is_err() {
         return FSM_FILE::missing();
     }
 
@@ -114,7 +107,7 @@ unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
 
 unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = ThatDisk(dev);
+    let device = disk_device::DiskDevice::new(dev);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
@@ -149,7 +142,7 @@ unsafe extern "C" fn fun_label(_a: i8, b: *mut i8) {
 
 unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
-    let device = ThatDisk(dev);
+    let device = disk_device::DiskDevice::new(dev);
 
     let fl = tarfs::TarFS::from_device(device);
 
