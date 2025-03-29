@@ -30,6 +30,7 @@
 #include "gfx/intel.h"
 
 #include <lib/pixel.h>
+#include <net/socket.h>
 
 size_t VERSION_MAJOR = 0;    /// Версия ядра
 size_t VERSION_MINOR = 3;    /// Пре-релиз
@@ -443,11 +444,35 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 //    void sysidle();
 //    thread_create(get_current_proc(), sysidle, 0x100, true, false);
 
+    // net_test();
+
     new_nsh();
 
     while (1)
         ;
 }
+
+// void net_test() {
+//     socket_address_t server_addr = {
+//         .address = {192, 168, 1, 128},
+//         .port = 9999
+//     };
+
+//     char data[32] = {0};
+
+//     socket_t* srv_sock = socket_new(&server_addr, SOCKET_TCP);
+//     socket_t* client_sock = socket_listen(srv_sock);
+
+//     if(client_sock) {
+//         socket_read_until_newline(client_sock, data);
+
+//         socket_close(client_sock);
+//     }
+
+//     int length = strlen(data);
+
+//     qemu_note("Received %d bytes with data: `%s`", length, data);
+// }
 
 /*
 void sysidle() {
