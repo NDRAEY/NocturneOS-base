@@ -1,5 +1,9 @@
 // note: возможно лучшим решением будет переделать под определенные файловые системмы, но пока сойдет и так
 
+#![no_std]
+
+extern crate alloc;
+
 use alloc::ffi::CString;
 use alloc::string::String;
 use core::ffi::{c_void, CStr};
@@ -17,7 +21,7 @@ struct CFile {
     err: u32,
 }
 
-extern "C" {
+unsafe extern "C" {
     fn fopen(filename: *const u8, mode: *const u8) -> *mut CFile;
     fn fclose(stream: *mut CFile);
     fn fsize(stream: *mut CFile) -> usize;
@@ -67,6 +71,31 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
 
     Ok(result)
 }
+
+
+pub fn read(file_path: &str) -> Result<Vec<u8>, &str> {
+    let mut file_path_string = String::from(file_path);
+    file_path_string.push('\0');
+
+    let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"r".as_ptr() as _) };
+
+    if file.is_null() {
+        return Err("Failed to open file.");
+    }
+
+    let size = unsafe { fsize(file) };
+    let mut buffer: Vec<u8> = vec![0; size + 1]; // Создаем буфер для строки
+    let ptr = buffer.as_mut_ptr() as *mut c_void;
+
+    unsafe {
+        fread(file, 1, size, ptr);
+
+        fclose(file);
+    }
+
+    Ok(buffer)
+}
+
 
 pub struct File {
     raw_file: *mut CFile,

@@ -368,6 +368,15 @@ add_custom_target(
 )
 
 add_custom_target(
+  check
+	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} check
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+	USES_TERMINAL
+	VERBATIM
+)
+
+
+add_custom_target(
 	doc
 	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} doc
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust

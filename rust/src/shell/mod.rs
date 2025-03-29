@@ -8,7 +8,7 @@ use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
 use crate::system::run_elf_file::run;
 use crate::system::version::version;
-use crate::{print, println};
+use noct_tty::{print, println};
 
 use noct_path::Path;
 
@@ -179,7 +179,7 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
         }
         None => {
             let path = context.current_path.as_string().clone() + command;
-            let file = crate::std::fs::File::open(&path);
+            let file = noct_fs::File::open(&path);
 
             match file {
                 Ok(mut file) => {
