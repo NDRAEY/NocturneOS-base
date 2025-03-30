@@ -1,6 +1,7 @@
 use alloc::string::{String, ToString};
 
-use crate::{print, println};
+
+use noct_tty::{print, println};
 
 use super::ShellContext;
 
@@ -14,7 +15,7 @@ pub fn cat(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
 
     let path = fullpath.as_str().to_string();
     
-    let file = crate::std::fs::read_to_string(&path);
+    let file = noct_fs::read_to_string(&path);
 
     match file {
         Ok(data) => {

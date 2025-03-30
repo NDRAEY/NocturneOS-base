@@ -1,3 +1,7 @@
+#![no_std]
+
+extern crate alloc;
+
 use core::fmt;
 use core::fmt::Write;
 use lazy_static::lazy_static;
@@ -5,13 +9,13 @@ use spin::Mutex;
 
 use alloc::string::String;
 
-extern "C" {
+unsafe extern "C" {
     fn _tty_puts(c: *const u8);
 }
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::std::tty::_print_tty(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::_print_tty(format_args!($($arg)*)));
 }
 
 #[macro_export]

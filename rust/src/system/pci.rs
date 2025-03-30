@@ -3,10 +3,11 @@
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
+use noct_logger::qemu_log;
 use spin::RwLock;
 use x86::io::{inl, outl};
 
-use crate::{print, println, qemu_log};
+use noct_tty::{print, println};
 
 use super::timer::timestamp;
 

@@ -8,7 +8,6 @@ use core::{arch::asm, panic::PanicInfo};
 pub mod audio;
 pub mod drv;
 pub mod gfx;
-pub mod nd;
 pub mod shell;
 pub mod std;
 pub mod system;
@@ -17,6 +16,7 @@ pub use noct_tarfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
+use noct_tty::println;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

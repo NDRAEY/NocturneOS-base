@@ -21,4 +21,4 @@ disk*.img
 cmake-*/
 compile_commands.json
 .cache/
-test_*.txt
+test_*

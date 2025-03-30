@@ -100,12 +100,11 @@ size_t getPixel(int32_t x, int32_t y);
  * @param color - цвет
  */
 inline static __attribute__((always_inline)) void set_pixel(uint32_t x, uint32_t y, uint32_t color) {
-	#ifndef RELEASE
 	if (x >= VESA_WIDTH ||
 		y >= VESA_HEIGHT) {
 		return;
 	}
-	#endif
+	
 	uint8_t* pixels = back_framebuffer_addr + (x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch;
 
 	pixels[0] = color & 0xff;

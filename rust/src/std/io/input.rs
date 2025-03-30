@@ -1,6 +1,7 @@
 use alloc::{string::String, vec::Vec};
 
-use crate::{print, std::io::screen::screen_update};
+use noct_tty::print;
+use crate::std::io::screen::screen_update;
 
 extern "C" {
     pub fn getchar() -> u32;
@@ -16,7 +17,6 @@ pub fn read_to_string() -> String {
             break;
         }
 
-        // \b is 8
         if ch == 8 {
             if st.pop().is_some() {
                 print!("{0} {0}", char::from_u32(8).unwrap());
