@@ -5,25 +5,58 @@
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-pub fn set_pixel(x: u32, y: u32, color: u32) {
+pub fn fill(color: u32) {
     let (w, h) = dimensions();
-    if x >= w as u32 || y >= h as u32 {
+    let len = w * h * bits_per_pixel();
+
+    for y in 0..h {
+        for x in 0..w {
+            set_pixel(x, y, color);
+        }
+    }
+}
+
+pub fn set_pixel(x: usize, y: usize, color: u32) {
+    let (w, h) = dimensions();
+
+    if x >= w || y >= h {
         return;
     }
 
-    let pixels = unsafe {
-        back_framebuffer_addr.add(((x * (framebuffer_bpp >> 3)) + y * framebuffer_pitch) as usize)
-    };
-
-    let pixels = unsafe {
-        core::slice::from_raw_parts_mut(pixels, (getDisplayPitch() * getScreenHeight()) as _)
-    };
+    let offset = (x * (bits_per_pixel() >> 3)) + y * pitch();
+    let pixels = &mut framebuffer_mut()[offset..];
 
     pixels[0] = (color & 0xff) as u8;
     pixels[1] = ((color >> 8) & 0xff) as u8;
     pixels[2] = ((color >> 16) & 0xff) as u8;
 }
 
+#[inline]
+pub fn framebuffer() -> &'static [u8] {
+    let (w, h) = dimensions();
+    let len = w * h * bits_per_pixel();
+
+    unsafe { core::slice::from_raw_parts(back_framebuffer_addr, len) }
+}
+
+#[inline]
+pub fn framebuffer_mut() -> &'static mut [u8] {
+    let (w, h) = dimensions();
+    let len = w * h * bits_per_pixel();
+
+    unsafe { core::slice::from_raw_parts_mut(back_framebuffer_addr, len) }
+}
+
+#[inline]
 pub fn dimensions() -> (usize, usize) {
     unsafe { (getScreenWidth().try_into().unwrap(), getScreenHeight().try_into().unwrap()) }
+}
+
+pub fn pitch() -> usize {
+    unsafe { getDisplayPitch() as _ }
+}
+
+#[inline]
+pub fn bits_per_pixel() -> usize {
+    unsafe { framebuffer_bpp as _ }
 }

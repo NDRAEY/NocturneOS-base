@@ -89,7 +89,7 @@ impl Path {
         }
     }
     
-    pub fn parent(&mut self) -> &mut Self {
+    pub fn parent(&mut self) {
         // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
         
         // IDK why it doesn't work, it gives random string array.
@@ -98,7 +98,7 @@ impl Path {
         if stems.len() == 1 {
             self.buffer = stems.join("/") + "/";
 
-            return self;
+            return;
         }
 
         let mut finpath = stems[..stems.len() - 1].join("/");
@@ -109,8 +109,6 @@ impl Path {
         }
 
         self.buffer = finpath;
-
-        self
     }
 
     pub fn as_string(&self) -> &String {

@@ -80,6 +80,12 @@ pub struct DirectoryIter<'dir> {
     index: usize,
 }
 
+impl<'a> DirectoryIter<'a> {
+    pub fn names(self) -> impl Iterator<Item = String> + use<'a> {
+        self.map(|x| x.name)
+    }
+}
+
 impl Iterator for DirectoryIter<'_> {
     type Item = File;
 

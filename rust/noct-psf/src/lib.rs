@@ -1,4 +1,6 @@
-use crate::gfx::set_pixel;
+#![no_std]
+
+use noct_screen::set_pixel;
 
 extern "C" {
     static psf_h: u8;
@@ -52,7 +54,7 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
         let rposy = pos_y + y;
         for (x, mask) in mask.iter().enumerate() {
             if (row & mask) != 0 {
-                unsafe { set_pixel((pos_x + x) as u32, rposy as u32, color) };
+                set_pixel(pos_x + x, rposy, color);
             }
         }
     }

@@ -4,7 +4,7 @@ extern crate alloc;
 
 use alloc::string::{String, ToString};
 use nimage::Image;
-use noct_input::keyboard_buffer_get_or_nothing;
+use noct_input::keyboard_buffer_get;
 use noct_logger::qemu_log;
 use noct_tty::println;
 
@@ -49,9 +49,7 @@ pub fn pavi(argc: usize, argv: &[String]) -> Result<(), usize> {
 
     render_image(&image, ShowMode::BoundsX);
     
-    while unsafe { keyboard_buffer_get_or_nothing() } != 1 {
-        core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
-    }
+    while unsafe { keyboard_buffer_get() } != 1 {}
 
     Ok(())
 }
@@ -93,7 +91,7 @@ fn render_image(image: &Image, render_mode: ShowMode) {
 
             pixel = ((pixel & 0xff0000) >> 16) | ((pixel & 0x00ff00)) | ((pixel & 0x0000ff) << 16);
 
-            noct_screen::set_pixel((start_x + x) as u32, (start_y + y) as u32, pixel);
+            noct_screen::set_pixel(start_x + x, start_y + y, pixel);
         }
     }
 }

@@ -7,16 +7,27 @@ use crate::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
 
 impl FSM_FILE {
     pub fn with_data<T: ToString>(
-        name: T,
+        path: T,
         mode: core::ffi::c_int,
         size: size_t,
         time: Option<FSM_TIME>,
         typ: c_int,
         access: u32,
     ) -> Self {
-        let name = name.to_string();
-        let name_bytes = name.as_bytes();
-        let max_len = name_bytes.len().min(1024);
+        let path = path.to_string();
+
+        let name: String;
+        let mut splitted = path.split('/');
+
+        if path.ends_with('/') {
+            let prelast = splitted.clone().count() - 2;
+
+            name = splitted.nth(prelast).unwrap().to_string();
+        } else {
+            name = splitted.last().unwrap().to_string();
+        }
+
+        let max_len = name.as_bytes().len().min(1024);
 
         let mut file = FSM_FILE {
             Ready: true,
@@ -29,8 +40,12 @@ impl FSM_FILE {
             CHMOD: access,
         };
 
-        for (i, &byte) in name_bytes.iter().take(max_len).enumerate() {
+        for (i, &byte) in name.as_bytes().iter().take(max_len).enumerate() {
             file.Name[i] = byte as i8;
+        }
+
+        for (i, &byte) in path.as_bytes().iter().take(max_len).enumerate() {
+            file.Path[i] = byte as i8;
         }
 
         file

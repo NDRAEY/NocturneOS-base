@@ -102,7 +102,6 @@ pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
 pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
     let v = KEYBOARD_BUFFER.get_mut().unwrap();
 
-    // We actually read, but `get()` mutates buffer so we use `write()`
     v.get()
 }
 
