@@ -12,7 +12,6 @@ typedef struct env {
     size_t Display_H;                        /// Высота экрана
     size_t Display_B;                        /// Бит / пиксель
     size_t Display_P;                        /// Глубина экрана
-    size_t Display_S;                        /// Размер буфера
     size_t Ticks;                            /// Количество текущих тиков
     size_t RAM_Install;                 /// Установлено ОЗУ
     size_t RAM_Used;                    /// Использовано ОЗУ

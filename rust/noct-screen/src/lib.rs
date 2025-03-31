@@ -5,6 +5,8 @@
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
+pub mod screen;
+
 pub fn fill(color: u32) {
     let (w, h) = dimensions();
     let len = w * h * bits_per_pixel();

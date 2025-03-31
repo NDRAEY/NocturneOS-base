@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common.h>
-#include "lib/string.h"
 
 #define punch() memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
 // #define punch()
@@ -26,13 +25,6 @@ typedef struct rgba_struct {
 	uint8_t b;
 	uint8_t a;
 } rgba_color;
-
-typedef struct rgb_struct {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} rgb_color;
-
 
 enum colors  {
 	VESA_BLACK = 0x000000,
@@ -80,9 +72,6 @@ typedef struct svga_mode_info {
 	uint8_t reserved1[206];
 } __attribute__ ((packed)) svga_mode_info_t;
 
-//#define punch() sse_memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
-//#define punch() rect_copy(0, 0, VESA_WIDTH, VESA_HEIGHT)
-
 uint32_t getDisplayPitch();
 uint32_t getScreenWidth();
 uint32_t getScreenHeight();
@@ -120,16 +109,6 @@ inline static __attribute__((always_inline)) void set_pixel4x1(uint32_t x, uint3
 	pixels[2] = pixels[6] = pixels[10] = pixels[14] = (color >> 16) & 0xff;
 }
 
-/**
- * @brief Получение размера буфера экрана
- *
- * @return uint32_t - Размер буфера экрана
- */
-inline static __attribute__((always_inline)) uint32_t getDisplaySize(){
-	return framebuffer_size;
-}
-
 void setPixelAlpha(uint32_t x, uint32_t y, rgba_color color);
-void rect_copy(int x, int y, int width, int height);
 void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch);
 

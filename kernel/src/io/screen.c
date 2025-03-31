@@ -239,15 +239,3 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
 void clean_screen(){
     memset(back_framebuffer_addr, 0, framebuffer_size);  // Optimized variant
 }
-
-void rect_copy(int x, int y, int width, int height) {
-    unsigned char* src = (unsigned char*)back_framebuffer_addr + (y * framebuffer_pitch) + (x * (framebuffer_bpp/8));
-    unsigned char* dest = (unsigned char*)framebuffer_addr + (y * framebuffer_pitch) + (x * (framebuffer_bpp/8));
-    size_t bytes_per_line = width * (framebuffer_bpp/8);
-    
-    for(int i = 0; i < height; i++) {
-        memcpy(dest, src, bytes_per_line);
-        src += framebuffer_pitch;
-        dest += framebuffer_pitch;
-    }
-}

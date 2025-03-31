@@ -27,7 +27,6 @@ void configure_env(){
     system_environment.Display_H = getScreenHeight();                        /// Высота экрана
     system_environment.Display_B = getDisplayBpp();                        /// Смещение экрана
     system_environment.Display_P = getDisplayPitch();                        /// Глубина экрана
-    system_environment.Display_S = getDisplaySize();                        /// Размер буфера
     system_environment.Ticks = getTicks();                            /// Количество текущих тиков
     system_environment.RAM_Install = phys_memory_size;                      /// Установлено ОЗУ
     system_environment.RAM_Used = used_phys_memory_size;                         /// Использовано ОЗУ
