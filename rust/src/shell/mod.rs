@@ -3,7 +3,6 @@ use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
 use noct_fs_sys::dir::Directory;
-use noct_fs_sys::file::File;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
 use crate::std::io::input::getchar;
@@ -141,7 +140,7 @@ fn suggest_completions(stem: &str) -> Vec<String> {
         return vec![];
     }
 
-    if stem.chars().nth(0).is_some_and(|a| a.is_alphabetic())
+    if stem.chars().next().is_some_and(|a| a.is_alphabetic())
         && stem.chars().nth(1).is_some_and(|a| a == ':')
         && stem.chars().nth(2).is_some_and(|a| a == '/')
     {
