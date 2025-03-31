@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common.h>
+#include <lib/string.h>
 
 #define punch() memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
 // #define punch()

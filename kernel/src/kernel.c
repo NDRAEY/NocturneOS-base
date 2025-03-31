@@ -32,6 +32,8 @@
 #include <lib/pixel.h>
 #include <net/socket.h>
 
+#include <io/screen_new.h>
+
 size_t VERSION_MAJOR = 0;    /// Версия ядра
 size_t VERSION_MINOR = 3;    /// Пре-релиз
 size_t VERSION_PATCH = 5;    /// Патч
@@ -277,11 +279,13 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     text_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
     // /Sayori/Fonts/UniCyrX-ibm-8x16.psf
 
-    qemu_log("Initializing the virtual video memory manager...");
-    init_vbe(mboot);
-
     qemu_log("Initializing Task Manager...");
     init_task_manager();
+
+    screenman_init();
+
+    qemu_log("Initializing the virtual video memory manager...");
+    init_vbe(mboot);
 
     clean_screen();
 

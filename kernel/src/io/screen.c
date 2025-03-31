@@ -7,6 +7,7 @@
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/mtrr.h"
+#include "io/screen_new.h"
 
 uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана
 uint32_t framebuffer_pitch;				/// Частота обновления экрана
@@ -115,6 +116,8 @@ void init_vbe(multiboot_header_t *mboot) {
 	fb_mtrr_idx = find_free_mtrr();
 
     write_mtrr_size(fb_mtrr_idx, frame, framebuffer_size, 1);
+
+    screenman_add_screen(framebuffer_addr, framebuffer_width, framebuffer_height, 0); // 1 is RGB
 }
 
 /**

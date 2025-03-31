@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use num_derive::FromPrimitive;
+
+#[derive(Debug, FromPrimitive)]
 pub enum PixelFormat {
     RGB,
     // ...
@@ -14,7 +16,7 @@ pub struct PixelFormatOffsets {
 impl PixelFormat {
     pub fn bits_per_pixel(&self) -> usize {
         match self {
-            PixelFormat::RGB => 3,
+            PixelFormat::RGB => 24,
             // ...
         }
     }
@@ -52,6 +54,7 @@ pub struct Resolution {
 }
 
 pub struct Screen<'fb> {
+    pub(crate) global_id: Option<usize>,
     framebuffer: &'fb mut [u8],
     resolution: Resolution,
     pixel_format: PixelFormat,
@@ -65,6 +68,7 @@ impl<'a> Screen<'a> {
         pixel_format: PixelFormat,
     ) -> Self {
         Self {
+            global_id: None,
             framebuffer,
             resolution: Resolution { width, height },
             pixel_format,
@@ -78,6 +82,7 @@ impl<'a> Screen<'a> {
         pixel_format: PixelFormat,
     ) -> Self {
         Self {
+            global_id: None,
             framebuffer: unsafe {
                 core::slice::from_raw_parts_mut(
                     framebuffer,
@@ -136,5 +141,13 @@ impl<'a> Screen<'a> {
         let (r, g, b, a) = (pixels[offs.r >> 3], pixels[offs.g >> 3], pixels[offs.b >> 3], None);
 
         Some(self.pixel_format().to_universal(r, g, b, a))
+    }
+
+    pub fn framebuffer_raw(&self) -> &[u8] {
+        &self.framebuffer
+    }
+
+    pub fn framebuffer_raw_mut(&mut self) -> &mut [u8] {
+        &mut self.framebuffer
     }
 }

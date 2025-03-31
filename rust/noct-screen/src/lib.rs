@@ -3,13 +3,26 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+use manager::GLOBAL_SCREENS;
+use screen::Screen;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub mod screen;
+pub mod manager;
+pub mod c_api;
+
+pub fn get_default_screen() -> Option<&'static Screen<'static>> {
+    let mgr = unsafe { &GLOBAL_SCREENS }.write();
+
+    let mgr = mgr.get()
+        .unwrap();
+
+    mgr.default_screen()
+}
 
 pub fn fill(color: u32) {
     let (w, h) = dimensions();
-    let len = w * h * bits_per_pixel();
 
     for y in 0..h {
         for x in 0..w {
