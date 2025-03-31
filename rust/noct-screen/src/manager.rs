@@ -1,7 +1,7 @@
 extern crate alloc;
 
 use core::cell::OnceCell;
-use alloc::vec::Vec;
+use alloc::{sync::Arc, vec::Vec};
 
 use spin::RwLock;
 
@@ -11,8 +11,8 @@ pub static mut GLOBAL_SCREENS: RwLock<OnceCell<Manager<'static>>> = RwLock::new(
 pub static mut GLOBAL_SCREEN_ID: RwLock<usize> = RwLock::new(0);
 
 pub struct Manager<'scr> {
-    screens: Vec<Screen<'scr>>,
-    default_screen: Option<&'scr mut Screen<'scr>>
+    screens: Vec<Screen>,
+    default_screen: Option<&'scr mut Screen>
 }
 
 impl Manager<'static> {
@@ -23,7 +23,7 @@ impl Manager<'static> {
         }
     }
 
-    pub fn add_screen(&mut self, mut screen: Screen<'static>) -> usize {
+    pub fn add_screen(&mut self, mut screen: Screen) -> usize {
         screen.global_id = Some(unsafe { *GLOBAL_SCREEN_ID.read() });
 
         self.screens.push(screen);
@@ -51,7 +51,7 @@ impl Manager<'static> {
         self.screens.iter().position(|a| a.global_id == self.default_screen.as_ref().unwrap().global_id)
     }
 
-    pub fn default_screen_mut(&mut self) -> Option<&'static mut Screen> {
+    pub fn default_screen_mut(&mut self) -> Option<&mut Screen> {
         self.default_screen.as_deref_mut()
     }
 
@@ -63,7 +63,27 @@ impl Manager<'static> {
         self.screens.get(index)
     }
 
-    pub fn nth_screen_mut(&mut self, index: usize) -> Option<&'static mut Screen> {
+    pub fn nth_screen_mut(&mut self, index: usize) -> Option<&mut Screen> {
         self.screens.get_mut(index)
     }
+}
+
+pub fn with_manager<F, R>(f: F) -> R
+where F: Fn(&Manager) -> R {
+    let mgr_ref = unsafe { &GLOBAL_SCREENS };
+
+    let guard = mgr_ref.read();
+    let mgr = guard.get().unwrap();
+
+    f(mgr)
+}
+
+pub fn with_manager_mut<F, R>(f: F) -> R
+where F: Fn(&mut Manager) -> R {
+    let mgr_ref = unsafe { &GLOBAL_SCREENS };
+
+    let mut guard = mgr_ref.write();
+    let mgr = guard.get_mut().unwrap();
+
+    f(mgr)
 }

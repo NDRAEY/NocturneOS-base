@@ -1,6 +1,8 @@
+use core::slice::from_raw_parts_mut;
+
 use num_derive::FromPrimitive;
 
-#[derive(Debug, FromPrimitive)]
+#[derive(Clone, Debug, FromPrimitive)]
 pub enum PixelFormat {
     RGB,
     // ...
@@ -35,9 +37,7 @@ impl PixelFormat {
     pub fn to_universal(&self, r: u8, g: u8, b: u8, a: Option<u8>) -> u32 {
         let ofs = self.offsets();
 
-        let mut color = ((r as u32) << ofs.r)
-            | ((g as u32) << ofs.g)
-            | ((b as u32) << ofs.b);
+        let mut color = ((r as u32) << ofs.r) | ((g as u32) << ofs.g) | ((b as u32) << ofs.b);
 
         if let Some(alpha) = ofs.a {
             color |= a.map(|x| (x as u32) << alpha).unwrap_or(0xff_000000);
@@ -47,22 +47,38 @@ impl PixelFormat {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Resolution {
     pub width: usize,
     pub height: usize,
 }
 
-pub struct Screen<'fb> {
+pub struct Screen {
     pub(crate) global_id: Option<usize>,
-    framebuffer: &'fb mut [u8],
+    framebuffer: &'static mut [u8],
     resolution: Resolution,
     pixel_format: PixelFormat,
 }
 
-impl<'a> Screen<'a> {
+impl Clone for Screen {
+    fn clone(&self) -> Self {
+        let ptr = self.framebuffer.as_ptr();
+        let len = self.framebuffer.len();
+
+        let ln = unsafe { from_raw_parts_mut(ptr as *mut u8, len) };
+        
+        Self {
+            global_id: self.global_id.clone(),
+            framebuffer: ln,
+            resolution: self.resolution.clone(),
+            pixel_format: self.pixel_format.clone(),
+        }
+    }
+}
+
+impl Screen {
     pub fn new(
-        framebuffer: &'a mut [u8],
+        framebuffer: &'static mut [u8],
         width: usize,
         height: usize,
         pixel_format: PixelFormat,
@@ -84,7 +100,7 @@ impl<'a> Screen<'a> {
         Self {
             global_id: None,
             framebuffer: unsafe {
-                core::slice::from_raw_parts_mut(
+                from_raw_parts_mut(
                     framebuffer,
                     width * height * pixel_format.bits_per_pixel(),
                 )
@@ -137,8 +153,13 @@ impl<'a> Screen<'a> {
         let pixels = &self.framebuffer[offset..];
 
         let offs = self.pixel_format().offsets();
-        
-        let (r, g, b, a) = (pixels[offs.r >> 3], pixels[offs.g >> 3], pixels[offs.b >> 3], None);
+
+        let (r, g, b, a) = (
+            pixels[offs.r >> 3],
+            pixels[offs.g >> 3],
+            pixels[offs.b >> 3],
+            None,
+        );
 
         Some(self.pixel_format().to_universal(r, g, b, a))
     }

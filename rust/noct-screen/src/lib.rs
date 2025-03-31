@@ -3,22 +3,42 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use manager::GLOBAL_SCREENS;
-use screen::Screen;
+use manager::{with_manager, GLOBAL_SCREENS};
+use screen::{PixelFormat, Screen};
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-pub mod screen;
-pub mod manager;
 pub mod c_api;
+pub mod manager;
+pub mod screen;
 
-pub fn get_default_screen() -> Option<&'static Screen<'static>> {
-    let mgr = unsafe { &GLOBAL_SCREENS }.write();
+pub fn get_default_screen() -> Option<Screen> {
+    // with_manager(|mgr| {
+    //     let a = mgr.default_screen();
+    //     a.cloned()
+    // })
 
-    let mgr = mgr.get()
-        .unwrap();
+    let mgr_ref = unsafe { &GLOBAL_SCREENS };
 
-    mgr.default_screen()
+    let mut guard = mgr_ref.read();
+    let mgr = guard.get().unwrap();
+
+    let a = mgr.default_screen();
+    a.cloned()
+}
+
+pub fn add_screen(
+    framebuffer: &'static mut [u8],
+    width: usize,
+    height: usize,
+    pixfmt: PixelFormat,
+) -> usize {
+    let mgr_ref = unsafe { &GLOBAL_SCREENS };
+
+    let mut guard = mgr_ref.write();
+    let mgr = guard.get_mut().unwrap();
+
+    mgr.add_screen(Screen::new(framebuffer, width, height, pixfmt))
 }
 
 pub fn fill(color: u32) {
@@ -64,7 +84,12 @@ pub fn framebuffer_mut() -> &'static mut [u8] {
 
 #[inline]
 pub fn dimensions() -> (usize, usize) {
-    unsafe { (getScreenWidth().try_into().unwrap(), getScreenHeight().try_into().unwrap()) }
+    unsafe {
+        (
+            getScreenWidth().try_into().unwrap(),
+            getScreenHeight().try_into().unwrap(),
+        )
+    }
 }
 
 pub fn pitch() -> usize {
