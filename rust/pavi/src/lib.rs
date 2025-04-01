@@ -6,6 +6,7 @@ use alloc::string::{String, ToString};
 use nimage::Image;
 use noct_input::keyboard_buffer_get;
 use noct_logger::qemu_log;
+use noct_screen::screen::Resolution;
 use noct_tty::println;
 
 enum ShowMode {
@@ -43,9 +44,6 @@ pub fn pavi(argc: usize, argv: &[String]) -> Result<(), usize> {
 
     let image = image.unwrap();
 
-    let (screen_width, screen_height) = noct_screen::dimensions();
-    // noct_screen::set_pixel(x, y, color);
-
 
     render_image(&image, ShowMode::BoundsX);
     
@@ -55,6 +53,7 @@ pub fn pavi(argc: usize, argv: &[String]) -> Result<(), usize> {
 }
 
 fn render_image(image: &Image, render_mode: ShowMode) {
+    let screen = noct_screen::get_screen().unwrap();
     let (mut start_x, mut start_y, mut width, mut height) = (0,0, 0,0);
 
     match render_mode {
@@ -62,7 +61,7 @@ fn render_image(image: &Image, render_mode: ShowMode) {
             let im_w = image.width();
             let im_h = image.height();
 
-            let (scr_w, scr_h) = noct_screen::dimensions();
+            let Resolution { width: scr_w, height: scr_h } = *screen.resolution();
 
             width = scr_w;
 
@@ -76,7 +75,9 @@ fn render_image(image: &Image, render_mode: ShowMode) {
             todo!()
         },
         ShowMode::Stretch => {
-            (width, height) = noct_screen::dimensions();
+            let Resolution { width: scr_w, height: scr_h } = *screen.resolution();
+
+            (width, height) = (scr_w, scr_h);
         },
     }
 
@@ -91,7 +92,7 @@ fn render_image(image: &Image, render_mode: ShowMode) {
 
             pixel = ((pixel & 0xff0000) >> 16) | ((pixel & 0x00ff00)) | ((pixel & 0x0000ff) << 16);
 
-            noct_screen::set_pixel(start_x + x, start_y + y, pixel);
+            screen.set_pixel(start_x + x, start_y + y, pixel);
         }
     }
 }

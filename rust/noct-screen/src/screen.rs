@@ -1,4 +1,4 @@
-use core::slice::from_raw_parts_mut;
+use core::{fmt::Debug, slice::from_raw_parts_mut};
 
 use num_derive::FromPrimitive;
 
@@ -53,38 +53,30 @@ pub struct Resolution {
     pub height: usize,
 }
 
-pub struct Screen {
-    pub(crate) global_id: Option<usize>,
-    framebuffer: &'static mut [u8],
-    resolution: Resolution,
-    pixel_format: PixelFormat,
+pub struct Screen<'a> {
+    pub(crate) framebuffer: &'a mut [u8],
+    pub(crate) resolution: Resolution,
+    pub(crate) pixel_format: PixelFormat,
 }
 
-impl Clone for Screen {
-    fn clone(&self) -> Self {
-        let ptr = self.framebuffer.as_ptr();
-        let len = self.framebuffer.len();
-
-        let ln = unsafe { from_raw_parts_mut(ptr as *mut u8, len) };
-        
-        Self {
-            global_id: self.global_id.clone(),
-            framebuffer: ln,
-            resolution: self.resolution.clone(),
-            pixel_format: self.pixel_format.clone(),
-        }
+impl Debug for Screen<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("Screen")
+            .field("framebuffer", &self.framebuffer.as_ptr().addr())
+            .field("resolution", &self.resolution)
+            .field("pixel_format", &self.pixel_format)
+            .finish()
     }
 }
 
-impl Screen {
+impl<'a> Screen<'a> {
     pub fn new(
-        framebuffer: &'static mut [u8],
+        framebuffer: &'a mut [u8],
         width: usize,
         height: usize,
         pixel_format: PixelFormat,
     ) -> Self {
         Self {
-            global_id: None,
             framebuffer,
             resolution: Resolution { width, height },
             pixel_format,
@@ -98,21 +90,31 @@ impl Screen {
         pixel_format: PixelFormat,
     ) -> Self {
         Self {
-            global_id: None,
             framebuffer: unsafe {
-                from_raw_parts_mut(
-                    framebuffer,
-                    width * height * pixel_format.bits_per_pixel(),
-                )
+                from_raw_parts_mut(framebuffer, width * height * pixel_format.bits_per_pixel())
             },
             resolution: Resolution { width, height },
             pixel_format,
         }
     }
 
+    pub fn clone_with_same_reference(&self) -> Self {
+        let ptr = self.framebuffer.as_ptr();
+        let len = self.framebuffer.len();
+
+        // Here I do the serious crime, now `ln` is a ANOTHER MUTABLE REFERENCE TO THE SAME ADDRESS.
+        let ln = unsafe { from_raw_parts_mut(ptr as *mut u8, len) };
+
+        Self {
+            framebuffer: ln,
+            resolution: self.resolution.clone(),
+            pixel_format: self.pixel_format.clone(),
+        }
+    }
+
     #[inline]
     pub fn stride(&self) -> usize {
-        self.resolution.width * self.resolution.height * self.pixel_format.bits_per_pixel()
+        self.resolution.width * (self.pixel_format.bits_per_pixel() >> 3)
     }
 
     #[inline]
@@ -127,7 +129,7 @@ impl Screen {
 
     #[inline]
     fn pixel_offset(&self, x: usize, y: usize) -> usize {
-        (x * (self.pixel_format().bits_per_pixel() >> 3)) + y * self.stride()
+        ((y * self.resolution.width) + x) * (self.pixel_format().bits_per_pixel() >> 3)
     }
 
     pub fn set_pixel(&mut self, x: usize, y: usize, color: u32) {
@@ -162,6 +164,14 @@ impl Screen {
         );
 
         Some(self.pixel_format().to_universal(r, g, b, a))
+    }
+
+    pub fn fill(&mut self, color: u32) {
+        for y in 0..self.resolution.height {
+            for x in 0..self.resolution.width {
+                self.set_pixel(x, y, color);
+            }
+        }
     }
 
     pub fn framebuffer_raw(&self) -> &[u8] {

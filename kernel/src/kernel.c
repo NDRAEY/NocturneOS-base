@@ -282,12 +282,13 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     qemu_log("Initializing Task Manager...");
     init_task_manager();
 
-    screenman_init();
-
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);
 
     clean_screen();
+
+    
+    while(1);
 
     qemu_log("Initalizing fonts...");
     tty_fontConfigurate();

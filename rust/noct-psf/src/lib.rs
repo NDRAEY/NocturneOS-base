@@ -1,6 +1,6 @@
 #![no_std]
 
-use noct_screen::set_pixel;
+use noct_screen::get_screen;
 
 extern "C" {
     static psf_h: u8;
@@ -54,7 +54,7 @@ pub extern "C" fn draw_vga_ch(c: u16, pos_x: usize, pos_y: usize, color: u32) {
         let rposy = pos_y + y;
         for (x, mask) in mask.iter().enumerate() {
             if (row & mask) != 0 {
-                set_pixel(pos_x + x, rposy, color);
+                get_screen().unwrap().set_pixel(pos_x + x, rposy, color);
             }
         }
     }

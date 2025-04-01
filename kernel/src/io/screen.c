@@ -117,7 +117,7 @@ void init_vbe(multiboot_header_t *mboot) {
 
     write_mtrr_size(fb_mtrr_idx, frame, framebuffer_size, 1);
 
-    screenman_add_screen(framebuffer_addr, framebuffer_width, framebuffer_height, 0); // 1 is RGB
+    screen_init(framebuffer_addr, framebuffer_width, framebuffer_height, 0); // 0 is RGB
 }
 
 /**
