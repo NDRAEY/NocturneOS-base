@@ -7,7 +7,6 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub fn fill(color: u32) {
     let (w, h) = dimensions();
-    let len = w * h * bits_per_pixel();
 
     for y in 0..h {
         for x in 0..w {

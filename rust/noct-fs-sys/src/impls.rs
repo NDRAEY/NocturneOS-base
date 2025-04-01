@@ -16,18 +16,17 @@ impl FSM_FILE {
     ) -> Self {
         let path = path.to_string();
 
-        let name: String;
         let mut splitted = path.split('/');
 
-        if path.ends_with('/') {
+        let name: String = if path.ends_with('/') {
             let prelast = splitted.clone().count() - 2;
 
-            name = splitted.nth(prelast).unwrap().to_string();
+            splitted.nth(prelast).unwrap().to_string()
         } else {
-            name = splitted.last().unwrap().to_string();
-        }
+            splitted.next_back().unwrap().to_string()
+        };
 
-        let max_len = name.as_bytes().len().min(1024);
+        let max_len = name.len().min(1024);
 
         let mut file = FSM_FILE {
             Ready: true,

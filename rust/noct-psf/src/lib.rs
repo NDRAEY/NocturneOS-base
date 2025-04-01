@@ -21,7 +21,7 @@ impl PSF {
             panic!("Attempted to pass null to PSF!");
         }
 
-        let data = unsafe { core::slice::from_raw_parts(data, len) };
+        let data = unsafe { core::slice::from_raw_parts(unsafe {data}, len) };
 
         if data[0] != 0x36 || data[1] != 0x04 {
             return None;
