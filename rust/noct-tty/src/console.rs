@@ -128,7 +128,7 @@ impl Console {
         if character == '\n' {
             self.move_down();
             return;
-        } else if character as u32 == 8 {
+        } else if character as u32 == 8 {  // Backspace
             self.move_left();
             return;
         } else if character == '\r' {
