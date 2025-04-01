@@ -4,7 +4,6 @@
 extern crate alloc;
 
 use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
-use std::io::screen;
 
 pub mod audio;
 pub mod drv;
@@ -20,7 +19,6 @@ pub use noct_tarfs;
 use noct_alloc::Allocator;
 pub use noct_logger::*;
 use noct_tty::println;
-use system::timer::timestamp;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

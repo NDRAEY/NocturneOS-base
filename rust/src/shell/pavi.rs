@@ -1,4 +1,3 @@
-use core::ffi::c_char;
 
 use alloc::{string::String, vec::Vec};
 use super::ShellContext;
