@@ -3,7 +3,7 @@
 
 extern crate alloc;
 
-use core::{arch::asm, panic::PanicInfo};
+use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
 use std::io::screen;
 
 pub mod audio;
@@ -13,8 +13,9 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
-pub use noct_tarfs;
 pub use noct_psf;
+use noct_psf::PSF;
+pub use noct_tarfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
@@ -34,6 +35,16 @@ fn panic(_info: &PanicInfo) -> ! {
     }
 
     loop {}
+}
+
+#[no_mangle]
+pub static mut PSF_FONT: OnceCell<PSF> = OnceCell::new();
+
+#[no_mangle]
+pub extern "C" fn psf_init(ptr: *const u8, len: u32) {
+    unsafe {
+        PSF_FONT.set(PSF::from_raw_ptr(ptr, len as _).expect("Failed to initialize PSF font.")).unwrap()
+    };
 }
 
 /// Main entry point for testing.
@@ -68,10 +79,10 @@ pub extern "C" fn rust_main() {
 
     //     loop {
     //         let start_time = timestamp();
-            
+
     //         noct_screen::fill(0);
     //         noct_tty::renderer::render(&tty);
-            
+
     //         qemu_log!("Took: {} ms", timestamp() - start_time);
     //     }
     // }

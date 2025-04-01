@@ -1,6 +1,12 @@
-use noct_psf::draw_vga_ch;
+use core::cell::OnceCell;
+
+use noct_psf::PSF;
 
 use crate::console::Console;
+
+unsafe extern {
+    pub static PSF_FONT: OnceCell<PSF>;
+}
 
 pub fn render(console: &Console) {
     let dimensions = console.dimensions();
@@ -13,7 +19,7 @@ pub fn render(console: &Console) {
                 continue;
             }
 
-            draw_vga_ch(char.character as u16, column * 8, row * 16, char.attribute.color());
+            unsafe { PSF_FONT.get().unwrap().draw_character(char.character as u16, column * 8, row * 16, char.attribute.color()) };
         }
     }
 }
