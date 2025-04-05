@@ -2,6 +2,9 @@
 
 extern crate alloc;
 
+pub mod console;
+pub mod renderer;
+
 use core::fmt;
 use core::fmt::Write;
 use lazy_static::lazy_static;

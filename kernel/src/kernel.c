@@ -274,7 +274,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     kernel_start_time = getTicks();
 
     mtrr_init();
-    text_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
+    fonts_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
     // /Sayori/Fonts/UniCyrX-ibm-8x16.psf
 
     qemu_log("Initializing the virtual video memory manager...");

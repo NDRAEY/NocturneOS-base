@@ -8,15 +8,13 @@
 #include "mem/vmm.h"
 #include "sys/mtrr.h"
 
-uint8_t *framebuffer_addr = 0;				/// Точка монтирования
+uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана
 uint32_t framebuffer_pitch;				/// Частота обновления экрана
 uint32_t framebuffer_bpp;				/// Глубина цвета экрана
 uint32_t framebuffer_width;				/// Длина экрана
 uint32_t framebuffer_height;			/// Высота экрана
 uint32_t framebuffer_size;				/// Кол-во пикселей
 uint8_t *back_framebuffer_addr = 0;		/// Позиция буфера экрана
-bool lazyDraw = true;					/// Включен ли режим ленивой прорисовки
-bool tty_oem_mode = false;				/// Режим работы
 
 size_t fb_mtrr_idx = 0;
 size_t bfb_mtrr_idx = 0;
@@ -79,31 +77,12 @@ void create_back_framebuffer() {
  * @param mboot - информация полученная от загрузчика
  */
 void init_vbe(multiboot_header_t *mboot) {
-    // FIXME: Something wrong with `svga_mode_info_t` structure!
-//    svga_mode_info_t *svga_mode = (svga_mode_info_t*) mboot->vbe_mode_info;
-//    framebuffer_addr = (uint8_t*)svga_mode->physbase;
-//    framebuffer_pitch = svga_mode->pitch;
-//    framebuffer_bpp = svga_mode->bpp;
-//    framebuffer_width = svga_mode->screen_width;
-//    framebuffer_height = svga_mode->screen_height;
-//    framebuffer_size = framebuffer_height * framebuffer_pitch;
-
-//    qemu_log("[VBE] [Install] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %x",
-//             framebuffer_width,
-//             framebuffer_height,
-//             framebuffer_pitch,
-//             framebuffer_bpp,
-//             framebuffer_size,
-//             framebuffer_addr
-//    );
-
-
     framebuffer_addr = (uint8_t *) mboot->framebuffer_addr;
     framebuffer_pitch = mboot->framebuffer_pitch;
     framebuffer_bpp = mboot->framebuffer_bpp;
     framebuffer_width = mboot->framebuffer_width;
     framebuffer_height = mboot->framebuffer_height;
-    // framebuffer_pitch = framebuffer_width * (framebuffer_bpp >> 3);
+
     framebuffer_size = framebuffer_height * framebuffer_pitch;
 
     qemu_log("[VBE] [USING LEGACY INFO] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %p",
@@ -129,11 +108,9 @@ void init_vbe(multiboot_header_t *mboot) {
     size_t time = (getTicks() - start_tk)/(getFrequency()/1000);
     qemu_log("Okay mapping! (took %d millis)", time);
 
-    qemu_log("Creating second framebuffer");
-
     create_back_framebuffer();
 
-    qemu_log("^---- OKAY");
+    qemu_log("Created back framebuffer");
 
 	fb_mtrr_idx = find_free_mtrr();
 

@@ -14,28 +14,16 @@
 #include "io/serial_port.h"
 #include "io/screen.h"
 
-uint32_t psf_font_version = 0;
+extern void psf_init(uint8_t* data, uint32_t len);
 
-uint8_t psf_h = 0;
-
-static psf_t *_font_ptr = nullptr;
-static bool _init = false;
-static uint8_t* first_glyph = 0;
-
-uint16_t *unicode;
-
-/**
- * @brief Инициализация шрифта PSF
- * @param psf - (const char*) имя файла
- * @return true - всё ок; false - ошибка
- */
-bool text_init(char* psf){
+bool fonts_init(char* psf) {
 	ON_NULLPTR(psf, {
 		qemu_log("Filename is nullptr!");
 		return false;
 	});
 
     FILE* psf_file = fopen(psf, "r");
+
     if (!psf_file) {
         qemu_log("[Core] [PSF] Не удалось найти файл `%s`. \n",psf);
         return false;
@@ -49,44 +37,20 @@ bool text_init(char* psf){
 	fread(psf_file, rfsize, 1, buffer);
     fclose(psf_file);
 
-    psf_t *header = (psf_t*)buffer;
-    _init = false;
-    psf_h = 0;
-    if (header->magic[0] != PSF1_MAGIC0 || header->magic[1] != PSF1_MAGIC1){
-        qemu_log("PSF Header Error");
-        return false;
-    }
-    _font_ptr = (psf_t*)buffer;
-    psf_h = header->charHeight;
+    psf_init(buffer, rfsize);
 
-    qemu_log("Height is: %d", psf_h);
-    
-    _init = true;
-    first_glyph = (uint8_t*)_font_ptr+sizeof(psf_t);
-    return _init;
+    kfree(buffer);
+
+    return true;
 }
 
-size_t psf1_get_h() {
-    return psf_h;
-}
-
-uint8_t *psf1_get_glyph(uint16_t ch){
-    psf_t *header = (psf_t*)_font_ptr;
-
-    if ((ch > 511) || (ch > 255 && (header->mode == 0 || header->mode == 2))){
-        return 0;
-    }
-
-    return ((uint8_t*)_font_ptr+sizeof(psf_t)+(ch*psf_h));
-}
-
-void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color){
+void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color) {
 	ON_NULLPTR(text, {
 		return;
 	});
 
     size_t scrwidth = getScreenWidth();
-    for(int i = 0; i < len; i++){
+    for(int i = 0; i < len; i++) {
         if (x + 8 <= scrwidth) {
             uint16_t ch = (uint16_t)(uint8_t)text[i];
             if(ch == 0xd0 || ch == 0xd1) {
@@ -98,7 +62,7 @@ void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color){
                 ch |= ch2;
             }
 
-            draw_vga_ch(ch, x, y, color);
+            draw_character(&PSF_FONT, ch, x, y, color);
             x += 8;
         } else {
             break;

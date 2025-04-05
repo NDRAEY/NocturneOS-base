@@ -2,7 +2,8 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
-use noct_logger::qemu_err;
+use noct_fs_sys::dir::Directory;
+use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
@@ -12,17 +13,17 @@ use noct_tty::{print, println};
 
 use noct_path::Path;
 
+pub mod cat;
 pub mod cd;
 pub mod cls;
 pub mod dir;
-pub mod cat;
-pub mod pci;
-pub mod parallel_desktop;
-pub mod meminfo;
-pub mod mala;
-pub mod pavi;
-pub mod miniplay;
 pub mod file_ops;
+pub mod mala;
+pub mod meminfo;
+pub mod miniplay;
+pub mod parallel_desktop;
+pub mod pavi;
+pub mod pci;
 pub mod reboot;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
@@ -74,6 +75,8 @@ fn process_input(_context: &mut ShellContext) -> String {
         let raw_ch = unsafe { getchar() };
         let ch = char::from_u32(raw_ch).unwrap();
 
+        qemu_note!("Key is: {}", raw_ch);
+
         if ch == '\0' {
             continue;
         }
@@ -82,10 +85,44 @@ fn process_input(_context: &mut ShellContext) -> String {
             break;
         }
 
+        // Backspace
         if ch as u32 == 8 {
             if input.pop().is_some() {
                 print!("{0} {0}", char::from_u32(8).unwrap());
             }
+            continue;
+        } else if ch == '\t' {
+            // Tab
+            qemu_warn!("Tab!");
+
+            if input.trim().is_empty() {
+                continue;
+            }
+
+            let mut back_counter = input.len();
+
+            while back_counter > 0 && input.chars().nth(back_counter) != Some(' ') {
+                back_counter -= 1;
+            }
+
+            qemu_warn!("Fin");
+
+            let stem = input.as_str()[back_counter..].trim();
+
+            qemu_note!("Finding completions for: `{}`", stem);
+
+            let completions = suggest_completions(stem);
+
+            qemu_note!("Completions: {:?}", completions);
+
+            if completions.len() == 1 {
+                // Apply it
+                todo!("Apply it!");
+            } else {
+                // Show variants
+                todo!("Show variants!");
+            }
+
             continue;
         }
 
@@ -96,6 +133,36 @@ fn process_input(_context: &mut ShellContext) -> String {
     }
 
     input
+}
+
+fn suggest_completions(stem: &str) -> Vec<String> {
+    if stem.is_empty() {
+        return vec![];
+    }
+
+    if stem.chars().next().is_some_and(|a| a.is_alphabetic())
+        && stem.chars().nth(1).is_some_and(|a| a == ':')
+        && stem.chars().nth(2).is_some_and(|a| a == '/')
+    {
+        // It's path
+
+        let mut path = Path::from_path(stem).unwrap();
+
+        path.parent();
+
+        qemu_note!("List all occurencies of `{}` in `{}`", stem, path.as_str());
+
+        let rdir = Directory::from_path(&path).unwrap();
+        let variants = rdir.into_iter().names();
+
+        return variants
+            .into_iter()
+            .map(|name| path.as_string().clone() + &name)
+            .filter(|full| full.starts_with(stem))
+            .collect();
+    }
+
+    vec![]
 }
 
 #[no_mangle]

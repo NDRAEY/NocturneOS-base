@@ -16,14 +16,10 @@
 #define PSF1_MAGIC0     0X36
 #define PSF1_MAGIC1     0X04
 
-typedef struct __attribute__((packed)) {
-    uint8_t magic[2];
-    uint8_t mode;
-    uint8_t charHeight;
-} psf_t;
+extern void* PSF_FONT;
 
-bool text_init(char* psf);
-extern void draw_vga_ch(uint16_t c, size_t pos_x, size_t pos_y, size_t color);
+bool fonts_init(char* psf);
+extern void draw_character(void* psf, uint16_t ch, size_t pos_x, size_t pos_y, uint32_t color);
 void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color);
 size_t psf1_get_w();
 size_t psf1_get_h();

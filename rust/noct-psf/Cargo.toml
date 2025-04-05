@@ -1,0 +1,7 @@
+[package]
+name = "noct-psf"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+noct-screen = { path = "../noct-screen" }
