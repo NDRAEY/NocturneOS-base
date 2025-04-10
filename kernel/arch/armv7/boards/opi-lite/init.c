@@ -1,0 +1,3 @@
+void board_init() {
+	
+}
