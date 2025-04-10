@@ -57,7 +57,7 @@ unsafe extern "C" fn fun_read(
     let path = ".".to_string() + &raw_ptr_to_string(path);
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
-    let result = fl.read_file(&path, offset as _, count as _, outbuf);
+    let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
     
     result.unwrap_or(0) as _
 }

@@ -12,7 +12,6 @@
 *.pcap
 *.d
 /rust/target
-/rust/Cargo.lock
 .idea/
 iso/ramdisk
 disk*.img
