@@ -7,7 +7,8 @@ enable_language(C ASM)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;ReleaseOptimized;ReleaseOptimizedSSE" CACHE STRING "Available configurations" FORCE)
 
-set(VALID_ARCHITECTURES "x86" "x86_64")
+set(VALID_ARCHITECTURES "x86" "armv7")
+set(SUPPORTED_ARMV7_BOARDS "opi-lite")
 
 if(NOT NOCTURNE_ARCH)
   set(NOCTURNE_ARCH "x86")
@@ -18,9 +19,30 @@ if(__INDEX EQUAL -1)
   message(FATAL_ERROR "Invalid architecture: ${NOCTURNE_ARCH}. Accepted values are: ${VALID_ARCHITECTURES}")
 endif()
 
+if(NOCTURNE_ARCH STREQUAL "armv7" AND NOT NOCTURNE_BOARD)
+	message(WARNING "Board not selected. Select an ARM board you want compile for: ${SUPPORTED_ARMV7_BOARDS}")
+	message(FATAL_ERROR "Read the warning above. When you're ready, add this to your CMake command: `-DNOCTURNE_BOARD=<myboard>`")
+endif()
+
+if(NOCTURNE_ARCH STREQUAL "armv7")
+	list(FIND SUPPORTED_ARMV7_BOARDS "${NOCTURNE_BOARD}" __INDEX)
+	if(__INDEX EQUAL -1)
+		message(WARNING "Invalid board selected. Select an ARM board you want compile for: ${SUPPORTED_ARMV7_BOARDS}")
+		message(FATAL_ERROR "Read the warning above. When you're ready, add this to your CMake command: `-DNOCTURNE_BOARD=<myboard>`")
+	endif()
+endif()
+
 option(NOCTURNE_USE_CLANG "Use Clang compiler for building" OFF)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "LANG=en_US.UTF-8 ${COMMAND}")
+
+if(NOCTURNE_ARCH STREQUAL "x86")
+	set(CLANG_ARCHITECTURE_TRIPLE "i386-pc-none")
+	set(RUST_TARGET_TRIPLE "i686-unknown-none")
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(CLANG_ARCHITECTURE_TRIPLE "armv7-unknown-none")
+	set(RUST_TARGET_TRIPLE "armv7-unknown-none")
+endif()
 
 set(ISO_DIR "${CMAKE_SOURCE_DIR}/iso/")
 set(KERNEL kernel.elf)
@@ -34,10 +56,15 @@ set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")
     set(CMAKE_C_COMPILER "clang")
-    set(CMAKE_C_FLAGS "-target i386-pc-none ${CMAKE_C_FLAGS}")
+    set(CMAKE_C_FLAGS "-target ${CLANG_ARCHITECTURE_TRIPLE} ${CMAKE_C_FLAGS}")
 else()
     message("Using GCC compiler!")
     set(CMAKE_C_COMPILER "gcc")
+	
+	if(NOCTURNE_ARCH STREQUAL "armv7")
+		set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+	endif()
+	
     set(CMAKE_C_FLAGS "-fuse-ld=lld ${CMAKE_C_FLAGS}")
 endif()
 
@@ -218,15 +245,15 @@ add_executable(${KERNEL} ${SRC})
 # Rust
 
 set(RUST_COMPILER_TOOLCHAIN "nightly-2025-01-11")
-set(RUST_TARGET "i686-unknown-none.json")
+set(RUST_TARGET "${RUST_TARGET_TRIPLE}.json")
 set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
-set(RUST_TARGET_TRIPLE "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
-set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TARGET_TRIPLE}/bin/src/cargo")
+set(RUST_TOOLCHAIN_FULLNAME "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
+set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TOOLCHAIN_FULLNAME}/bin/src/cargo")
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a" "fake.a"
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/debug/libnocturne.a" "fake.a"
 		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS}
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 		COMMENT "Building Rust files..."
@@ -236,15 +263,15 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		VERBATIM
 	)
 
-	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/debug/libnocturne.a")
 	add_dependencies(${KERNEL} rs)
 
-	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/debug/libnocturne.a")
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/debug/libnocturne.a")
 
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a" "fake.a"
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release_no_opt/libnocturne.a" "fake.a"
 		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile release_no_opt
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 		COMMENT "Building Rust files..."
@@ -254,15 +281,15 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 		VERBATIM
 	)
 
-	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+	add_custom_target(rs ALL DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release_no_opt/libnocturne.a")
 	add_dependencies(${KERNEL} rs)
 
-	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release_no_opt/libnocturne.a")
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release_no_opt/libnocturne.a")
 
 else()
 
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a" "fake.a"
+		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release/libnocturne.a" "fake.a"
 		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --release
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 		COMMENT "Building Rust files..."
@@ -272,10 +299,10 @@ else()
 		VERBATIM
 	)
 
-	add_custom_target(rs DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
+	add_custom_target(rs DEPENDS "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release/libnocturne.a")
 	add_dependencies(${KERNEL} rs)
 
-	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/i686-unknown-none/release/libnocturne.a")
+	target_link_libraries(${KERNEL} "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/release/libnocturne.a")
 endif()
 
 # Targets
