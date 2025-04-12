@@ -91,7 +91,7 @@ set(QEMU_MEMORY_SIZE 128M)
 
 #set(QEMU "qemu-system-x86_64")
 set(QEMU "qemu-system-i386")
-set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -hda ${CMAKE_SOURCE_DIR}/test.iso)
+set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap)
 
 set(MKRESCUE grub-mkrescue)
 set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} -V NocturneOS)
@@ -111,7 +111,14 @@ set(ASM_SRC kernel/asm/init.s
 	# kernel/asm/64bit_on_32bit.s
 )
 
-set(C_SRC 
+if(NOCTURNE_ARCH STREQUAL "x86")
+	set(C_SRC kernel/src/arch/x86/init.c)
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(C_SRC kernel/src/arch/armv7/init.c)
+endif()
+
+set(C_SRC
+	${C_SRC}
 	kernel/src/sys/cpu_isr.c 
 	kernel/src/sys/gdt.c 
 	kernel/src/sys/isr.c 
@@ -395,7 +402,7 @@ add_custom_target(
 
 add_custom_target(
         run_with_disk
-        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -hda ${CMAKE_SOURCE_DIR}/disk.img
+        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -hda ${CMAKE_SOURCE_DIR}/test_disk.img
         USES_TERMINAL
         DEPENDS iso
 )

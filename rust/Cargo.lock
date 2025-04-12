@@ -339,6 +339,10 @@ dependencies = [
 name = "noct-noctfs"
 version = "0.1.0"
 dependencies = [
+ "no_std_io",
+ "noct-dpm-sys",
+ "noct-fs-sys",
+ "noct-logger",
  "noctfs",
 ]
 

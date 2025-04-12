@@ -32,6 +32,8 @@
 #include <lib/pixel.h>
 #include <net/socket.h>
 
+#include <arch/init.h>
+
 size_t VERSION_MAJOR = 0;    /// Версия ядра
 size_t VERSION_MINOR = 3;    /// Пре-релиз
 size_t VERSION_PATCH = 5;    /// Патч
@@ -53,21 +55,6 @@ size_t kernel_start_time = 0;
 size_t ramdisk_size = INITRD_RW_SIZE;
 
 void kHandlerCMD(char *);
-
-void __createRamDisk()
-{
-    qemu_note("[INITRD] Create virtual read-write disk...");
-    void *disk_t = kcalloc(INITRD_RW_SIZE, 1);
-    if (disk_t == NULL)
-    {
-        qemu_err("[INITRD] Fatal create virtual disk");
-        return;
-    }
-    qemu_log("[INITRD] Temp disk is (%d bytes) created to %x", ramdisk_size, disk_t);
-    dpm_reg('T', "TempDisk", "TEMPFS", 2, ramdisk_size, 0, 0, 2, "TEMP-DISK", disk_t);
-    fs_tempfs_format('T');
-    qemu_ok("[INITRD] The virtual hard disk has been successfully created.");
-}
 
 /**
  * @brief Обработка команд указаных ядру при загрузке
@@ -191,10 +178,12 @@ void new_nsh();
 */
 void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial_esp)
 {
+    __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
+    
+    arch_init();
+
     __com_setInit(1, 1);
     __com_init(PORT_COM1);
-
-    __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
 
     framebuffer_addr = (uint8_t *)(mboot->framebuffer_addr);
 
@@ -327,8 +316,6 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     bootScreenPaint("Настройка FDT...");
     file_descriptors_init();
-
-    __createRamDisk();
 
     bootScreenPaint("Настройка системных вызовов...");
     qemu_log("Registering System Calls...");

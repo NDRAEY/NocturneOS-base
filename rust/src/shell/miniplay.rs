@@ -13,6 +13,10 @@ pub fn miniplay_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), u
     let mut args = Vec::from(_args);
     args.insert(0, String::from("miniplay"));
 
+    for i in &mut args {
+        i.push('\0');
+    }
+
     let ptrs: Vec<*const u8> = args.iter().map(|x| x.as_str().as_ptr()).collect();
     let ptr = ptrs.as_ptr();
 

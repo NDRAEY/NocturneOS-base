@@ -65,6 +65,7 @@ pub extern "C" fn rust_main() {
     // })
 
     noct_iso9660::fs_iso9660_init();
+    noct_noctfs::fs_noctfs_init();
 
     // {
     //     noct_screen::fill(0);

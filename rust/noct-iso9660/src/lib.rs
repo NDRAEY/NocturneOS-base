@@ -126,9 +126,7 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
     let root = fl.read_root();
 
-    core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     for i in &root {
-        core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
         qemu_println!("{}", i.name);
     }
 
@@ -166,7 +164,10 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
     noct_dpm_sys::dpm_read(disk_letter, 0, 0x8001, 5, buffer.as_mut_ptr() as *mut _);
 
     if ISO9660_OEM != buffer {
-        qemu_err!("Not valid ISO!");
+        qemu_err!(
+            "Not valid ISO! (Disk: {})",
+            char::from_u32(disk_letter as u32).unwrap()
+        );
         return 0;
     }
 
