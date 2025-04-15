@@ -1,4 +1,4 @@
-// AC'97 driver by NDRAEY (Drew Pavlenko >_)
+// AC'97 driver by NDRAEY
 
 // FIXME: Not working in VirtualBox, only in QEMU
 
@@ -256,10 +256,6 @@ void ac97_test() {
     char* data = kmalloc(filesize);
     fread(file, filesize, 1, data);
 
-//    size_t page_count = ac97_copy_user_memory_to_dma(data, filesize);
-
-//    qemu_log("Allocated %d pages for user memory in DMA", page_count);
-
     ac97_set_master_volume(2, 2, false);
     ac97_set_pcm_volume(2, 2, false);
 
@@ -270,6 +266,4 @@ void ac97_test() {
 
     kfree(data);
     fclose(file);
-
-//    ac97_destroy_user_buffer();
 }
