@@ -21,3 +21,4 @@ cmake-*/
 compile_commands.json
 .cache/
 test_*
+*.wav

@@ -399,7 +399,7 @@ dependencies = [
 [[package]]
 name = "noctfs"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/noctfs#53421019dee0405393e2455fd28d25ef8be1b83e"
+source = "git+https://github.com/NDRAEY/noctfs#1a6532055a20ed3b8c0e22cbd773a5c126284429"
 dependencies = [
  "arrayref",
  "bitflags 2.9.0",

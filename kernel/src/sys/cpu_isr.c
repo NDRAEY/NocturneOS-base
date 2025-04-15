@@ -46,7 +46,7 @@ _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint3
 
 	if(get_current_proc()->pid != 0) {
 		qemu_note("EXIT HERE");
-		blyat_fire();
+		thread_exit_entrypoint();
 	}
 
     __asm__ volatile("cli");  // Disable interrupts

@@ -11,12 +11,10 @@
 void list_init(list_t* list){
     list->first = nullptr;
     list->count = 0;
-    list->mutex = false;
 }
 
 void list_add(list_t* list, list_item_t* item){
     if (item->list == nullptr){
-        mutex_get(&(list->mutex), true);
         if (list->first){
             item->list = list;
             item->next = list->first;
@@ -31,13 +29,10 @@ void list_add(list_t* list, list_item_t* item){
         }
 
         list->count++;
-        mutex_release(&(list->mutex));
     }
 }
 
 void list_remove(list_item_t* item){
-    mutex_get(&(item->list->mutex), true);
-
     if (item->list->first == item) {
         item->list->first = item->next;
         if (item->list->first == item){
@@ -47,5 +42,4 @@ void list_remove(list_item_t* item){
     item->next->prev = item->prev;
     item->prev->next = item->next;
     item->list->count--;
-    mutex_release(&(item->list->mutex));
 }

@@ -16,6 +16,8 @@ WAVHeader miniplay_hdr;
 
 size_t miniplay_anim_pos = 0;
 
+#define BUFFER_SIZE (256 << 10)
+
 // Duration = File Size / (Sample Rate * Number of Channels * Sample Width)
 
 void miniplay_display() {
@@ -89,8 +91,10 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 	fseek(file, 0xae, SEEK_SET);
 
+
+	// char* data = kmalloc(BUFFER_SIZE);
 	char* data = kmalloc(miniplay_filesize);
-	fread(file, miniplay_filesize, 1, data);
+	// memset(data, 0, BUFFER_SIZE);
 
 	set_cursor_enabled(false);
 
@@ -104,9 +108,24 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 	miniplay_timestamp = timestamp();
 
-    ac97_WriteAll(data, miniplay_filesize);
+	// size_t counter = 0;
 
-	ac97_reset_channel();
+	// while (counter < miniplay_filesize) {
+	// 	qemu_printf("%d/%d\n", counter, miniplay_filesize);
+
+	// 	size_t writesize = MIN(BUFFER_SIZE, miniplay_filesize - counter);
+
+	// 	fread(file, writesize, 1, data);
+	// 	ac97_WriteAll(data, writesize);
+
+	// 	counter += writesize;
+	// }
+
+	fread(file, miniplay_filesize, 1, data);
+	ac97_WriteAll(data, miniplay_filesize);
+
+	// ac97_reset_channel();
+	ac97_set_play_sound(false);
 
 	kfree(data);
 	fclose(file);

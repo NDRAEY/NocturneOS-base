@@ -8,8 +8,6 @@ typedef	struct	_list_item_t	list_item_t;
 typedef struct {
 	list_item_t*	first;
 	size_t		count;
-	mutex_t		mutex;
-	
 } list_t;
 
 struct _list_item_t {

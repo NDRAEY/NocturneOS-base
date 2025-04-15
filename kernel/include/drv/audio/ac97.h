@@ -14,7 +14,7 @@ typedef struct {
     uint32_t reserved : 19;
     uint8_t channel : 2;
     uint8_t sample : 2;
-} ac97_global_status_t;
+} __attribute__((packed)) ac97_global_status_t;
 
 #define AC97_MIN_RATE 8000
 #define AC97_MAX_RATE 48000
@@ -31,10 +31,10 @@ typedef struct {
 #define NABM_GLOBAL_STATUS  0x30
 
 typedef struct {
-    void* memory_pos;
+    uint32_t memory_pos;
     uint16_t sample_count;
     uint16_t flags;
-} AC97_BDL_t;
+} __attribute__((packed)) AC97_BDL_t;
 
 // Volume in dB, not %
 void ac97_set_master_volume(uint8_t left, uint8_t right, bool mute);

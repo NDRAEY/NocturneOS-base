@@ -109,7 +109,7 @@ size_t syscall_exit(uint32_t status) {
 		return 0;
 	}
 
-	blyat_fire();
+	thread_exit_entrypoint();
 
     return 0;
 }

@@ -1,7 +1,3 @@
-/*
- * SayoriOS
- * Переключение задач
- */
 .extern		current_thread
 .extern		current_proc
 .extern		tss
@@ -49,14 +45,13 @@ task_switch_v2:
     # Load our page directory address
     mov 12(%ebx), %ebx
 
+    # Reload TLB
     mov %cr3, %eax
     cmp %eax, %ebx
 
     je .no_need
 
     mov %ebx, %cr3
-
-    # .a: jmp .a
 
     .no_need:
 

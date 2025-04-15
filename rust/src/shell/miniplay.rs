@@ -1,6 +1,6 @@
 use core::ffi::c_char;
 
-use alloc::{string::String, vec::Vec};
+use alloc::{string::{String, ToString}, vec::Vec};
 use super::ShellContext;
 
 pub static MINIPLAY_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("miniplay", miniplay_w, Some("Media player."));
@@ -23,4 +23,8 @@ pub fn miniplay_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), u
     unsafe { miniplay(ptrs.len() as _, ptr as *const *const _) };
 
     Ok(())
+}
+
+pub fn mp(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+    miniplay_w(_context, &["R:/i.wav".to_string()])
 }

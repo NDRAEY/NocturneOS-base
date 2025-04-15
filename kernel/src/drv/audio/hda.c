@@ -350,11 +350,13 @@ void hda_reset() {
 
     WRITE32(0x8, READ32(0x8) & ~1);
 
-    while((READ32(0x08) & 1) != 0);
+    while((READ32(0x08) & 1) != 0)
+    ;
 
     WRITE32(0x8, READ32(0x8) | 1);
 
-    while ((READ32(0x08) & 1) != 1);
+    while ((READ32(0x08) & 1) != 1)
+    ;
 
     qemu_ok("Reset ok!");
 }

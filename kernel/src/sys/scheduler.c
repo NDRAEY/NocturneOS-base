@@ -1,9 +1,9 @@
 /**
  * @file sys/scheduler.c
- * @author Пиминов Никита (nikita.piminoff@yandex.ru)
+ * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY (pikachu_andrey@vk.com)
  * @brief Менеджер задач
  * @version 0.3.5
- * @date 2022-10-01
+ * @date 2025-04-13
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 #include	"sys/scheduler.h"
@@ -11,16 +11,16 @@
 #include	"io/ports.h"
 #include "mem/vmm.h"
 
-list_t process_list;			/// Список процессов
-list_t thread_list;				/// Список потоков
+list_t process_list;
+list_t thread_list;				
 
-uint32_t next_pid = 0;			/// Следующий ID задачи (PID)
-uint32_t next_thread_id = 0;	/// Следующий ID потока
-bool multi_task = false;		/// Готова ли система к многозадачности
-process_t* kernel_proc = 0;		/// Обработчик процесса ядра
-thread_t* kernel_thread = 0;	/// Обработчик основного потока ядра
-process_t* current_proc = 0;	/// Текущий процесс
-thread_t* current_thread = 0;	/// Текущий поток
+uint32_t next_pid = 0;			
+uint32_t next_thread_id = 0;	
+bool multi_task = false;		
+process_t* kernel_proc = 0;		
+thread_t* kernel_thread = 0;	
+process_t* current_proc = 0;	
+thread_t* current_thread = 0;	
 extern uint32_t init_esp;
 
 bool scheduler_working = true;
@@ -28,7 +28,7 @@ bool scheduler_working = true;
 extern physical_addr_t kernel_page_directory;
 
 /**
- * @brief Инициализация менеджера задач
+ * @brief Initializes scheduler
  */
 void init_task_manager(void){
 	uint32_t esp = 0;
@@ -61,7 +61,7 @@ void init_task_manager(void){
 	kernel_thread->process = kernel_proc;
 	kernel_thread->list_item.list = nullptr;
 	kernel_thread->id = next_thread_id++;
-	kernel_thread->stack_size = 0x4000;
+	kernel_thread->stack_size = DEFAULT_STACK_SIZE;
 	kernel_thread->suspend = false;
 	kernel_thread->esp = esp;
 	kernel_thread->stack_top = init_esp;
@@ -119,15 +119,15 @@ size_t create_process(void* entry_point, char name[256], bool suspend, bool is_k
 }
 
  /**
- * @brief Получить текущий обработчик процесса
+ * @brief Get current process
  *
- * @return process_t* - Текущий обработчик задачи
+ * @return process_t* - Current process
  */
  volatile process_t * get_current_proc(void) {
     return current_proc;
 }
 
-__attribute__((noreturn)) void blyat_fire() {
+__attribute__((noreturn)) void thread_exit_entrypoint() {
     qemu_note("THREAD %d WANTS TO EXIT!", current_thread->id);
     thread_exit(current_thread);
     while(1)  // If something goes wrong, we loop here.
@@ -168,7 +168,8 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->entry_point = (uint32_t) entry_point;
 
     /* Create thread's stack */
-    stack = (void*) kcalloc(stack_size, 1);
+    stack = kmalloc_common(stack_size, 16);
+    memset(stack, 0, stack_size);
 
     tmp_thread->stack = stack;
     tmp_thread->esp = (uint32_t) stack + stack_size - (7 * 4);
@@ -190,9 +191,13 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 
     eflags |= (1 << 9);
 
-    esp[-1] = (uint32_t) blyat_fire;
+    // Fill the stack.
+    // On normal systems (like in Linux) exit is called manually, but if something goes wrong, give this task a peaceful death.
+    esp[-1] = (uint32_t) thread_exit_entrypoint;
     esp[-2] = (uint32_t) entry_point;
     esp[-3] = eflags;
+
+    // Those are EBX, ESI, EDI and EBP
     esp[-4] = 0;
     esp[-5] = 0;
     esp[-6] = 0;
@@ -217,34 +222,15 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
 	return tmp_thread;
 }
 
-/**
- * @brief Остановить поток
- * 
- * @param thread - Поток
- * @param suspend - Вкл/выкл
- */
 void thread_suspend(thread_t* thread, bool suspend) {
 	thread->suspend = suspend;
 }
 
-/**
- * @brief Завершить текущий поток
- * 
- * @param thread - Поток
- */
 void thread_exit(thread_t* thread){
 	/* Disable all interrupts */
 	__asm__ volatile ("cli");
 
-	/* Remove thread from queue */
-//	list_remove(&thread->list_item);
-//
-//	thread->process->threads_count--;
-//
-//	/* Free thread's memory (handler and stack) */
-//	kfree(thread->stack);
-//	kfree(thread);
-
+	/* Mark it as deas */
     thread->state = DEAD;
 
 	/* Load to ECX switch function address */
@@ -257,11 +243,6 @@ void thread_exit(thread_t* thread){
 	__asm__ volatile ("call *%ecx");
 }
 
-/**
- * @brief Получение состояния о мультипотоке
- *
- * @return bool - true - если готово к работе
- */
 bool is_multitask(void){
     return multi_task;
 }
@@ -269,7 +250,7 @@ bool is_multitask(void){
 void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
     thread_t* next_thread = (thread_t *)current_thread->list_item.next;
 
-    while(next_thread->state == PAUSED || next_thread->state == DEAD) {
+    while(next_thread != NULL && (next_thread->state == PAUSED || next_thread->state == DEAD)) {
         thread_t* next_thread_soon = (thread_t *)next_thread->list_item.next;
 
         if(next_thread->state == DEAD) {
@@ -291,23 +272,18 @@ void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
 
             qemu_log("MODIFIED PROCESS");
 
-			bool is_krnl_process = current_proc->pid == 0; // TODO: Switch to kernel's PD here, because process info stored there
+			bool is_krnl_process = current_proc->pid == 0;
+            // TODO: Switch to kernel's PD here, because process info stored there
             if(process->threads_count == 0 && is_krnl_process)  {
-                // `st` command crashes here
                 qemu_log("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
-
-//                heap_dump();
 
                 for(size_t pt = 0; pt < 1024; pt++) {
                     size_t page_table = process->page_tables_virts[pt];
-                    // qemu_log("[%p: %d] PAGE TABLE AT: %x", process->page_tables_virts + pt, pt, page_table);
-
                     if(page_table) {
                         qemu_note("[%d] FREE PAGE TABLE AT: %x", pt, page_table);
                         kfree((void *) page_table);
                     }
                 }
-                // end
 
                 qemu_log("FREED PAGE TABLES");
 
@@ -330,15 +306,3 @@ void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
 
     task_switch_v2(current_thread, next_thread);
 }
-
-/**
- * @brief Переключиться в пользовательский режим
- * 
- * @param entry_point - Точка входа
- * @param stack_size - Размер стека
- */
-//void init_user_mode(void* entry_point, size_t stack_size){
-//    void* user_stack = (void*) kmalloc(stack_size);
-//
-//    user_mode_switch(entry_point, (uint32_t) user_stack + stack_size);
-//}

@@ -10,6 +10,7 @@
 #include "mem/pmm.h"
 #include "lib/stdio.h"
 #include "mem/vmm.h"
+#include "sys/scheduler.h"
 
 uint8_t ac97_busnum, ac97_slot, ac97_func;
 
@@ -26,12 +27,13 @@ size_t  currently_pages_count = 0;
 
 uint32_t current_sample_rate = 44100;
 
-__attribute__((aligned(PAGE_SIZE))) AC97_BDL_t ac97_buffer[32];
+// The kernel already mapped this 1:1, so no conversion is needed.
+__attribute__((aligned(PAGE_SIZE))) volatile AC97_BDL_t ac97_buffer[32];
 
 char* ac97_audio_buffer = 0;
 size_t ac97_audio_buffer_phys;
 
-size_t ac97_lvi = 0;
+volatile size_t ac97_lvi = 0;
 
 #define AUDIO_BUFFER_SIZE (128 * KB)
 
@@ -58,24 +60,14 @@ void ac97_set_pcm_sample_rate(uint16_t sample_rate) {
 		return;
     
     outw(native_audio_mixer + NAM_SAMPLE_RATE, sample_rate);
-//    outs(native_audio_mixer + 0x2E, sample_rate);
-//    outs(native_audio_mixer + 0x30, sample_rate);
 }
 
-//void ac97_load_data(char* data, uint32_t length) {
-//    size_t samples = 0xfffe;
-//    size_t i;
-//    size_t times = MIN(31, length/samples);
-//
-//    for (i = 0; i < times; i++) {
-//        ac97_buffer[i].memory_pos = data + (i * samples);
-//        ac97_buffer[i].sample_count = samples;
-//    }
-//    ac97_buffer[i-1].flags = 1 << 14;  // 14 bit - last entry of buffer, stop playing
-//}
-
 void ac97_reset_channel() {
-    outb(native_audio_bus_master + 0x1b, inb(native_audio_bus_master + 0x1B) | 0x02);
+    outb(native_audio_bus_master + 0x1b, 0x02);
+
+    while(inb(native_audio_bus_master + 0x1b) & 0x02) {
+        yield();
+    }
 }
 
 void ac97_clear_status_register() {
@@ -95,8 +87,15 @@ void ac97_update_lvi(uint8_t index) {
 }
 
 void ac97_set_play_sound(bool play) {
-//    outb(native_audio_bus_master + 0x1b, inb(native_audio_bus_master + 0x1B) | (uint8_t)play);
-    outb(native_audio_bus_master + 0x1b, (uint8_t)play);
+    uint8_t input = inb(native_audio_bus_master + 0x1B);
+
+    if(play) {
+        input |= 0x1;
+    } else {
+        input &= ~0x1;
+    }
+
+    outb(native_audio_bus_master + 0x1b, input);
 }
 
 void ac97_init() {
@@ -137,19 +136,13 @@ void ac97_init() {
     outw(native_audio_mixer + NAM_RESET, 1);
     qemu_log("Cold reset");
 
-    // /* 
-    // ac97_global_status_t status;
-    // ac97_global_status_t* statusptr = &status;
-
     const uint32_t status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
 
     qemu_log("Status: %d (%x)", status, status);
-//    qemu_log("Status Reserved: %d", status.reserved);
-//    qemu_log("Status Channels: %d", (status.channel==0?2:(status.channel==1?4:(status.channel==2?6:0))));
-//    qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
+    qemu_log("Status Reserved: %d", status.reserved);
+    qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
+    qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
     
-    // */
-
     uint16_t extended_audio = inw(native_audio_mixer + NAM_EXTENDED_AUDIO);
     qemu_log("Status: %d", extended_audio);
 
@@ -167,6 +160,7 @@ void ac97_init() {
     ac97_set_pcm_volume(0, 0, false);
 
     ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
+    memset(ac97_audio_buffer, 0, AUDIO_BUFFER_SIZE);
     ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
                                        (virtual_addr_t)ac97_audio_buffer);
 
@@ -184,7 +178,8 @@ bool ac97_is_initialized() {
 }
 
 void ac97_FillBDLs() {
-    size_t sample_divisor = 2;
+    size_t sample_divisor = 2;  // AC'97 is 2-channel, so one sample is two bytes long.
+
     // We need to fill ALL BDL entries.
     // If we don't do that, we can encounter lags and freezes, because DMA doesn't stop
     // even when its read pointer reached the end marker. (It will scroll to the end)
@@ -194,23 +189,20 @@ void ac97_FillBDLs() {
 
     size_t filled = 0;
     for (size_t j = 0; j < AUDIO_BUFFER_SIZE; j += bdl_span) {
-        ac97_buffer[filled].memory_pos = (void*)(ac97_audio_buffer_phys + j);
-        ac97_buffer[filled].sample_count = (bdl_span / sample_divisor) + 2;
+        ac97_buffer[filled].memory_pos = ac97_audio_buffer_phys + j;
+        ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
-//            LOG("[%d] %x; %x", filled, ac97_data_buffer.second[filled].memory_pos, ac97_data_buffer.second[filled].sample_count);
         filled++;
     }
 
-    qemu_log("Fills: %d", filled);
+    qemu_printf("Fills: %d\n", filled);
+    
+    ac97_lvi = 31;
 
-    filled--;
-
-    ac97_buffer[filled].flags = (1 << 14) | (1 << 15);
+    ac97_buffer[ac97_lvi].flags = (1 << 14) | (1 << 15);
 
     ac97_update_bdl();
-    ac97_update_lvi(filled);
-
-    ac97_lvi = filled;
+    ac97_update_lvi(ac97_lvi);
 }
 
 void ac97_WriteAll(void* buffer, size_t size) {
@@ -218,52 +210,34 @@ void ac97_WriteAll(void* buffer, size_t size) {
 
     size_t loaded = 0;
 
-    for(; loaded < size; loaded += AUDIO_BUFFER_SIZE) {
+    while(loaded < size) {
         size_t block_size = MIN(size - loaded, AUDIO_BUFFER_SIZE);
 
         memcpy(ac97_audio_buffer,
                      (char*)buffer + loaded,
                      block_size);
 
+        // Zero out all the remaining space
         if (block_size < AUDIO_BUFFER_SIZE) {
             memset((char *) ac97_audio_buffer + block_size,
                      0,
                      AUDIO_BUFFER_SIZE - block_size);
         }
 
+        if(loaded == 0) {
+            ac97_set_play_sound(true);
+        }
+        
         ac97_update_lvi(ac97_lvi);
 
-        ac97_set_play_sound(true);
-        ac97_clear_status_register();
-
-        while ((inb(native_audio_bus_master + 0x16) & (1 << 1)) == 0) {
+        // Poll while playing.
+        while (!(inb(native_audio_bus_master + 0x16) & (1 << 1))) {
             __asm__ volatile("nop");
+            yield();
         }
+
+        loaded += block_size;
     }
 
     qemu_log("Finish");
-}
-
-
-void ac97_test() {
-    FILE* file = fopen("R:\\Sayori\\a.wav", "rb");
-    fseek(file, 0, SEEK_END);
-
-    const uint32_t filesize = ftell(file);
-
-    fseek(file, 0xae, SEEK_SET);
-
-    char* data = kmalloc(filesize);
-    fread(file, filesize, 1, data);
-
-    ac97_set_master_volume(2, 2, false);
-    ac97_set_pcm_volume(2, 2, false);
-
-    ac97_WriteAll(data, filesize);
-
-    qemu_log("Exiting");
-    ac97_reset_channel();
-
-    kfree(data);
-    fclose(file);
 }
