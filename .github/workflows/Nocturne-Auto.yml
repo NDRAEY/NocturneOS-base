@@ -13,7 +13,7 @@ jobs:
 
       - name: Step 1 - Software installation
         run: |
-          sudo apt install python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
+          sudo apt install nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
 
       - name: Step 1.1 - Install Rust
         run: |
