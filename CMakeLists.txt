@@ -315,7 +315,7 @@ endif()
 
 # Targets
 
-if(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
+if((NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug")) OR (NOT (${CMAKE_BUILD_TYPE} STREQUAL "Dev")))
     #if(0)
     add_custom_command(
             TARGET ${KERNEL}
