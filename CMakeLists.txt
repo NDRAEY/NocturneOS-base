@@ -5,7 +5,7 @@ enable_language(C ASM)
 
 # Options
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;ReleaseOptimizedSSE" CACHE STRING "Available configurations" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;ReleaseOptimizedSSE;OptSym" CACHE STRING "Available configurations" FORCE)
 
 set(VALID_ARCHITECTURES "x86" "armv7")
 set(SUPPORTED_ARMV7_BOARDS "opi-lite")
@@ -84,6 +84,7 @@ set(CMAKE_C_FLAGS_DEV "-O0" CACHE STRING "Flags for Dev" FORCE)
 set(CMAKE_C_FLAGS_RELEASE "-DRELEASE -O0" CACHE STRING "Flags for Release" FORCE)
 set(CMAKE_C_FLAGS_RELEASEOPTIMIZED "-DRELEASE -O2" CACHE STRING "Flags for ReleaseOptimized" FORCE)
 set(CMAKE_C_FLAGS_RELEASEOPTIMIZEDSSE "-DRELEASE -O2 -msse2" CACHE STRING "Flags for ReleaseOptimizedSSE" FORCE)
+set(CMAKE_C_FLAGS_OPTSYM "-DRELEASE -O2 -ggdb3" CACHE STRING "Flags for OptSym" FORCE)
 
 set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")
 
@@ -315,9 +316,15 @@ endif()
 
 # Targets
 
-if((NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug")) AND (NOT (${CMAKE_BUILD_TYPE} STREQUAL "Dev")))
-    #if(0)
-    add_custom_command(
+if(
+	(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
+	AND
+	(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Dev"))
+    AND
+	(NOT (${CMAKE_BUILD_TYPE} STREQUAL "OptSym"))
+	)
+    
+	add_custom_command(
             TARGET ${KERNEL}
             COMMAND strip -s ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
             COMMENT "Copying files..."

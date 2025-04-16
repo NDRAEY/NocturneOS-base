@@ -14,7 +14,9 @@
 #include "drv/disk/dpm.h"
 
 size_t memdisk_dpm_read(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, void* Buffer){
-	memdisk_t* memdisk = dpm_info(disk + 65).Point;
+    qemu_printf("RD => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
+
+    memdisk_t* memdisk = dpm_info(disk + 65).Point;
 
     size_t end_offset = low_offset + size;
 
@@ -28,6 +30,11 @@ size_t memdisk_dpm_read(size_t disk, uint64_t high_offset, uint64_t low_offset, 
 }
 
 size_t memdisk_dpm_write(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, void* Buffer){
+    qemu_printf("WRITE? => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
+
+    while(1)
+    ;
+
 	memdisk_t* memdisk = dpm_info(disk + 65).Point;
 
     size_t end_offset = low_offset + size;
@@ -51,7 +58,7 @@ bool memdisk_create(char letter, void* memory, size_t size) {
     }
 
     if(memory == 0) {
-        memory = kcalloc(size, 1);
+        memory = kcalloc(size, sizeof(size_t));
     }
 
     memdisk_t* disk = allocate_one(memdisk_t);
@@ -73,7 +80,7 @@ bool memdisk_create(char letter, void* memory, size_t size) {
 
     qemu_note("Memory: %p; Size: %x; Letter: %c; Index: %d", memory, size, letter, disk_inx);
 
-    if (disk_inx < 0){
+    if (disk_inx < 0) {
         qemu_err("[MEMDISK] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
         
         return false;

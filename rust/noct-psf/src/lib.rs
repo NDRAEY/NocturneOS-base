@@ -3,6 +3,7 @@
 extern crate alloc;
 
 use alloc::vec::Vec;
+use noct_logger::{qemu_err, qemu_note};
 use noct_screen::set_pixel;
 
 pub mod c_api;
@@ -21,7 +22,7 @@ impl PSF {
             panic!("Attempted to pass null to PSF!");
         }
 
-        let data = unsafe { core::slice::from_raw_parts(unsafe {data}, len) };
+        let data = unsafe { core::slice::from_raw_parts(data, len) };
 
         if data[0] != 0x36 || data[1] != 0x04 {
             return None;
@@ -104,22 +105,23 @@ impl PSF {
 
         let offset = 4 + ch as usize * self.height;
     
-        return Some(&self.font_data[offset..]);
+        return Some(&self.font_data[offset..offset+self.height]);
     }
 
     pub fn draw_character(&self, c: u16, pos_x: usize, pos_y: usize, color: u32) {
         let mask: [u8; 8] = [128, 64, 32, 16, 8, 4, 2, 1];
-    
+
         let glyph_idx: u16 = Self::psf1_rupatch(c);
         let raw_glyph = self.get_glyph(glyph_idx);
     
         if raw_glyph.is_none() {
+            qemu_err!("Glyph is None");
             return;
         }
 
         let glyph = raw_glyph.unwrap();
     
-        for (y, row) in glyph.iter().enumerate().take(self.height) {
+        for (y, row) in glyph.iter().enumerate() {
             let rposy = pos_y + y;
 
             for (x, mask) in mask.iter().enumerate() {

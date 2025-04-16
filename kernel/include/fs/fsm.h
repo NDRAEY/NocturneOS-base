@@ -67,7 +67,7 @@ typedef int (*fsm_cmd_detect_t)(const char letter);
 typedef struct
 {
 	bool Ready;				 /// Загружена ли фс?
-	char Name[64];			 /// Наименование драйвера
+	char* Name;			 /// Наименование драйвера
 	fsm_cmd_read_t Read;	 /// Команда для чтения
 	fsm_cmd_write_t Write;	 /// Команда для записи
 	fsm_cmd_info_t Info;	 /// Команда для получения информации

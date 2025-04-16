@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 noct-screen = { path = "../noct-screen" }
+noct-logger = { path = "../noct-logger" }

@@ -4,7 +4,7 @@ extern crate alloc;
 
 use alloc::{string::{String, ToString}, vec::Vec};
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
-use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_ok};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
@@ -56,12 +56,14 @@ unsafe extern "C" fn fun_read(
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    qemu_note!("Path: {}", &path);
-
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
+    qemu_note!("Reading {}", path);
+
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
-    
+
+    qemu_ok!("Reading {} success!", path);
+
     result.unwrap_or(0) as _
 }
 
@@ -78,8 +80,6 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    qemu_note!("Path: {}", &path);
-
     let entry = fl.find_file(&path);
 
     if entry.is_err() {
@@ -90,14 +90,16 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let ftype = tarfs_type_to_fsm_type(entry._type);
 
-    FSM_FILE::with_data(
+    let result = FSM_FILE::with_data(
         entry.name,
         0,
         entry.size as _,
         None,
         ftype as _,
         FSM_MOD_READ,
-    )
+    );
+
+    result
 }
 
 unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
@@ -118,10 +120,15 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    qemu_note!("Path: {:?}", path);
+    // qemu_note!("Path: {:?}", path);
+
+    // for i in &fl.list().unwrap() {
+    //     qemu_note!("{:?}", i.name);
+    // }
 
     let data = fl.list_by_path_shallow(&path).unwrap();
 
+    qemu_note!("Array size: {}", data.len());
     for i in &data {
         qemu_note!("{}", &i.name);
     }

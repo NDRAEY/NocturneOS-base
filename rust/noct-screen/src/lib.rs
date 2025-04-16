@@ -3,6 +3,8 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+use noct_logger::qemu_note;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub fn fill(color: u32) {
@@ -48,7 +50,7 @@ pub fn framebuffer_mut() -> &'static mut [u8] {
 
 #[inline]
 pub fn dimensions() -> (usize, usize) {
-    unsafe { (getScreenWidth().try_into().unwrap(), getScreenHeight().try_into().unwrap()) }
+    unsafe { (getScreenWidth() as usize, getScreenHeight() as usize) }
 }
 
 pub fn pitch() -> usize {

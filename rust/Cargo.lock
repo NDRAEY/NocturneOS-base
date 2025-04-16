@@ -364,6 +364,7 @@ dependencies = [
 name = "noct-psf"
 version = "0.1.0"
 dependencies = [
+ "noct-logger",
  "noct-screen",
 ]
 

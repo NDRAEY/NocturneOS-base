@@ -187,7 +187,8 @@ void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cm
 	fsm->Dir = Dir;
 	fsm->Label = Label;
 	fsm->Detect = Detect;
-	memcpy(fsm->Name, Name, strlen(Name));
+
+	fsm->Name = strdynamize(Name);
 
     vector_push_back(fsm_entries, (size_t)fsm);
 
@@ -195,19 +196,17 @@ void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cm
 }
 
 void fsm_dpm_update(char Letter){
-    const char* BLANK = "Unknown";
-
     if (Letter == -1) {
         // Global update
         for(int i = 0; i < 26; i++){
             int DISKID = i + 65;
             
-            dpm_LabelUpdate(DISKID, BLANK);
-            dpm_FileSystemUpdate(DISKID, BLANK);
-
             DPM_Disk dpm = dpm_info(DISKID);
 
             if (dpm.Ready != 1) {
+                dpm_LabelUpdate(DISKID, NULL);
+                dpm_FileSystemUpdate(DISKID, NULL);
+        
             	continue;
             }
 
@@ -222,14 +221,16 @@ void fsm_dpm_update(char Letter){
                 	continue;
                 }
 
-                char* lab_test = kcalloc(1, 129);
+                char* lab_test = kcalloc(1, 64);
 
                 fsm->Label(DISKID, lab_test);
 
                 dpm_LabelUpdate(DISKID, lab_test);
                 dpm_FileSystemUpdate(DISKID, fsm->Name);
 
-                qemu_note("                       | Label: %s", lab_test);
+                // qemu_note("                       | Label: %s", lab_test);
+
+                dpm_dump(DISKID);
 
                 kfree(lab_test);
 
@@ -239,8 +240,9 @@ void fsm_dpm_update(char Letter){
     } else {
         // Personal update
         int DISKID  = Letter;
-        dpm_LabelUpdate(DISKID, BLANK);
-        dpm_FileSystemUpdate(DISKID, BLANK);
+
+        dpm_LabelUpdate(DISKID, NULL);
+        dpm_FileSystemUpdate(DISKID, NULL);
 
         for(int f = 0; f < fsm_entries->size; f++) {
             FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;

@@ -12,15 +12,16 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+pub use noct_iso9660;
+pub use noct_noctfs;
 pub use noct_psf;
 use noct_psf::PSF;
 pub use noct_tarfs;
-pub use noct_iso9660;
-pub use noct_noctfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
 use noct_tty::println;
+use spin::Mutex;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -30,11 +31,11 @@ fn panic(_info: &PanicInfo) -> ! {
     qemu_err!("{}", _info);
     println!("{}", _info);
 
-    unsafe {
-        asm!("hlt");
+    loop {
+        unsafe {
+            asm!("hlt");
+        }    
     }
-
-    loop {}
 }
 
 #[no_mangle]
@@ -43,8 +44,12 @@ pub static mut PSF_FONT: OnceCell<PSF> = OnceCell::new();
 #[no_mangle]
 pub extern "C" fn psf_init(ptr: *const u8, len: u32) {
     unsafe {
-        PSF_FONT.set(PSF::from_raw_ptr(ptr, len as _).expect("Failed to initialize PSF font.")).unwrap()
+        let psf = PSF::from_raw_ptr(ptr, len as _).expect("Failed to initialize PSF font.");
+
+        PSF_FONT.set(psf).unwrap()
     };
+
+    qemu_note!("Font initialized!");
 }
 
 /// Main entry point for testing.

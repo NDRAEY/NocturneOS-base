@@ -12,9 +12,9 @@ typedef size_t (*dpm_disk_write_cmd)(size_t, uint64_t, uint64_t, size_t, const v
 
 typedef struct
 {
-    bool Ready;            /// Устройство подключено? (1 - да | 0 - нет)
-    char Name[96];        /// Имя диск
-    char FileSystem[64];   /// Файловая система
+    bool Ready;            /// Устройство подключено?
+    char* Name;            /// Имя диск
+    char* FileSystem;      /// Файловая система
     int Status;            /// Режим устройства (0 - не обслуживает | 1 - Чтение/Запись | 2 - Только чтение)
     size_t Size;           /// Размер диска (в байтах)
     size_t Sectors;        /// Кол-во секторов
@@ -39,3 +39,5 @@ int dpm_unmount(char Letter, bool FreeReserved);
 void dpm_LabelUpdate(char Letter, const char *Label);
 void dpm_fnc_write(char Letter, dpm_disk_read_cmd Read, dpm_disk_write_cmd Write);
 int dpm_searchFreeIndex(int Index);
+
+void dpm_dump(char Letter);

@@ -13,6 +13,9 @@
 #include "mem/vmm.h"
 #include "io/serial_port.h"
 #include "io/screen.h"
+#include "debug/hexview.h"
+
+extern volatile void* PSF_FONT;
 
 extern void psf_init(uint8_t* data, uint32_t len);
 
@@ -29,9 +32,7 @@ bool fonts_init(char* psf) {
         return false;
     }
 
-    fseek(psf_file, 0, SEEK_END);
-    size_t rfsize = ftell(psf_file);
-    fseek(psf_file, 0, SEEK_SET);
+    size_t rfsize = fsize(psf_file);
 
     char* buffer = kmalloc(rfsize);
 	fread(psf_file, rfsize, 1, buffer);
@@ -62,10 +63,14 @@ void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color) {
                 ch |= ch2;
             }
 
-            draw_character(&PSF_FONT, ch, x, y, color);
+            rs_draw_character(&PSF_FONT, ch, x, y, color);
             x += 8;
         } else {
             break;
         }
     }
+}
+
+void draw_character(uint16_t ch, size_t pos_x, size_t pos_y, uint32_t color) {
+    rs_draw_character(&PSF_FONT, ch, pos_x, pos_y, color);
 }

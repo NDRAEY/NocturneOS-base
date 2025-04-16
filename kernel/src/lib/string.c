@@ -9,6 +9,7 @@
 #include "common.h"
 #include "lib/string.h"
 #include "lib/math.h"
+#include "mem/vmm.h"
 //#include <emmintrin.h>  // SSE functions and types
 
 bool isalnum(char c){
@@ -887,4 +888,15 @@ unsigned long strtoul(const char* str, char** endptr, int base) {
     }
 
     return result;
+}
+
+char* strdynamize(char* str) {
+    size_t len = strlen(str);
+
+    char* mem = kmalloc(len + 1);
+    strcpy(mem, str);
+
+    mem[len] = 0;
+
+    return mem;
 }

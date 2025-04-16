@@ -195,9 +195,9 @@ int dpm_unmount(char Letter, bool FreeReserved)
 
 	DPM_Disks[Index].Ready = 0;
 
-	// memcpy(DPM_Disks[Index].Name, NULL, sizeof(NULL));
-	// memcpy(DPM_Disks[Index].Serial, NULL, sizeof(NULL));
-	// memcpy(DPM_Disks[Index].FileSystem, NULL, sizeof(NULL));
+	kfree(DPM_Disks[Index].Name);
+	kfree(DPM_Disks[Index].FileSystem);
+
 	DPM_Disks[Index].Status = 0;
 	DPM_Disks[Index].Size = 0;
 	DPM_Disks[Index].Sectors = 0;
@@ -238,11 +238,11 @@ int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t S
 		qemu_log("[DPM] The drive was assigned the letter '%c'", Index + 65);
 	}
 
-	DPM_Disks[Index].Ready = 1;
+	DPM_Disks[Index].Name = strdynamize(Name);
+	
+	DPM_Disks[Index].FileSystem = strdynamize(FS);
 
-	memcpy(DPM_Disks[Index].Name, Name, strlen(Name));
 	memcpy(DPM_Disks[Index].Serial, Serial, strlen(Serial));
-	memcpy(DPM_Disks[Index].FileSystem, FS, strlen(FS));
 	DPM_Disks[Index].Status = Status;
 	DPM_Disks[Index].Size = Size;
 	DPM_Disks[Index].Sectors = Sectors;
@@ -250,10 +250,12 @@ int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t S
 	DPM_Disks[Index].AddrMode = AddrMode;
 	DPM_Disks[Index].Point = Point;
 
+	DPM_Disks[Index].Ready = 1;
+
 	qemu_log("[DPM] Disk '%c' is registered!", Index + 65);
 	qemu_log("  |-- Name: %s", DPM_Disks[Index].Name);
 	qemu_log("  |-- Serial: %s", DPM_Disks[Index].Serial);
-	qemu_log("  |-- FileSystem: %s", DPM_Disks[Index].FileSystem);
+	qemu_log("  |-- FileSystem: %s", DPM_Disks[Index].FileSystem ?: "(null)");
 	qemu_log("  |-- Status: %d", DPM_Disks[Index].Status);
 	// qemu_log("  |-- Size: %d", DPM_Disks[Index].Size);  // Most disks have capacity is greater than 4GB (32-bit space), so every disk with capacity greater than 4GB will give a bug. (We need to impelement BigInt?)
 	qemu_log("  |-- Sectors: %d", DPM_Disks[Index].Sectors);
@@ -270,9 +272,15 @@ void dpm_FileSystemUpdate(char Letter, char *FileSystem)
 
 	size_t index = (Letter < 0 || Letter > 25 ? 0 : Letter);
 
-	size_t c = strlen(FileSystem);
-	memset(DPM_Disks[index].FileSystem, 0, 64);									  /// Зачищаем данные
-	memcpy(DPM_Disks[index].FileSystem, FileSystem, (c > 64 || c == 0 ? 64 : c)); /// Пишем данные
+	if(DPM_Disks[index].FileSystem != NULL) {
+		kfree(DPM_Disks[index].FileSystem);
+	}
+
+	if(FileSystem != NULL) {
+		DPM_Disks[index].FileSystem = strdynamize(FileSystem);
+	} else {
+		DPM_Disks[index].FileSystem = 0;
+	}
 }
 
 void dpm_LabelUpdate(char Letter, const char *Label)
@@ -282,9 +290,15 @@ void dpm_LabelUpdate(char Letter, const char *Label)
 	size_t index; // = (Letter > 32 ? Letter - 32 : Letter);
 	index = (Letter < 0 || Letter > 25 ? 0 : Letter);
 
-	size_t c = strlen(Label);
-	memset(DPM_Disks[index].Name, 0, 128); /// Зачищаем данные
-	memcpy(DPM_Disks[index].Name, Label, (c > 128 || c == 0 ? 128 : c)); /// Пишем данные
+	if(DPM_Disks[index].Name != NULL) {
+		kfree(DPM_Disks[index].Name);
+	}
+
+	if(Label != NULL) {
+		DPM_Disks[index].Name = strdynamize(Label);
+	} else {
+		DPM_Disks[index].Name = 0;
+	}
 }
 
 size_t dpm_disk_size(char Letter)
@@ -305,4 +319,18 @@ DPM_Disk dpm_info(char Letter)
 	index = (Letter < 0 || Letter > 25 ? 0 : Letter);
 
 	return DPM_Disks[index];
+}
+
+void dpm_dump(char Letter) {
+	DPM_Disk info = dpm_info(Letter);
+
+	qemu_log("  |-- Name: %s", info.Name);
+	qemu_log("  |-- Serial: %s", info.Serial);
+	qemu_log("  |-- FileSystem: %s", info.FileSystem ?: "(null)");
+	qemu_log("  |-- Status: %d", info.Status);
+	// qemu_log("  |-- Size: %d", info.Size);  // Most disks have capacity is greater than 4GB (32-bit space), so every disk with capacity greater than 4GB will give a bug. (We need to impelement BigInt?)
+	qemu_log("  |-- Sectors: %d", info.Sectors);
+	qemu_log("  |-- SectorSize: %d", info.SectorSize);
+	qemu_log("  |-- AddrMode: %d", info.AddrMode);
+	qemu_log("  |-- Point: %x", info.Point);
 }

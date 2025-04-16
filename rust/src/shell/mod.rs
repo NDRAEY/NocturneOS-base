@@ -35,7 +35,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     cd::CD_COMMAND_ENTRY,
     file_ops::CREATE_DIR_COMMAND_ENTRY,
     file_ops::CREATE_FILE_COMMAND_ENTRY,
-    file_ops::CREATE_DIR_COMMAND_ENTRY,
+    file_ops::REMOVE_DIR_COMMAND_ENTRY,
     file_ops::REMOVE_FILE_COMMAND_ENTRY,
     cat::CAT_COMMAND_ENTRY,
     parallel_desktop::PD_COMMAND_ENTRY,

@@ -198,7 +198,7 @@ void _tty_putchar(uint16_t c) {
             tty_scroll(1);
         }
 
-        draw_character(&PSF_FONT, c, tty_pos_x, tty_pos_y, tty_text_color);
+        draw_character(c, tty_pos_x, tty_pos_y, tty_text_color);
         
         tty_pos_x += tty_off_pos_x;
     }

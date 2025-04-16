@@ -65,7 +65,8 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	}
 
 	info->Online = 1;
-	memcpy(info->FileSystem, disk.FileSystem, sizeof(disk.FileSystem));
+	
+	memcpy(info->FileSystem, disk.FileSystem, strlen(disk.FileSystem));
 
 	info->DriverFS = fsm_getIDbyName(info->FileSystem);
 

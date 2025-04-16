@@ -195,12 +195,12 @@ void ac97_FillBDLs() {
         ac97_buffer[filled].memory_pos = ac97_audio_buffer_phys + j;
         ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
-        qemu_printf("[%d] %x -> %x\n", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count);
+        // qemu_printf("[%d] %x -> %x\n", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count);
 
         filled++;
     }
 
-    qemu_printf("Fills: %d\n", filled);
+    // qemu_printf("Fills: %d\n", filled);
     
     ac97_lvi = 31;
 
