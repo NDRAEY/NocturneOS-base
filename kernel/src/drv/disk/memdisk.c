@@ -14,7 +14,7 @@
 #include "drv/disk/dpm.h"
 
 size_t memdisk_dpm_read(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, void* Buffer){
-    qemu_printf("RD => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
+    // qemu_printf("RD => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
 
     memdisk_t* memdisk = dpm_info(disk + 65).Point;
 
@@ -85,8 +85,8 @@ bool memdisk_create(char letter, void* memory, size_t size) {
         
         return false;
     } else {
-        qemu_ok("[MEMDISK] [Successful] Registering OK");
         dpm_fnc_write(letter, &memdisk_dpm_read, &memdisk_dpm_write);
+        qemu_ok("[MEMDISK] [Successful] Registering OK");
 
         return true;
     }

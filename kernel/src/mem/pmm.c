@@ -399,8 +399,7 @@ uint32_t phys_get_page_data(uint32_t* page_dir, virtual_addr_t virtual) {
 	return pt[PT_INDEX(virtual)];
 }
 
-uint32_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
-//	virtual &= ~0x3ff;
+size_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
 	virtual &= ~0xfff;
 
 	uint32_t* pt;
@@ -413,6 +412,12 @@ uint32_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
 	}
 
 	return pt[PT_INDEX(virtual)] & ~0x3ff;
+}
+
+uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual) {
+	size_t phys = virt2phys(page_dir, virtual & ~0xfff);
+
+	return phys + (virtual & 0xfff);
 }
 
 void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) {

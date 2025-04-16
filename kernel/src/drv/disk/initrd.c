@@ -23,6 +23,11 @@ int initrd_tarfs(uint32_t start, uint32_t end) {
 
 	qemu_warn("Initrd occupies %d pages", ALIGN(initrd_size, PAGE_SIZE) / PAGE_SIZE);
 
+	// void* mem = kmalloc_common(initrd_size, PAGE_SIZE);
+
+	// memcpy(mem, initrd_data, initrd_size);
+
+	// bool is_ready = memdisk_create('R', mem, initrd_size);
 	bool is_ready = memdisk_create('R', initrd_data, initrd_size);
 	
 	return (int)is_ready;

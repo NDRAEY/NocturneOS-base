@@ -32,7 +32,7 @@ void *alloc_no_map(size_t size, size_t align);
 void free_no_map(void* ptr);
 bool vmm_is_page_used_by_entries(size_t address);
 void* kmalloc_common(size_t size, size_t align)  __attribute__((__malloc__)) __attribute__((__alloc_size__(1)));
-void *kmalloc_common_contiguous(physical_addr_t* page_directory, size_t page_count);
+// void *kmalloc_common_contiguous(physical_addr_t* page_directory, size_t page_count);
 
 SAYORI_INLINE void* kmalloc(size_t size) {
 	return kmalloc_common(size, 1);

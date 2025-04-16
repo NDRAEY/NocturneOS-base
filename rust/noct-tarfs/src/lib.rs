@@ -73,6 +73,8 @@ unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *con
 }
 
 unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
+    qemu_note!("INFO!!!!!");
+
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);
 
@@ -80,6 +82,12 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
+    // qemu_note!("Path: {:?}", path);
+
+    // for i in &fl.list().unwrap() {
+    //     qemu_note!("{:?}", i.name);
+    // }
+    
     let entry = fl.find_file(&path);
 
     if entry.is_err() {
@@ -113,6 +121,8 @@ unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
 }
 
 unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
+    qemu_note!("DIR!!!!!");
+
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);
 
@@ -120,18 +130,7 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    // qemu_note!("Path: {:?}", path);
-
-    // for i in &fl.list().unwrap() {
-    //     qemu_note!("{:?}", i.name);
-    // }
-
     let data = fl.list_by_path_shallow(&path).unwrap();
-
-    qemu_note!("Array size: {}", data.len());
-    for i in &data {
-        qemu_note!("{}", &i.name);
-    }
 
     let files: Vec<FSM_FILE> = data
         .iter()

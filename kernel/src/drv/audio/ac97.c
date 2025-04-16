@@ -31,11 +31,11 @@ uint32_t current_sample_rate = 44100;
 __attribute__((aligned(PAGE_SIZE))) volatile AC97_BDL_t ac97_buffer[32];
 
 char* ac97_audio_buffer = 0;
-size_t ac97_audio_buffer_phys;
+// size_t ac97_audio_buffer_phys;
 
 volatile size_t ac97_lvi = 0;
 
-#define AUDIO_BUFFER_SIZE (64 * KB)
+#define AUDIO_BUFFER_SIZE (128 * KB)
 
 // Volume in dB, not % (max 64)
 void ac97_set_master_volume(uint8_t left, uint8_t right, bool mute) {
@@ -161,11 +161,11 @@ void ac97_init() {
     ac97_set_master_volume(0, 0, false);
     ac97_set_pcm_volume(0, 0, false);
 
-    // ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
-    ac97_audio_buffer = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(AUDIO_BUFFER_SIZE, PAGE_SIZE) / PAGE_SIZE);
+    ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
+    // ac97_audio_buffer = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(AUDIO_BUFFER_SIZE, PAGE_SIZE) / PAGE_SIZE);
     memset(ac97_audio_buffer, 0, AUDIO_BUFFER_SIZE);
-    ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
-                                       (virtual_addr_t)ac97_audio_buffer);
+    // ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
+    //                                    (virtual_addr_t)ac97_audio_buffer);
 
     qemu_log("Updated capabilities");
 
@@ -192,7 +192,9 @@ void ac97_FillBDLs() {
 
     size_t filled = 0;
     for (size_t j = 0; j < AUDIO_BUFFER_SIZE; j += bdl_span) {
-        ac97_buffer[filled].memory_pos = ac97_audio_buffer_phys + j;
+        size_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)(ac97_audio_buffer + j));
+
+        ac97_buffer[filled].memory_pos = phys;
         ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
         // qemu_printf("[%d] %x -> %x\n", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count);

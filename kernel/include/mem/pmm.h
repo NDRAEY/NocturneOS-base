@@ -71,3 +71,4 @@ void unmap_pages_overlapping(physical_addr_t* page_directory, size_t virtual, si
 void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags);
 
 void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size);
+uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual);
