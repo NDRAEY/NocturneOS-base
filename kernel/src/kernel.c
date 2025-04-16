@@ -248,18 +248,17 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     fsm_init();
 
     qemu_log("Registration of file system drivers...");
-    fs_tarfs_register();
-    // fsm_reg("TARFS", &fs_tarfs_read, &fs_tarfs_write, &fs_tarfs_info, &fs_tarfs_create, &fs_tarfs_delete,
-    //         &fs_tarfs_dir, &fs_tarfs_label, &fs_tarfs_detect);
+    fs_tarfs_register();    
+    fs_iso9660_init();
     fsm_reg("FAT32", &fs_fat32_read, &fs_fat32_write, &fs_fat32_info, &fs_fat32_create, &fs_fat32_delete,
-            &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
-    fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
-            &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
-
+        &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
+    fs_noctfs_init();
+    // fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
+    //         &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
+        
     grub_modules_init(mboot);
-
+        
     fsm_dpm_update(-1);
-
     kernel_start_time = getTicks();
 
     mtrr_init();

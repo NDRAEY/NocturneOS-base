@@ -61,7 +61,7 @@ bool memdisk_create(char letter, void* memory, size_t size) {
     int disk_inx = dpm_reg(
             letter,
             "Memory disk",
-            "Sukablyat Industries",
+            "None",
             1,
             size,
             size,

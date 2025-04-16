@@ -541,13 +541,11 @@ void init_paging() {
 
 	// Preallocate our kernel space
 
-	qemu_log("Allocating %d pages for kernel space...", (real_end / 4096) + 1);
+	size_t page_count = ALIGN(real_end, 4096) / 4096;
 
-	for(size_t i = 0; i < ALIGN(real_end, 4096) / 4096; i++) {
-		// Note: if allocator returns 0, it's an error.
-		// But we don't care, because we're allocating pages for first time here.
-		phys_alloc_single_page();
-	}
+	qemu_log("Allocating %d pages for kernel space...", page_count);
+
+	phys_alloc_multi_pages(page_count);
 
 	// Create new page directory
 
@@ -555,7 +553,7 @@ void init_paging() {
 
 	qemu_log("New page directory at: %p", kernel_page_directory);
 
-	map_pages(kernel_page_directory, 0, 0, ALIGN(real_end, PAGE_SIZE), PAGE_WRITEABLE);
+	map_pages(kernel_page_directory, 0, 0, real_end, PAGE_WRITEABLE);
 
 	qemu_log("Max: %x", phys_memory_size);
 

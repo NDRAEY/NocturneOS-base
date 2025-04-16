@@ -21,7 +21,7 @@ int initrd_tarfs(uint32_t start, uint32_t end) {
 
 	void* initrd_data = (void*)start;
 
-	qemu_warn("Initrd occupies %d pages", ALIGN(initrd_size, 4096) / 4096);
+	qemu_warn("Initrd occupies %d pages", ALIGN(initrd_size, PAGE_SIZE) / PAGE_SIZE);
 
 	bool is_ready = memdisk_create('R', initrd_data, initrd_size);
 	

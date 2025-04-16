@@ -173,7 +173,8 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
     }
 }
 
-pub fn fs_noctfs_init() {
+#[unsafe(no_mangle)]
+pub extern "C" fn fs_noctfs_init() {
     unsafe {
         noct_fs_sys::fsm_reg(
             FSNAME.as_ptr() as *const _,

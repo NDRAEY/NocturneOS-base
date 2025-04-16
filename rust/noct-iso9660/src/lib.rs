@@ -9,7 +9,7 @@ use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
 use noct_logger::{qemu_err, qemu_log, qemu_println};
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
-static FSNAME: &[u8] = b"LOLFS\0";
+static FSNAME: &[u8] = b"ISO9660\0";
 
 struct ThatDisk(Disk);
 
@@ -179,7 +179,8 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
     1
 }
 
-pub fn fs_iso9660_init() {
+#[no_mangle]
+pub extern "C" fn fs_iso9660_init() {
     unsafe {
         noct_fs_sys::fsm_reg(
             FSNAME.as_ptr() as *const _,
@@ -193,6 +194,4 @@ pub fn fs_iso9660_init() {
             Some(fun_detect),
         )
     };
-
-    unsafe { noct_fs_sys::fsm_dpm_update(-1) };
 }

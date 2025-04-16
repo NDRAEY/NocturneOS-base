@@ -35,21 +35,21 @@ size_t ac97_audio_buffer_phys;
 
 volatile size_t ac97_lvi = 0;
 
-#define AUDIO_BUFFER_SIZE (128 * KB)
+#define AUDIO_BUFFER_SIZE (64 * KB)
 
 // Volume in dB, not % (max 64)
 void ac97_set_master_volume(uint8_t left, uint8_t right, bool mute) {
-    const uint16_t value = (right & 63) << 0
-        | (left & 63) << 8
-        | (uint8_t)mute << 15;
+    const uint16_t value = ((right & 63) << 0)
+        | ((left & 63) << 8)
+        | ((uint16_t)mute << 15);
     outw(native_audio_mixer + NAM_SET_MASTER_VOLUME, value);
 }
 
 // Volume in dB, not % (max 32)
 void ac97_set_pcm_volume(uint8_t right, uint8_t left, bool mute) {
-    uint16_t value = (right & 31) << 0
-        | (left & 31) << 8
-        | (mute?1:0) << 15;
+    uint16_t value = ((right & 31) << 0)
+        | ((left & 31) << 8)
+        | ((uint16_t)mute << 15);
     outw(native_audio_mixer + NAM_SET_PCM_VOLUME, value);
 }
 
@@ -63,7 +63,9 @@ void ac97_set_pcm_sample_rate(uint16_t sample_rate) {
 }
 
 void ac97_reset_channel() {
-    outb(native_audio_bus_master + 0x1b, 0x02);
+    uint8_t input = inb(native_audio_bus_master + 0x1b);
+    // outb(native_audio_bus_master + 0x1b, 0x02);
+    outb(native_audio_bus_master + 0x1b, input | 0x02);
 
     while(inb(native_audio_bus_master + 0x1b) & 0x02) {
         yield();
@@ -159,8 +161,8 @@ void ac97_init() {
     ac97_set_master_volume(0, 0, false);
     ac97_set_pcm_volume(0, 0, false);
 
-    ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
-    //ac97_audio_buffer = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(AUDIO_BUFFER_SIZE, PAGE_SIZE) / PAGE_SIZE);
+    // ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
+    ac97_audio_buffer = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(AUDIO_BUFFER_SIZE, PAGE_SIZE) / PAGE_SIZE);
     memset(ac97_audio_buffer, 0, AUDIO_BUFFER_SIZE);
     ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
                                        (virtual_addr_t)ac97_audio_buffer);
@@ -222,19 +224,18 @@ void ac97_WriteAll(void* buffer, size_t size) {
                 (char*)buffer + loaded,
                 block_size);
 
-        qemu_printf("memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n", ac97_audio_buffer,
+        qemu_printf("memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n",
+            ac97_audio_buffer,
             (char*)buffer + loaded,
             block_size);
 
         // Zero out all the remaining space
-        // if (block_size < AUDIO_BUFFER_SIZE) {
-        //     memset((char *) ac97_audio_buffer + block_size,
-        //              0,
-        //              AUDIO_BUFFER_SIZE - block_size);
-        // }
+        if (block_size < AUDIO_BUFFER_SIZE) {
+            memset(ac97_audio_buffer + block_size, 0, AUDIO_BUFFER_SIZE - block_size);
+        }
 
         ac97_update_lvi(ac97_lvi);
-        ac97_set_play_sound(true);     
+        ac97_set_play_sound(true);
         ac97_clear_status_register();
 
         // Poll while playing.

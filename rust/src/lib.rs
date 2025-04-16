@@ -15,6 +15,8 @@ pub mod system;
 pub use noct_psf;
 use noct_psf::PSF;
 pub use noct_tarfs;
+pub use noct_iso9660;
+pub use noct_noctfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
@@ -63,9 +65,6 @@ pub extern "C" fn rust_main() {
     //         qemu_ok!("{}", i);
     //     }
     // })
-
-    noct_iso9660::fs_iso9660_init();
-    noct_noctfs::fs_noctfs_init();
 
     // {
     //     noct_screen::fill(0);

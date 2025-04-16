@@ -40,6 +40,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	bool is_valid_delim = struntil(Name, ':') == 1 && (struntil(Name, '/') == 2);
 
 	if (!is_valid_delim) {
+		qemu_err("`%s` delimiters are invalid.", Name);
 		goto end;
 	}
 
@@ -52,13 +53,14 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	// Now cut a rest of path with trailing \ (or /)
 	substr(info->Path, Name, 2, strlen(Name + 2));
 
-	qemu_log("Supposed path: %s", info->Path);
+	qemu_log("Supposed path: `%s`", info->Path);
 
 
 	// Get disk info.
 	DPM_Disk disk = dpm_info(info->Disk);
 
 	if (disk.Ready != 1) {
+		qemu_err("Disk `%c` is not ready", info->Disk);
 		goto end;
 	}
 
@@ -67,7 +69,10 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 
 	info->DriverFS = fsm_getIDbyName(info->FileSystem);
 
+	// qemu_note("DriverFS = %d", info->DriverFS);
+
 	if (info->DriverFS == -1) {
+		qemu_err("FSID failed (`%s`)", info->FileSystem);
 		goto end;
 	}
 
@@ -151,7 +156,7 @@ size_t nvfs_write(const char* Name, size_t Offset, size_t Count, const void *Buf
 
 FSM_FILE nvfs_info(const char* Name){
 	NVFS_DECINFO* vinfo = nvfs_decode(Name);  // no memleak
-    if (nvfs_debug) {
+    // if (nvfs_debug) {
 	    qemu_log("NVFS INFO:\n"
 		     "Ready: %d\n"
 		     "Disk: [%d] %c\n"
@@ -169,7 +174,7 @@ FSM_FILE nvfs_info(const char* Name){
 		     vinfo->FileSystem,
 		     vinfo->DriverFS
 		);
-    }
+    // }
 
 	FSM_FILE file = {};
 
@@ -178,6 +183,7 @@ FSM_FILE nvfs_info(const char* Name){
 	}
 
 	file = fsm_info(vinfo->DriverFS, vinfo->Disk, vinfo->Path);
+
 end:
 
 	kfree(vinfo);

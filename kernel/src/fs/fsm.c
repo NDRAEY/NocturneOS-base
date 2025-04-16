@@ -54,6 +54,8 @@ int fsm_getIDbyName(const char* Name){
         vector_result_t res = vector_get(fsm_entries, i);
         FSM* fsm = (FSM*)res.element;
 
+        qemu_note("`%s` =? `%s`", fsm->Name, Name);
+
 		if (strcmp(fsm->Name, Name) != 0) {
             continue;
         }

@@ -55,6 +55,9 @@ unsafe extern "C" fn fun_read(
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
+
+    qemu_note!("Path: {}", &path);
+
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
@@ -74,6 +77,8 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
+
+    qemu_note!("Path: {}", &path);
 
     let entry = fl.find_file(&path);
 
@@ -116,6 +121,10 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
     qemu_note!("Path: {:?}", path);
 
     let data = fl.list_by_path_shallow(&path).unwrap();
+
+    for i in &data {
+        qemu_note!("{}", &i.name);
+    }
 
     let files: Vec<FSM_FILE> = data
         .iter()
