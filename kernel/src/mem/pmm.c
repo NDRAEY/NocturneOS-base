@@ -269,6 +269,44 @@ void reload_cr3() {
 		"mov %eax, %cr3");
 }
 
+void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size) {
+	virtual_addr_t vend = ALIGN(virtual + size, PAGE_SIZE);
+
+	while(virtual <= vend) {
+		virtual_addr_t v = virtual & ~0xfff;
+		physical_addr_t p = physical & ~0xfff;
+
+		// Get our Page Directory Index and Page Table Index.
+		uint32_t pdi = PD_INDEX(v);
+		uint32_t pti = PT_INDEX(v);
+
+		// Check if page table not present.
+		if((page_dir[pdi] & 1) == 0) {
+			uint32_t* pt = (uint32_t *)phys_alloc_single_page();
+
+			qemu_ok("FOUND A MISSING PAGE TABLE TO MAP! %p", pt);
+
+			page_dir[pdi] = (uint32_t)pt | PAGE_WRITEABLE | PAGE_PRESENT;
+
+			if(paging_initialized && page_dir == get_kernel_page_directory()) {
+				uint32_t pt_addr = (uint32_t)page_directory_start + (pdi * PAGE_SIZE);
+
+				memset((uint32_t*)pt_addr, 0, PAGE_SIZE);
+
+				pt = (uint32_t*)pt_addr;
+			} else if(paging_initialized && page_dir != get_kernel_page_directory()) {
+				qemu_warn("FIXME: Mapping other page directories");
+				while(1);
+			}
+		}
+
+		physical += PAGE_SIZE;
+		virtual += PAGE_SIZE;
+	}
+
+	reload_cr3();
+}
+
 // Maps a page.
 // Note: No need to set PAGE_PRESENT flag, it sets automatically.
 // TODO: Rewrite this, this is buggy

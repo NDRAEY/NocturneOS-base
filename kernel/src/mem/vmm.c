@@ -285,6 +285,35 @@ void *kmalloc_common(size_t size, size_t align)
 	return allocated;
 }
 
+void *kmalloc_common_contiguous(physical_addr_t* page_directory, size_t page_count)
+{
+	size_t sz = page_count * PAGE_SIZE;
+	void *allocated = alloc_no_map(sz, PAGE_SIZE);
+
+	if (!allocated)
+	{
+		return 0;
+	}
+
+	size_t phys_pages = phys_alloc_multi_pages(page_count);
+
+	if(phys_pages == 0) {
+		return 0;
+	}
+
+	map_pages(
+		page_directory,
+		phys_pages,
+		(virtual_addr_t)allocated,
+		page_count * PAGE_SIZE,
+		PAGE_WRITEABLE
+	);
+
+	qemu_ok("From %x to %x, here you are!", (size_t)allocated, (size_t)(allocated + sz));
+
+	return allocated;
+}
+
 bool vmm_is_page_used_by_entries(size_t address)
 {
 	for (size_t i = 0; i < system_heap.allocated_count; i++)

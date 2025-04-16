@@ -51,6 +51,7 @@ extern void enable_paging();
 
 physical_addr_t phys_alloc_single_page();
 physical_addr_t phys_alloc_multi_pages(size_t count);
+
 void phys_free_single_page(physical_addr_t addr);
 void phys_free_multi_pages(physical_addr_t addr, size_t count);
 void map_single_page(physical_addr_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags);
@@ -68,3 +69,5 @@ uint32_t* get_kernel_page_directory();
 void map_pages_overlapping(physical_addr_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags);
 void unmap_pages_overlapping(physical_addr_t* page_directory, size_t virtual, size_t size);
 void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags);
+
+void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size);

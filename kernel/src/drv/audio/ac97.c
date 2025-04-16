@@ -139,9 +139,9 @@ void ac97_init() {
     const uint32_t status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
 
     qemu_log("Status: %d (%x)", status, status);
-    qemu_log("Status Reserved: %d", status.reserved);
-    qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
-    qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
+    //qemu_log("Status Reserved: %d", status.reserved);
+    //qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
+    //qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
     
     uint16_t extended_audio = inw(native_audio_mixer + NAM_EXTENDED_AUDIO);
     qemu_log("Status: %d", extended_audio);
@@ -160,6 +160,7 @@ void ac97_init() {
     ac97_set_pcm_volume(0, 0, false);
 
     ac97_audio_buffer = kmalloc_common(AUDIO_BUFFER_SIZE, PAGE_SIZE);
+    //ac97_audio_buffer = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(AUDIO_BUFFER_SIZE, PAGE_SIZE) / PAGE_SIZE);
     memset(ac97_audio_buffer, 0, AUDIO_BUFFER_SIZE);
     ac97_audio_buffer_phys = virt2phys(get_kernel_page_directory(),
                                        (virtual_addr_t)ac97_audio_buffer);
@@ -192,6 +193,8 @@ void ac97_FillBDLs() {
         ac97_buffer[filled].memory_pos = ac97_audio_buffer_phys + j;
         ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
+        qemu_printf("[%d] %x -> %x\n", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count);
+
         filled++;
     }
 
@@ -209,26 +212,30 @@ void ac97_WriteAll(void* buffer, size_t size) {
     qemu_log("Start");
 
     size_t loaded = 0;
+	ac97_set_play_sound(false);
+    // ac97_reset_channel();
 
     while(loaded < size) {
         size_t block_size = MIN(size - loaded, AUDIO_BUFFER_SIZE);
 
         memcpy(ac97_audio_buffer,
-                     (char*)buffer + loaded,
-                     block_size);
+                (char*)buffer + loaded,
+                block_size);
+
+        qemu_printf("memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n", ac97_audio_buffer,
+            (char*)buffer + loaded,
+            block_size);
 
         // Zero out all the remaining space
-        if (block_size < AUDIO_BUFFER_SIZE) {
-            memset((char *) ac97_audio_buffer + block_size,
-                     0,
-                     AUDIO_BUFFER_SIZE - block_size);
-        }
+        // if (block_size < AUDIO_BUFFER_SIZE) {
+        //     memset((char *) ac97_audio_buffer + block_size,
+        //              0,
+        //              AUDIO_BUFFER_SIZE - block_size);
+        // }
 
-        if(loaded == 0) {
-            ac97_set_play_sound(true);
-        }
-        
         ac97_update_lvi(ac97_lvi);
+        ac97_set_play_sound(true);     
+        ac97_clear_status_register();
 
         // Poll while playing.
         while (!(inb(native_audio_bus_master + 0x16) & (1 << 1))) {

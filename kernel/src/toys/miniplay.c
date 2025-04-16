@@ -90,16 +90,18 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	fread(file, 1, sizeof miniplay_hdr, &miniplay_hdr);
 
 	fseek(file, 0xae, SEEK_SET);
-
-
-	// char* data = kmalloc(BUFFER_SIZE);
+	
+	
+	//char* data = kmalloc(BUFFER_SIZE);
 	char* data = kmalloc(miniplay_filesize);
-	// memset(data, 0, BUFFER_SIZE);
+
+	fread(file, miniplay_filesize, 1, data);
+	// memset(data, 0, miniplay_filesize);
 
 	set_cursor_enabled(false);
 
     // Thread.
-	thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true, false);
+	//thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true, false);
 
 	ac97_set_pcm_sample_rate(miniplay_hdr.sampleRate);
 
@@ -108,29 +110,30 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 	miniplay_timestamp = timestamp();
 
-	// size_t counter = 0;
+  /*
+	size_t counter = 0;
 
-	// while (counter < miniplay_filesize) {
-	// 	qemu_printf("%d/%d\n", counter, miniplay_filesize);
+	while (counter < miniplay_filesize) {
+		qemu_printf("%d/%d\n", counter, miniplay_filesize);
 
-	// 	size_t writesize = MIN(BUFFER_SIZE, miniplay_filesize - counter);
+		size_t writesize = MIN(BUFFER_SIZE, miniplay_filesize - counter);
 
-	// 	fread(file, writesize, 1, data);
-	// 	ac97_WriteAll(data, writesize);
+		fread(file, writesize, 1, data);
+		ac97_WriteAll(data, writesize);
 
-	// 	counter += writesize;
-	// }
+		counter += writesize;
+	}
+  */
 
-	fread(file, miniplay_filesize, 1, data);
 	ac97_WriteAll(data, miniplay_filesize);
 
-	// ac97_reset_channel();
 	ac97_set_play_sound(false);
+	// ac97_reset_channel();
 
 	kfree(data);
 	fclose(file);
 
-	thread_exit(display_thread);
+	//thread_exit(display_thread);
 
 	clean_tty_screen();
 
