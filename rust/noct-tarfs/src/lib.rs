@@ -73,7 +73,7 @@ unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *con
 }
 
 unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
-    qemu_note!("INFO!!!!!");
+    //qemu_note!("INFO!!!!!");
 
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);
