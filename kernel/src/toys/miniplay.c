@@ -128,7 +128,9 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	ac97_WriteAll(data, miniplay_filesize);
 
 	ac97_set_play_sound(false);
+	ac97_clear_status_register();
 	// ac97_reset_channel();
+    // ac97_FillBDLs();
 
 	kfree(data);
 	fclose(file);

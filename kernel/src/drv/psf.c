@@ -38,6 +38,8 @@ bool fonts_init(char* psf) {
 	fread(psf_file, rfsize, 1, buffer);
     fclose(psf_file);
 
+    // hexview_advanced(buffer, rfsize, 24, false, new_qemu_printf);
+
     psf_init(buffer, rfsize);
 
     kfree(buffer);

@@ -250,13 +250,6 @@ uint32_t * new_page_directory() {
 	return dir;
 }
 
-void blank_page_directory(uint32_t* pagedir_addr) {
-	// Just roll over 1024 entries and set them to 0.
-	for (size_t i = 0; i < 1024; i++) {
-		pagedir_addr[i] = 0;  // Fully blank
-	}
-}
-
 uint32_t* get_page_table_by_vaddr(const uint32_t* page_dir, virtual_addr_t vaddr) {
 	if(paging_initialized)
 		return (uint32_t*)((char*)page_directory_start + (PD_INDEX(vaddr) * PAGE_SIZE));
@@ -519,10 +512,10 @@ uint32_t* get_kernel_page_directory() {
 		return kernel_page_directory;
 }
 
+extern size_t grub_last_module_end;
 void init_paging() {
-    extern size_t grub_last_module_end;
 
-    qemu_log("Memory bitmap covers: %d MB", (sizeof(pages_bitmap) * 8) >> 10);
+	__asm__ volatile("cli");
 
 	kernel_start = (size_t)&KERNEL_BASE_pos;
 	kernel_end = (size_t)&KERNEL_END_pos;
@@ -580,6 +573,8 @@ void init_paging() {
 			qemu_log("[%d]: %x", i, pd[i]);
         }
 	}
+
+	__asm__ volatile("sti");
 }
 
 

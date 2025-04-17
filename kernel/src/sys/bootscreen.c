@@ -10,6 +10,7 @@
 #include <io/ports.h>
 #include "io/tty.h"
 
+static bool bootscreen_initialized = false;
 uint32_t theme = 0;					/// Текущая тема (0 или 1)
 uint32_t bgColorDark = 0x000000;	/// Цвет заднего фона для темной темы
 uint32_t txColorDark = 0x92D7D4;	/// Цвет текста для темной темы
@@ -82,6 +83,10 @@ uint32_t bootScreenTheme(uint32_t type){
  * @param tx - Установить цвет для вывода текста
  */
 void bootScreenClose(uint32_t bg, uint32_t tx){
+    if(!bootscreen_initialized) {
+        return;
+    }
+
     tty_setcolor(tx);
     drawRect(0, 0, getScreenWidth(), getScreenHeight(), bg);
     setPosX(0);
@@ -147,6 +152,10 @@ void bootScreenProcentPaint(){
  * @param title - Вывести данное сообщение
  */
 void bootScreenPaint(char* title){
+    if(!bootscreen_initialized) {
+        return;
+    }
+
     if (bs_logs)
         qemu_log("[BOOT] %s",title);
     
@@ -201,4 +210,5 @@ void bootScreenInit(uint32_t count){
     maxHeightLine = getScreenHeight() / 16;
     bootScreenPaint("Загрузка...");
 
+    bootscreen_initialized = true;
 }

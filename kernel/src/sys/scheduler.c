@@ -208,6 +208,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 
 thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
 						bool kernel, bool suspend) {
+    if(!multi_task) {
+        qemu_err("Scheduler is disabled!");
+        return NULL;
+    }
+
 	/* Disable all interrupts */
 	__asm__ volatile ("cli");
 
@@ -227,7 +232,12 @@ void thread_suspend(thread_t* thread, bool suspend) {
 }
 
 void thread_exit(thread_t* thread){
-	/* Disable all interrupts */
+	if(!multi_task) {
+        qemu_err("Scheduler is disabled!");
+        return;
+    }
+
+    /* Disable all interrupts */
 	__asm__ volatile ("cli");
 
 	/* Mark it as deas */
@@ -248,6 +258,11 @@ bool is_multitask(void){
 }
 
 void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
+    if(!multi_task) {
+        // qemu_err("Scheduler is disabled!");
+        return;
+    }
+
     thread_t* next_thread = (thread_t *)current_thread->list_item.next;
 
     while(next_thread != NULL && (next_thread->state == PAUSED || next_thread->state == DEAD)) {

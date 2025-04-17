@@ -213,7 +213,7 @@ void fsm_dpm_update(char Letter){
             for(int f = 0; f < fsm_entries->size; f++) {
                 FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;
 
-                qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm);
+                qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm->Name);
 
                 int detect = fsm->Detect(DISKID);
 

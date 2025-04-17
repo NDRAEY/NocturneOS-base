@@ -85,7 +85,7 @@ void ac97_update_bdl() {
 }
 
 void ac97_update_lvi(uint8_t index) {
-    outb(native_audio_bus_master + NABM_PCM_OUT + 0x05, index);
+    outb(native_audio_bus_master + NABM_PCM_OUT + 0x05, index & 0b11111);
 }
 
 void ac97_set_play_sound(bool play) {
@@ -192,12 +192,12 @@ void ac97_FillBDLs() {
 
     size_t filled = 0;
     for (size_t j = 0; j < AUDIO_BUFFER_SIZE; j += bdl_span) {
-        size_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)(ac97_audio_buffer + j));
+        size_t phys = virt2phys_precise(get_kernel_page_directory(), (virtual_addr_t)(ac97_audio_buffer + j));
 
         ac97_buffer[filled].memory_pos = phys;
         ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
-        // qemu_printf("[%d] %x -> %x\n", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count);
+        qemu_log("[%d] %x -> %x", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count * sample_divisor);
 
         filled++;
     }
@@ -226,7 +226,8 @@ void ac97_WriteAll(void* buffer, size_t size) {
                 (char*)buffer + loaded,
                 block_size);
 
-        qemu_printf("memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n",
+        qemu_printf("[%d] memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n",
+            timestamp(),
             ac97_audio_buffer,
             (char*)buffer + loaded,
             block_size);
@@ -238,7 +239,7 @@ void ac97_WriteAll(void* buffer, size_t size) {
 
         ac97_update_lvi(ac97_lvi);
         ac97_set_play_sound(true);
-        ac97_clear_status_register();
+        // ac97_clear_status_register();
 
         // Poll while playing.
         while (!(inb(native_audio_bus_master + 0x16) & (1 << 1))) {
