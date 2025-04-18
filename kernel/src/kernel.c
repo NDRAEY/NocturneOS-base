@@ -170,6 +170,32 @@ extern void audio_system_init();
 
 void new_nsh();
 
+extern size_t KERNEL_BASE_pos;
+extern size_t KERNEL_END_pos;
+
+void scan_kernel(multiboot_header_t *mboot) {
+    kernel_start = (size_t)&KERNEL_BASE_pos;
+	kernel_end = (size_t)&KERNEL_END_pos;
+
+	qemu_log("Kernel: %x - %x", kernel_start, kernel_end);
+
+    multiboot_module_t* module_list = (multiboot_module_t*)mboot->mods_addr;
+    size_t count = mboot->mods_count;
+
+    for (size_t i = 0; i < count; i++) {
+        multiboot_module_t *mod = module_list + i;
+
+        qemu_log("Module #%d: Start: %x; End: %x;",
+                i,
+                mod->mod_start,
+                mod->mod_end
+        );
+    }
+
+    multiboot_module_t* last_module = module_list + count - 1;
+    qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
+}
+
 /*
   Спаси да сохрани этот кусок кода
   Да на все твое кодерская воля
@@ -184,6 +210,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     __com_setInit(1, 1);
     __com_init(PORT_COM1);
+    
+    scan_kernel(mboot);
 
     framebuffer_addr = (uint8_t *)(mboot->framebuffer_addr);
 
@@ -198,14 +226,14 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     qemu_log("SSE: %s", sse_check() ? "Supported" : "Not supported");
 
-    if (sse_check())
-    {
+    if (sse_check()) {
         fpu_save();
     }
 
     qemu_log("Setting `Interrupt Descriptor Table`...");
     init_descriptor_tables();
-    qemu_log("Setting `RIH`...");
+    
+    qemu_log("Setting `ISR`...");
     isr_init();
 
     qemu_log("Initializing FPU...");
@@ -241,8 +269,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     drv_vbe_init(mboot);
 
-    // qemu_log("Audio system init");
-    // audio_system_init();
+    qemu_log("Audio system init");
+    audio_system_init();
 
     qemu_log("FSM Init");
     fsm_init();
@@ -269,7 +297,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     fonts_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
 
     qemu_log("Initializing Task Manager...");
-    // init_task_manager();
+    init_task_manager();
 
     clean_screen();
 
@@ -280,8 +308,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     tty_setcolor(0xffffff);
 
-    // bootScreenInit(15);
-    // bootScreenLazy(true);
+    bootScreenInit(15);
+    bootScreenLazy(true);
 
     keyboard_buffer_init();
 
@@ -291,26 +319,26 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     if (ps2_channel2_okay)
     {
-        // bootScreenPaint("Настройка PS/2 Мыши...");
-        // mouse_install();
+        bootScreenPaint("Настройка PS/2 Мыши...");
+        mouse_install();
     }
 
-    // bootScreenPaint("Пост-настройка PS/2...");
+    bootScreenPaint("Пост-настройка PS/2...");
     ps2_keyboard_install_irq();
-    // ps2_mouse_install_irq();
+    ps2_mouse_install_irq();
 
     bootScreenPaint("PCI Setup...");
     pci_scan_everything();
 
     bootScreenPaint("Инициализация ATA...");
-    // ata_init();
-    // ata_dma_init();
+    ata_init();
+    ata_dma_init();
 
     bootScreenPaint("Калибровка датчика температуры процессора...");
     cputemp_calibrate();
 
-    // bootScreenPaint("Настройка FDT...");
-    // file_descriptors_init();
+    bootScreenPaint("Настройка файловых дескрипторов...");
+    file_descriptors_init();
 
     bootScreenPaint("Настройка системных вызовов...");
     qemu_log("Registering System Calls...");
@@ -318,19 +346,23 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     bootScreenPaint("Настройка ENV...");
     qemu_log("Registering ENV...");
-    // configure_env();
+    configure_env();
 
-    // bootScreenPaint("Инициализация списка сетевых карт...");
-    // netcards_list_init();
+    bootScreenPaint("Инициализация списка сетевых карт...");
+    netcards_list_init();
 
-    // bootScreenPaint("Инициализация сетевого стека...");
-    // netstack_init();
-    // bootScreenPaint("Инициализация ARP...");
-    // arp_init();
-    // bootScreenPaint("Инициализация RTL8139...");
-    // rtl8139_init();
-    // bootScreenPaint("Инициализация DHCP...");
-    // dhcp_init_all_cards();
+    bootScreenPaint("Инициализация сетевого стека...");
+    netstack_init();
+
+    bootScreenPaint("Инициализация ARP...");
+    arp_init();
+
+    bootScreenPaint("Инициализация RTL8139...");
+    rtl8139_init();
+
+    bootScreenPaint("Инициализация DHCP...");
+    dhcp_init_all_cards();
+
     bootScreenPaint("Готово...");
     bootScreenClose(0x000000, 0xFFFFFF);
     tty_set_bgcolor(COLOR_BG);
@@ -340,20 +372,16 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
                __TIMESTAMP__                                // Время окончания компиляции ядра
     );
 
-    // while(1)
-    // ;
-
     tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
 
     sayori_time_t time = get_time();
     tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);
 
-    // _tty_printf("Listing ATA disks:\n");
-    // ata_list();
+    _tty_printf("Listing ATA disks:\n");
+    ata_list();
 
     tty_taskInit();
 
-    /*
     if (is_rsdp)
     {
         RSDPDescriptor *rsdp = rsdp_find();
@@ -375,32 +403,31 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     }
 
     tty_printf("Processors: %d\n", system_processors_found);
-    */
 
-    // if (test_network)
-    // {
-    //     _tty_printf("Listing network cards:\n");
+    if (test_network)
+    {
+        _tty_printf("Listing network cards:\n");
 
-    //     uint8_t mac_buffer[6] = {0};
+        uint8_t mac_buffer[6] = {0};
 
-    //     for (int i = 0; i < netcards_get_count(); i++)
-    //     {
-    //         netcard_entry_t *entry = netcard_get(i);
+        for (int i = 0; i < netcards_get_count(); i++)
+        {
+            netcard_entry_t *entry = netcard_get(i);
 
-    //         _tty_printf("\tName: %s\n", entry->name);
-    //         entry->get_mac_addr(mac_buffer);
+            _tty_printf("\tName: %s\n", entry->name);
+            entry->get_mac_addr(mac_buffer);
 
-    //         _tty_printf("\tMAC address: %x:%x:%x:%x:%x:%x\n",
-    //                     mac_buffer[0],
-    //                     mac_buffer[1],
-    //                     mac_buffer[2],
-    //                     mac_buffer[3],
-    //                     mac_buffer[4],
-    //                     mac_buffer[5]);
-    //     }
+            _tty_printf("\tMAC address: %x:%x:%x:%x:%x:%x\n",
+                        mac_buffer[0],
+                        mac_buffer[1],
+                        mac_buffer[2],
+                        mac_buffer[3],
+                        mac_buffer[4],
+                        mac_buffer[5]);
+        }
 
-    //     _tty_printf("OK!\n");
-    // }
+        _tty_printf("OK!\n");
+    }
 
     ac97_init();
     ahci_init();

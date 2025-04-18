@@ -36,7 +36,19 @@ void vmm_init()
 	system_heap.allocated_count = 0;
 	system_heap.used_memory = 0;
 
+	extern size_t grub_last_module_end;
+	size_t real_end = grub_last_module_end + PAGE_BITMAP_SIZE;
+
 	system_heap.start = 0x1000000;
+
+	if(real_end > system_heap.start) {
+		qemu_warn("The heap is beyond kernel space address, moving heap!");
+
+		system_heap.start = ALIGN(real_end, PAGE_SIZE);
+
+		qemu_note("Now heap starts at: %x", system_heap.start);
+	}
+
 	system_heap.memory = (struct heap_entry *)pmm_alloc_and_map_self(get_kernel_page_directory(), PAGE_SIZE);
 
 	memset(system_heap.memory, 0, PAGE_SIZE);
