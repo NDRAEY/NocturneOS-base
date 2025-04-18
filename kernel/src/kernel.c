@@ -306,7 +306,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
 
-    tty_setcolor(0xffffff);
+    clean_screen();
 
     bootScreenInit(15);
     bootScreenLazy(true);

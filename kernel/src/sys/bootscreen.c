@@ -109,6 +109,7 @@ void bootScreenChangeMode(int m){
 void bootScreenInfo(){
     setPosX(0);
     setPosY(0);
+
     if (!lazy){
         tty_printf("SayoriOS v%d.%d.%d\nBuilt: %s\n",
         VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
@@ -124,10 +125,9 @@ void bootScreenInfo(){
         setPosY(getScreenHeight() - 32);
         tty_printf(about);
     }
+
     setPosX(0);
     setPosY(16*5);
-
-
 }
 
 /**
@@ -208,7 +208,7 @@ void bootScreenInit(uint32_t count){
     tty_changeState(false);  // Disabling print functions
     maxStrLine = (getScreenWidth() / 8) - 2;
     maxHeightLine = getScreenHeight() / 16;
-    bootScreenPaint("Загрузка...");
-
     bootscreen_initialized = true;
+    
+    bootScreenPaint("Загрузка...");
 }

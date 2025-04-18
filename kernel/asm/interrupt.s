@@ -6,7 +6,7 @@
     .global	isr\isr_num
 isr\isr_num:
     cli
-    ;push	$0
+    push	$0
     push	$\isr_num
     jmp	isr_common_stub_noerr
 .endm
@@ -25,7 +25,7 @@ isr\isr_num:
     .global irq\irq_num
 irq\irq_num:
     cli
-    ;push	$0
+    push	$0
     push	$\isr_num
     jmp	irq_common_stub
 .endm
