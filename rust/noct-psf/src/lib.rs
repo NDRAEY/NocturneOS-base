@@ -17,12 +17,12 @@ pub struct PSF {
 }
 
 impl PSF {
-    pub fn from_raw_ptr(data: *const u8, len: usize) -> Option<Self> {
+    pub unsafe fn from_raw_ptr(data: *const u8, len: usize) -> Option<Self> {
         if data.is_null() {
             panic!("Attempted to pass null to PSF!");
         }
 
-        let data = unsafe { core::slice::from_raw_parts(data, len) };
+        let data = core::slice::from_raw_parts(data, len);
 
         if data[0] != 0x36 || data[1] != 0x04 {
             return None;
@@ -105,7 +105,7 @@ impl PSF {
 
         let offset = 4 + ch as usize * self.height;
     
-        return Some(&self.font_data[offset..offset+self.height]);
+        Some(&self.font_data[offset..offset+self.height])
     }
 
     pub fn draw_character(&self, c: u16, pos_x: usize, pos_y: usize, color: u32) {

@@ -56,22 +56,23 @@ NocturneOS - это форк операционной системы SayoriOS.
   - Пищалка (Buzzer, PC Speaker)
   - Realek RTL-8139 (Драйвер для работы с сетью)
 - Файлы и папки
-  - Виртуальная файловая система [VFS] Позволит вам не задаваться вопросом на каком устройстве файл
-  - Sayori Easy File System (Простая файловая система для виртуального диска)
+  - Виртуальная файловая система
   - TarFS
-  - FAT32
+  - NoctFS
+  - FAT32 (RO)
 - Сеть
-  - Протоколы ([В планах] Без протоколов сеть бесполезна)
+  - ARP
+  - UDP
+  - DHCP
 - Прочие
   - Программы ELF32 (Поддержка и запуск в ядре)
   - Определение процессора (Получение информации о процессоре)
   - Поддержка FPU (Для работы чисел с плавающей точкой)
-  - Поддержка SAF ([В планах] Sayori Application File)
   - Поддержка UEFI
 
 ## Сборка
 
-Для написания программ под NocturneOS может потребоваться SayoriSDK: https://github.com/pimnik98/SayoriSDK
+Для написания программ под NocturneOS может потребоваться SayoriSDK: https://github.com/NDRAEY/NocturneSDK
 
 Для компиляции вам потребуется операционная система на базе ядра Linux или Windows (с WSL), в которой предустановлено ПО для разработки.Установить можно следующей командой:
 
@@ -86,10 +87,10 @@ sudo apt-get install python3 gcc cmake ninja-build xorriso mtools
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-На данный момент используется версия Rust 1.77, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
+На данный момент используется версия Rust 1.84, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
 ```bash
-rustup toolchain install nightly-2024-01-11
-rustup component add rust-src --toolchain nightly-2024-01-11-x86_64-unknown-linux-gnu
+rustup toolchain install nightly-2025-01-11
+rustup component add rust-src --toolchain nightly-2025-01-11-x86_64-unknown-linux-gnu
 ```
 
 Если вы планируете запускать эту систему в виртуальной машине, то ещё нужно установить QEMU:
