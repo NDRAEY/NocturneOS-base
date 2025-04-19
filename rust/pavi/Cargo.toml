@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 nimage = { version = "0.1.2", features = ["tga"], default-features = false }
-zeraus = { git = "https://github.com/NDRAEY/zeraus", version = "0.1.0", default-features = false, features = ["no_std", "text"] }
+gi-ui = { git = "https://github.com/NDRAEY/gi-ui", version = "0.1.0", default-features = false, features = ["no_std", "text"] }
 noct-tty = { path = "../noct-tty" }
 noct-fs = { path = "../noct-fs" }
 noct-screen = { path = "../noct-screen" }
