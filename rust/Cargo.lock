@@ -329,6 +329,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-ipc"
+version = "0.1.0"
+dependencies = [
+ "noct-sched",
+ "spin 0.5.2",
+]
+
+[[package]]
 name = "noct-iso9660"
 version = "0.1.0"
 dependencies = [
@@ -377,6 +385,13 @@ version = "0.1.0"
 dependencies = [
  "noct-logger",
  "noct-screen",
+]
+
+[[package]]
+name = "noct-sched"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
 ]
 
 [[package]]
@@ -430,11 +445,13 @@ dependencies = [
  "noct-fs",
  "noct-fs-sys",
  "noct-input",
+ "noct-ipc",
  "noct-iso9660",
  "noct-logger",
  "noct-noctfs",
  "noct-path",
  "noct-psf",
+ "noct-sched",
  "noct-screen",
  "noct-tarfs",
  "noct-tty",

@@ -25,7 +25,7 @@ pub fn set_pixel(x: usize, y: usize, color: u32) {
     }
 
     let offset = (x * (bits_per_pixel() >> 3)) + y * pitch();
-    let pixels = &mut framebuffer_mut()[offset..];
+    let pixels = &mut back_framebuffer_mut()[offset..];
 
     pixels[0] = (color & 0xff) as u8;
     pixels[1] = ((color >> 8) & 0xff) as u8;
@@ -33,19 +33,35 @@ pub fn set_pixel(x: usize, y: usize, color: u32) {
 }
 
 #[inline]
-pub fn framebuffer() -> &'static [u8] {
+pub fn back_framebuffer() -> &'static [u8] {
     let (w, h) = dimensions();
-    let len = w * h * bits_per_pixel();
+    let len = w * h * (bits_per_pixel() >> 3);
 
     unsafe { core::slice::from_raw_parts(back_framebuffer_addr, len) }
 }
 
 #[inline]
-pub fn framebuffer_mut() -> &'static mut [u8] {
+pub fn back_framebuffer_mut() -> &'static mut [u8] {
     let (w, h) = dimensions();
-    let len = w * h * bits_per_pixel();
+    let len = w * h * (bits_per_pixel() >> 3);
 
     unsafe { core::slice::from_raw_parts_mut(back_framebuffer_addr, len) }
+}
+
+#[inline]
+pub fn framebuffer() -> &'static [u8] {
+    let (w, h) = dimensions();
+    let len = w * h * (bits_per_pixel() >> 3);
+
+    unsafe { core::slice::from_raw_parts(framebuffer_addr, len) }
+}
+
+#[inline]
+pub fn framebuffer_mut() -> &'static mut [u8] {
+    let (w, h) = dimensions();
+    let len = w * h * (bits_per_pixel() >> 3);
+
+    unsafe { core::slice::from_raw_parts_mut(framebuffer_addr, len) }
 }
 
 #[inline]
@@ -60,4 +76,12 @@ pub fn pitch() -> usize {
 #[inline]
 pub fn bits_per_pixel() -> usize {
     unsafe { framebuffer_bpp as _ }
+}
+
+#[inline]
+pub fn flush() {
+    let backfb = back_framebuffer();
+    let real_screen = framebuffer_mut();
+
+    real_screen.copy_from_slice(backfb);
 }

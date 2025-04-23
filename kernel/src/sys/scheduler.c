@@ -48,8 +48,10 @@ void init_task_manager(void){
 	kernel_proc->page_dir = kernel_page_directory;
 	kernel_proc->list_item.list = nullptr;
 	kernel_proc->threads_count = 1;
-	strcpy((char*)kernel_proc->name, "Kernel");
-	kernel_proc->suspend = false;
+
+	kernel_proc->name = strdynamize("kernel");
+	
+    kernel_proc->suspend = false;
 
 	list_add(&process_list, &kernel_proc->list_item);
 
@@ -83,7 +85,7 @@ void scheduler_mode(bool on) {
 	scheduler_working = on;
 }
 
-size_t create_process(void* entry_point, char name[256], bool suspend, bool is_kernel) {
+size_t create_process(void* entry_point, char* name, bool suspend, bool is_kernel) {
     scheduler_working = false;
 	__asm__ volatile("cli");
 
@@ -93,7 +95,8 @@ size_t create_process(void* entry_point, char name[256], bool suspend, bool is_k
 	proc->list_item.list = nullptr;  // No nested processes hehe :)
 	proc->threads_count = 0;
 
-	strcpy(proc->name, name);
+	proc->name = strdynamize(name);
+    
 	proc->suspend = suspend;
 
     list_add(&process_list, &proc->list_item);
@@ -310,6 +313,7 @@ void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
 
                 qemu_log("REMOVED PROCESS FROM LIST");
 
+                kfree(process->name);
                 kfree(process);
 
                 qemu_log("FREED PROCESS LIST ITEM");

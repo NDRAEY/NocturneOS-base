@@ -58,11 +58,11 @@ unsafe extern "C" fn fun_read(
 
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
-    qemu_note!("Reading {}", path);
+    // qemu_note!("Reading {}", path);
 
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
 
-    qemu_ok!("Reading {} success!", path);
+    // qemu_ok!("Reading {} success!", path);
 
     result.unwrap_or(0) as _
 }
@@ -121,8 +121,6 @@ unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
 }
 
 unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
-    qemu_note!("DIR!!!!!");
-
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);
 

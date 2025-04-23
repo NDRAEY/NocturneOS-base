@@ -167,6 +167,7 @@ extern void fs_tarfs_register();
 extern void rust_main();
 extern void keyboard_buffer_init();
 extern void audio_system_init();
+extern void ipc_init();
 
 void new_nsh();
 
@@ -266,6 +267,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     switch_qemu_logging();
 
     kHandlerCMD((char *)mboot->cmdline);
+
+    ipc_init();
 
     drv_vbe_init(mboot);
 

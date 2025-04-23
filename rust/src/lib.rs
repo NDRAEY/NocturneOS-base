@@ -1,9 +1,12 @@
 #![no_std]
 #![no_main]
 
+#![allow(static_mut_refs)]
+
 extern crate alloc;
 
 use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
+use std::thread::spawn;
 
 pub mod audio;
 pub mod drv;
@@ -12,6 +15,7 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+use noct_ipc::{manager::{create_named_channel, find_named_channel}, NamedChannel};
 pub use noct_iso9660;
 pub use noct_noctfs;
 pub use noct_psf;
@@ -22,6 +26,7 @@ use noct_alloc::Allocator;
 pub use noct_logger::*;
 use noct_tty::println;
 use spin::Mutex;
+use system::timer::timestamp;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -72,6 +77,8 @@ pub extern "C" fn rust_main() {
     // })
 
     // {
+    //     unsafe { noct_sched::scheduler_mode(false) };
+
     //     noct_screen::fill(0);
 
     //     let screen_dimen = noct_screen::dimensions();
@@ -85,8 +92,25 @@ pub extern "C" fn rust_main() {
 
     //         noct_screen::fill(0);
     //         noct_tty::renderer::render(&tty);
+    //         noct_screen::flush();
 
     //         qemu_log!("Took: {} ms", timestamp() - start_time);
     //     }
+    // }
+
+    // {
+    //     let chan = create_named_channel("postman_guy").unwrap();
+
+    //     chan.write("Hello!\0".as_bytes());
+
+    //     spawn(move || {
+    //         let my_chan = find_named_channel("postman_guy").unwrap();
+
+    //         let mut data = [0u8; 6];
+
+    //         my_chan.read(&mut data);
+
+    //         qemu_ok!("Data is: {data:?}");
+    //     });
     // }
 }
