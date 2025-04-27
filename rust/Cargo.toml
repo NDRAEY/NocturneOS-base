@@ -8,11 +8,11 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-tarfs", "noct-tty", "pavi"]
+members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-tty", "pavi"]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
-spin = "0.5.2"
+spin = "0.10.0"
 x86 = "0.52.0"
 noct-alloc = { path = "./noct-alloc" }
 noct-fs-sys = { path = "./noct-fs-sys" }

@@ -3,7 +3,7 @@ extern crate alloc;
 use alloc::{boxed::Box, format, string::{String, ToString}};
 use core::ffi::c_int;
 
-use crate::{size_t, FSM_DIR, FSM_FILE, FSM_TIME, FSM_TYPE_DIR, FSM_TYPE_FILE};
+use crate::{size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_FILE, FSM_TIME};
 
 impl FSM_FILE {
     pub fn with_data<T: ToString>(
@@ -11,7 +11,7 @@ impl FSM_FILE {
         mode: core::ffi::c_int,
         size: size_t,
         time: Option<FSM_TIME>,
-        typ: c_int,
+        typ: FSM_ENTITY_TYPE,
         access: u32,
     ) -> Self {
         let path = path.to_string();

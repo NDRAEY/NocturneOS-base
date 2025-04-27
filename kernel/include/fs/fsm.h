@@ -6,8 +6,10 @@
 #define FSM_MOD_WRITE 0x02u /// Права записи
 #define FSM_MOD_EXEC 0x04u  /// Права выполнения
 
-#define FSM_TYPE_DIR 5
-#define FSM_TYPE_FILE 0
+typedef enum {
+	TYPE_FILE = 0,
+	TYPE_DIR = 5
+} FSM_ENTITY_TYPE;
 
 typedef struct
 {
@@ -27,7 +29,7 @@ typedef struct
 	int Mode;		   /// Режим файла
 	size_t Size;	   /// Размер файла в байтах (oсt2bin)
 	FSM_TIME LastTime; /// Время последнего изменения файла
-	int Type;		   /// Тип элемента
+	FSM_ENTITY_TYPE Type;		   /// Тип элемента
 	uint32_t CHMOD;	   /// CHMOD файла
 } __attribute__((packed)) FSM_FILE;
 
@@ -53,10 +55,10 @@ typedef FSM_FILE (*fsm_cmd_info_t)(const char letter, const char *path);
 typedef void (*fsm_cmd_dir_t)(const char letter, const char *, FSM_DIR *out);
 
 /// Буква, Название, Тип (0 - файл | 1 - папка)
-typedef int (*fsm_cmd_create_t)(const char letter, const char *path, int type);
+typedef int (*fsm_cmd_create_t)(const char letter, const char *path, FSM_ENTITY_TYPE type);
 
 /// Буква, Название, Тип (0 - файл | 1 - папка)
-typedef int (*fsm_cmd_delete_t)(const char letter, const char *path, int);
+typedef int (*fsm_cmd_delete_t)(const char letter, const char *path, FSM_ENTITY_TYPE type);
 
 /// Буква, Буфер
 typedef void (*fsm_cmd_label_t)(const char letter, char *buffer);

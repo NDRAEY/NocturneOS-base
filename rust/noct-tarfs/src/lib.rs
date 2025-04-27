@@ -3,8 +3,8 @@
 extern crate alloc;
 
 use alloc::{string::{String, ToString}, vec::Vec};
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_ok};
+use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_ENTITY_TYPE_TYPE_FILE, FSM_ENTITY_TYPE_TYPE_DIR};
+use noct_logger::{qemu_err, qemu_log};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
@@ -36,9 +36,8 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
 
 fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
     match tarfs_type {
-        tarfs::Type::Dir => FSM_TYPE_DIR,
-        tarfs::Type::File => FSM_TYPE_FILE,
-        _ => FSM_TYPE_FILE
+        tarfs::Type::Dir => FSM_ENTITY_TYPE_TYPE_DIR,
+        _ => FSM_ENTITY_TYPE_TYPE_FILE
     }
 }
 
@@ -55,14 +54,8 @@ unsafe extern "C" fn fun_read(
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
-
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
-
-    // qemu_note!("Reading {}", path);
-
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
-
-    // qemu_ok!("Reading {} success!", path);
 
     result.unwrap_or(0) as _
 }
@@ -82,12 +75,6 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    // qemu_note!("Path: {:?}", path);
-
-    // for i in &fl.list().unwrap() {
-    //     qemu_note!("{:?}", i.name);
-    // }
-    
     let entry = fl.find_file(&path);
 
     if entry.is_err() {
@@ -110,12 +97,12 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     result
 }
 
-unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
+unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {
     qemu_log!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
+unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
     qemu_log!("Deleting is not supported!");
     0
 }

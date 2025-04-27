@@ -1,5 +1,5 @@
 use alloc::string::{String, ToString};
-use noct_fs_sys::FSM_TYPE_DIR;
+use noct_fs_sys::FSM_ENTITY_TYPE_TYPE_DIR;
 
 use crate::println;
 
@@ -36,7 +36,7 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
         let fsize = file.file.Size;
 
         println!("{} [{:4}] [{:8} bytes]\t{}", fdatetime.format(), {
-            if ftype as u32 == FSM_TYPE_DIR { "DIR" } else { "FILE" }
+            if ftype as u32 == FSM_ENTITY_TYPE_TYPE_DIR { "DIR" } else { "FILE" }
         }, fsize, file.name);
     }
 

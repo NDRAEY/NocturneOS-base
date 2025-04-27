@@ -3,9 +3,9 @@
 extern crate alloc;
 
 use alloc::{string::String, vec::Vec};
-use iso9660_simple::helpers::get_directory_entry_by_path;
+use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
 use noct_dpm_sys::Disk;
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE};
+use noct_fs_sys::{FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ};
 use noct_logger::{qemu_err, qemu_log, qemu_println};
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
@@ -41,6 +41,15 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
     };
 
     String::from_utf8(rpath.to_vec()).unwrap()
+}
+
+#[inline]
+fn iso_type_to_fsm_type(entry: &ISODirectoryEntry) -> u32 {
+    if entry.is_folder() {
+        FSM_ENTITY_TYPE_TYPE_DIR
+    } else {
+        FSM_ENTITY_TYPE_TYPE_FILE
+    }
 }
 
 unsafe extern "C" fn fun_read(
@@ -94,11 +103,7 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     }
 
     let entry = entry.unwrap();
-    let ftype = if entry.is_folder() {
-        FSM_TYPE_DIR
-    } else {
-        FSM_TYPE_FILE
-    };
+    let ftype = iso_type_to_fsm_type(&entry);
 
     FSM_FILE::with_data(
         entry.name,
@@ -110,13 +115,13 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
-    qemu_log!("Creating is not supported!");
+unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {
+    qemu_err!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
-    qemu_log!("Deleting is not supported!");
+unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
+    qemu_err!("Deleting is not supported!");
     0
 }
 
@@ -138,11 +143,7 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
                 0,
                 elem.record.data_length.lsb,
                 None,
-                if elem.is_folder() {
-                    FSM_TYPE_DIR
-                } else {
-                    FSM_TYPE_FILE
-                } as _,
+                iso_type_to_fsm_type(&elem),
                 FSM_MOD_READ,
             )
         })

@@ -5,7 +5,7 @@ extern crate alloc;
 use alloc::{string::String, vec::Vec};
 use disk_device::DiskDevice;
 use noct_dpm_sys::Disk;
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_TYPE_DIR, FSM_TYPE_FILE, dir};
+use noct_fs_sys::{FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ};
 use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
 use noctfs::{NoctFS, entity::Entity};
 
@@ -47,7 +47,7 @@ unsafe extern "C" fn fun_read(
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap();
+    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap().1;
 
     let outbuf = unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
 
@@ -57,8 +57,26 @@ unsafe extern "C" fn fun_read(
     count
 }
 
-unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const i8) -> u32 {
-    todo!()
+unsafe extern "C" fn fun_write(
+    letter: i8,
+    path: *const i8,
+    offset: u32,
+    count: u32,
+    buffer: *const i8,
+) -> u32 {
+    let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+
+    let mut diskdev = DiskDevice::new(disk);
+    let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
+
+    let (parent, entity) = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap();
+
+    let outbuf = unsafe { core::slice::from_raw_parts(buffer as *const u8, count as _) };
+
+    fs.write_contents_by_entity(parent.start_block, &entity, outbuf, offset as _)
+        .unwrap();
+
+    count
 }
 
 unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
@@ -67,14 +85,14 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap();
+    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap().1;
 
     qemu_note!("{entity:#x?}");
 
     let ftype = if entity.is_directory() {
-        FSM_TYPE_DIR
+        FSM_ENTITY_TYPE_TYPE_DIR
     } else {
-        FSM_TYPE_FILE
+        FSM_ENTITY_TYPE_TYPE_FILE
     };
 
     FSM_FILE::with_data(
@@ -87,16 +105,17 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: i32) -> i32 {
+unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {
     todo!()
 }
 
-unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: i32) -> i32 {
+unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
     todo!()
 }
 
-fn find_by_path(fs: &mut NoctFS<'_>, path: String) -> Option<Entity> {
+fn find_by_path(fs: &mut NoctFS<'_>, path: String) -> Option<(Entity, Entity)> {
     let mut initial = fs.get_root_entity().unwrap();
+    let mut previous = initial.clone();
 
     let splitted = path.split("/").filter(|a| !a.is_empty());
 
@@ -109,6 +128,7 @@ fn find_by_path(fs: &mut NoctFS<'_>, path: String) -> Option<Entity> {
             if ent.name == i {
                 found = true;
 
+                previous = initial;
                 initial = ent;
                 break;
             }
@@ -119,7 +139,7 @@ fn find_by_path(fs: &mut NoctFS<'_>, path: String) -> Option<Entity> {
         }
     }
 
-    Some(initial)
+    Some((previous, initial))
 }
 
 unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
@@ -128,7 +148,7 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let directory_block = find_by_path(&mut fs, raw_ptr_to_string(_b));
+    let directory_block = find_by_path(&mut fs, raw_ptr_to_string(_b)).map(|a| a.1);
     let entities = fs.list_directory(directory_block.unwrap().start_block);
 
     let files: Vec<FSM_FILE> = entities
@@ -140,9 +160,9 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
                 elem.size as u32,
                 None,
                 if elem.is_directory() {
-                    FSM_TYPE_DIR
+                    FSM_ENTITY_TYPE_TYPE_DIR
                 } else {
-                    FSM_TYPE_FILE
+                    FSM_ENTITY_TYPE_TYPE_FILE
                 } as _,
                 FSM_MOD_READ,
             )

@@ -12,12 +12,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "allocator-api2"
-version = "0.2.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
-
-[[package]]
 name = "arrayref"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -141,12 +135,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "equivalent"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-
-[[package]]
 name = "float-cmp"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -156,29 +144,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "foldhash"
-version = "0.1.5"
+name = "font8x8"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+checksum = "875488b8711a968268c7cf5d139578713097ca4635a76044e8fe8eedf831d07e"
 
 [[package]]
-name = "fontdue"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e57e16b3fe8ff4364c0661fdaac543fb38b29ea9bc9c2f45612d90adf931d2b"
+name = "gi-derive"
+version = "0.1.0"
+source = "git+https://github.com/NDRAEY/gi-ui#a8e92143038789076e044dd5e527be9df0314aaa"
 dependencies = [
- "hashbrown",
- "ttf-parser",
+ "quote",
+ "syn",
 ]
 
 [[package]]
 name = "gi-ui"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#7d91e9038e5f92c1d72e1eb5ee80029752f71726"
+source = "git+https://github.com/NDRAEY/gi-ui#a8e92143038789076e044dd5e527be9df0314aaa"
 dependencies = [
  "embedded-graphics",
- "fontdue",
- "nostd",
+ "font8x8",
+ "gi-derive",
  "tinytga",
 ]
 
@@ -187,17 +174,6 @@ name = "glob"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
-
-[[package]]
-name = "hashbrown"
-version = "0.15.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf151400ff0baff5465007dd2f3e717f3fe502074ca563069ce3a6629d07b289"
-dependencies = [
- "allocator-api2",
- "equivalent",
- "foldhash",
-]
 
 [[package]]
 name = "iso9660_simple"
@@ -225,9 +201,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.171"
+version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c19937216e9d3aa9956d9bb8dfc0b0c8beb6058fc4f7a4dc4d850edf86a237d6"
+checksum = "d750af042f7ef4f724306de029d18836c26c1765a54a6a3f094cbd23a7267ffa"
 
 [[package]]
 name = "libloading"
@@ -275,9 +251,9 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "nimage"
-version = "0.1.3"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18fb916beec87ba1c08313249011b1179431edf0d1379b1033feb5b2ce7e2abe"
+checksum = "fe463d259e54c9743609b05ad836923ce2eff51a310bcc076064903b13f8bc2d"
 dependencies = [
  "tinytga",
 ]
@@ -333,7 +309,7 @@ name = "noct-ipc"
 version = "0.1.0"
 dependencies = [
  "noct-sched",
- "spin 0.5.2",
+ "spin 0.10.0",
 ]
 
 [[package]]
@@ -351,7 +327,7 @@ name = "noct-logger"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "spin 0.5.2",
+ "spin 0.10.0",
 ]
 
 [[package]]
@@ -403,6 +379,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-smbios"
+version = "0.1.0"
+
+[[package]]
 name = "noct-tarfs"
 version = "0.1.0"
 dependencies = [
@@ -426,7 +406,7 @@ dependencies = [
 [[package]]
 name = "noctfs"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/noctfs#1a6532055a20ed3b8c0e22cbd773a5c126284429"
+source = "git+https://github.com/NDRAEY/noctfs#a3a4dfb1ae4b68d5eba11fe9a7c16e9998da16ec"
 dependencies = [
  "arrayref",
  "bitflags 2.9.0",
@@ -457,7 +437,7 @@ dependencies = [
  "noct-tty",
  "pavi",
  "raw-cpuid 11.5.0",
- "spin 0.5.2",
+ "spin 0.10.0",
  "x86",
 ]
 
@@ -469,15 +449,6 @@ checksum = "d273983c5a657a70a3e8f2a01329822f3b8c8172b73826411a55751e404a0a4a"
 dependencies = [
  "memchr",
  "minimal-lexical",
-]
-
-[[package]]
-name = "nostd"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa3dd4c68516f7c5a1838eda0de376d4bc3c2aba3893da0ca2cf400bbc18435f"
-dependencies = [
- "memchr",
 ]
 
 [[package]]
@@ -514,9 +485,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -597,12 +568,6 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "spin"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
-
-[[package]]
-name = "spin"
 version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
@@ -618,9 +583,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.100"
+version = "2.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
+checksum = "8ce2b7fc941b3a24138a0a7cf8e858bfc6a992e7978a068a5c760deb0ed43caf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -645,12 +610,6 @@ dependencies = [
  "embedded-graphics",
  "nom",
 ]
-
-[[package]]
-name = "ttf-parser"
-version = "0.21.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c591d83f69777866b9126b24c6dd9a18351f177e49d625920d19f989fd31cf8"
 
 [[package]]
 name = "unicode-ident"
