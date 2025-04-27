@@ -433,6 +433,7 @@ dependencies = [
  "noct-psf",
  "noct-sched",
  "noct-screen",
+ "noct-smbios",
  "noct-tarfs",
  "noct-tty",
  "pavi",

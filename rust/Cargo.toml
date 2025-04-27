@@ -33,6 +33,7 @@ noct-psf = { path = "./noct-psf" }
 noct-noctfs = { path = "./noct-noctfs" }
 noct-sched = { path = "./noct-sched" }
 noct-ipc = { path = "./noct-ipc" }
+noct-smbios = { path = "./noct-smbios" }
 
 [profile.release]
 panic = "abort"

@@ -63,6 +63,14 @@ pub extern "C" fn psf_init(ptr: *const u8, len: u32) {
 pub extern "C" fn rust_main() {
     println!("Привет, {}!", "Rust");
 
+    let smbios = noct_smbios::find_smbios().unwrap();
+
+    qemu_note!("SMBIOS: {smbios:x?}");
+
+    for i in smbios.scan() {
+        qemu_note!("{i:?}");
+    }
+
     // let mut p = Path::from_path("R:/").unwrap();
     // qemu_log!("{:?}", p);
     // qemu_log!("{:?}", p.apply(".."));
