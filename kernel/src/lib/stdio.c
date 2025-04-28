@@ -405,3 +405,10 @@ size_t fwrite(FILE *stream, size_t size, size_t count, const void *ptr) {
 }
 
 
+void getcwd(char* str) {
+	char* cwd = get_current_proc()->cwd;
+
+	size_t len = strlen(cwd);
+	
+	memcpy(str, cwd, len);
+}

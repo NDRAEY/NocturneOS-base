@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include <fs/fsm.h>  
+#include <sys/scheduler.h>
 
 #define EOF (-1)
 #define SEEK_SET 0
@@ -48,3 +49,6 @@ void perror(FILE* stream,char* s);
 uint32_t ferror(FILE* stream);
 
 size_t fwrite(FILE *stream, size_t size, size_t count, const void *ptr);
+
+
+void getcwd(char* str);

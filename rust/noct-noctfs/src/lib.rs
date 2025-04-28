@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+use core::ffi::CStr;
+
 use alloc::{string::String, vec::Vec};
 use disk_device::DiskDevice;
 use noct_fs_sys::{FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ};
@@ -13,25 +15,9 @@ pub mod disk_device;
 static FSNAME: &[u8] = b"NoctFS\0";
 
 fn raw_ptr_to_string(ptr: *const i8) -> String {
-    let rpath = unsafe {
-        core::slice::from_raw_parts(ptr as *const u8, {
-            let mut ln = 0;
+    let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
+    c_str.to_string_lossy().into_owned()
 
-            loop {
-                let byte = ptr.add(ln).read_volatile();
-
-                if byte == 0 {
-                    break;
-                }
-
-                ln += 1;
-            }
-
-            ln
-        })
-    };
-
-    String::from_utf8(rpath.to_vec()).unwrap()
 }
 
 unsafe extern "C" fn fun_read(

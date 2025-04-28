@@ -1,5 +1,7 @@
 #![no_std]
 
+use core::ffi::CStr;
+
 use alloc::{
     string::{String, ToString},
     vec::Vec,
@@ -27,17 +29,6 @@ pub struct SMBIOS32Header {
     pub number_of_structs: u16,
     pub bcd_revision: u8,
 }
-
-// impl SMBIOS32 {
-//     pub fn is_valid(&self) -> bool {
-//         let len = self.entry_point_length;
-//         let mut checksum: u8 = 0;
-
-//         for i in 0..len {
-//             // ...
-//         }
-//     }
-// }
 
 #[repr(C, packed)]
 #[derive(Debug)]
@@ -90,26 +81,16 @@ impl SMBIOS {
         let mut counter = 1;
 
         loop {
-            let data = unsafe {
-                core::slice::from_raw_parts(addr as *const u8, {
-                    let mut a = addr as *const u8;
-                    let mut len = 0usize;
-
-                    while a.read() != 0 {
-                        a = a.add(1);
-                        len += 1;
-                    }
-
-                    len
-                })
-            };
+            let c_str = unsafe { CStr::from_ptr(addr as *const i8) };
+    
+            let data = c_str.to_bytes();
 
             if data.len() == 0 {
                 return None;
             }
 
             if counter == nr {
-                return Some(String::from_utf8_lossy(data).to_string());
+                return Some(c_str.to_string_lossy().to_string());
             }
 
             addr += data.len() + 1;

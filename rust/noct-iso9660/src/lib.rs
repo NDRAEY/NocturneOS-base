@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+use core::ffi::CStr;
+
 use alloc::{string::String, vec::Vec};
 use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
 use noct_dpm_sys::Disk;
@@ -22,25 +24,8 @@ impl iso9660_simple::Read for ThatDisk {
 }
 
 fn raw_ptr_to_string(ptr: *const i8) -> String {
-    let rpath = unsafe {
-        core::slice::from_raw_parts(ptr as *const u8, {
-            let mut ln = 0;
-
-            loop {
-                let byte = ptr.add(ln).read_volatile();
-
-                if byte == 0 {
-                    break;
-                }
-
-                ln += 1;
-            }
-
-            ln
-        })
-    };
-
-    String::from_utf8(rpath.to_vec()).unwrap()
+    let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
+    c_str.to_string_lossy().into_owned()
 }
 
 #[inline]

@@ -50,6 +50,7 @@ void init_task_manager(void){
 	kernel_proc->threads_count = 1;
 
 	kernel_proc->name = strdynamize("kernel");
+	kernel_proc->cwd = strdynamize("R:/");
 	
     kernel_proc->suspend = false;
 
@@ -96,6 +97,9 @@ size_t create_process(void* entry_point, char* name, bool suspend, bool is_kerne
 	proc->threads_count = 0;
 
 	proc->name = strdynamize(name);
+
+    // Inherit path
+	proc->cwd = strdynamize(get_current_proc()->cwd);
     
 	proc->suspend = suspend;
 

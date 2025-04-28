@@ -66,7 +66,7 @@ impl Pavi {
         let im_w = self.image.width();
         let im_h = self.image.height();
 
-        qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
+        // qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
 
         match *self.render_mode.borrow() {
             ShowMode::BoundsX => {
@@ -101,10 +101,10 @@ impl Pavi {
             }
         }
 
-        qemu_note!(
-            "Mode: {:?}; X: {start_x}; Y: {start_y}; W: {width}; Height: {height}",
-            self.render_mode
-        );
+        // qemu_note!(
+        //     "Mode: {:?}; X: {start_x}; Y: {start_y}; W: {width}; Height: {height}",
+        //     self.render_mode
+        // );
 
         let new_image = self.image.scale_to_new(width, height);
 
