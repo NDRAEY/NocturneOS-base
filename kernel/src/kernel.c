@@ -477,7 +477,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
 //     char data[32] = {0};
 
-//     socket_t* srv_sock = socket_new(&server_addr, SOCKET_TCP);
+//     socket_t* srv_sock = socket_new(&server_addr, PROTO_TCP);
 //     socket_t* client_sock = socket_listen(srv_sock);
 
 //     if(client_sock) {
@@ -489,6 +489,7 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 //     int length = strlen(data);
 
 //     qemu_note("Received %d bytes with data: `%s`", length, data);
+//     socket_close(srv_sock);
 // }
 
 /*

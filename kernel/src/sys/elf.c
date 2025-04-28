@@ -172,15 +172,13 @@ int32_t spawn(const char *name, int argc, char* eargv[]) {
     extern uint32_t next_pid;
     extern list_t process_list, thread_list;
 
-//    vmm_debug_switch(true);
     process_t* proc = (process_t*)kcalloc(1, sizeof(process_t));
-//    vmm_debug_switch(false);
 
     proc->pid = next_pid++;
     proc->list_item.list = nullptr;  // No nested processes hehe :)
     proc->threads_count = 0;
 
-    strcpy(proc->name, name);
+    proc->name = strdynamize(name);
     proc->suspend = false;
 
     for (int32_t i = 0; i < elf_file->elf_header.e_phnum; i++) {
