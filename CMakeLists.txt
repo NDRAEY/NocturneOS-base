@@ -327,6 +327,7 @@ if(
             TARGET ${KERNEL}
             COMMAND strip -s ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
             COMMENT "Copying files..."
+			POST_BUILD
     )
 
     add_custom_target(
