@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-tty", "pavi"]
+members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
@@ -34,6 +34,7 @@ noct-noctfs = { path = "./noct-noctfs" }
 noct-sched = { path = "./noct-sched" }
 noct-ipc = { path = "./noct-ipc" }
 noct-smbios = { path = "./noct-smbios" }
+noct-timer = { path = "./noct-timer" }
 
 [profile.release]
 panic = "abort"

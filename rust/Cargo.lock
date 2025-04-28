@@ -394,6 +394,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-timer"
+version = "0.1.0"
+
+[[package]]
 name = "noct-tty"
 version = "0.1.0"
 dependencies = [
@@ -435,6 +439,7 @@ dependencies = [
  "noct-screen",
  "noct-smbios",
  "noct-tarfs",
+ "noct-timer",
  "noct-tty",
  "pavi",
  "raw-cpuid 11.5.0",

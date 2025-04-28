@@ -9,7 +9,7 @@ use x86::io::{inl, outl};
 
 use noct_tty::{print, println};
 
-use super::timer::timestamp;
+use noct_timer::timestamp;
 
 static PCI_ADDRESS_PORT: u16 = 0xCF8;
 static PCI_DATA_PORT: u16 = 0xCFC;
@@ -71,11 +71,7 @@ static PCI_DEVICE_TYPE_STRINGS: [(u8, u8, &str); 89] = [
     (0x08, 0x01, "Контроллер прямого доступа к памяти"),
     (0x08, 0x02, "Системный таймер"),
     (0x08, 0x03, "Часы реального времени"),
-    (
-        0x08,
-        0x04,
-        "Универсальный контроллер PCI с возможностью горячей замены",
-    ),
+    (0x08, 0x04, "Универсальный контроллер PCI (hot-plug)"),
     (0x08, 0x80, "Другая системная периферия"),
     (0x09, 0x00, "Контроллер клавиатуры"),
     (0x09, 0x01, "Цифровой преобразователь"),

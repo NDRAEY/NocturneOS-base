@@ -2,11 +2,11 @@
 #![no_main]
 
 #![allow(static_mut_refs)]
+#![allow(unused_imports)]
 
 extern crate alloc;
 
 use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
-use std::thread::spawn;
 
 pub mod audio;
 pub mod drv;
@@ -15,7 +15,6 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
-use noct_ipc::{manager::{create_named_channel, find_named_channel}, NamedChannel};
 pub use noct_iso9660;
 pub use noct_noctfs;
 pub use noct_psf;
@@ -25,8 +24,8 @@ pub use noct_tarfs;
 use noct_alloc::Allocator;
 pub use noct_logger::*;
 use noct_tty::println;
-use spin::Mutex;
-use system::timer::timestamp;
+
+pub use noct_ipc::manager::ipc_init;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

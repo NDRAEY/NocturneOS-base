@@ -76,7 +76,7 @@ fn process_input(context: &mut ShellContext) -> String {
         let raw_ch = unsafe { getchar() };
         let ch = char::from_u32(raw_ch).unwrap();
 
-        qemu_note!("Key is: {}", raw_ch);
+        // qemu_note!("Key is: {}", raw_ch);
 
         if ch == '\0' {
             continue;
