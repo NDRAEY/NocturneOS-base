@@ -219,7 +219,7 @@ void nvfs_dir_v2(const char* Name, FSM_DIR* dir) {
 
 	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
 
-	new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
+	// new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
 	
 	end:
 	kfree(vinfo);
