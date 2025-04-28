@@ -10,5 +10,5 @@ pub fn pavi(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> 
     let mut args = Vec::from(_args);
     args.insert(0, String::from("pavi"));
 
-    pavi_view(args.len() as _, &args)
+    pavi_view(&args)
 }

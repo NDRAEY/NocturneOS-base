@@ -13,6 +13,7 @@ pub fn meminfo(_context: &mut ShellContext, _args: &[String]) -> Result<(), usiz
     let p_free = data.free_physical();
     let v_used = data.used_virtual;
     let v_count = data.heap_allocated_count;
+    let h_pk_u = data.peak_heap_usage;
 
     println!("Физическая:");
     println!("    Используется: {} байт ({} KB | {} MB)", p_used, p_used >> 10, p_used >> 20);
@@ -21,6 +22,7 @@ pub fn meminfo(_context: &mut ShellContext, _args: &[String]) -> Result<(), usiz
     println!("Виртуальная:");
     println!("    {} записей", v_count);
     println!("    Используется: {} байт ({} KB | {} MB)", v_used, v_used >> 10, v_used >> 20);
+    println!("    Пиковое потребление: {} байт ({} KB | {} MB)", h_pk_u, h_pk_u >> 10, h_pk_u >> 20);
 
 
     Ok(())

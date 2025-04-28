@@ -17,6 +17,8 @@
 heap_t system_heap;
 bool vmm_debug = false;
 
+size_t peak_heap_usage = 0;
+
 size_t pmm_alloc_and_map_self(size_t *page_dir, size_t bytes)
 {
 	size_t count = ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE;
@@ -199,6 +201,8 @@ void *alloc_no_map(size_t size, size_t align)
 
 	system_heap.allocated_count++;
 	system_heap.used_memory += size;
+
+  peak_heap_usage = MAX(peak_heap_usage, system_heap.used_memory);
 
 	// end:
 

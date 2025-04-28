@@ -2,9 +2,18 @@
 
 extern crate alloc;
 
-use alloc::string::{String, ToString};
+use core::cell::RefCell;
+
+use alloc::{
+    format,
+    string::{String, ToString},
+};
+use gi_ui::{canvas::Canvas, components::text8x8::Text, draw::Draw, size::Size};
 use nimage::Image;
-use noct_input::{kbd::{parse_scancode, Key, SpecialKey}, keyboard_buffer_get};
+use noct_input::{
+    kbd::{Key, SpecialKey, parse_scancode},
+    keyboard_buffer_get,
+};
 use noct_logger::{qemu_err, qemu_log, qemu_note};
 use noct_tty::println;
 
@@ -13,10 +22,192 @@ enum ShowMode {
     Centered,
     BoundsX,
     BoundsY,
-    Stretch
+    Stretch,
 }
 
-pub fn pavi(_argc: usize, argv: &[String]) -> Result<(), usize> {
+struct Pavi {
+    filepath: String,
+    image: Image,
+    render_mode: RefCell<ShowMode>,
+}
+
+impl Pavi {
+    pub fn new(fpath: &String) -> Result<Self, String> {
+        let data = noct_fs::read(&fpath);
+
+        if let Err(e) = data {
+            // println!("{}: {}", fpath, e.to_string());
+            return Err(e.to_string());
+        }
+
+        let data = data.unwrap();
+
+        let image = nimage::tga::from_tga_data(data.as_slice());
+
+        if image.is_none() {
+            // println!("{}: Invalid file format.", fpath);
+            return Err("Invalid file format.".to_string());
+        }
+
+        let image = image.unwrap();
+
+        Ok(Self {
+            filepath: fpath.to_string(),
+            image,
+            render_mode: RefCell::new(ShowMode::BoundsX),
+        })
+    }
+
+    fn render_image(&self) {
+        let (mut start_x, mut start_y, mut width, mut height) = (0isize, 0isize, 0, 0);
+
+        let (scr_w, scr_h) = noct_screen::dimensions();
+
+        let im_w = self.image.width();
+        let im_h = self.image.height();
+
+        qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
+
+        match *self.render_mode.borrow() {
+            ShowMode::BoundsX => {
+                let diff = im_w as f64 / scr_w as f64;
+
+                width = scr_w;
+                height = (im_h as f64 / diff) as usize;
+
+                start_y = (scr_h as isize - height as isize) / 2;
+            }
+            ShowMode::BoundsY => {
+                let diff = im_h as f64 / scr_h as f64;
+
+                width = (im_w as f64 / diff) as usize;
+                height = scr_h;
+
+                start_x = (scr_w as isize - width as isize) / 2;
+            }
+            ShowMode::Stretch => {
+                (width, height) = (scr_w, scr_h);
+            }
+            ShowMode::Centered => {
+                if im_w < scr_w {
+                    start_x = (scr_w as isize - im_w as isize) / 2;
+                }
+
+                if im_h < scr_h {
+                    start_y = (scr_h as isize - im_h as isize) / 2;
+                }
+
+                (width, height) = (im_w, im_h);
+            }
+        }
+
+        qemu_note!(
+            "Mode: {:?}; X: {start_x}; Y: {start_y}; W: {width}; Height: {height}",
+            self.render_mode
+        );
+
+        let new_image = self.image.scale_to_new(width, height);
+
+        let mut text = Text::new()
+            .with_color(0xff_00ff00)
+            .with_kerning(1)
+            .with_size(12)
+            .with_text(&format!(
+                "{} - [{}x{}] ({:?})",
+                self.filepath,
+                self.image.width(),
+                self.image.height(),
+                self.render_mode.borrow()
+            ));
+
+        let mut canvas = Canvas::new(text.size().0, text.size().1);
+
+        text.draw(&mut canvas, 0, 0);
+
+        noct_screen::fill(0);
+
+        for x in 0..width {
+            for y in 0..height {
+                let pixel = new_image.get_pixel(x, y);
+
+                let mut pixel = pixel.unwrap_or(0) as u32;
+
+                if pixel == 0 {
+                    continue;
+                }
+
+                pixel =
+                    ((pixel & 0xff0000) >> 16) | (pixel & 0x00ff00) | ((pixel & 0x0000ff) << 16);
+
+                let rx = start_x + x as isize;
+                let ry = start_y + y as isize;
+
+                if rx < 0 || ry < 0 {
+                    continue;
+                }
+
+                noct_screen::set_pixel(rx as usize, ry as usize, pixel);
+            }
+        }
+
+        let csz = canvas.size();
+
+        for x in 0..csz.0 {
+            for y in 0..csz.1 {
+                let pixel = canvas.get_pixel(x, y).unwrap();
+
+                if (pixel & 0xFF000000) == 0 {
+                    continue;
+                }
+
+                noct_screen::set_pixel(x, y, pixel);
+            }
+        }
+    }
+
+    pub fn run(&self) {
+        self.render_image();
+
+        loop {
+            let ckey = unsafe { keyboard_buffer_get() };
+            let key = parse_scancode(ckey as u8);
+
+            if key.is_none() {
+                qemu_err!("Failed to parse key: {ckey}");
+                continue;
+            }
+
+            let (key, pressed) = key.unwrap();
+
+            if !pressed {
+                continue;
+            }
+
+            match key {
+                Key::Special(SpecialKey::ESCAPE) => {
+                    break;
+                }
+                Key::Character('t') => {
+                    let next_mode = match *self.render_mode.borrow() {
+                        ShowMode::BoundsX => ShowMode::BoundsY,
+                        ShowMode::BoundsY => ShowMode::Stretch,
+                        ShowMode::Stretch => ShowMode::Centered,
+                        ShowMode::Centered => ShowMode::BoundsX,
+                    };
+
+                    *self.render_mode.borrow_mut() = next_mode;
+
+                    self.render_image();
+                }
+                _ => {
+                    qemu_note!("Key {:?} is not supported yet", key);
+                }
+            }
+        }
+    }
+}
+
+pub fn pavi(argv: &[String]) -> Result<(), usize> {
     let filename = argv.iter().skip(1).last();
 
     if filename.is_none() {
@@ -26,136 +217,16 @@ pub fn pavi(_argc: usize, argv: &[String]) -> Result<(), usize> {
 
     let filename = filename.unwrap();
 
-    let data = noct_fs::read(filename);
+    let pavi = Pavi::new(filename);
 
-    if let Err(e) = data {
-        println!("{}: {}", filename, e.to_string());
-        return Err(1);
-    }
-    
-    let data = data.unwrap();
-
-
-    let image = nimage::tga::from_tga_data(data.as_slice());
-
-    if image.is_none() {
-        println!("{}: Invalid file format.", filename);
+    if let Err(e) = pavi {
+        println!("{filename}: {e}");
         return Err(1);
     }
 
-    let image = image.unwrap();
+    let pavi = pavi.unwrap();
 
-    let mut render_mode = ShowMode::BoundsX;
-    render_image(&image, &render_mode);
-    
-    loop {
-        let ckey = unsafe { keyboard_buffer_get() };
-        let key = parse_scancode(ckey as u8);
-
-        if key.is_none() {
-            qemu_err!("Failed to parse key: {ckey}");
-            continue;
-        }
-
-        let (key, pressed) = key.unwrap();
-
-        if !pressed {
-            continue;
-        }
-
-        match key {
-            Key::Special(SpecialKey::ESCAPE) => {
-                break;
-            }
-            Key::Character('t') => {
-                render_mode = match render_mode {
-                    ShowMode::BoundsX => ShowMode::BoundsY,
-                    ShowMode::BoundsY => ShowMode::Stretch,
-                    ShowMode::Stretch => ShowMode::Centered,
-                    ShowMode::Centered => ShowMode::BoundsX,
-                };
-
-                render_image(&image, &render_mode);
-            }
-            _ => {
-                qemu_note!("Key {:?} is not supported yet", key);
-            }
-        }
-    }
+    pavi.run();
 
     Ok(())
-}
-
-fn render_image(image: &Image, render_mode: &ShowMode) {
-    let (mut start_x, mut start_y, mut width, mut height) = (0isize, 0isize, 0, 0);
-
-    let (scr_w, scr_h) = noct_screen::dimensions();
-
-    let im_w = image.width();
-    let im_h = image.height();
-
-    qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
-
-    match render_mode {
-        ShowMode::BoundsX => {
-            let diff = im_w as f64 / scr_w as f64;
-            
-            width = scr_w;
-            height = (im_h as f64 / diff) as usize;
-
-            start_y = (scr_h as isize - height as isize) / 2;
-        },
-        ShowMode::BoundsY => {
-            let diff = im_h as f64 / scr_h as f64;
-
-            width = (im_w as f64 / diff) as usize;
-            height = scr_h;
-
-            start_x = (scr_w as isize - width as isize) / 2;
-        },
-        ShowMode::Stretch => {
-            (width, height) = (scr_w, scr_h);
-        },
-        ShowMode::Centered => {
-            if im_w < scr_w  {
-                start_x = (scr_w as isize - im_w as isize) / 2;
-            }
-
-            if im_h < scr_h {
-                start_y = (scr_h as isize - im_h as isize) / 2;
-            }
-
-            (width, height) = (im_w, im_h);
-        }
-    }
-
-    qemu_note!("Mode: {render_mode:?}; X: {start_x}; Y: {start_y}; W: {width}; Height: {height}");
-
-    let mut new_image = image.clone();
-    new_image.scale(width, height);
-
-    noct_screen::fill(0);
-
-    for x in 0..width {
-        for y in 0..height {
-            let pixel = new_image.get_pixel(x, y);
-
-            let mut pixel = pixel.unwrap_or(0) as u32;
-
-            if pixel == 0 {
-                continue;
-            }
-
-            pixel = ((pixel & 0xff0000) >> 16) | ((pixel & 0x00ff00)) | ((pixel & 0x0000ff) << 16);
-
-            let rx = start_x + x as isize;
-            let ry = start_y + y as isize;
-
-            if rx < 0 || ry < 0 {
-                continue;
-            }
-
-            noct_screen::set_pixel(rx as usize, ry as usize, pixel);
-        }
-    }
 }
