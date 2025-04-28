@@ -36,7 +36,7 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
         let fsize = file.file.Size;
 
         println!("{} [{:4}] [{:8} bytes]\t{}", fdatetime.format(), {
-            if ftype as u32 == FSM_ENTITY_TYPE_TYPE_DIR { "DIR" } else { "FILE" }
+            if ftype == FSM_ENTITY_TYPE_TYPE_DIR { "DIR" } else { "FILE" }
         }, fsize, file.name);
     }
 

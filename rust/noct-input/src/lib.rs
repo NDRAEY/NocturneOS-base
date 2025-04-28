@@ -1,6 +1,7 @@
 #![no_std]
 #![allow(static_mut_refs)]
 
+pub mod kbd;
 
 ///////////////////////////
 unsafe extern "C" {

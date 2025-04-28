@@ -85,16 +85,14 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     let ftype = tarfs_type_to_fsm_type(entry._type);
 
-    let result = FSM_FILE::with_data(
+    FSM_FILE::with_data(
         entry.name,
         0,
         entry.size as _,
         None,
         ftype as _,
         FSM_MOD_READ,
-    );
-
-    result
+    )
 }
 
 unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {

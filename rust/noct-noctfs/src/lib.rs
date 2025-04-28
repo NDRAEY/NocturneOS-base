@@ -4,9 +4,8 @@ extern crate alloc;
 
 use alloc::{string::String, vec::Vec};
 use disk_device::DiskDevice;
-use noct_dpm_sys::Disk;
 use noct_fs_sys::{FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ};
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
+use noct_logger::qemu_note;
 use noctfs::{NoctFS, entity::Entity};
 
 pub mod disk_device;

@@ -3,8 +3,6 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use noct_logger::qemu_note;
-
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub fn fill(color: u32) {
