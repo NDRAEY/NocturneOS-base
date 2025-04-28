@@ -14,7 +14,6 @@ pub struct Allocator;
 unsafe impl GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let ptr = kmalloc_common(layout.size(), layout.align());
-        // core::slice::from_raw_parts_mut(ptr as *mut u8, layout.size()).fill(0);
 
         if ptr.is_null() {
             panic!("Failed to allocate memory");

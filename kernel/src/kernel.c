@@ -10,7 +10,6 @@
 #include "kernel.h"
 
 #include <drv/fpu.h>
-#include <lib/php/explode.h>
 #include <sys/unwind.h>
 
 #include "io/ports.h"

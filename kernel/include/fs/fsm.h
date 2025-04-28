@@ -92,5 +92,4 @@ int fsm_delete(int FIndex, char DIndex, const char *Name, int Mode);
 int fsm_create(int FIndex, char DIndex, const char *Name, int Mode);
 void fsm_dump(FSM_FILE file);
 void fsm_dir(int FIndex, const char DIndex, const char *Name, FSM_DIR *out);
-int fsm_isPathToFile(const char *Path, const char *Name);
 void fsm_dpm_update(char Letter);

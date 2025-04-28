@@ -14,7 +14,6 @@
 
 #include "../lib/libstring/include/string.h"
 #include "mem/vmm.h"
-#include "lib/php/explode.h"
 #include "fs/fsm.h"
 
 bool nvfs_debug = false;

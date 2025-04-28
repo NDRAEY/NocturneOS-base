@@ -11,7 +11,6 @@
 #include <fs/fsm.h>
 #include <lib/php/pathinfo.h>
 #include "lib/php/str_contains.h"
-#include "lib/php/explode.h"
 #include "lib/sprintf.h"
 #include "mem/vmm.h"
 
@@ -25,28 +24,6 @@ bool fsm_debug = false;
 
 void fsm_init() {
     fsm_entries = vector_new();
-}
-
-int fsm_isPathToFile(const char* Path, const char* Name){
-	char* zpath = pathinfo(Name, PATHINFO_DIRNAME);					/// Получаем родительскую папку элемента
-	char* bpath = pathinfo(Name, PATHINFO_BASENAME);				/// Получаем имя файла (или пустоту если папка)
-	bool   isCheck1 = strcmpn(zpath,Path);				/// Проверяем совпадение путей
-	bool   isCheck2 = strlen(bpath) == 0;				/// Проверяем, что путе нет ничего лишнего (будет 0, если просто папка)
-	bool   isCheck3 = str_contains(Name, Path);	/// Проверяем наличие, вхождения путя
-	size_t c1 = str_cdsp2(Path,'\\');
-	size_t c2 = str_cdsp2(Name,'\\');
-	size_t c3 = str_cdsp2(Path,'/');
-	size_t c4 = str_cdsp2(Name,'/');
-	
-	bool   isCheck4 = ((c2 - c1) == 1) && (c4 == c3);
-	bool   isCheck5 = ((c4 - c3) == 1) && (c2 == c1);
-
-    bool isPassed = ((isCheck1 && !isCheck2 && isCheck3) || (!isCheck1 && isCheck2 && isCheck3 && (isCheck4 || isCheck5)));
-
-	kfree(zpath);
-	kfree(bpath);
-
-	return isPassed;
 }
 
 int fsm_getIDbyName(const char* Name){
