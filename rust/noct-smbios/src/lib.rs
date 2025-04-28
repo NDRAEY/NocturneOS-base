@@ -177,6 +177,48 @@ impl SMBIOS {
                         rom_size: firmware_rom_size as usize,
                     });
                 }
+                1 => {
+                    let manufacturer = data[0x4];
+                    let product_name = data[0x5];
+                    let version = data[0x6];
+                    let serial_number = data[0x7];
+                    let uuid: &[u8] = &data[0x8..0x18];
+                    let sku = data[0x19];
+                    let family = data[0x1A];
+
+                    let manufacturer = self
+                        .parse_string(table_end as _, manufacturer as _)
+                        .unwrap_or("Unknown".to_string());
+                    let product_name = self
+                        .parse_string(table_end as _, product_name as _)
+                        .unwrap_or("Unknown".to_string());
+                    let version = self
+                        .parse_string(table_end as _, version as _)
+                        .unwrap_or("Unknown".to_string());
+                    let serial_number = self
+                        .parse_string(table_end as _, serial_number as _)
+                        .unwrap_or("Unknown".to_string());
+                    let sku = self
+                        .parse_string(table_end as _, sku as _)
+                        .unwrap_or("Unknown".to_string());
+                    let family = self
+                        .parse_string(table_end as _, family as _)
+                        .unwrap_or("Unknown".to_string());
+
+                    entries.push(SMBIOSEntry::System {
+                        manufacturer,
+                        product_name,
+                        version,
+                        serial_number,
+                        uuid: {
+                            let mut n_uuid = [0u8; 16];
+                            n_uuid.copy_from_slice(uuid);
+                            n_uuid
+                        },
+                        sku,
+                        family,
+                    });
+                }
                 _ => (),
             }
 
