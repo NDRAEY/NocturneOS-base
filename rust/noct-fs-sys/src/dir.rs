@@ -24,7 +24,7 @@ impl Directory<'_> {
             return None;
         }
 
-        qemu_note!("Data: {:#?}", data);
+        // qemu_note!("Data: {:#?}", data);
 
         let dirs = data.CountDir;
         let files = data.CountFiles;

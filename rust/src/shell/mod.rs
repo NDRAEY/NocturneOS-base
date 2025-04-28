@@ -69,7 +69,7 @@ fn help(_ctx: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
     Ok(())
 }
 
-fn process_input(_context: &mut ShellContext) -> String {
+fn process_input(context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
     loop {
@@ -116,12 +116,28 @@ fn process_input(_context: &mut ShellContext) -> String {
 
             qemu_note!("Completions: {:?}", completions);
 
-            if completions.len() == 1 {
+            if completions.is_empty() {
+                qemu_note!("No variants found.");
+            } else if completions.len() == 1 {
                 // Apply it
-                todo!("Apply it!");
+                let completion = &completions[0];
+                let remnant = &completion[stem.len()..];
+
+                input.push_str(remnant);
+
+                print!("{}", remnant);
             } else {
                 // Show variants
-                todo!("Show variants!");
+
+                println!("\n- Available variants:");
+                
+                for i in &completions {
+                    print!("{i} ");
+                }
+
+                println!();
+
+                print!("{}> {input}", context.current_path.as_str());
             }
 
             continue;

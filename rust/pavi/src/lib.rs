@@ -45,9 +45,6 @@ pub fn pavi(_argc: usize, argv: &[String]) -> Result<(), usize> {
 
     let image = image.unwrap();
 
-    // let (screen_width, screen_height) = noct_screen::dimensions();
-    // noct_screen::set_pixel(x, y, color);
-
     let mut render_mode = ShowMode::BoundsX;
     render_image(&image, &render_mode);
     
