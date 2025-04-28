@@ -10,10 +10,14 @@ publish = false
 [workspace]
 members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
 
+[target.'cfg(target_arch = "x86")'.dependencies]
+x86 = "0.52.0"
+raw-cpuid = "11.4.0"
+noct-smbios = { path = "./noct-smbios" }
+
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.10.0"
-x86 = "0.52.0"
 noct-alloc = { path = "./noct-alloc" }
 noct-fs-sys = { path = "./noct-fs-sys" }
 noct-dpm-sys = { path = "./noct-dpm-sys" }
@@ -21,7 +25,6 @@ noct-logger = { path = "./noct-logger" }
 noct-path = { path = "./noct-path" }
 noct-iso9660 = { path = "./noct-iso9660" }
 noct-screen = { path = "./noct-screen" }
-raw-cpuid = "11.4.0"
 elf = { version = "0.7.4", default-features = false }
 noct-tarfs = { path = "./noct-tarfs" }
 noct-fileio = { path = "./noct-fileio" }
@@ -33,7 +36,6 @@ noct-psf = { path = "./noct-psf" }
 noct-noctfs = { path = "./noct-noctfs" }
 noct-sched = { path = "./noct-sched" }
 noct-ipc = { path = "./noct-ipc" }
-noct-smbios = { path = "./noct-smbios" }
 noct-timer = { path = "./noct-timer" }
 
 [profile.release]
