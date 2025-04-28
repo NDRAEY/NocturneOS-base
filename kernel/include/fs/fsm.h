@@ -39,7 +39,7 @@ typedef struct
 	size_t CountFiles; /// Количество файлов
 	size_t CountDir;   /// Количество папок
 	size_t CountOther; /// Количество неизвестного типа файлов
-	const FSM_FILE *Files;   /// Файлы и папки
+	FSM_FILE *Files;   /// Файлы и папки
 } __attribute__((packed)) FSM_DIR;
 
 /// Буква, Название, откуда, сколько, буфер

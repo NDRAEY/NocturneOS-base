@@ -163,7 +163,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
 
-        /* Create new thread handler */
+    /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
 
     /* Initialization of thread  */
@@ -258,6 +258,27 @@ void thread_exit(thread_t* thread){
 
 	/* Jump to switch_task() */
 	__asm__ volatile ("call *%ecx");
+}
+
+bool process_exists(size_t pid) {
+    process_t* proc = get_current_proc();
+
+    do {
+        if(proc->pid == pid) {
+            return true;
+        }
+
+        proc = proc->list_item.next;
+    } while(proc != NULL && proc->pid != 0);
+
+    return false;
+}
+
+void process_wait(size_t pid) {
+    while(process_exists(pid)) {
+        __asm__ volatile("nop");
+        yield();
+    }
 }
 
 bool is_multitask(void){

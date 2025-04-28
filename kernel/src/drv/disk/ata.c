@@ -141,7 +141,7 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 		
 			outb(io + ATA_REG_COMMAND, ATA_CMD_IDENTIFY_PACKET);
 			 
-            for(int i = 0; i < 256; i++) {
+            for(register int i = 0; i < 256; i++) {
                 *(uint16_t *)(ide_buf + i) = inw(io + ATA_REG_DATA);
             }
 
