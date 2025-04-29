@@ -18,6 +18,14 @@ impl process_t {
     }
 }
 
+#[inline]
 pub fn me() -> &'static process_t {
     unsafe { &*get_current_proc() }
+}
+
+#[inline]
+pub fn task_yield() {
+    unsafe {
+        task_switch_v2_wrapper(core::mem::zeroed::<registers>());
+    };
 }

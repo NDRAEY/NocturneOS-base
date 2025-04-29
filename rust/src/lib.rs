@@ -1,8 +1,8 @@
 #![no_std]
 #![no_main]
 
-#![allow(static_mut_refs)]
 #![allow(unused_imports)]
+#![allow(static_mut_refs)]
 
 extern crate alloc;
 

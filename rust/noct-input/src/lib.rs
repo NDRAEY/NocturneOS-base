@@ -1,28 +1,15 @@
 #![no_std]
 #![allow(static_mut_refs)]
 
-pub mod kbd;
-
-///////////////////////////
-unsafe extern "C" {
-fn task_switch_v2_wrapper();
-}
-
-#[inline]
-pub fn task_yield() {
-    unsafe {
-        task_switch_v2_wrapper();
-    };
-}
-///////////////////////////
-
-
 extern crate alloc;
 
 use core::cell::OnceCell;
 use alloc::vec::Vec;
 
 use noct_logger::{qemu_err, qemu_ok};
+use noct_sched::task_yield;
+
+pub mod kbd;
 
 /// Global keyboard buffer (kernel-wide). Used everywhere.
 static mut KEYBOARD_BUFFER: OnceCell<KeyboardBuffer> = OnceCell::new();

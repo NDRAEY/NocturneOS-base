@@ -302,6 +302,8 @@ name = "noct-input"
 version = "0.1.0"
 dependencies = [
  "noct-logger",
+ "noct-sched",
+ "spin 0.10.0",
 ]
 
 [[package]]
