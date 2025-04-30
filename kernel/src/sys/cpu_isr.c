@@ -58,21 +58,21 @@ _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint3
 }
 
 _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t code){
-    qemu_log("=== ЯДРО УПАЛО =======================================\n");
-    qemu_log("| ");
-    qemu_log("| Наименование: %s",title);
-    qemu_log("| Код ошибки: %x",code);
-    qemu_log("| Сообщение: %s",msg);
-    qemu_log("| EAX: %x",regs.eax);
-    qemu_log("| EBX: %x",regs.ebx);
-    qemu_log("| ECX: %x",regs.ecx);
-    qemu_log("| EDX: %x",regs.edx);
-    qemu_log("| ESP: %x",regs.esp);
-    qemu_log("| EBP: %x",regs.ebp);
-    qemu_log("| EIP: %x",regs.eip);
-    qemu_log("| EFLAGS: %x",regs.eflags);
-    qemu_log("| ");
-    qemu_log("======================================================\n");
+    qemu_printf("=== ЯДРО УПАЛО =======================================\n");
+    qemu_printf("| \n");
+    qemu_printf("| Наименование: %s\n",title);
+    qemu_printf("| Код ошибки: %x\n",code);
+    qemu_printf("| Сообщение: %s\n",msg);
+    qemu_printf("| EAX: %x\n",regs.eax);
+    qemu_printf("| EBX: %x\n",regs.ebx);
+    qemu_printf("| ECX: %x\n",regs.ecx);
+    qemu_printf("| EDX: %x\n",regs.edx);
+    qemu_printf("| ESP: %x\n",regs.esp);
+    qemu_printf("| EBP: %x\n",regs.ebp);
+    qemu_printf("| EIP: %x\n",regs.eip);
+    qemu_printf("| EFLAGS: %x\n",regs.eflags);
+    qemu_printf("| \n");
+    qemu_printf("======================================================\n");
 
     qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
 
@@ -100,12 +100,14 @@ void print_regs(registers_t regs) {
 void division_by_zero(registers_t regs)
 {
     qemu_log("Exception: DIVISION BY ZERO\n");
-    print_regs(regs);      bsod_screen(regs,"CRITICAL_ERROR_DZ_DIVISION_BY_ZERO","Деление на ноль",regs.eax);
+    print_regs(regs);
+    bsod_screen(regs,"CRITICAL_ERROR_DZ_DIVISION_BY_ZERO","Деление на ноль",regs.eax);
 }
 
-void fault_opcode(registers_t regs){
+void fault_opcode(registers_t regs) {
     qemu_log("FAULT OPERATION CODE...\n");
-    print_regs(regs);      bsod_screen(regs,"CRITICAL_ERROR_UD_FAULT_OPERATION_CODE","Невалидный код",regs.eax);
+    print_regs(regs);
+    bsod_screen(regs,"CRITICAL_ERROR_UD_FAULT_OPERATION_CODE","Невалидный код",regs.eax);
 }
 
 void double_error(registers_t regs){

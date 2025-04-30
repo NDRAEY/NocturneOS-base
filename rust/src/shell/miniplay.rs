@@ -26,5 +26,5 @@ pub fn miniplay_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), u
 }
 
 pub fn mp(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
-    miniplay_w(_context, &["R:/i.wav".to_string()])
+    miniplay_w(_context, &["R:/test_sound.wav".to_string()])
 }

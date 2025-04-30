@@ -47,11 +47,21 @@ void vmm_init()
 		qemu_warn("The heap is beyond kernel space address, moving heap!");
 
 		system_heap.start = ALIGN(real_end, PAGE_SIZE);
-
-		qemu_note("Now heap starts at: %x", system_heap.start);
 	}
 
+	// size_t arena = system_heap.start;
+
+	// system_heap.start += PAGE_SIZE;
+
+	qemu_note("Now heap starts at: %x", system_heap.start);
+
 	system_heap.memory = (struct heap_entry *)pmm_alloc_and_map_self(get_kernel_page_directory(), PAGE_SIZE);
+
+	// size_t p_pages = phys_alloc_single_page();
+
+	// map_pages(get_kernel_page_directory(), p_pages, system_heap.start, PAGE_SIZE, PAGE_WRITEABLE);
+
+	// system_heap.memory = (struct heap_entry *)arena;
 
 	memset(system_heap.memory, 0, PAGE_SIZE);
 

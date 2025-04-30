@@ -46,3 +46,6 @@ void clean_screen();
 void clean_tty_screen();
 void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, size_t y, size_t color);
 void clean_tty_screen_no_update();
+
+void tty_set_autoupdate(bool value);
+bool tty_get_autoupdate();

@@ -33,6 +33,7 @@ uint32_t tty_off_pos_h = 16;					/// ...
 uint32_t tty_text_color;				/// Текущий цвет шрифта
 uint32_t tty_bg_color;                  /// Текущий задний фон
 bool stateTTY = true;					/// Статус, разрешен ли вывод текста через tty_printf
+static bool tty_autoupdate = true;
 /////////////////////////////////
 
 // TODO: Move to things/cursor.c
@@ -188,7 +189,9 @@ void _tty_putchar(uint16_t c) {
             tty_scroll(1);
         }
 
-        punch();
+        if(tty_autoupdate) {
+            punch();
+        }
     } else if (c == '\t') {
         tty_pos_x += 4 * tty_off_pos_h;
     } else if(c == '\b') {
@@ -323,4 +326,13 @@ void clean_tty_screen() {
 
 void screen_update() {
     punch();
+}
+
+
+void tty_set_autoupdate(bool value) {
+    tty_autoupdate = value;
+}
+
+bool tty_get_autoupdate() {
+    return tty_autoupdate;
 }

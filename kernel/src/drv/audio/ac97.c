@@ -216,7 +216,6 @@ void ac97_WriteAll(void* buffer, size_t size) {
     qemu_log("Start");
 
     size_t loaded = 0;
-	ac97_set_play_sound(false);
     // ac97_reset_channel();
 
     while(loaded < size) {

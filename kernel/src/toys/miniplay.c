@@ -6,6 +6,8 @@
 #include "sys/scheduler.h"
 #include "sys/timer.h"
 #include "lib/stdio.h"
+#include "lib/keymap.h"
+#include "io/keyboard.h"
 
 char* miniplay_filename;
 size_t miniplay_pages_total = 0;
@@ -16,7 +18,7 @@ WAVHeader miniplay_hdr;
 
 size_t miniplay_anim_pos = 0;
 
-#define BUFFER_SIZE (256 << 10)
+#define BUFFER_SIZE (128 << 10)
 
 // Duration = File Size / (Sample Rate * Number of Channels * Sample Width)
 
@@ -92,16 +94,16 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	fseek(file, 0xae, SEEK_SET);
 	
 	
-	//char* data = kmalloc(BUFFER_SIZE);
-	char* data = kmalloc(miniplay_filesize);
+	char* data = kmalloc(BUFFER_SIZE);
+	// char* data = kmalloc(miniplay_filesize);
 
-	fread(file, miniplay_filesize, 1, data);
-	// memset(data, 0, miniplay_filesize);
+	// fread(file, miniplay_filesize, 1, data);
 
 	set_cursor_enabled(false);
+	tty_set_autoupdate(false);
 
     // Thread.
-	//thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true, false);
+	thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true, false);
 
 	ac97_set_pcm_sample_rate(miniplay_hdr.sampleRate);
 
@@ -110,10 +112,13 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 	miniplay_timestamp = timestamp();
 
-  /*
 	size_t counter = 0;
 
 	while (counter < miniplay_filesize) {
+		if(keyboard_buffer_get_or_nothing() == KEY_ESC) {
+			break;
+		}
+
 		qemu_printf("%d/%d\n", counter, miniplay_filesize);
 
 		size_t writesize = MIN(BUFFER_SIZE, miniplay_filesize - counter);
@@ -123,23 +128,21 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 		counter += writesize;
 	}
-  */
 
-	ac97_WriteAll(data, miniplay_filesize);
+	// ac97_WriteAll(data, miniplay_filesize);
 
 	ac97_set_play_sound(false);
 	ac97_clear_status_register();
-	// ac97_reset_channel();
-    // ac97_FillBDLs();
 
 	kfree(data);
 	fclose(file);
 
-	//thread_exit(display_thread);
+	thread_exit(display_thread);
 
 	clean_tty_screen();
 
 	set_cursor_enabled(true);
+	tty_set_autoupdate(true);
 
 	return 0;
 }
