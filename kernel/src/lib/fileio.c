@@ -178,7 +178,7 @@ uint32_t fileperms(const char* Path){
  */
 bool touch(const char* Path){
     FSM_FILE file = nvfs_info(Path);
-    return nvfs_create(Path, 0);
+    return nvfs_create(Path, TYPE_FILE);
 }
 
 
@@ -190,7 +190,7 @@ bool touch(const char* Path){
  * @return bool - true - если успешно, в противном случае false
  */
 bool mkdir(const char* Path){
-    return nvfs_create(Path, 1);
+    return nvfs_create(Path, TYPE_DIR);
 }
 
 /**

@@ -93,6 +93,18 @@ impl FSM_DIR {
             Files: ptr as *mut FSM_FILE,
         }
     }
+
+    pub fn missing() -> Self {
+        // `core::mem::zeroed`?
+        FSM_DIR {
+            Ready: false,
+            CountFiles: 0,
+            CountDir: 0,
+            CountOther: 0,
+            Files: core::ptr::null_mut(),
+        }
+    }
+
 }
 
 impl FSM_TIME {

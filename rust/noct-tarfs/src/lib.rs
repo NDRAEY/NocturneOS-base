@@ -113,7 +113,14 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    let data = fl.list_by_path_shallow(&path).unwrap();
+    let data = fl.list_by_path_shallow(&path);
+
+    if data.is_err() {
+        *out = FSM_DIR::missing();
+        return;
+    }
+
+    let data = data.unwrap();
 
     let files: Vec<FSM_FILE> = data
         .iter()

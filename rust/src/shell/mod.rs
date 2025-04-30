@@ -165,7 +165,9 @@ fn suggest_completions(stem: &str) -> Vec<String> {
 
         let mut path = Path::from_path(stem).unwrap();
 
-        path.parent();
+        if !stem.ends_with('/') {
+            path.parent();
+        }
 
         qemu_note!("List all occurencies of `{}` in `{}`", stem, path.as_str());
 
@@ -287,5 +289,5 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
         }
     }
 
-    println!("Command: `{}`, Arguments: {:?}", command, arguments);
+    // println!("Command: `{}`, Arguments: {:?}", command, arguments);
 }

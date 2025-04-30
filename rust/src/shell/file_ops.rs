@@ -26,7 +26,10 @@ pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), us
 
     match noct_fileio::create_new_file(dir.as_str()) {
         Some(()) => Ok(()),
-        None => Err(1),
+        None => {
+            println!("Failed to create file: {}", dir);
+            Err(1)
+        },
     }
 }
 

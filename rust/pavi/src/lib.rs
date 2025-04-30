@@ -113,11 +113,12 @@ impl Pavi {
             .with_kerning(1)
             .with_size(12)
             .with_text(&format!(
-                "{} - [{}x{}] ({:?})",
+                "{} - [{}x{}] ({:?} | {:?})",
                 self.filepath,
                 self.image.width(),
                 self.image.height(),
-                self.render_mode.borrow()
+                self.render_mode.borrow(),
+                self.image.pixel_format()
             ));
 
         let mut canvas = Canvas::new(text.size().0, text.size().1);
@@ -211,7 +212,9 @@ pub fn pavi(argv: &[String]) -> Result<(), usize> {
     let filename = argv.iter().skip(1).last();
 
     if filename.is_none() {
-        println!("Failed to open file!");
+        println!("Provide a file!");
+        println!("Usage: pavi <filename>");
+
         return Err(1);
     }
 

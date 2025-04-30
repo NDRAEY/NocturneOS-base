@@ -53,7 +53,6 @@
 
 #include <fs/fsm.h>
 
-#include <fs/milla.h>
 #include <fs/fat32.h>
 #include <fs/nvfs.h>
 #include <fs/tempfs.h>

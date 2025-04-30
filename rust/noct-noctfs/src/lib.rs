@@ -4,9 +4,11 @@ extern crate alloc;
 
 use core::ffi::CStr;
 
-use alloc::{string::String, vec::Vec};
+use alloc::{string::{String, ToString}, vec::Vec};
 use disk_device::DiskDevice;
-use noct_fs_sys::{FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ};
+use noct_fs_sys::{
+    FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
+};
 use noct_logger::qemu_note;
 use noctfs::{NoctFS, entity::Entity};
 
@@ -17,7 +19,6 @@ static FSNAME: &[u8] = b"NoctFS\0";
 fn raw_ptr_to_string(ptr: *const i8) -> String {
     let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
     c_str.to_string_lossy().into_owned()
-
 }
 
 unsafe extern "C" fn fun_read(
@@ -32,7 +33,7 @@ unsafe extern "C" fn fun_read(
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap().1;
+    let entity = find_by_path(&mut fs, &raw_ptr_to_string(path)).unwrap().1;
 
     let outbuf = unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
 
@@ -54,7 +55,7 @@ unsafe extern "C" fn fun_write(
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let (parent, entity) = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap();
+    let (parent, entity) = find_by_path(&mut fs, &raw_ptr_to_string(path)).unwrap();
 
     let outbuf = unsafe { core::slice::from_raw_parts(buffer as *const u8, count as _) };
 
@@ -70,7 +71,13 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let entity = find_by_path(&mut fs, raw_ptr_to_string(path)).unwrap().1;
+    let entity = find_by_path(&mut fs, &raw_ptr_to_string(path));
+
+    if entity.is_none() {
+        return FSM_FILE::missing();
+    }
+
+    let entity = entity.unwrap().1;
 
     qemu_note!("{entity:#x?}");
 
@@ -90,15 +97,53 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {
-    todo!()
+unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
+    let path = raw_ptr_to_string(path);
+    qemu_note!("Create: {}", &path);
+
+    let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+
+    let mut diskdev = DiskDevice::new(disk);
+    let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
+
+    let (path, name) = {
+        let mut rest_path = path.split('/').filter(|a| !a.is_empty()).rev().skip(1).collect::<Vec<&str>>().iter().rev().map(|&a| String::from(a)).collect::<Vec<_>>().join("/");
+        let name = path.split('/').filter(|a| !a.is_empty()).last().unwrap();
+
+        if rest_path.is_empty() {
+            rest_path = "/".to_string();
+        }
+
+        (rest_path, name)
+    };
+
+    qemu_note!("Path: {path:?}; Name: {name:?}");
+
+    let directory_block = match find_by_path(&mut fs, &path).map(|a| a.1) {
+        Some(blk) => blk,
+        None => return 0
+    }.start_block;
+
+    match mode {
+        FSM_ENTITY_TYPE_TYPE_DIR => {
+            fs.create_directory(directory_block, name);
+        }
+        FSM_ENTITY_TYPE_TYPE_FILE => {
+            fs.create_file(directory_block, name);
+        }
+        _ => {
+            panic!("create: Unknown type: {}", mode);
+        }
+    };
+
+    return 1;
 }
 
 unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
     todo!()
 }
 
-fn find_by_path(fs: &mut NoctFS<'_>, path: String) -> Option<(Entity, Entity)> {
+fn find_by_path(fs: &mut NoctFS<'_>, path: &String) -> Option<(Entity, Entity)> {
     let mut initial = fs.get_root_entity().unwrap();
     let mut previous = initial.clone();
 
@@ -133,7 +178,7 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
     let mut diskdev = DiskDevice::new(disk);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
-    let directory_block = find_by_path(&mut fs, raw_ptr_to_string(_b)).map(|a| a.1);
+    let directory_block = find_by_path(&mut fs, &raw_ptr_to_string(_b)).map(|a| a.1);
     let entities = fs.list_directory(directory_block.unwrap().start_block);
 
     let files: Vec<FSM_FILE> = entities

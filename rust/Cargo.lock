@@ -152,7 +152,7 @@ checksum = "875488b8711a968268c7cf5d139578713097ca4635a76044e8fe8eedf831d07e"
 [[package]]
 name = "gi-derive"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#0766ca6ac60e261050ba67b4860ba3afbf5bd819"
+source = "git+https://github.com/NDRAEY/gi-ui#bc9a06f29e15ab73f2ed3f0fa9ba8be02a8897f9"
 dependencies = [
  "quote",
  "syn",
@@ -161,7 +161,7 @@ dependencies = [
 [[package]]
 name = "gi-ui"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#0766ca6ac60e261050ba67b4860ba3afbf5bd819"
+source = "git+https://github.com/NDRAEY/gi-ui#bc9a06f29e15ab73f2ed3f0fa9ba8be02a8897f9"
 dependencies = [
  "embedded-graphics",
  "font8x8",
@@ -251,9 +251,9 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "nimage"
-version = "0.1.6"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b5c776a662994939e22161c87a9ed01ac8e4ee1a20915931ff9c40ec6606c58"
+checksum = "3e53eca12f9a379c484351fb57625529fe61343428331a35513f4baaf963d99b"
 dependencies = [
  "tinytga",
 ]
