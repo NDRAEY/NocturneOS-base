@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "noct-alloc", "noct-dpm-sys", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
+members = [ "noct-alloc", "noct-dpm-sys", "noct-elfloader", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
 
 [target.'cfg(target_arch = "x86")'.dependencies]
 x86 = "0.52.0"
@@ -37,6 +37,7 @@ noct-noctfs = { path = "./noct-noctfs" }
 noct-sched = { path = "./noct-sched" }
 noct-ipc = { path = "./noct-ipc" }
 noct-timer = { path = "./noct-timer" }
+noct-elfloader = { path = "./noct-elfloader" }
 
 [profile.release]
 panic = "abort"

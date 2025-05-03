@@ -142,7 +142,7 @@ int32_t run_elf_file(const char *name, int argc, char* eargv[]) {
     qemu_log("Program returned: %d", _result);
     qemu_log("Cleaning VMM:");
 
-    for (int32_t i = 0; i < vmm_allocated_count; i++){
+    for (int32_t i = 0; i < vmm_allocated_count; i++) {
         qemu_log("\tCleaning %d: %x [%d]", i, vmm_allocated[i], vmm_sizes[i]);
 		for(int j = 0; j < vmm_sizes[i]; j++) {
 			unmap_single_page(get_kernel_page_directory(), vmm_mapped[i] + (j * PAGE_SIZE));

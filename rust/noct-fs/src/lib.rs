@@ -25,7 +25,7 @@ unsafe extern "C" {
     fn fopen(filename: *const u8, mode: *const u8) -> *mut CFile;
     fn fclose(stream: *mut CFile);
     fn fsize(stream: *mut CFile) -> usize;
-    fn fread(stream: *mut CFile, count: isize, size: usize, buffer: *mut c_void) -> i32;
+    fn fread(stream: *mut CFile, count: usize, size: usize, buffer: *mut c_void) -> i32;
 
     fn mkdir(path: *const i8) -> bool;
 }
@@ -73,7 +73,7 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
 }
 
 
-pub fn read(file_path: &str) -> Result<Vec<u8>, &str> {
+pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
     let mut file_path_string = String::from(file_path);
     file_path_string.push('\0');
 
@@ -84,11 +84,11 @@ pub fn read(file_path: &str) -> Result<Vec<u8>, &str> {
     }
 
     let size = unsafe { fsize(file) };
-    let mut buffer: Vec<u8> = vec![0; size + 1]; // Создаем буфер для строки
+    let mut buffer: Vec<u8> = vec![0; size];
     let ptr = buffer.as_mut_ptr() as *mut c_void;
 
     unsafe {
-        fread(file, 1, size, ptr);
+        fread(file, size, 1, ptr);
 
         fclose(file);
     }

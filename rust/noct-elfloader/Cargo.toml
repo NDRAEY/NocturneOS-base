@@ -1,0 +1,10 @@
+[package]
+name = "noct-elfloader"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+elf = { version = "0.7.4", default-features = false }
+noct-fs = { path = "../noct-fs" }
+noct-logger = { path = "../noct-logger" }
+noct-physmem = { path = "../noct-physmem" }

@@ -279,6 +279,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-elfloader"
+version = "0.1.0"
+dependencies = [
+ "elf",
+ "noct-fs",
+ "noct-logger",
+ "noct-physmem",
+]
+
+[[package]]
 name = "noct-fileio"
 version = "0.1.0"
 dependencies = [
@@ -427,6 +437,7 @@ dependencies = [
  "lazy_static",
  "noct-alloc",
  "noct-dpm-sys",
+ "noct-elfloader",
  "noct-fileio",
  "noct-fs",
  "noct-fs-sys",

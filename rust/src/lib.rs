@@ -120,4 +120,12 @@ pub extern "C" fn rust_main() {
     //         qemu_ok!("Data is: {data:?}");
     //     });
     // }
+
+    let program = noct_elfloader::load_elf_file("R:/test_h");
+
+    if let Ok(mut program) = program {
+        qemu_ok!("Running program...");
+
+        program.run(&[]);
+    }
 }
