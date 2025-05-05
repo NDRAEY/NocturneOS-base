@@ -24,6 +24,9 @@ size_t pmm_alloc_and_map_self(size_t *page_dir, size_t bytes)
 	size_t count = ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE;
 	size_t pages = phys_alloc_multi_pages(count);
 
+	qemu_note("Pages to be allocated: %d", count);
+	qemu_note("Allocated at: %x", pages);
+
 	map_pages(page_dir, pages, pages, bytes, PAGE_WRITEABLE);
 
 	return pages;
@@ -41,6 +44,8 @@ void vmm_init()
 	extern size_t grub_last_module_end;
 	size_t real_end = grub_last_module_end + PAGE_BITMAP_SIZE;
 
+	/////
+
 	system_heap.start = 0x1000000;
 
 	if(real_end > system_heap.start) {
@@ -49,24 +54,33 @@ void vmm_init()
 		system_heap.start = ALIGN(real_end, PAGE_SIZE);
 	}
 
-	// size_t arena = system_heap.start;
+	/////
 
-	// system_heap.start += PAGE_SIZE;
+	// system_heap.memory = (struct heap_entry *)pmm_alloc_and_map_self(
+	// 	get_kernel_page_directory(),
+	// 	PAGE_SIZE
+	// );
 
-	qemu_note("Now heap starts at: %x", system_heap.start);
+	size_t arena_phys = phys_alloc_single_page();
+	size_t arena_virt = system_heap.start;
 
-	system_heap.memory = (struct heap_entry *)pmm_alloc_and_map_self(get_kernel_page_directory(), PAGE_SIZE);
+	// FIXME: Setting this to PAGE_SIZE causes undefined behaviour
+	system_heap.start += PAGE_SIZE * 2;
 
-	// size_t p_pages = phys_alloc_single_page();
+	map_pages(get_kernel_page_directory(), arena_phys, arena_virt, PAGE_SIZE, PAGE_WRITEABLE);
 
-	// map_pages(get_kernel_page_directory(), p_pages, system_heap.start, PAGE_SIZE, PAGE_WRITEABLE);
-
-	// system_heap.memory = (struct heap_entry *)arena;
-
+	system_heap.memory = (struct heap_entry *)arena_virt;
 	memset(system_heap.memory, 0, PAGE_SIZE);
 
+	qemu_log("ARENA AT: %x (P%x)", arena_virt, arena_phys);
 	qemu_log("CAPACITY: %d", system_heap.capacity);
-	qemu_log("MEMORY AT: %x", (size_t)system_heap.memory);
+
+	// kmalloc(1);
+
+	qemu_note("Now heap starts at: %x", system_heap.start);
+	qemu_note("Phys: %x", virt2phys(get_kernel_page_directory(), system_heap.start));
+
+	// while(1);
 
 	// void* al1 = kmalloc_common(16, 1);
 	// void* al2 = kmalloc_common(16, 1);

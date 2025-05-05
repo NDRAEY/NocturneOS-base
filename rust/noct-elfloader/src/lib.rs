@@ -109,9 +109,6 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
                 qemu_err!("Error happened during load! ({e})");
 
                 // Clean up
-
-                // ...
-
                 for seg in loaded_segments {
                     unsafe {
                         for page in 0..seg.page_count {
@@ -128,9 +125,9 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
                     }
                 }
 
-                todo!("Clean up");
+                // todo!("Clean up");
 
-                // return Err(LoadError::ElfParser(e));
+                return Err(LoadError::ElfParser(e));
             }
         };
 
@@ -165,8 +162,6 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
             virtual_addr: i.p_vaddr as _,
             page_count,
         });
-
-        qemu_note!("{i:#x?}");
     }
 
     Ok(ProgramHandle {

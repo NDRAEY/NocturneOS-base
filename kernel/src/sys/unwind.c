@@ -4,53 +4,42 @@
 //#include "lib/string.h"
 
 
+volatile size_t NOCTURNE_ksym_data_start = 0;
+volatile size_t NOCTURNE_ksym_data_end = 0;
+
 #ifndef RELEASE
-__attribute__((section(".debug_symbols"))) char function_addr_data[512 * KB];
 
-char _temp_funcname[1024] = {0};
-
-size_t decode_hex(const char s[], int length) {
-    int dec = 0;
-    int power = 1;
-
-    for (int i = length - 1; i >= 0; i--) {
-        int digit = 0;
-
-        if(s[i] >= 0 && s[i] <= '9') {
-            digit = s[i] - '0';
-        } else if(s[i] >= 'a' && s[i] <= 'f') {
-            digit = s[i] - 'a' + 10;
-        }
-
-        dec += digit * power;
-        power *= 16;
-    }
-    
-    return dec;
-}
+char _temp_funcname[512] = {0};
 
 // Returns true if okay, function name stored in _temp_funcname
 bool get_func_name_by_addr(size_t addr) {
-    char* temp = (char*)function_addr_data;
+    char* temp = (char*)NOCTURNE_ksym_data_start;
 
-    do {
-        memset(_temp_funcname, 0, 1024);
-    
-        size_t current_addr = decode_hex(temp, 8); // First addr
+    if(temp == 0) {
+        qemu_err("ksym was not initialized before.");
+        return false;
+    }
+
+    do {    
+        uint32_t current_addr = *(uint32_t*)temp;
         
-        temp += 3; // Type
-        temp += 8; // Address in HEX
+        temp += 4; // Address
 
-        memcpy(_temp_funcname, temp, struntil(temp, '\n'));
+        size_t namelen = (size_t)*(uint8_t*)temp;
 
-        temp += struntil(temp, '\n') + 1; // Name
+        temp += 1; // Name length
 
-        size_t next_addr = decode_hex(temp, 8); // Second addr
+        memcpy(_temp_funcname, temp, namelen);
+        _temp_funcname[namelen] = 0;
+
+        temp += namelen;
+
+        uint32_t next_addr = *(uint32_t*)temp;
         
         if(addr >= current_addr && addr < next_addr) {
             return true;
         }
-    } while(*temp != '\0');
+    } while((size_t)temp < NOCTURNE_ksym_data_end);
 
     return false;
 }
@@ -63,10 +52,10 @@ void unwind_stack(uint32_t MaxFrames) {
     tty_printf("Stack trace:\n");
 
     for(uint32_t frame = 0; stk && frame < MaxFrames; ++frame) {
+        bool exists = get_func_name_by_addr(stk->eip);
+
         qemu_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
         tty_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
-
-        bool exists = get_func_name_by_addr(stk->eip);
 
         qemu_printf("%s\n", exists ? _temp_funcname : "???");
         tty_printf("%s\n", exists ? _temp_funcname : "???");

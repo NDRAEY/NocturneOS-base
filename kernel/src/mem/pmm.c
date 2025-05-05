@@ -22,14 +22,12 @@ size_t kernel_start;
 size_t kernel_end;
 
 size_t mmap_length = 0;
-memory_map_entry_t*	mentry = 0;
 
 size_t phys_memory_size = 0;
 size_t used_phys_memory_size = 0;
 
 physical_addr_t* kernel_page_directory = 0;
 
-// Create 512 KB page bitmap for saving data about 4 GB space.
 /// Карта занятых страниц
 // uint8_t pages_bitmap[PAGE_BITMAP_SIZE] = {0};
 uint8_t* pages_bitmap = 0;
@@ -101,7 +99,7 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 		} else {
 			// Otherwise, we have some bits cleared - we have free page(s).
 			// Roll over all bits
-			for(int j = 0; j < 8; j++) {
+			for(size_t j = 0; j < 8; j++) {
 				// Check if page is free
 				if(((pages_bitmap[i] >> j) & 1) == 0) {
 					// If we starting, we need to save an address.
@@ -120,8 +118,9 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 
 								// We have no control, so keep loops running until we mark all `count` pages as used.
 								// If we marked all pages, exit the loops.
-								if(!--counter)
+								if(!--counter) {
 									goto phys_multialloc_end;
+								}
 							}
 
 							sj = 0;
@@ -236,7 +235,7 @@ uint32_t * new_page_directory() {
 	// Allocate a page (page directory is 4096 bytes)
 	uint32_t* dir = (uint32_t*)phys_alloc_single_page();
 
-	qemu_log("Allocated page directory at: %p", dir);
+	qemu_log("Allocated page directory at: %x", dir);
 
 	// Blank it (they can store garbage, so we need to blank it)
 	memset(dir, 0, 4096);
@@ -456,46 +455,41 @@ void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virt
 }
 
 void check_memory_map(memory_map_entry_t* mmap_addr, uint32_t length){
-	int i;
 	/* Entries number in memory map structure */
 	mmap_length = length;
 	size_t n = length / sizeof(memory_map_entry_t);
 
 	/* Set pointer to memory map */
-	mentry = mmap_addr;
+	
 	qemu_log("[PMM] Map:");
-	for (i = 0; i < n; i++){
-		memory_map_entry_t entry = mentry[i];
+
+	for (size_t i = 0; i < n; i++){
+		memory_map_entry_t* entry = mmap_addr + i;
 		
 		qemu_log("%s [Address: %x | Length: %x] <%d>",
-				 (entry.type == 1?"Available":"Reserved"),
-				 entry.addr_low, entry.len_low, entry.type);
+				 (entry->type == 1 ? "Available" : "Reserved"),
+				 entry->addr_low, entry->len_low, entry->type);
 
-		phys_memory_size += entry.len_low;
+		phys_memory_size += entry->len_low;
 	}
 
-	qemu_log("RAM: %d MB | %d KB | %d B", phys_memory_size/(1024*1024), phys_memory_size/1024, phys_memory_size);
+	qemu_log("RAM: %d MB | %d KB | %d B", phys_memory_size >> 20, phys_memory_size >> 10, phys_memory_size);
 }
 
 size_t getInstalledRam(){
     return phys_memory_size;
 }
 
-void mark_reserved_memory_as_used(memory_map_entry_t* mmap_addr, uint32_t length){
-	int i;
-	/* Entries number in memory map structure */
-	mmap_length = length;
+void mark_reserved_memory_as_used(memory_map_entry_t* mmap_addr, uint32_t length) {
 	size_t n = length / sizeof(memory_map_entry_t);
 
-	/* Set pointer to memory map */
-	mentry = mmap_addr;
-	for (i = 0; i < n; i++){
-		memory_map_entry_t entry = mentry[i];
+	for (int i = 0; i < n; i++){
+		memory_map_entry_t* entry = mmap_addr + i;
 
-		size_t addr = entry.addr_low;
-		size_t length = entry.len_low;
+		size_t addr = entry->addr_low;
+		size_t length = entry->len_low;
 
-		if(entry.type != 1) {
+		if(entry->type != 1) {
 			for(int j = 0; j < length; j += PAGE_SIZE) {
 				phys_mark_page_entry(addr + j, 1);  // Mark as used
 			}
@@ -523,6 +517,8 @@ void init_paging() {
     qemu_log("Last GRUB module ends at: %x", grub_last_module_end);
 
     pages_bitmap = (uint8_t*)grub_last_module_end;
+
+	memset(pages_bitmap, 0, PAGE_BITMAP_SIZE);
 	
 	size_t real_end = (size_t)(grub_last_module_end + PAGE_BITMAP_SIZE);
 
@@ -539,11 +535,34 @@ void init_paging() {
 
 	// Preallocate our kernel space
 
-	size_t page_count = ALIGN(real_end, 4096) / 4096;
+	size_t page_count = ALIGN(real_end, PAGE_SIZE) / PAGE_SIZE;
 
 	qemu_log("Allocating %d pages for kernel space...", page_count);
 
-	phys_alloc_multi_pages(page_count);
+	// {
+	// 	size_t a1 = phys_alloc_multi_pages(0x1000);
+
+	// 	qemu_note("A1 (should be 0x0): %x", a1);
+		
+	// 	size_t a2 = phys_alloc_multi_pages(0x1000);
+
+	// 	qemu_note("A2 (should be 0x100000): %x", a2);
+
+	// 	while(1)
+	// 	;
+	// }
+
+	{
+		size_t reserved = phys_alloc_multi_pages(page_count);
+
+		if(reserved != 0) {
+			qemu_err("Should be 0, but got %x", reserved);
+			qemu_err("Manual assertion failed: First physical memory allocation should return zero!");
+
+			while(1)
+			;
+		}
+	}
 
 	// Create new page directory
 

@@ -177,6 +177,20 @@ void scan_kernel(multiboot_header_t *mboot) {
     kernel_start = (size_t)&KERNEL_BASE_pos;
 	kernel_end = (size_t)&KERNEL_END_pos;
 
+    qemu_log("Flags: %x", mboot->flags);
+    qemu_log("MemLower: %x", mboot->mem_lower);
+    qemu_log("MemUpper: %x", mboot->mem_upper);
+    qemu_log("BootDevice: %x", mboot->boot_device);
+    qemu_log("CmdLine: %x", mboot->cmdline);
+    qemu_log("ModsCount: %x", mboot->mods_count);
+    qemu_log("ModsAddr: %x", mboot->mods_addr);
+    qemu_log("Num: %x", mboot->num);
+    qemu_log("Size: %x", mboot->size);
+    qemu_log("Addr: %x", mboot->addr);
+    qemu_log("Shndx: %x", mboot->shndx);
+    qemu_log("MmapLength: %x", mboot->mmap_length);
+    qemu_log("MmapAddr: %x", mboot->mmap_addr);
+
 	qemu_log("Kernel: %x - %x", kernel_start, kernel_end);
 
     multiboot_module_t* module_list = (multiboot_module_t*)mboot->mods_addr;
@@ -185,10 +199,11 @@ void scan_kernel(multiboot_header_t *mboot) {
     for (size_t i = 0; i < count; i++) {
         multiboot_module_t *mod = module_list + i;
 
-        qemu_log("Module #%d: Start: %x; End: %x;",
+        qemu_log("Module #%d: Start: %x; End: %x; Size: %d k",
                 i,
                 mod->mod_start,
-                mod->mod_end
+                mod->mod_end,
+                (mod->mod_end - mod->mod_start) >> 10
         );
     }
 
@@ -202,7 +217,7 @@ void scan_kernel(multiboot_header_t *mboot) {
   Да прибудет с тобой, священный код
   Я тебя благославляю
 */
-void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial_esp)
+void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t initial_esp)
 {
     __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
     
@@ -262,11 +277,11 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
 
     vmm_init();
     qemu_ok("VMM OK!");
-
+    
     switch_qemu_logging();
-
+    
     kHandlerCMD((char *)mboot->cmdline);
-
+    
     ipc_init();
 
     drv_vbe_init(mboot);
@@ -285,16 +300,23 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     fs_noctfs_init();
     // fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
     //         &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
-        
+
+    
     grub_modules_init(mboot);
-        
+
     fsm_dpm_update(-1);
     kernel_start_time = getTicks();
 
     mtrr_init();
 
+    dpm_dump('R');
+
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);
+
+    dpm_dump('R');
+
+    heap_dump();
 
     fonts_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
 
@@ -302,6 +324,8 @@ void __attribute__((noreturn)) kmain(multiboot_header_t *mboot, uint32_t initial
     init_task_manager();
 
     clean_screen();
+
+    // *((char*)0x5FFF98FF) = 0;
 
     qemu_log("Initalizing fonts...");
     tty_fontConfigurate();

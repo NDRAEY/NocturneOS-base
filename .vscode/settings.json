@@ -3,5 +3,10 @@
         "node_modules",
         "rust/target",
         "ramdisk/"
+    ],
+    "rust-analyzer.diagnostics.styleLints.enable": true,
+    "rust-analyzer.linkedProjects": [
+        "rust/Cargo.toml",
+        "utils/chen/Cargo.toml"
     ]
 }

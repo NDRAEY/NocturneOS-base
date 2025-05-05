@@ -11,6 +11,7 @@
 *.tmp
 *.pcap
 *.d
+**/*.map
 /rust/target
 .idea/
 iso/ramdisk

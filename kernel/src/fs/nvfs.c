@@ -46,13 +46,13 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	// Disk is always first letter of the path.
 	info->Disk = Name[0];
 
-	qemu_log("Disk: %c", info->Disk);
+	// qemu_log("Disk: %c", info->Disk);
 
 
 	// Now cut a rest of path with trailing \ (or /)
 	substr(info->Path, Name, 2, strlen(Name + 2));
 
-	qemu_log("Supposed path: `%s`", info->Path);
+	// qemu_log("Supposed path: `%s`", info->Path);
 
 
 	// Get disk info.

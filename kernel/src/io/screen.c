@@ -56,7 +56,11 @@ void create_back_framebuffer() {
     qemu_log("^---- 1. Allocating");
     
     back_framebuffer_addr = (uint8_t*)kmalloc_common(framebuffer_size, PAGE_SIZE);
+
+    qemu_log("^---- 2. Zeroing (%x - %x)", back_framebuffer_addr, back_framebuffer_addr + framebuffer_size);
     memset(back_framebuffer_addr, 0, framebuffer_size);
+
+    qemu_ok("^---- Ready!");
 
     size_t phys_bfb = virt2phys(get_kernel_page_directory(), (virtual_addr_t) back_framebuffer_addr);
 

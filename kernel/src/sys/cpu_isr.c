@@ -16,21 +16,21 @@
 #include 	<io/status_loggers.h>
 
 _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint32_t code) {
-    qemu_err("=== ЯДРО УПАЛО =======================================\n");
-    qemu_err("| ");
-    qemu_err("| Наименование: %s",title);
-    qemu_err("| Код ошибки: %x",code);
-    qemu_err("| Сообщение: %s",msg);
-    qemu_err("| EAX: %x",regs.eax);
-    qemu_err("| EBX: %x",regs.ebx);
-    qemu_err("| ECX: %x",regs.ecx);
-    qemu_err("| EDX: %x",regs.edx);
-    qemu_err("| ESP: %x",regs.esp);
-    qemu_err("| EBP: %x",regs.ebp);
-    qemu_err("| EIP: %x",regs.eip);
-    qemu_err("| EFLAGS: %x",regs.eflags);
-    qemu_err("| ");
-    qemu_err("======================================================\n");
+    qemu_printf("=== ЯДРО УПАЛО =======================================\n");
+    qemu_printf("| \n");
+    qemu_printf("| Наименование: %s\n",title);
+    qemu_printf("| Код ошибки: %x\n",code);
+    qemu_printf("| Сообщение: %s\n",msg);
+    qemu_printf("| EAX: %x\n",regs.eax);
+    qemu_printf("| EBX: %x\n",regs.ebx);
+    qemu_printf("| ECX: %x\n",regs.ecx);
+    qemu_printf("| EDX: %x\n",regs.edx);
+    qemu_printf("| ESP: %x\n",regs.esp);
+    qemu_printf("| EBP: %x\n",regs.ebp);
+    qemu_printf("| EIP: %x\n",regs.eip);
+    qemu_printf("| EFLAGS: %x\n",regs.eflags);
+    qemu_printf("| \n");
+    qemu_printf("======================================================\n");
 
     /* extern char _temp_funcname[1024]; */
 

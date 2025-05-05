@@ -281,6 +281,8 @@ void dpm_FileSystemUpdate(char Letter, char *FileSystem)
 	} else {
 		DPM_Disks[index].FileSystem = 0;
 	}
+
+	// qemu_warn("[%d] Updated filesystem to: `%s` (%x)", Letter, DPM_Disks[index].FileSystem ?: "(null)", DPM_Disks[index].FileSystem);
 }
 
 void dpm_LabelUpdate(char Letter, const char *Label)
@@ -299,6 +301,8 @@ void dpm_LabelUpdate(char Letter, const char *Label)
 	} else {
 		DPM_Disks[index].Name = 0;
 	}
+
+	// qemu_warn("[%d] Updated label to: `%s` (%x)", Letter, DPM_Disks[index].FileSystem ?: "(null)", DPM_Disks[index].FileSystem);
 }
 
 size_t dpm_disk_size(char Letter)
@@ -324,9 +328,9 @@ DPM_Disk dpm_info(char Letter)
 void dpm_dump(char Letter) {
 	DPM_Disk info = dpm_info(Letter);
 
-	qemu_log("  |-- Name: %s", info.Name);
+	qemu_log("  |-- Name: %s (%x)", info.Name ?: "(null)", info.Name);
 	qemu_log("  |-- Serial: %s", info.Serial);
-	qemu_log("  |-- FileSystem: %s", info.FileSystem ?: "(null)");
+	qemu_log("  |-- FileSystem: %s (%x)", info.FileSystem ?: "(null)", info.FileSystem);
 	qemu_log("  |-- Status: %d", info.Status);
 	// qemu_log("  |-- Size: %d", info.Size);  // Most disks have capacity is greater than 4GB (32-bit space), so every disk with capacity greater than 4GB will give a bug. (We need to impelement BigInt?)
 	qemu_log("  |-- Sectors: %d", info.Sectors);

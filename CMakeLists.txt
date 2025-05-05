@@ -89,7 +89,7 @@ set(CMAKE_C_FLAGS_OPTSYM "-DRELEASE -O2 -ggdb3" CACHE STRING "Flags for OptSym" 
 set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")
 
 
-set(QEMU_MEMORY_SIZE 128M)
+set(QEMU_MEMORY_SIZE 256M)
 
 #set(QEMU "qemu-system-x86_64")
 set(QEMU "qemu-system-i386")
@@ -257,6 +257,19 @@ set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
 set(RUST_TOOLCHAIN_FULLNAME "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
 set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TOOLCHAIN_FULLNAME}/bin/src/cargo")
 
+add_custom_command(
+	OUTPUT "${CMAKE_SOURCE_DIR}/utils/chen/target/release/chen" ".fake"
+	COMMAND cargo build --release 
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/utils/chen
+	COMMENT "Building Chen utility..."
+	DEPENDS "${CMAKE_SOURCE_DIR}/utils/chen/src"
+	DEPENDS "${CMAKE_SOURCE_DIR}/utils/chen/Cargo.toml"
+	USES_TERMINAL
+	VERBATIM
+)
+
+add_custom_target(chen ALL DEPENDS "${CMAKE_SOURCE_DIR}/utils/chen/target/release/chen")
+add_dependencies(${KERNEL} chen)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_custom_command(
@@ -314,6 +327,21 @@ endif()
 
 # Targets
 
+add_custom_command(
+	TARGET ${KERNEL}
+	COMMAND ${CMAKE_SOURCE_DIR}/utils/chen/target/release/chen ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
+	COMMENT "Adding symbols..."
+	POST_BUILD
+)
+
+add_custom_target(
+	copy_symbols
+	COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}.map ${ISO_DIR}/${KERNEL}.map
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	DEPENDS ${KERNEL}
+	COMMENT "Copying files..."
+)
+
 if(
 	(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
 	AND
@@ -322,33 +350,26 @@ if(
 	(NOT (${CMAKE_BUILD_TYPE} STREQUAL "OptSym"))
 	)
     
-	add_custom_command(
-            TARGET ${KERNEL}
+	add_custom_target(
+			strip_down
             COMMAND strip -s ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
             COMMENT "Copying files..."
-			POST_BUILD
+			DEPENDS copy_symbols
     )
 
     add_custom_target(
             copy_kernel
             COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL} ${ISO_DIR}/${KERNEL}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            DEPENDS ${KERNEL}
+            DEPENDS strip_down
             COMMENT "Copying files..."
     )
 else()
-    add_custom_command(
-            TARGET ${KERNEL}
-            COMMAND bash ${CMAKE_SOURCE_DIR}/tools/geninsert.sh ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}
-            COMMENT "Adding debug symbols..."
-			POST_BUILD
-    )
-
     add_custom_target(
             copy_kernel
             COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/${KERNEL} ${ISO_DIR}/${KERNEL}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            DEPENDS ${KERNEL}
+            DEPENDS copy_symbols
             COMMENT "Copying files..."
     )
 endif()

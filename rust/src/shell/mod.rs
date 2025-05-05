@@ -275,7 +275,18 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
                     match elf::file::parse_ident::<AnyEndian>(&data) {
                         Ok(_) => {
                             // todo!("Run ELF file");
-                            run(path.as_str(), &com);
+                            // run(path.as_str(), &com);
+
+                            let program = noct_elfloader::load_elf_file(path.as_str());
+
+                            match program {
+                                Ok(mut prog) => {
+                                    prog.run(&arguments);
+                                },
+                                Err(e) => {
+                                    println!("Error: {e:?}");
+                                },
+                            }
                         }
                         Err(_) => {
                             println!("{}: not an ELF file", path);
