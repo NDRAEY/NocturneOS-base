@@ -54,12 +54,12 @@ void init_task_manager(void){
 	
     kernel_proc->suspend = false;
 
-	list_add(&process_list, &kernel_proc->list_item);
+	list_add(&process_list, (void*)&kernel_proc->list_item);
 
 	/* Create kernel thread */
 	kernel_thread = (thread_t*) kmalloc(sizeof(thread_t));
 
-	memset(kernel_thread, 0, sizeof(thread_t));
+	memset((void*)kernel_thread, 0, sizeof(thread_t));
 
 	kernel_thread->process = kernel_proc;
 	kernel_thread->list_item.list = nullptr;
@@ -69,7 +69,7 @@ void init_task_manager(void){
 	kernel_thread->esp = esp;
 	kernel_thread->stack_top = init_esp;
 
-	list_add(&thread_list, &kernel_thread->list_item);
+	list_add((void*)&thread_list, (void*)&kernel_thread->list_item);
 
 	current_proc = kernel_proc;
 	current_thread = kernel_thread;
@@ -103,15 +103,15 @@ size_t create_process(void* entry_point, char* name, bool suspend, bool is_kerne
     
 	proc->suspend = suspend;
 
-    list_add(&process_list, &proc->list_item);
+    list_add(&process_list, (void*)&proc->list_item);
 
     thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel, suspend);
 
     qemu_log("PID: %d, DIR: %x; Threads: %d; Suspend: %d", proc->pid, proc->page_dir, proc->threads_count, proc->suspend);
 
-	list_add(&thread_list, &thread->list_item);
+	list_add(&thread_list, (void*)&thread->list_item);
 
-    void* virt = clone_kernel_page_directory(proc->page_tables_virts);
+    void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
 
     proc->page_dir = phys;
@@ -183,7 +183,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->stack_top = (uint32_t) stack + stack_size;
 
     /* Add thread to ring queue */
-    list_add(&thread_list, &tmp_thread->list_item);
+    list_add(&thread_list, (void*)&tmp_thread->list_item);
 
     /* Thread's count increment */
     proc->threads_count++;
