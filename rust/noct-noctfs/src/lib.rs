@@ -17,7 +17,7 @@ pub mod disk_device;
 static FSNAME: &[u8] = b"NoctFS\0";
 
 fn raw_ptr_to_string(ptr: *const i8) -> String {
-    let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
+    let c_str = unsafe { CStr::from_ptr(ptr) };
     c_str.to_string_lossy().into_owned()
 }
 
@@ -108,7 +108,7 @@ unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
 
     let (path, name) = {
         let mut rest_path = path.split('/').filter(|a| !a.is_empty()).rev().skip(1).collect::<Vec<&str>>().iter().rev().map(|&a| String::from(a)).collect::<Vec<_>>().join("/");
-        let name = path.split('/').filter(|a| !a.is_empty()).last().unwrap();
+        let name = path.split('/').filter(|a| !a.is_empty()).next_back().unwrap();
 
         if rest_path.is_empty() {
             rest_path = "/".to_string();
@@ -136,14 +136,14 @@ unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
         }
     };
 
-    return 1;
+    1
 }
 
 unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
     todo!()
 }
 
-fn find_by_path(fs: &mut NoctFS<'_>, path: &String) -> Option<(Entity, Entity)> {
+fn find_by_path(fs: &mut NoctFS<'_>, path: &str) -> Option<(Entity, Entity)> {
     let mut initial = fs.get_root_entity().unwrap();
     let mut previous = initial.clone();
 

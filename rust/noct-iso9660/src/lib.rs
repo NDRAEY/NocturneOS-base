@@ -26,7 +26,7 @@ impl iso9660_simple::Read for ThatDisk {
 }
 
 fn raw_ptr_to_string(ptr: *const i8) -> String {
-    let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
+    let c_str = unsafe { CStr::from_ptr(ptr) };
     c_str.to_string_lossy().into_owned()
 }
 

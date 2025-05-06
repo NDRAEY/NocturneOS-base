@@ -241,8 +241,8 @@ fn parse_commandline(raw_input: &str) -> Vec<String> {
     result
 }
 
-fn process_command(context: &mut ShellContext, raw_input: &String) {
-    let com = parse_commandline(&raw_input);
+fn process_command(context: &mut ShellContext, raw_input: &str) {
+    let com = parse_commandline(raw_input);
 
     if com.is_empty() {
         return;
@@ -282,7 +282,7 @@ fn process_command(context: &mut ShellContext, raw_input: &String) {
 
                             match program {
                                 Ok(mut prog) => {
-                                    prog.run(&arguments);
+                                    prog.run(arguments);
                                 }
                                 Err(e) => {
                                     println!("Error: {e:?}");

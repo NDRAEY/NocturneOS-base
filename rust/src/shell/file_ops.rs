@@ -95,11 +95,11 @@ pub fn copy_file(_context: &mut ShellContext, args: &[String]) -> Result<(), usi
     let src_path = &args[0];
     let dest_path = &args[1];
 
-    noct_fileio::create_new_file(&dest_path).unwrap();
+    noct_fileio::create_new_file(dest_path).unwrap();
 
     match noct_fs::read(src_path) {
         Ok(data) => {
-            noct_fs::write(&dest_path, &data).unwrap();
+            noct_fs::write(dest_path, &data).unwrap();
 
             Ok(())
         },

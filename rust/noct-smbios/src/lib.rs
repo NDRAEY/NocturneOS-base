@@ -86,7 +86,7 @@ impl SMBIOS {
     
             let data = c_str.to_bytes();
 
-            if data.len() == 0 {
+            if data.is_empty() {
                 return None;
             }
 

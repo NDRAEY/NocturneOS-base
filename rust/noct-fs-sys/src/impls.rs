@@ -69,9 +69,9 @@ impl FSM_DIR {
         let (mut files_c, mut dirs, mut other) = (0, 0, 0);
 
         for i in files.iter() {
-            if i.Type as u32 == FSM_ENTITY_TYPE_TYPE_FILE {
+            if i.Type == FSM_ENTITY_TYPE_TYPE_FILE {
                 files_c += 1;
-            } else if i.Type as u32 == FSM_ENTITY_TYPE_TYPE_DIR  {
+            } else if i.Type == FSM_ENTITY_TYPE_TYPE_DIR  {
                 dirs += 1;
             } else {
                 other += 1;

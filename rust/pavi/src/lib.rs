@@ -33,7 +33,7 @@ struct Pavi {
 
 impl Pavi {
     pub fn new(fpath: &String) -> Result<Self, String> {
-        let data = noct_fs::read(&fpath);
+        let data = noct_fs::read(fpath);
 
         if let Err(e) = data {
             // println!("{}: {}", fpath, e.to_string());
@@ -114,7 +114,7 @@ impl Pavi {
             .with_color(0xff_00ff00)
             .with_kerning(1)
             .with_size(12)
-            .with_text(&format!(
+            .with_text(format!(
                 "{} - [{}x{}] ({:?} | {:?})",
                 self.filepath,
                 self.image.width(),
@@ -133,7 +133,7 @@ impl Pavi {
             for y in 0..height {
                 let pixel = new_image.get_pixel(x, y);
 
-                let mut pixel = pixel.unwrap_or(0) as u32;
+                let mut pixel = pixel.unwrap_or(0);
 
                 if pixel == 0 {
                     continue;
