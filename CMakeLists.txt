@@ -204,7 +204,7 @@ set(C_SRC
 	kernel/src/fmt/tga.c 
 	kernel/src/lib/asprintf.c
 	kernel/src/lib/sprintf.c
-	kernel/src/drv/disk/floppy.c 
+  # kernel/src/drv/disk/floppy.c 
 	kernel/src/drv/disk/ata_dma.c 
 	kernel/src/drv/audio/ac97.c 
 	kernel/src/sys/elf.c 

@@ -40,18 +40,18 @@ size_t VERSION_PATCH = 5;    /// Патч
 char* OS_ARCH = "i386";      /// Архитектура
 char* VERSION_NAME = "Soul"; /// Имя версии (изменяется вместе с минорной части версии)
 
-#define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
+//#define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
 
 extern bool ps2_channel2_okay;
 
 uint32_t init_esp = 0;
 bool test_pcs = true;
-bool test_floppy = true;
+//bool test_floppy = true;
 bool test_network = true;
 bool is_rsdp = true;
 bool initRD = false;
 size_t kernel_start_time = 0;
-size_t ramdisk_size = INITRD_RW_SIZE;
+//size_t ramdisk_size = INITRD_RW_SIZE;
 
 void kHandlerCMD(char *);
 
@@ -102,10 +102,11 @@ void kHandlerCMD(char *cmd)
                 qemu_log("\t Sorry, no support bootscreen mode!");
             }
         }
-        if (strcmpn(out_data[0], "ramdisk"))
+        /*if (strcmpn(out_data[0], "ramdisk"))
         {
             ramdisk_size = atoi(out_data[1]);
         }
+        */
         if (strcmpn(out_data[0], "disable"))
         {
             if (strcmpn(out_data[1], "coms"))
@@ -117,11 +118,13 @@ void kHandlerCMD(char *cmd)
                 __com_setInit(4, 0);
                 qemu_log("\t COM-OUT DISABLED");
             }
+      /*
             else if (strcmpn(out_data[1], "floppy"))
             {
                 test_floppy = false;
                 qemu_log("\t FLOPPY DISABLED");
             }
+            */
             else if (strcmpn(out_data[1], "network"))
             {
                 test_network = false;
@@ -173,7 +176,7 @@ void new_nsh();
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
 
-void scan_kernel(multiboot_header_t *mboot) {
+void scan_kernel(const multiboot_header_t *mboot) {
     kernel_start = (size_t)&KERNEL_BASE_pos;
 	kernel_end = (size_t)&KERNEL_END_pos;
 
@@ -198,6 +201,7 @@ void scan_kernel(multiboot_header_t *mboot) {
 
     for (size_t i = 0; i < count; i++) {
         multiboot_module_t *mod = module_list + i;
+        (void)mod;
 
         qemu_log("Module #%d: Start: %x; End: %x; Size: %d k",
                 i,
@@ -208,6 +212,7 @@ void scan_kernel(multiboot_header_t *mboot) {
     }
 
     multiboot_module_t* last_module = module_list + count - 1;
+    (void)last_module;
     qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
 }
 
@@ -228,7 +233,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     scan_kernel(mboot);
 
-    framebuffer_addr = (uint8_t *)(mboot->framebuffer_addr);
+    framebuffer_addr = (uint8_t *)(size_t)(mboot->framebuffer_addr);
 
     drawASCIILogo(0);
 
