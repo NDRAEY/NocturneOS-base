@@ -152,7 +152,7 @@ checksum = "875488b8711a968268c7cf5d139578713097ca4635a76044e8fe8eedf831d07e"
 [[package]]
 name = "gi-derive"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#bc9a06f29e15ab73f2ed3f0fa9ba8be02a8897f9"
+source = "git+https://github.com/NDRAEY/gi-ui#a6410e34bbae218943b6fcd0f40d1bb55b5e70eb"
 dependencies = [
  "quote",
  "syn",
@@ -161,7 +161,7 @@ dependencies = [
 [[package]]
 name = "gi-ui"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#bc9a06f29e15ab73f2ed3f0fa9ba8be02a8897f9"
+source = "git+https://github.com/NDRAEY/gi-ui#a6410e34bbae218943b6fcd0f40d1bb55b5e70eb"
 dependencies = [
  "embedded-graphics",
  "font8x8",
@@ -177,9 +177,9 @@ checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
 
 [[package]]
 name = "iso9660_simple"
-version = "0.1.10"
+version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cacd326f8128680597f6f7cfd2866308b9854e2c2fb7107770b226ac85562da8"
+checksum = "0d1c46a0fda3cb9276362bcb0896a55fcf6c0ea3cb102a07a0a40a1ebcdc0ca2"
 
 [[package]]
 name = "itertools"
@@ -430,7 +430,7 @@ dependencies = [
 [[package]]
 name = "noctfs"
 version = "0.1.0"
-source = "git+https://github.com/NDRAEY/noctfs#a3a4dfb1ae4b68d5eba11fe9a7c16e9998da16ec"
+source = "git+https://github.com/NDRAEY/noctfs#e46b5b17cf33834bc48a5a01c3a80806c9296e40"
 dependencies = [
  "arrayref",
  "bitflags 2.9.0",

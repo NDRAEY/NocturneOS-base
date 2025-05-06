@@ -1,9 +1,8 @@
 extern crate alloc;
 
 use alloc::{boxed::Box, format, string::{String, ToString}};
-use core::ffi::c_int;
 
-use crate::{size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_FILE, FSM_TIME};
+use crate::{size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_TIME};
 
 impl FSM_FILE {
     pub fn with_data<T: ToString>(
@@ -70,27 +69,23 @@ impl FSM_DIR {
         let (mut files_c, mut dirs, mut other) = (0, 0, 0);
 
         for i in files.iter() {
-            match i.Type as u32 {
-                FSM_TYPE_FILE => {
-                    files_c += 1;
-                }
-                FSM_TYPE_DIR => {
-                    dirs += 1;
-                }
-                _ => {
-                    other += 1;
-                }
+            if i.Type as u32 == FSM_ENTITY_TYPE_TYPE_FILE {
+                files_c += 1;
+            } else if i.Type as u32 == FSM_ENTITY_TYPE_TYPE_DIR  {
+                dirs += 1;
+            } else {
+                other += 1;
             }
         }
 
-        let ptr = Box::leak(files).as_ptr();
+        let ptr: &'static mut [FSM_FILE] = Box::leak(files);
 
         FSM_DIR {
             Ready: true,
             CountFiles: files_c,
             CountDir: dirs,
             CountOther: other,
-            Files: ptr as *mut FSM_FILE,
+            Files: ptr.as_mut_ptr(),
         }
     }
 

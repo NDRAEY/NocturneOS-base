@@ -309,8 +309,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     mtrr_init();
 
-    dpm_dump('R');
-
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);
 
