@@ -41,4 +41,4 @@ SAYORI_INLINE bool isdigit(char a) {
 	return a >= '0' && a <= '9';
 }
 
-char* strdynamize(char* str);
+char* strdynamize(const char* str);

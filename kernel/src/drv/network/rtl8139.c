@@ -186,9 +186,9 @@ void rtl8139_send_packet(void *data, size_t length) {
 
 	qemu_log("Sending packet");
 
-	memset(rtl8139_transfer_buffer, 0, 65535);
+	memset((void*)rtl8139_transfer_buffer, 0, 65535);
 
-	memcpy(rtl8139_transfer_buffer, data, length);
+	memcpy((void*)rtl8139_transfer_buffer, data, length);
 
 	//qemu_log("Send packet: Virtual memory at %x", (size_t)rtl8139_transfer_buffer);
 	//qemu_log("Send packet: Physical memory at %x", rtl8139_transfer_buffer_phys);

@@ -9,7 +9,6 @@ use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
-use crate::system::run_elf_file::run;
 use crate::system::version::version;
 use noct_tty::{print, println};
 

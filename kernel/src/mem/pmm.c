@@ -261,6 +261,7 @@ void reload_cr3() {
 		"mov %eax, %cr3");
 }
 
+/*
 void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size) {
 	virtual_addr_t vend = ALIGN(virtual + size, PAGE_SIZE);
 
@@ -270,7 +271,7 @@ void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t v
 
 		// Get our Page Directory Index and Page Table Index.
 		uint32_t pdi = PD_INDEX(v);
-		uint32_t pti = PT_INDEX(v);
+		//uint32_t pti = PT_INDEX(v);
 
 		// Check if page table not present.
 		if((page_dir[pdi] & 1) == 0) {
@@ -298,6 +299,8 @@ void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t v
 
 	reload_cr3();
 }
+
+*/
 
 // Maps a page.
 // Note: No need to set PAGE_PRESENT flag, it sets automatically.

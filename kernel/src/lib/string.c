@@ -890,7 +890,7 @@ unsigned long strtoul(const char* str, char** endptr, int base) {
     return result;
 }
 
-char* strdynamize(char* str) {
+char* strdynamize(const char* str) {
     size_t len = strlen(str);
 
     char* mem = kmalloc(len + 1);

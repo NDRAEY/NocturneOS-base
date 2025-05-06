@@ -327,6 +327,7 @@ DPM_Disk dpm_info(char Letter)
 
 void dpm_dump(char Letter) {
 	DPM_Disk info = dpm_info(Letter);
+  (void)info;
 
 	qemu_log("  |-- Name: %s (%x)", info.Name ?: "(null)", info.Name);
 	qemu_log("  |-- Serial: %s", info.Serial);

@@ -107,7 +107,7 @@ void thread_suspend(thread_t* thread, bool suspend);
 /* Exit from thread */
 void thread_exit(thread_t* thread);
 
-size_t create_process(void* entry_point, char name[256], bool suspend, bool is_kernel);
+size_t create_process(void* entry_point, char* name, bool suspend, bool is_kernel);
 
 /* Check multitask flag */
 bool is_multitask(void);
