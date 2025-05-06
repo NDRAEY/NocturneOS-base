@@ -1,7 +1,6 @@
 #![no_std]
 
 use arrayref::array_ref;
-use noct_logger::qemu_note;
 
 unsafe extern "C" {
     static NOCTURNE_ksym_data_start: usize;

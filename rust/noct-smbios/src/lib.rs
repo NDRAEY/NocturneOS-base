@@ -38,6 +38,7 @@ pub struct SMBIOSEntryHeader {
     handle: u16,
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct SMBIOS {
     address: usize,

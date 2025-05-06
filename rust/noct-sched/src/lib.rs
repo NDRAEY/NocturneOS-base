@@ -5,7 +5,7 @@
 
 use core::ffi::CStr;
 
-use alloc::string::{String, ToString};
+use alloc::string::String;
 
 extern crate alloc;
 

@@ -1,7 +1,7 @@
 use crate::{dpm_read, dpm_write, DPM_Disk, DPM_Disks};
 
 pub struct Disk {
-    disk: *mut DPM_Disk,
+    // disk: *mut DPM_Disk,
     letter: char,
 }
 
@@ -43,7 +43,7 @@ pub fn get_disk(letter: char) -> Option<Disk> {
     }
 
     Some(Disk {
-        disk: rdisk as *mut DPM_Disk,
+        // disk: rdisk as *mut DPM_Disk,
         letter
     })
 }

@@ -5,7 +5,7 @@ use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, FSM_DIR, FSM_FILE};
 
 #[derive(Debug)]
 pub struct Directory<'a> {
-    path: String,
+    // path: String,
     files: &'a [FSM_FILE],
     nvfs_dir: crate::FSM_DIR,
 }
@@ -32,7 +32,7 @@ impl Directory<'_> {
         let overall = dirs + files + others;
 
         let m_self = Self {
-            path: st,
+            // path: st,
             files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },            
             nvfs_dir: data,
         };

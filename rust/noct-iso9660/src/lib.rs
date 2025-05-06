@@ -10,7 +10,7 @@ use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ, FSM_TIME,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_println};
+use noct_logger::{qemu_err, qemu_log, qemu_note};
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"ISO9660\0";
@@ -36,6 +36,18 @@ fn iso_type_to_fsm_type(entry: &ISODirectoryEntry) -> u32 {
         FSM_ENTITY_TYPE_TYPE_DIR
     } else {
         FSM_ENTITY_TYPE_TYPE_FILE
+    }
+}
+
+#[inline]
+fn iso_datetime_to_fsm(entry: &ISODirectoryEntry) -> FSM_TIME {
+    FSM_TIME {
+        year: 1900 + entry.record.datetime.year as u16,
+        month: entry.record.datetime.month as _,
+        day: entry.record.datetime.day as _,
+        hour: entry.record.datetime.hour as _,
+        minute: entry.record.datetime.minute as _,
+        second: entry.record.datetime.second as _,
     }
 }
 
@@ -93,10 +105,10 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     let ftype = iso_type_to_fsm_type(&entry);
 
     FSM_FILE::with_data(
-        entry.name,
+        &entry.name,
         0,
         entry.record.data_length.lsb,
-        None,
+        Some(iso_datetime_to_fsm(&entry)),
         ftype as _,
         FSM_MOD_READ,
     )
@@ -135,9 +147,7 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let root = fl.read_directory(root.record.lba.lsb as _);
 
-    for i in &root {
-        qemu_println!("{}", i.name);
-    }
+    // qemu_note!("{:?}", &root);
 
     let files: Vec<FSM_FILE> = root
         .iter()
@@ -146,14 +156,7 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
                 elem.name.clone(),
                 0,
                 elem.record.data_length.lsb,
-                Some(FSM_TIME {
-                    year: 1900 + elem.record.datetime.year as u16,
-                    month: elem.record.datetime.month as _,
-                    day: elem.record.datetime.day as _,
-                    hour: elem.record.datetime.hour as _,
-                    minute: elem.record.datetime.minute as _,
-                    second: elem.record.datetime.second as _,
-                }),
+                Some(iso_datetime_to_fsm(&elem)),
                 iso_type_to_fsm_type(&elem),
                 FSM_MOD_READ,
             )

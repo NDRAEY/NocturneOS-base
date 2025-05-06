@@ -14,7 +14,7 @@ use noct_input::{
     kbd::{Key, SpecialKey, parse_scancode},
     keyboard_buffer_get,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_logger::{qemu_err, qemu_note};
 use noct_tty::println;
 
 #[derive(Debug)]
@@ -59,7 +59,9 @@ impl Pavi {
     }
 
     fn render_image(&self) {
-        let (mut start_x, mut start_y, mut width, mut height) = (0isize, 0isize, 0, 0);
+        let width: usize;
+        let height: usize;
+        let (mut start_x, mut start_y) = (0isize, 0isize);
 
         let (scr_w, scr_h) = noct_screen::dimensions();
 

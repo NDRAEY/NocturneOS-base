@@ -4,7 +4,8 @@ use noct_psf::PSF;
 
 use crate::console::Console;
 
-unsafe extern {
+unsafe extern "C" {
+    #[allow(improper_ctypes)]
     pub static PSF_FONT: OnceCell<PSF>;
 }
 

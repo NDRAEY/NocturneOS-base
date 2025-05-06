@@ -10,8 +10,8 @@ pub mod manager;
 pub struct NamedChannel {
     name: String,
 
-    creator: usize, // Process PID
-    connected_processes: Vec<usize>,
+    // creator: usize, // Process PID
+    // connected_processes: Vec<usize>,
 
     data: Vec<u8>,
 }
@@ -20,15 +20,15 @@ impl NamedChannel {
     pub fn new<S: ToString>(name: S) -> Option<Self> {
         Some(Self {
             name: name.to_string(),
-            creator: noct_sched::me().pid as usize,
-            connected_processes: Vec::new(),
+            // creator: noct_sched::me().pid as usize,
+            // connected_processes: Vec::new(),
             data: Vec::with_capacity(256),
         })
     }
 
-    fn handle_connection(&mut self, from_pid: usize) {
-        self.connected_processes.push(from_pid);
-    }
+    // fn handle_connection(&mut self, from_pid: usize) {
+    //     self.connected_processes.push(from_pid);
+    // }
 
     pub fn write(&mut self, data: &[u8]) {
         self.data.extend_from_slice(data);

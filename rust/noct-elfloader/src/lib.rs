@@ -3,11 +3,9 @@
 extern crate alloc;
 
 use alloc::{string::String, vec::Vec};
-use elf::{ParseError, endian::AnyEndian, segment::ProgramHeader};
+use elf::{ParseError, endian::AnyEndian};
 use noct_logger::{qemu_err, qemu_note};
-use noct_physmem::{
-    PAGE_PRESENT, PAGE_SIZE, PAGE_USER, PAGE_WRITEABLE, get_kernel_page_directory, map_pages,
-};
+use noct_physmem::{PAGE_PRESENT, PAGE_SIZE, PAGE_USER, PAGE_WRITEABLE};
 
 #[inline(always)]
 pub fn align_up(value: usize, align: usize) -> usize {

@@ -1,7 +1,4 @@
 use core::cell::OnceCell;
-
-use noct_logger::qemu_note;
-
 use crate::PSF;
 
 #[no_mangle]

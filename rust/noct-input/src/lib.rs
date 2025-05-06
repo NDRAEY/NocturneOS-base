@@ -61,7 +61,7 @@ impl KeyboardBuffer {
 /// - Keyboard buffer MUST be called before others
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn keyboard_buffer_init() {
-    match KEYBOARD_BUFFER.set(KeyboardBuffer::new()) {
+    match unsafe { KEYBOARD_BUFFER.set(KeyboardBuffer::new()) } {
         Ok(()) => {
             qemu_ok!("Keyboard buffer initialized!");
         }

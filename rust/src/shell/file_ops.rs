@@ -86,7 +86,7 @@ pub fn remove_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usi
     }
 }
 
-pub fn copy_file(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn copy_file(_context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     if args.len() < 2 {
         println!("Usage: cp <source filename> <destination filename>");
         return Err(1);
@@ -99,7 +99,7 @@ pub fn copy_file(context: &mut ShellContext, args: &[String]) -> Result<(), usiz
 
     match noct_fs::read(src_path) {
         Ok(data) => {
-            noct_fs::write(&dest_path, &data);
+            noct_fs::write(&dest_path, &data).unwrap();
 
             Ok(())
         },
