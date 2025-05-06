@@ -12,6 +12,8 @@ pub static REMOVE_FILE_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("rmfile", remove_file, Some("Removes a file"));
 pub static REMOVE_DIR_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("rmdir", remove_dir, Some("Removes a directory"));
+pub static COPY_FILE_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
+    ("cp", copy_file, Some("Copies a file"));
 
 pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     if args.is_empty() {
@@ -81,5 +83,29 @@ pub fn remove_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usi
     match noct_fileio::remove_directory(dir.as_str()) {
         Some(()) => Ok(()),
         None => Err(1),
+    }
+}
+
+pub fn copy_file(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+    if args.len() < 2 {
+        println!("Usage: cp <source filename> <destination filename>");
+        return Err(1);
+    }
+
+    let src_path = &args[0];
+    let dest_path = &args[1];
+
+    noct_fileio::create_new_file(&dest_path).unwrap();
+
+    match noct_fs::read(src_path) {
+        Ok(data) => {
+            noct_fs::write(&dest_path, &data);
+
+            Ok(())
+        },
+        Err(error) => {
+            println!("Error: {error}");
+            Err(1)
+        },
     }
 }

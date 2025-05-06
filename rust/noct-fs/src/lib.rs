@@ -26,6 +26,7 @@ unsafe extern "C" {
     fn fclose(stream: *mut CFile);
     fn fsize(stream: *mut CFile) -> usize;
     fn fread(stream: *mut CFile, count: usize, size: usize, buffer: *mut c_void) -> i32;
+    fn fwrite(stream: *mut CFile, count: usize, size: usize, buffer: *const c_void) -> usize;
 
     fn mkdir(path: *const i8) -> bool;
 }
@@ -95,6 +96,28 @@ pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
 
     Ok(buffer)
 }
+
+pub fn write(file_path: &str, data: &[u8]) -> Result<usize, &'static str> {
+    let mut file_path_string = String::from(file_path);
+    file_path_string.push('\0');
+
+    let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"w".as_ptr() as _) };
+
+    if file.is_null() {
+        return Err("Failed to open file.");
+    }
+
+    // let size = unsafe { fsize(file) };
+
+    unsafe {
+        let written = fwrite(file, data.len(), 1, data.as_ptr() as *const _);
+
+        fclose(file);
+        
+        Ok(written)
+    }
+}
+
 
 
 pub struct File {
