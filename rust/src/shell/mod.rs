@@ -3,6 +3,8 @@ use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
 use noct_fs_sys::dir::Directory;
+use noct_input::kbd::Key;
+use noct_input::kbd::SpecialKey;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
 use crate::std::io::input::getchar;
@@ -51,12 +53,14 @@ static COMMANDS: &[ShellCommandEntry] = &[
 
 pub struct ShellContext {
     current_path: Path,
+    command_history: Vec<String>,
 }
 
 impl ShellContext {
     fn new() -> Self {
         Self {
-            current_path: Path::from_path("R:/").unwrap(),
+            current_path: Path::from_path(&noct_sched::me().cwd()).unwrap(),
+            command_history: Vec::with_capacity(8),
         }
     }
 }
@@ -76,77 +80,71 @@ fn process_input(context: &mut ShellContext) -> String {
         let raw_ch = unsafe { getchar() };
         let ch = char::from_u32(raw_ch).unwrap();
 
-        // qemu_note!("Key is: {}", raw_ch);
-
-        if ch == '\0' {
-            continue;
-        }
-
-        if ch == '\n' {
-            break;
-        }
-
-        // Backspace
-        if ch as u32 == 8 {
-            if input.pop().is_some() {
-                print!("{0} {0}", char::from_u32(8).unwrap());
-            }
-            continue;
-        } else if ch == '\t' {
-            // Tab
-            qemu_warn!("Tab!");
-
-            if input.trim().is_empty() {
+        match ch {
+            '\0' => continue,
+            '\n' => break,
+            '\x08' => {
+                if input.pop().is_some() {
+                    print!("\x08 \x08");
+                }
                 continue;
             }
+            '\t' => {
+                qemu_warn!("Tab!");
 
-            let mut back_counter = input.len();
-
-            while back_counter > 0 && input.chars().nth(back_counter) != Some(' ') {
-                back_counter -= 1;
-            }
-
-            qemu_warn!("Fin");
-
-            let stem = input.as_str()[back_counter..].trim();
-
-            qemu_note!("Finding completions for: `{}`", stem);
-
-            let completions = suggest_completions(stem);
-
-            qemu_note!("Completions: {:?}", completions);
-
-            if completions.is_empty() {
-                qemu_note!("No variants found.");
-            } else if completions.len() == 1 {
-                // Apply it
-                let completion = &completions[0];
-                let remnant = &completion[stem.len()..];
-
-                input.push_str(remnant);
-
-                print!("{}", remnant);
-            } else {
-                // Show variants
-
-                println!("\n- Available variants:");
-                
-                for i in &completions {
-                    print!("{i} ");
+                if input.trim().is_empty() {
+                    continue;
                 }
 
-                println!();
+                let mut back_counter = input.len();
 
-                print!("{}> {input}", context.current_path.as_str());
+                while back_counter > 0 && input.chars().nth(back_counter) != Some(' ') {
+                    back_counter -= 1;
+                }
+
+                qemu_warn!("Fin");
+
+                let stem = input.as_str()[back_counter..].trim();
+
+                qemu_note!("Finding completions for: `{}`", stem);
+
+                let completions = suggest_completions(stem);
+
+                qemu_note!("Completions: {:?}", completions);
+
+                if completions.is_empty() {
+                    qemu_note!("No variants found.");
+                } else if completions.len() == 1 {
+                    // Apply it
+                    let completion = &completions[0];
+                    let remnant = &completion[stem.len()..];
+
+                    input.push_str(remnant);
+
+                    print!("{}", remnant);
+                } else {
+                    // Show variants
+
+                    println!("\n- Available variants:");
+
+                    for i in &completions {
+                        print!("{i} ");
+                    }
+
+                    println!();
+
+                    print!("{}> {input}", context.current_path.as_str());
+                }
+
+                continue;
             }
+            _ => {
+                input.push(ch);
 
-            continue;
-        }
-
-        input.push(ch);
-
-        print!("{}", ch);
-        unsafe { screen_update() };
+                print!("{}", ch);
+                unsafe { screen_update() };
+            }
+        };
     }
 
     input
@@ -204,7 +202,9 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
 
         print!("\n");
 
-        process_command(&mut context, raw_input);
+        process_command(&mut context, &raw_input);
+
+        context.command_history.push(raw_input);
     }
 
     // Should be `0` but infinite loop broke my plans.
@@ -240,7 +240,7 @@ fn parse_commandline(raw_input: &str) -> Vec<String> {
     result
 }
 
-fn process_command(context: &mut ShellContext, raw_input: String) {
+fn process_command(context: &mut ShellContext, raw_input: &String) {
     let com = parse_commandline(&raw_input);
 
     if com.is_empty() {
@@ -282,10 +282,10 @@ fn process_command(context: &mut ShellContext, raw_input: String) {
                             match program {
                                 Ok(mut prog) => {
                                     prog.run(&arguments);
-                                },
+                                }
                                 Err(e) => {
                                     println!("Error: {e:?}");
-                                },
+                                }
                             }
                         }
                         Err(_) => {

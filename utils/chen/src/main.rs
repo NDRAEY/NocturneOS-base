@@ -65,5 +65,6 @@ fn main() {
             .unwrap();
 
         file.write(&final_result).unwrap();
+        file.set_len(final_result.len() as u64).unwrap();
     }
 }

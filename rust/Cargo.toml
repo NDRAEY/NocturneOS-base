@@ -38,6 +38,7 @@ noct-sched = { path = "./noct-sched" }
 noct-ipc = { path = "./noct-ipc" }
 noct-timer = { path = "./noct-timer" }
 noct-elfloader = { path = "./noct-elfloader" }
+noct-ksymparser = { path = "./noct-ksymparser" }
 
 [profile.release]
 panic = "abort"

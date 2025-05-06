@@ -1,6 +1,5 @@
 #![no_std]
 #![no_main]
-
 #![allow(unused_imports)]
 #![allow(static_mut_refs)]
 
@@ -38,7 +37,7 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {
         unsafe {
             asm!("hlt");
-        }    
+        }
     }
 }
 
@@ -121,11 +120,17 @@ pub extern "C" fn rust_main() {
     //     });
     // }
 
-    let program = noct_elfloader::load_elf_file("R:/test_h");
+    // let program = noct_elfloader::load_elf_file("R:/test_h");
 
-    if let Ok(mut program) = program {
-        qemu_ok!("Running program...");
+    // if let Ok(mut program) = program {
+    //     qemu_ok!("Running program...");
 
-        program.run(&[]);
+    //     program.run(&[]);
+    // }
+
+    let symbols = ["unknownfunction_0", "dpm_LabelUpdate", "virt2phys", "eps_eps", "aaaa", "nvfs_write"];
+
+    for i in symbols {
+        qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));
     }
 }

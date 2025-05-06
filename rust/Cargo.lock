@@ -337,6 +337,10 @@ dependencies = [
 [[package]]
 name = "noct-ksymparser"
 version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "noct-logger",
+]
 
 [[package]]
 name = "noct-logger"
@@ -448,6 +452,7 @@ dependencies = [
  "noct-input",
  "noct-ipc",
  "noct-iso9660",
+ "noct-ksymparser",
  "noct-logger",
  "noct-noctfs",
  "noct-path",
