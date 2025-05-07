@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../common.h"
+#include "common.h"
+#include "io/ports.h"
 
 #define ATA_SR_BSY     0x80
 #define ATA_SR_DRDY    0x40
@@ -124,7 +125,6 @@ typedef struct {
 
 
 void ide_select_drive(uint8_t bus, bool slave);
-void ide_400ns_delay(uint16_t io);
 void ide_poll(uint16_t io);
 bool ide_poll_drq(uint16_t io);
 bool ide_poll_bsy(uint16_t io);
@@ -150,4 +150,11 @@ static inline void ata_set_params(uint8_t drive, uint16_t* io, uint8_t* real_dri
 		*io = ATA_SECONDARY_IO;
 
 	*real_drive = _drv;
+}
+
+SAYORI_INLINE void ide_400ns_delay(uint16_t io) {
+    inb(io + ATA_REG_ALTSTATUS);
+    inb(io + ATA_REG_ALTSTATUS);
+    inb(io + ATA_REG_ALTSTATUS);
+    inb(io + ATA_REG_ALTSTATUS);
 }

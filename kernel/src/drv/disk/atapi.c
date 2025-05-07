@@ -24,11 +24,13 @@ bool ata_scsi_status_wait(uint8_t bus) {
 	while (1) {
 		uint8_t status = inb(ATA_PORT(bus) + ATA_REG_COMMAND);
 		
-		if ((status & 0x01) == 1)
+		if ((status & 0x01) == 1) {
 			return true; // error
+		}
 		
-		if (!(status & 0x80) && (status & 0x08))
+		if (!(status & 0x80) && (status & 0x08)) {
 			break;
+		}
 		
 		ide_400ns_delay(ATA_PORT(bus));
 	}
@@ -97,7 +99,7 @@ size_t ata_scsi_receive_size_of_transfer(uint16_t bus) {
  * @param buffer Буффер для хранения данных
  */
 void ata_scsi_read_result(uint16_t bus, size_t size, uint16_t* buffer) {
-	insw(ATA_PORT(bus) + ATA_REG_DATA, (uint16_t*)((uint8_t *)buffer), size);
+	insw(ATA_PORT(bus) + ATA_REG_DATA, buffer, size);
 }
 
 /**

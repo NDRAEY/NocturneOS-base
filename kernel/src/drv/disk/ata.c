@@ -341,13 +341,6 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 	return 0;
 }
 
-void ide_400ns_delay(uint16_t io) {
-	inb(io + ATA_REG_ALTSTATUS);
-	inb(io + ATA_REG_ALTSTATUS);
-	inb(io + ATA_REG_ALTSTATUS);
-	inb(io + ATA_REG_ALTSTATUS);
-}
-
 void ide_poll(uint16_t io) {
 	ide_400ns_delay(io);
 
