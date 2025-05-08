@@ -54,6 +54,7 @@ uint32_t getchar() {
                 character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
                                     keyboard_layout[keycode] :
                                     shifted_keyboard_layout[keycode];
+
                 break;
             }
         } else {
@@ -62,7 +63,7 @@ uint32_t getchar() {
             }
         }
     }
-    
+
     return character;
 }
 

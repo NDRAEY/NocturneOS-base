@@ -51,3 +51,12 @@ void ac97_init();
 void ac97_FillBDLs();
 void ac97_WriteAll(void* buffer, size_t size);
 bool ac97_is_initialized();
+
+
+// Audio System intrinsics.
+
+void ac97as_open(void* priv);
+void ac97as_set_volume(void* priv, uint8_t left, uint8_t right);
+void ac97as_set_rate(void* priv, uint32_t rate);
+void ac97as_write(void* priv, const char* data, size_t len);
+void ac97as_close(void* priv);

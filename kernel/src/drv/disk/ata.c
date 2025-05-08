@@ -77,7 +77,8 @@ size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size
 //    qemu_note("[ATA] [DPM] [DISK %d] [READ] Off: %d | Size: %d", dpm.Point, Offset, Size);
     // TODO: @ndraey не забудь для своей функции сделать кол-во полученных байт
 	// FIXME: For those who want to see thid piece of code: I literally burned my eyes with this.
-    ata_read((uint8_t) dpm.Point, Buffer, low_offset, Size);
+    size_t disk_nr = (size_t)dpm.Point;
+    ata_read(disk_nr, Buffer, low_offset, Size);
     return Size;
 }
 
@@ -88,7 +89,8 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 //    qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
     // TODO: @ndraey не забудь для своей функции сделать кол-во записанных байт
 	// FIXME: For those who want to see thid piece of code: I literally burned my eyes with this.
-    ata_write((uint8_t) dpm.Point, Buffer, low_offset, Size);
+    size_t disk_nr = (size_t)dpm.Point;
+    ata_write(disk_nr, Buffer, low_offset, Size);
     return Size;
 }
 
@@ -96,7 +98,7 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 	uint16_t io = (bus == ATA_PRIMARY) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
 
-	uint8_t drive_num = (bus << 1) | drive;
+	size_t drive_num = (bus << 1) | drive;
 
 	qemu_log("Identifying %s %s", PRIM_SEC(bus), MAST_SLV(drive));
 

@@ -4,7 +4,6 @@
 
 extern crate alloc;
 
-use alloc::ffi::CString;
 use alloc::string::String;
 use core::ffi::{c_void, CStr};
 
@@ -27,21 +26,6 @@ unsafe extern "C" {
     fn fsize(stream: *mut CFile) -> usize;
     fn fread(stream: *mut CFile, count: usize, size: usize, buffer: *mut c_void) -> i32;
     fn fwrite(stream: *mut CFile, count: usize, size: usize, buffer: *const c_void) -> usize;
-
-    fn mkdir(path: *const i8) -> bool;
-}
-
-pub fn make_directory(path: &str) -> Result<(), &str> {
-    let mut path_string = String::from(path);
-    path_string.push('\0');
-
-    let result = unsafe { mkdir(path_string.as_bytes().as_ptr() as *const _) };
-
-    if result {
-        Ok(())
-    } else {
-        Err("Failed to create directory.")
-    }
 }
 
 pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
@@ -154,6 +138,18 @@ impl File {
         Ok(())
     }
 
+    pub fn write(&mut self, buf: &[u8]) -> Result<(), &str> {
+        let size = buf.len();
+        let ptr = buf.as_ptr() as *const c_void;
+        let data = unsafe { fwrite(self.raw_file, 1, size, ptr) };
+
+        if (data as usize) != size {
+            return Err("Not enough data received");
+        }
+
+        Ok(())
+    }
+
     pub fn read_to_string(&mut self, buf: &mut String) -> Result<(), &str> {
         let size = unsafe { fsize(self.raw_file) };
         let mut buffer: Vec<i8> = vec![0; size]; // Создаем буфер для строки
@@ -163,10 +159,10 @@ impl File {
 
         buffer.push(0);
 
-        let raw = unsafe { CString::from_raw(buffer.as_mut_ptr()) };
-        let s = raw.into_string().unwrap();
+        let raw = unsafe { CStr::from_ptr(buffer.as_mut_ptr()) };
+        let s = raw.to_string_lossy();
 
-        buf.push_str(s.as_str());
+        buf.push_str(&s);
 
         if (data as usize) != size {
             return Err("Not enough data received");

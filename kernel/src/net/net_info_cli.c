@@ -17,7 +17,7 @@ uint32_t CLI_CMD_NET(uint32_t c, char **v) {
 		_tty_printf("%s\n", entry->name);
 		entry->get_mac_addr(mac_buffer);
 
-		_tty_printf("\t|- MAC адрес: %v:%v:%v:%v:%v:%v\n",
+		_tty_printf("\t|- MAC адрес: %x:%x:%x:%x:%x:%x\n",
 					mac_buffer[0],
 					mac_buffer[1],
 					mac_buffer[2],

@@ -1,0 +1,11 @@
+[package]
+name = "noct-audio"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+noct-logger = { path = "../noct-logger" }
+
+[build-dependencies]
+cbindgen = { version = "0.28.0", default-features = false }

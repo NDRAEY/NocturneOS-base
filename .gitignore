@@ -23,3 +23,4 @@ compile_commands.json
 .cache/
 test_*
 *.wav
+/kernel/include/generated

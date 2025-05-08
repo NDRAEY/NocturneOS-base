@@ -173,6 +173,8 @@ void ac97_init() {
 
     ac97_initialized = true;
 
+    audio_system_add_output("AC'97", NULL, ac97as_open, ac97as_set_volume, ac97as_set_rate, ac97as_write, ac97as_close);
+
     qemu_log("AC'97 initialized successfully!");
 }
 
@@ -225,7 +227,7 @@ void ac97_WriteAll(void* buffer, size_t size) {
                 (char*)buffer + loaded,
                 block_size);
 
-        qemu_printf("[%d] memcpy: ac97 buffer: 0x%x; original buffer: 0x%x; size: %d\n",
+        qemu_printf("[%d] memcpy: ac97 buffer: %x; original buffer: %x; size: %d\n",
             timestamp(),
             ac97_audio_buffer,
             (char*)buffer + loaded,
@@ -250,4 +252,44 @@ void ac97_WriteAll(void* buffer, size_t size) {
     }
 
     qemu_log("Finish");
+}
+
+void ac97as_open(void* priv) {
+    (void)priv;
+    qemu_log("OPEN!\n");
+}
+
+// Volume is in range 0 - 100
+void ac97as_set_volume(void* priv, uint8_t left, uint8_t right) {
+    (void)priv;
+    qemu_log("SET VOLUME: %d %d!\n", left, right);
+
+    size_t lch_mas = ((100 - left) * 63) / 100;
+    size_t rch_mas = ((100 - right) * 63) / 100;
+    size_t lch_pcm = ((100 - left) * 31) / 100;
+    size_t rch_pcm = ((100 - right) * 31) / 100;
+
+    qemu_log("Converted to: %d %d %d %d!\n", lch_mas, rch_mas, lch_pcm, rch_pcm);
+
+    ac97_set_master_volume(lch_mas, rch_mas, false);
+	ac97_set_pcm_volume(lch_pcm, rch_mas, false);
+}
+
+void ac97as_set_rate(void* priv, uint32_t rate) {
+    (void)priv;
+	ac97_set_pcm_sample_rate(rate);
+    qemu_log("RATE: %dHz!\n", rate);
+}
+
+void ac97as_write(void* priv, const char* data, size_t len) {
+    (void)priv;
+    qemu_log("WRITE: %p <%d>!\n", data, len);
+    ac97_WriteAll(data, len);
+}
+
+void ac97as_close(void* priv) {
+    (void)priv;
+    qemu_log("CLOSE!\n");
+
+    ac97_clear_status_register();
 }

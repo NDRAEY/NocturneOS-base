@@ -294,6 +294,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_log("Audio system init");
     audio_system_init();
 
+    // audio_system_add_output("Duper", NULL, noc_open, noc_set_volume, noc_set_rate, noc_write, noc_close);
+
+    // audio_system_open(0);
+
     qemu_log("FSM Init");
     fsm_init();
 

@@ -71,3 +71,5 @@
 #include "debug/hexview.h"
 
 #include "sys/cputemp.h"
+
+#include "generated/audiosystem_headers.h"

@@ -78,6 +78,9 @@ fn process_input(context: &mut ShellContext) -> String {
 
     loop {
         let raw_ch = unsafe { getchar() };
+
+        qemu_note!("{raw_ch}");
+
         let ch = char::from_u32(raw_ch).unwrap();
 
         match ch {

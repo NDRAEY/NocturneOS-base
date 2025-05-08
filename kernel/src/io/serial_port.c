@@ -148,13 +148,10 @@ void __com_writeUInt(int16_t port, size_t i){
 }
 
 
-void __com_writeHex(int16_t port, uint32_t i, bool mode){
+void __com_writeHex(int16_t port, uint32_t i) {
     const unsigned char hex[16] = "0123456789ABCDEF";
     uint32_t n = i;
     uint32_t d = 0x10000000;
-
-    if(mode)
-        __com_writeString(port, "0x");
 
     while ((i / d == 0) && (d >= 0x10)) {
         d /= 0x10;
@@ -219,10 +216,7 @@ void __com_pre_formatString(int16_t port, const char* format, va_list args){
                 __com_writeUInt(port,va_arg(args, unsigned int));
                 break;
             case 'x':
-                __com_writeHex(port,va_arg(args, uint32_t),true);
-                break;
-            case 'v':
-                __com_writeHex(port,va_arg(args, uint32_t),false);
+                __com_writeHex(port,va_arg(args, uint32_t));
                 break;
             default:
                 __com_writeChar(port,format[i]);

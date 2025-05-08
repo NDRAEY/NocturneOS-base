@@ -40,14 +40,14 @@ Widget_t* new_widget_button(char* label, uint32_t color, uint32_t label_color) {
     wgt_data->label_color = label_color;
     wgt_data->color = color;
 
-    qemu_log("Created Widget Button at: %x", wgt);
-    qemu_log("Created Widget Button DATA at: %x", wgt->custom_widget_data);
+    qemu_log("Created Widget Button at: %p", wgt);
+    qemu_log("Created Widget Button DATA at: %p", wgt->custom_widget_data);
 
     return wgt;
 }
 
 void destroy_widget_button(Widget_t* widget) {
-    qemu_log("Widget button destroy its data at: %x", widget->custom_widget_data);
+    qemu_log("Widget button destroy its data at: %p", widget->custom_widget_data);
     kfree(widget->custom_widget_data);
 }
 

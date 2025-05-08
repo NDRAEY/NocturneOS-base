@@ -7,7 +7,6 @@ extern crate alloc;
 
 use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
 
-pub mod audio;
 pub mod drv;
 pub mod gfx;
 pub mod shell;
@@ -25,6 +24,7 @@ pub use noct_logger::*;
 use noct_tty::println;
 
 pub use noct_ipc::manager::ipc_init;
+pub use noct_audio::c_api;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

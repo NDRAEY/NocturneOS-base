@@ -16,7 +16,6 @@
 
 heap_t system_heap;
 bool vmm_debug = false;
-
 size_t peak_heap_usage = 0;
 
 size_t pmm_alloc_and_map_self(size_t *page_dir, size_t bytes)
@@ -269,11 +268,13 @@ void free_no_map(void *ptr)
 
 void *kmalloc_common(size_t size, size_t align)
 {
+	scheduler_mode(false);
+
 	void *allocated = alloc_no_map(size, align);
 
 	if (!allocated)
 	{
-		return 0;
+		goto end;
 	}
 
 	size_t reg_addr = (size_t)allocated & ~0xfffu;
@@ -321,6 +322,10 @@ void *kmalloc_common(size_t size, size_t align)
 	{
 		qemu_ok("From %x to %x, here you are!", (size_t)allocated, (size_t)(allocated + size));
 	}
+
+	end:
+
+	scheduler_mode(true);
 
 	return allocated;
 }
@@ -413,9 +418,11 @@ size_t heap_get_block_idx(size_t address)
 
 void kfree(void *ptr)
 {
+	scheduler_mode(false);
+
 	if (!ptr)
 	{
-		return;
+		goto end;
 	}
 
 	struct heap_entry block = heap_get_block((size_t)ptr);
@@ -428,7 +435,7 @@ void kfree(void *ptr)
 	if (!block.address)
 	{
 		qemu_warn("No block!");
-		return;
+		goto end;
 	}
 
 	free_no_map(ptr);
@@ -450,7 +457,9 @@ void kfree(void *ptr)
 		}
 	}
 
-	//	qemu_ok("OK!");
+	end:
+
+	scheduler_mode(true);
 }
 
 #ifdef LAZY_KREALLOC

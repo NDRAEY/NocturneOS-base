@@ -26,7 +26,7 @@ void destroy_widget(Widget_t* widget) {
 
 void widget_notify(struct Window* window, struct Widget* widget, WidgetNotifyCode_t code, void* data) {
     qemu_log("Reached widget_notify()");
-    qemu_log("Got WIDGET notifcation: (WINDOW@%v)(id: %d) (WIDGET@%v) (CODE: %s)",
+    qemu_log("Got WIDGET notifcation: (WINDOW@%x)(id: %d) (WIDGET@%x) (CODE: %s)",
         window,
         window->id,
         widget,
