@@ -47,6 +47,9 @@ static COMMANDS: &[ShellCommandEntry] = &[
     pavi::PAVI_COMMAND_ENTRY,
     miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
+    ("eni", |_, args| {
+        eni_player::player(args)
+    }, Some("New player")),
     ("m", miniplay::mp, None),
     ("help", help, Some("Prints help message")),
 ];

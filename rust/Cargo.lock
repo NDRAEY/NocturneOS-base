@@ -118,6 +118,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "eg-seven-segment"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e7d2f54ed234b333c71865c641906175a0d58bf366534ba5b8ded74b524b87b"
+dependencies = [
+ "bitflags 2.9.0",
+ "embedded-graphics",
+]
+
+[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,6 +138,16 @@ name = "elf"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4445909572dbd556c457c849c4ca58623d84b27c8fff1e74b0b4227d8b90d17b"
+
+[[package]]
+name = "embedded-canvas"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1d266939e898d2b110ce1aaf5cf3e797c49b9e2b2c2d00f6fe45634bd201e2d"
+dependencies = [
+ "embedded-graphics",
+ "embedded-graphics-core",
+]
 
 [[package]]
 name = "embedded-graphics"
@@ -150,6 +170,45 @@ checksum = "ba9ecd261f991856250d2207f6d8376946cd9f412a2165d3b75bc87a0bc7a044"
 dependencies = [
  "az",
  "byteorder",
+]
+
+[[package]]
+name = "embedded-layout"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a90553247f2b05c59ac7894ea13d830636c2b1203fa03bff400eddbd1fa9f52"
+dependencies = [
+ "embedded-graphics",
+ "embedded-layout-macros",
+]
+
+[[package]]
+name = "embedded-layout-macros"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f6e621fe4c7e05b695274b722dc0a60bacd1c8696b58191baa0154713d52400"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "eni-player"
+version = "0.1.0"
+dependencies = [
+ "eg-seven-segment",
+ "embedded-canvas",
+ "embedded-graphics",
+ "embedded-layout",
+ "noct-audio",
+ "noct-fs",
+ "noct-input",
+ "noct-logger",
+ "noct-sched",
+ "noct-screen",
+ "noct-tty",
+ "spin 0.10.0",
 ]
 
 [[package]]
@@ -536,6 +595,7 @@ name = "nocturne"
 version = "0.1.0"
 dependencies = [
  "elf",
+ "eni-player",
  "lazy_static",
  "noct-alloc",
  "noct-audio",

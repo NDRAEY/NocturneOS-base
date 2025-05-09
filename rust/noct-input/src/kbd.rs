@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SpecialKey {
     ESCAPE,
     BACKSPACE,
@@ -25,7 +25,7 @@ pub enum SpecialKey {
     DELETE
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Key {
     Unknown,
     Special(SpecialKey),

@@ -20,6 +20,8 @@ struct CFile {
     err: u32,
 }
 
+unsafe impl Send for CFile {}
+
 unsafe extern "C" {
     fn fopen(filename: *const u8, mode: *const u8) -> *mut CFile;
     fn fclose(stream: *mut CFile);
@@ -103,11 +105,12 @@ pub fn write(file_path: &str, data: &[u8]) -> Result<usize, &'static str> {
 }
 
 
-
 pub struct File {
-    raw_file: *mut CFile,
+    raw_file: &'static mut CFile,
     // path: String,
 }
+
+unsafe impl Sync for File {}
 
 impl File {
     pub fn open(path: &str) -> Result<File, ()> {
@@ -121,21 +124,21 @@ impl File {
         }
 
         Ok(File {
-            raw_file: file,
+            raw_file: unsafe { &mut *file },
             // path: String::from(path),
         })
     }
 
-    pub fn read(&mut self, buf: &mut [u8]) -> Result<(), &str> {
+    pub fn read(&mut self, buf: &mut [u8]) -> Result<usize, &str> {
         let size = buf.len();
         let ptr = buf.as_mut_ptr() as *mut c_void;
         let data = unsafe { fread(self.raw_file, 1, size, ptr) };
 
-        if (data as usize) != size {
-            return Err("Not enough data received");
-        }
+        // if (data as usize) != size {
+        //     return Err("Not enough data received");
+        // }
 
-        Ok(())
+        Ok(data as _)
     }
 
     pub fn write(&mut self, buf: &[u8]) -> Result<(), &str> {
@@ -169,5 +172,9 @@ impl File {
         }
 
         Ok(())
+    }
+
+    pub fn size(&mut self) -> usize {
+        unsafe { fsize(self.raw_file) }
     }
 }

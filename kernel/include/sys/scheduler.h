@@ -97,6 +97,9 @@ thread_t* thread_create(process_t* proc,
 	               	    size_t stack_size,
 	               	    bool kernel,
 	               	    bool suspend);
+                        
+thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size,
+bool kernel, bool suspend, size_t arg1);
 
 /* Get current process */
 volatile process_t * get_current_proc(void);
@@ -118,7 +121,7 @@ extern void user_mode_switch(void* entry_point, uint32_t user_stack_top);
 /* Init user mode */
 void init_user_mode(void* entry_point, size_t stack_size);
 
-int32_t spawn(const char *name, int argc, char* eargv[]);
+int32_t spawn_prog(const char *name, int argc, char* eargv[]);
 
 void scheduler_mode(bool on);
 

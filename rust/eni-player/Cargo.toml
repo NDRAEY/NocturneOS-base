@@ -1,0 +1,20 @@
+[package]
+name = "eni-player"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eg-seven-segment = "0.2.0"
+embedded-canvas = "0.3.1"
+embedded-graphics = "0.8.1"
+embedded-layout = "0.4.2"
+
+noct-screen = { path = "../noct-screen" }
+noct-logger = { path = "../noct-logger" }
+noct-tty = { path = "../noct-tty" }
+noct-fs = { path = "../noct-fs" }
+noct-sched = { path = "../noct-sched" }
+noct-input = { path = "../noct-input" }
+noct-audio = { path = "../noct-audio" }
+
+spin = "0.10.0"
