@@ -5,7 +5,7 @@ use noct_logger::qemu_note;
 
 use crate::{AUDIO_DEVICES, GenericAudioDevice, get_device};
 
-use super::{AudioDevice, init};
+use super::init;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn audio_system_add_output(
@@ -17,7 +17,7 @@ pub extern "C" fn audio_system_add_output(
     write: extern "C" fn(*const u8, usize) -> (),
     close: extern "C" fn() -> (),
 ) {
-    let name = unsafe { CStr::from_ptr(name) };
+    let name = unsafe { CStr::from_ptr(unsafe { name }) };
     let name = name.to_string_lossy();
 
     #[allow(static_mut_refs)]
@@ -31,8 +31,8 @@ pub extern "C" fn audio_system_add_output(
                 on_open: core::mem::transmute(open),
                 on_set_volume: core::mem::transmute(set_volume),
                 on_set_rate: core::mem::transmute(set_rate),
-                on_write: core::mem::transmute(write),
-                on_close: core::mem::transmute(close),
+                on_write: core::mem::transmute::<extern "C" fn(*const u8, usize), fn(*mut c_void, *const u8, usize)>(write),
+                on_close: core::mem::transmute::<extern "C" fn(), fn(*mut c_void)>(close),
             }))
     };
 
@@ -60,7 +60,7 @@ pub extern "C" fn audio_system_rate(index: usize, rate: u32) {
 pub extern "C" fn audio_system_write(index: usize, data: *const u8, len: usize) {
     get_device(index)
         .expect("No device!")
-        .write(unsafe { core::slice::from_raw_parts(data, len) });
+        .write(unsafe { core::slice::from_raw_parts(unsafe { data }, len) });
 }
 
 #[unsafe(no_mangle)]
@@ -77,7 +77,7 @@ pub extern "C" fn audio_system_get_default_device_index() -> usize {
         return 0xFFFF_FFFF;
     }
 
-    return devs.len() - 1;
+    devs.len() - 1
 }
 
 #[unsafe(no_mangle)]

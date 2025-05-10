@@ -208,6 +208,7 @@ dependencies = [
  "noct-sched",
  "noct-screen",
  "noct-tty",
+ "nwav",
  "spin 0.10.0",
 ]
 
@@ -250,9 +251,9 @@ checksum = "875488b8711a968268c7cf5d139578713097ca4635a76044e8fe8eedf831d07e"
 
 [[package]]
 name = "getrandom"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73fea8450eea4bac3940448fb7ae50d91f034f941199fcd9d909a5a07aa455f0"
+checksum = "26145e563e54f2cadc477553f1ec5ee650b00862f0a58bcd12cbdc5f0ea2d2f4"
 dependencies = [
  "cfg-if",
  "libc",
@@ -310,9 +311,9 @@ dependencies = [
 
 [[package]]
 name = "iso9660_simple"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81ac4e3b4bc494877714a008db6306f152551fd2485d8bd95954534f9a6528a8"
+checksum = "2c23c0c19fda46d077325bcae412f007687a78c54cb9699f05d31418bb041f43"
 
 [[package]]
 name = "itertools"
@@ -641,6 +642,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "nwav"
+version = "0.1.0"
+source = "git+https://github.com/NDRAEY/nwav#9f11aa9f14c758e3340f818d3f798c31ff332817"
+dependencies = [
+ "arrayref",
 ]
 
 [[package]]

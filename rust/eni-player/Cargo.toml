@@ -18,3 +18,4 @@ noct-input = { path = "../noct-input" }
 noct-audio = { path = "../noct-audio" }
 
 spin = "0.10.0"
+nwav = { git = "https://github.com/NDRAEY/nwav" }

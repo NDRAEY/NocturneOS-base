@@ -2,18 +2,15 @@
 
 extern crate alloc;
 
-use core::cell::RefCell;
-
 use alloc::boxed::Box;
-use alloc::{format, vec};
 use alloc::string::{String, ToString};
 use alloc::sync::Arc;
 use alloc::vec::Vec;
-use border_wrapped::BorderWrapped;
+use alloc::{format, vec};
 use embedded_canvas::Canvas;
 use embedded_graphics::Drawable;
 use embedded_graphics::mono_font::ascii;
-use embedded_graphics::prelude::{Transform, WebColors};
+use embedded_graphics::prelude::WebColors;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle, StyledDrawable, Triangle};
 use embedded_graphics::text::{Baseline, Text, TextStyle};
 use embedded_graphics::{
@@ -21,23 +18,22 @@ use embedded_graphics::{
     pixelcolor::Rgb888,
     prelude::{Point, RgbColor, Size},
 };
-use embedded_layout::layout;
-use embedded_layout::layout::linear::spacing::DistributeFill;
 use embedded_layout::layout::linear::{LinearLayout, spacing};
 use embedded_layout::prelude::Chain;
 use margin::Margin;
 use noct_fs::File;
 use noct_input::kbd::{Key, SpecialKey};
-use noct_logger::{qemu_log, qemu_note, qemu_ok};
+use noct_logger::{qemu_log, qemu_ok};
 use noct_sched::{spawn, task_yield};
 use noct_tty::println;
+use nwav::Chunk::{Format, List};
 use spin::Mutex;
 
 const CACHE_SIZE: usize = 128 << 10;
 
-mod border_wrapped;
 mod margin;
-mod text_list;
+// mod border_wrapped;
+// mod text_list;
 
 #[derive(PartialEq)]
 pub enum PlayerStatus {
@@ -91,6 +87,7 @@ fn draw_ui(
     canvas: &mut Canvas<Rgb888>,
     status: &PlayerStatus,
     filename: &str,
+    track_info: &(String, String),
     cached_size: &usize,
     current_time: &usize,
     total_time: &usize,
@@ -115,7 +112,7 @@ fn draw_ui(
         TextStyle::with_baseline(Baseline::Top),
     );
 
-    let track_info = format!("{}\n\n{}", filename, "Unknown artist - Unknown");
+    let track_info = format!("{}\n\n{} - {}", filename, track_info.0, track_info.1);
 
     let track_info = Margin::new(Text::with_text_style(
         &track_info,
@@ -158,7 +155,7 @@ fn draw_ui(
     .bottom(25);
 
     let footer = Text::with_text_style(
-        "L = show track list; Space = Play / Pause;\n<- = 5 seconds rewind; -> = 5 seconds forward",
+        "Space = Play / Pause",
         Point::zero(),
         font,
         TextStyle::with_baseline(Baseline::Top),
@@ -210,13 +207,21 @@ fn render_canvas(canvas: &mut Canvas<Rgb888>) {
     }
 }
 
+#[inline(always)]
+fn bytes_to_seconds(fmtdata: &nwav::Fmt, byte_count: usize) -> usize {
+    byte_count
+        / (fmtdata.sampling_rate
+            * fmtdata.number_of_channels as u32
+            * (fmtdata.bits_per_sample as u32 >> 3)) as usize
+}
+
 pub fn player(args: &[String]) -> Result<(), usize> {
-    let filepath = match args.get(0) {
+    let filepath = match args.first() {
         Some(fp) => fp,
         None => {
             println!("No arguments!");
             return Err(1);
-        },
+        }
     };
 
     let mut audio = noct_audio::get_device(0).unwrap();
@@ -224,16 +229,40 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     let cache_line: Arc<Mutex<Vec<Box<[u8]>>>> = Arc::new(Mutex::new(Vec::new()));
 
-    let mut file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(&filepath).unwrap()));
+    let mut file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(filepath).unwrap()));
+
+    let (fmtdata, metadata) = {
+        let mut bytes = vec![0; 2048];
+
+        file.lock().read(&mut bytes).unwrap();
+
+        let wav = nwav::WAV::from_data(&bytes);
+
+        let chunk = match wav.read_chunk_by_name("fmt ") {
+            Some(Format(chunk)) => chunk,
+            _ => {
+                println!("Cannot read the `fmt ` chunk! Are you sure that's a WAV file?");
+
+                return Err(2);
+            }
+        };
+
+        let meta = match wav.read_chunk_by_name("LIST") {
+            Some(List(l)) => Some(l),
+            _ => None,
+        };
+
+        (chunk, meta)
+    };
+
+    let filesize = file.lock().size();
 
     let mut is_running = Arc::new(Mutex::new(true));
     let mut status = PlayerStatus::Playing;
-    let mut cached_size = Arc::new(Mutex::new(RefCell::new(0usize)));
-    let mut bytes_read = 0;
-    let mut current_time_seconds = 0;
-    let mut total_time_seconds = 193;
-
-    let filesize = file.lock().size();
+    let mut bytes_read: usize = 0;
+    let mut bytes_played: usize = 0;
+    let mut current_time_seconds: usize = 0;
+    let total_time_seconds: usize = bytes_to_seconds(&fmtdata, filesize);
 
     let mut canvas: Canvas<Rgb888> = Canvas::new(Size::new(800, 600));
 
@@ -256,7 +285,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
             let datasize = core::cmp::min(CACHE_SIZE, filesize - bytes_read);
             let mut buffer = vec![0u8; datasize];
-            
+
             file_bnd.read(buffer.as_mut()).unwrap();
             cache_bnd.push(buffer.into_boxed_slice());
 
@@ -268,17 +297,35 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         qemu_ok!("Exit!");
     });
 
+    let meta = metadata.map(|a| {
+        let artist = a
+            .iter()
+            .filter(|x| x.0 == "IART")
+            .map(|x| x.1.clone())
+            .next()
+            .unwrap_or("Unknown artist".to_string());
+
+        let title = a
+            .iter()
+            .filter(|x| x.0 == "INAM")
+            .map(|x| x.1.clone())
+            .next()
+            .unwrap_or("Unknown".to_string());
+
+        (artist, title)
+    }).unwrap_or(("Unknown artist".to_string(), "Unknown".to_string()));
+
     loop {
         let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
         let (key, is_pressed) = noct_input::kbd::parse_scancode(key as u8).unwrap();
-        
+
         if key == Key::Special(SpecialKey::ESCAPE) {
             noct_screen::fill(0);
             break;
         } else if key == Key::Character(' ') && is_pressed {
             status = match status {
                 PlayerStatus::Playing => PlayerStatus::Paused,
-                _ => PlayerStatus::Playing
+                _ => PlayerStatus::Playing,
             };
 
             continue;
@@ -286,17 +333,21 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
         {
             if status == PlayerStatus::Playing {
-                let mut x = cache_line.lock();
-                let block = x.get(0).map(|a| a.clone());
-                match block {
-                    Some(a) => {
-                        audio.write(&a);
+                let block = {
+                    let mut x = cache_line.lock();
+                    let block = x.first().cloned();
 
+                    if block.is_some() {
                         x.remove(0);
+                    }
 
-                        qemu_log!("Removed! {}", x.len());
-                    },
-                    None => (),
+                    block
+                };
+                
+                if let Some(a) = block {
+                    audio.write(&a);
+
+                    bytes_played += a.len();
                 };
             }
         }
@@ -305,8 +356,9 @@ pub fn player(args: &[String]) -> Result<(), usize> {
             &mut canvas,
             &status,
             &filepath,
+            &meta,
             &cache_line.lock().iter().map(|a| a.len()).sum(),
-            &current_time_seconds,
+            &bytes_to_seconds(&fmtdata, bytes_played),
             &total_time_seconds,
         );
 
