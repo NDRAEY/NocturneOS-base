@@ -2,7 +2,7 @@
  * @file kernel.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Основная точка входа в ядро
- * @version 0.3.5
+ * @version 0.4.0
  * @date 2022-11-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
@@ -34,11 +34,11 @@
 #include <arch/init.h>
 
 size_t VERSION_MAJOR = 0;    /// Версия ядра
-size_t VERSION_MINOR = 3;    /// Пре-релиз
-size_t VERSION_PATCH = 5;    /// Патч
+size_t VERSION_MINOR = 4;    /// Пре-релиз
+size_t VERSION_PATCH = 0;    /// Патч
 
 char* OS_ARCH = "i386";      /// Архитектура
-char* VERSION_NAME = "Soul"; /// Имя версии (изменяется вместе с минорной части версии)
+char* VERSION_NAME = "Aura"; /// Имя версии (изменяется вместе с минорной части версии)
 
 //#define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
 

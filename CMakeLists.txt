@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(NocturneOS VERSION 0.3.5)
+project(NocturneOS VERSION 0.4.0)
 enable_language(C ASM)
 
 # Options
