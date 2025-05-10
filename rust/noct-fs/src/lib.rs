@@ -25,6 +25,7 @@ unsafe impl Send for CFile {}
 unsafe extern "C" {
     fn fopen(filename: *const u8, mode: *const u8) -> *mut CFile;
     fn fclose(stream: *mut CFile);
+    fn fseek(stream: *mut CFile, offset: isize, whence: u8);
     fn fsize(stream: *mut CFile) -> usize;
     fn fread(stream: *mut CFile, count: usize, size: usize, buffer: *mut c_void) -> i32;
     fn fwrite(stream: *mut CFile, count: usize, size: usize, buffer: *const c_void) -> usize;
@@ -172,6 +173,10 @@ impl File {
         }
 
         Ok(())
+    }
+
+    pub fn rewind(&mut self) {
+        unsafe { fseek(self.raw_file as *mut _, 0, 0) };
     }
 
     pub fn size(&mut self) -> usize {

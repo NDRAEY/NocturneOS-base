@@ -23,7 +23,7 @@ use embedded_layout::prelude::Chain;
 use margin::Margin;
 use noct_fs::File;
 use noct_input::kbd::{Key, SpecialKey};
-use noct_logger::{qemu_log, qemu_ok};
+use noct_logger::{qemu_log, qemu_note, qemu_ok};
 use noct_sched::{spawn, task_yield};
 use noct_tty::println;
 use nwav::Chunk::{Format, List};
@@ -35,7 +35,7 @@ mod margin;
 // mod border_wrapped;
 // mod text_list;
 
-#[derive(PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum PlayerStatus {
     Playing,
     Paused,
@@ -258,10 +258,9 @@ pub fn player(args: &[String]) -> Result<(), usize> {
     let filesize = file.lock().size();
 
     let mut is_running = Arc::new(Mutex::new(true));
-    let mut status = PlayerStatus::Playing;
-    let mut bytes_read: usize = 0;
+    let mut status = Arc::new(Mutex::new(PlayerStatus::Playing));
+    let mut bytes_read = Arc::new(Mutex::new(0));
     let mut bytes_played: usize = 0;
-    let mut current_time_seconds: usize = 0;
     let total_time_seconds: usize = bytes_to_seconds(&fmtdata, filesize);
 
     let mut canvas: Canvas<Rgb888> = Canvas::new(Size::new(800, 600));
@@ -269,29 +268,31 @@ pub fn player(args: &[String]) -> Result<(), usize> {
     let arced_running = is_running.clone();
     let arced_file = file.clone();
     let arced_cache = cache_line.clone();
+    let arced_status = status.clone();
+    let arced_br = bytes_read.clone();
     spawn(move || {
         while *arced_running.lock() {
-            let mut file_bnd = arced_file.lock();
-            let mut cache_bnd = arced_cache.lock();
-
-            if bytes_read >= filesize {
-                qemu_log!("Reached the end!");
-                break;
+            if *arced_br.lock() >= filesize {
+                // qemu_log!("Reached the end!");
+                task_yield();
+                continue;
             }
-
-            if cache_bnd.len() > 5 {
+            
+            if arced_cache.lock().len() > 5 {
+                task_yield();
                 continue;
             }
 
-            let datasize = core::cmp::min(CACHE_SIZE, filesize - bytes_read);
+            qemu_note!("Cache fetch");
+
+            let datasize = core::cmp::min(CACHE_SIZE, filesize - *arced_br.lock());
             let mut buffer = vec![0u8; datasize];
-
+            
+            let mut file_bnd = arced_file.lock();
             file_bnd.read(buffer.as_mut()).unwrap();
-            cache_bnd.push(buffer.into_boxed_slice());
+            arced_cache.lock().push(buffer.into_boxed_slice());
 
-            bytes_read += CACHE_SIZE;
-
-            task_yield();
+            *arced_br.lock() += CACHE_SIZE;
         }
 
         qemu_ok!("Exit!");
@@ -323,7 +324,18 @@ pub fn player(args: &[String]) -> Result<(), usize> {
             noct_screen::fill(0);
             break;
         } else if key == Key::Character(' ') && is_pressed {
-            status = match status {
+            let curstat = *status.lock();
+
+            *status.lock() = match curstat {
+                PlayerStatus::Stop => {
+                    qemu_note!("STOP!");
+                    
+                    file.lock().rewind();
+                    bytes_played = 0;
+                    *bytes_read.lock() = 0;
+
+                    PlayerStatus::Playing
+                },
                 PlayerStatus::Playing => PlayerStatus::Paused,
                 _ => PlayerStatus::Playing,
             };
@@ -331,30 +343,37 @@ pub fn player(args: &[String]) -> Result<(), usize> {
             continue;
         }
 
-        {
-            if status == PlayerStatus::Playing {
-                let block = {
-                    let mut x = cache_line.lock();
-                    let block = x.first().cloned();
+        let curstat = *status.lock();
+        
+        if curstat == PlayerStatus::Playing {
+            qemu_log!("PLAYING!");
+            let block = {
+                let mut x = cache_line.lock();
+                let block = x.first().cloned();
 
-                    if block.is_some() {
-                        x.remove(0);
-                    }
+                if block.is_some() {
+                    x.remove(0);
+                }
 
-                    block
-                };
-                
-                if let Some(a) = block {
-                    audio.write(&a);
+                block
+            };
+            
+            if let Some(a) = block {
+                audio.write(&a);
 
-                    bytes_played += a.len();
-                };
+                bytes_played += a.len();
+            } else {
+                if *bytes_read.lock() >= filesize {
+                    qemu_note!("No block!");
+
+                    *status.lock() = PlayerStatus::Stop;
+                }
             }
         }
-
+        
         draw_ui(
             &mut canvas,
-            &status,
+            &curstat,
             &filepath,
             &meta,
             &cache_line.lock().iter().map(|a| a.len()).sum(),
