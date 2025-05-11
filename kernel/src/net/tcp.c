@@ -10,6 +10,8 @@
 #include "io/ports.h"
 #include "net/ipv4.h"
 #include "mem/vmm.h"
+#include "lib/rand.h"
+
 
 #define MAX_CONNECTIONS 64
 

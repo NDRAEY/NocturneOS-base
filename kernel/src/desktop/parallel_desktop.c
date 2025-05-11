@@ -10,6 +10,8 @@
 #include "desktop/widget_progress.h"
 #include "sys/timer.h"
 #include "lib/sprintf.h"
+#include "sys/system.h"
+#include "io/keyboard.h"
 
 extern Window_t* focused;
 
@@ -101,8 +103,6 @@ void parallel_desktop_start() {
 
     qemu_log("Reached init...");    
     set_cursor_enabled(false);
-
-    log_window_manager_state();
 
     // ROOT WINDOW
 
@@ -241,7 +241,4 @@ void parallel_desktop_start() {
     qemu_log("Exit successfully!!!");
 
     clean_tty_screen();
-
-    tty_printf("Memory allocation info written to COM1 (debug) port!!!\n");
-    log_window_manager_state();
 }

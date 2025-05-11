@@ -47,6 +47,8 @@ typedef	uint32_t		size_t;
 typedef	int32_t			ssize_t;
 #endif
 
+typedef size_t uintptr_t;
+
 #define allocate_one(T) kcalloc(sizeof(T), 1)
 
 // Use ON_NULLPTR macro to tell a user (developer) that he passed a nullptr

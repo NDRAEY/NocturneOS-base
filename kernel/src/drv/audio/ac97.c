@@ -11,6 +11,7 @@
 #include "lib/stdio.h"
 #include "mem/vmm.h"
 #include "sys/scheduler.h"
+#include "generated/audiosystem_headers.h"
 
 uint8_t ac97_busnum, ac97_slot, ac97_func;
 
@@ -281,7 +282,7 @@ void ac97as_set_rate(void* priv, uint32_t rate) {
     qemu_log("RATE: %dHz!\n", rate);
 }
 
-void ac97as_write(void* priv, const char* data, size_t len) {
+void ac97as_write(void* priv, const uint8_t* data, size_t len) {
     (void)priv;
     qemu_log("WRITE: %p <%d>!\n", data, len);
     ac97_WriteAll(data, len);

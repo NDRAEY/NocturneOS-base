@@ -38,7 +38,7 @@ int dpm_searchFreeIndex(int Index)
 	return -1;
 }
 
-void dpm_fnc_write(char Letter, dpm_disk_read_cmd Read, dpm_disk_write_cmd Write)
+void dpm_set_read_func(char Letter, dpm_disk_read_cmd Read)
 {
 	int Index = Letter - 65;
 
@@ -49,7 +49,33 @@ void dpm_fnc_write(char Letter, dpm_disk_read_cmd Read, dpm_disk_write_cmd Write
 		return;
 
 	DPM_Disks[Index].Read = Read;
+}
+
+
+void dpm_set_write_func(char Letter, dpm_disk_write_cmd Write)
+{
+	int Index = Letter - 65;
+
+	Index = (Index > 32 ? Index - 32 : Index);
+	Index = (Index < 0 || Index > 25 ? 0 : Index);
+
+	if (DPM_Disks[Index].Ready == 0 || DPM_Disks[Index].Status == 0)
+		return;
+
 	DPM_Disks[Index].Write = Write;
+}
+
+void dpm_set_command_func(char Letter, dpm_disk_command_cmd Command)
+{
+	int Index = Letter - 65;
+
+	Index = (Index > 32 ? Index - 32 : Index);
+	Index = (Index < 0 || Index > 25 ? 0 : Index);
+
+	if (DPM_Disks[Index].Ready == 0 || DPM_Disks[Index].Status == 0)
+		return;
+
+	DPM_Disks[Index].Command = Command;
 }
 
 void *dpm_metadata_read(char Letter)
@@ -85,7 +111,7 @@ void dpm_metadata_write(char Letter, uint32_t Addr)
  *
  * @return Кол-во прочитанных байт
  */
-size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, uint8_t *Buffer)
+size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, void *Buffer)
 {
 	int Index = Letter - 65;
 
@@ -129,7 +155,7 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
 		}
 	}
 
-	return DPM_ERROR_NO_READ;
+	return DPM_ERROR_CANT_READ;
 }
 
 /**
@@ -142,7 +168,7 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
  *
  * @return size_t - Кол-во записанных байт
  */
-size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const uint8_t *Buffer)
+size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const void *Buffer)
 {
 	int Index = Letter - 65;
 
@@ -180,7 +206,7 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 			qemu_log("[DPM] This functionality has not been implemented yet.");
 	}
 
-	return DPM_ERROR_NO_READ;
+	return DPM_ERROR_CANT_READ;
 }
 
 int dpm_unmount(char Letter, bool FreeReserved)
@@ -230,10 +256,10 @@ int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t S
 	{
 		qemu_warn("[DPM] Warning! This letter is already occupied, and an attempt will be made to search for a free letter.");
 		Index = dpm_searchFreeIndex(Index);
-		if (Index == DPM_ERROR_NO_MOUNT)
+		if (Index == DPM_ERROR_CANT_MOUNT)
 		{
 			qemu_warn("[DPM] Sorry, but the disk could not be registered because there is no free letter. Delete the extra devices and try again.");
-			return DPM_ERROR_NO_MOUNT;
+			return DPM_ERROR_CANT_MOUNT;
 		}
 		qemu_log("[DPM] The drive was assigned the letter '%c'", Index + 65);
 	}

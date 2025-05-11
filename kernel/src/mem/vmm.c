@@ -13,6 +13,7 @@
 #include "mem/pmm.h"
 #include "io/ports.h"
 #include "lib/math.h"
+#include "sys/scheduler.h"
 
 heap_t system_heap;
 bool vmm_debug = false;

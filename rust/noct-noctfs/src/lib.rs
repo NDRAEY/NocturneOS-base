@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::CStr;
+use core::ffi::{c_void, CStr};
 
 use alloc::{string::{String, ToString}, vec::Vec};
 use disk_device::DiskDevice;
@@ -26,7 +26,7 @@ unsafe extern "C" fn fun_read(
     path: *const i8,
     offset: u32,
     count: u32,
-    buffer: *mut i8,
+    buffer: *mut c_void,
 ) -> u32 {
     let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
@@ -48,7 +48,7 @@ unsafe extern "C" fn fun_write(
     path: *const i8,
     offset: u32,
     count: u32,
-    buffer: *const i8,
+    buffer: *const c_void,
 ) -> u32 {
     let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 

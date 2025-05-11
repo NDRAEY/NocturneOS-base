@@ -10,3 +10,4 @@ uint8_t getPressReleaseKeyboard();
 int gets_max(char *buffer, int length);
 
 void ps2_keyboard_init();
+void ps2_keyboard_install_irq();

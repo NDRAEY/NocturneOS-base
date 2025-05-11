@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+use core::ffi::c_void;
+
 use alloc::{string::{String, ToString}, vec::Vec};
 use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_ENTITY_TYPE_TYPE_FILE, FSM_ENTITY_TYPE_TYPE_DIR};
 use noct_logger::{qemu_err, qemu_log};
@@ -46,7 +48,7 @@ unsafe extern "C" fn fun_read(
     path: *const i8,
     offset: u32,
     count: u32,
-    buffer: *mut i8,
+    buffer: *mut c_void,
 ) -> u32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);
@@ -60,7 +62,7 @@ unsafe extern "C" fn fun_read(
     result.unwrap_or(0) as _
 }
 
-unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const i8) -> u32 {
+unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }

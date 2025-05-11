@@ -151,4 +151,6 @@ extern void irq15(void);
 
 extern void isr80(void);
 
+void init_descriptor_tables(void);
+
 #endif

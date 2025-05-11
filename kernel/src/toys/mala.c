@@ -1,6 +1,7 @@
 // Måla v0.1 (Swedish - Draw) (read as Mola) by NDRAEY (c) 2023
 
 #include <kernel.h>
+#include <io/keyboard.h>
 
 #define BUFSIZE(width, height) (width * height * 4)
 #define STATUSBAR_HEIGHT 32

@@ -457,7 +457,7 @@ void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virt
 	reload_cr3();
 }
 
-void check_memory_map(memory_map_entry_t* mmap_addr, uint32_t length){
+void check_memory_map(const memory_map_entry_t* mmap_addr, uint32_t length){
 	/* Entries number in memory map structure */
 	mmap_length = length;
 	size_t n = length / sizeof(memory_map_entry_t);
@@ -467,7 +467,7 @@ void check_memory_map(memory_map_entry_t* mmap_addr, uint32_t length){
 	qemu_log("[PMM] Map:");
 
 	for (size_t i = 0; i < n; i++){
-		memory_map_entry_t* entry = mmap_addr + i;
+		const memory_map_entry_t* entry = mmap_addr + i;
 		
 		qemu_log("%s [Address: %x | Length: %x] <%d>",
 				 (entry->type == 1 ? "Available" : "Reserved"),
@@ -483,11 +483,11 @@ size_t getInstalledRam(){
     return phys_memory_size;
 }
 
-void mark_reserved_memory_as_used(memory_map_entry_t* mmap_addr, uint32_t length) {
+void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length) {
 	size_t n = length / sizeof(memory_map_entry_t);
 
 	for (int i = 0; i < n; i++){
-		memory_map_entry_t* entry = mmap_addr + i;
+		const memory_map_entry_t* entry = mmap_addr + i;
 
 		size_t addr = entry->addr_low;
 		size_t length = entry->len_low;

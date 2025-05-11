@@ -1,5 +1,6 @@
 #include <common.h>
 #include <fs/fsm.h>
+#include <lib/asprintf.h>
 
 size_t fsm_DateConvertToUnix(FSM_TIME time) {
     uint32_t seconds_per_day = 24 * 60 * 60;

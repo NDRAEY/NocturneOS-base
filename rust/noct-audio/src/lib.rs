@@ -11,17 +11,23 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub type OnDeviceOpenFn = extern "C" fn(*mut c_void);
+pub type OnDeviceSetVolumeFn = extern "C" fn(*mut c_void, u8, u8) -> ();
+pub type OnDeviceSetRateFn = extern "C" fn(*mut c_void, u32) -> ();
+pub type OnDeviceWriteFn = extern "C" fn(*mut c_void, *const u8, usize) -> ();
+pub type OnDeviceCloseFn = extern "C" fn(*mut c_void);
+
 pub static mut AUDIO_DEVICE_GLOBAL_ID: usize = 0;
 pub static mut AUDIO_DEVICES: Option<Vec<Box<dyn AudioDevice>>> = None;
 
 pub struct GenericAudioDevice {
     name: String,
     private_data: *mut c_void,
-    on_open: fn(*mut c_void),
-    on_set_volume: fn(*mut c_void, u8, u8) -> (),
-    on_set_rate: fn(*mut c_void, u32) -> (),
-    on_write: fn(*mut c_void, *const u8, usize) -> (),
-    on_close: fn(*mut c_void) -> (),
+    on_open: OnDeviceOpenFn,
+    on_set_volume: OnDeviceSetVolumeFn,
+    on_set_rate: OnDeviceSetRateFn,
+    on_write: OnDeviceWriteFn,
+    on_close: OnDeviceCloseFn,
 }
 
 pub trait AudioDevice {

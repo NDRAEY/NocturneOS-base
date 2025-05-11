@@ -47,7 +47,7 @@ void register_interrupt_handler(uint8_t n, isr_t handler){
 }
 
 /* Инициализация ISR */
-void isr_init(){
+void isr_init() {
     register_interrupt_handler(INT_0, &division_by_zero);
     register_interrupt_handler(INT_6, &fault_opcode);
     register_interrupt_handler(INT_8, &double_error);

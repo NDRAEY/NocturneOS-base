@@ -83,7 +83,7 @@ size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size
 }
 
 
-size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer){
+size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
     /// Функции для записи
     DPM_Disk dpm = dpm_info(Disk + 65);
 //    qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
@@ -208,7 +208,8 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
                 qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
             } else {
                 qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
-                dpm_fnc_write(disk_inx + 65, &dpm_ata_read, &dpm_ata_write);
+				dpm_set_read_func(disk_inx + 65, &dpm_ata_read);
+				dpm_set_write_func(disk_inx + 65, &dpm_ata_write);
             }
 
             kfree(ide_buf);
@@ -327,7 +328,9 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
             qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
         } else {
             qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
-            dpm_fnc_write(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read, &dpm_ata_write);
+            // dpm_fnc_write(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read, &dpm_ata_write);
+			dpm_set_read_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read);
+			dpm_set_write_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_write);
         }
 
 

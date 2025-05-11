@@ -349,7 +349,7 @@ bool process_exists(size_t pid) {
             return true;
         }
 
-        proc = proc->list_item.next;
+        proc = (volatile process_t*)proc->list_item.next;
     } while(proc != NULL && proc->pid != 0);
 
     return false;

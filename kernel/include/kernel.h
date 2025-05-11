@@ -73,3 +73,4 @@
 #include "sys/cputemp.h"
 
 #include "generated/audiosystem_headers.h"
+#include "generated/iso9660.h"

@@ -32,7 +32,7 @@ void ipv4_handle_packet(netcard_entry_t *card, char *packet, size_t packet_size)
 	qemu_log("  |--- Destination: %d.%d.%d.%d", ipv4_pkt->Destination[0], ipv4_pkt->Destination[1], ipv4_pkt->Destination[2], ipv4_pkt->Destination[3]);
 	
 	
-	ethernet_frame_t* eth_frame = (packet - sizeof(ethernet_frame_t));
+	ethernet_frame_t* eth_frame = (ethernet_frame_t*)(packet - sizeof(ethernet_frame_t));
 	qemu_log("  |--- Phys source: %x:%x:%x:%x:%x:%x",
 			eth_frame->src_mac[0],
 			eth_frame->src_mac[1],

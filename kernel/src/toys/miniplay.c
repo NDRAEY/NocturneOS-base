@@ -119,7 +119,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 			break;
 		}
 
-		qemu_printf("%d/%d\n", counter, miniplay_filesize);
+		// qemu_printf("%d/%d\n", counter, miniplay_filesize);
 
 		size_t writesize = MIN(BUFFER_SIZE, miniplay_filesize - counter);
 

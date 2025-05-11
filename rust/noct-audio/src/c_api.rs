@@ -3,7 +3,7 @@ use core::ffi::{c_char, c_void, CStr};
 use alloc::{boxed::Box, string::ToString};
 use noct_logger::qemu_note;
 
-use crate::{AUDIO_DEVICES, GenericAudioDevice, get_device};
+use crate::*;
 
 use super::init;
 
@@ -11,11 +11,11 @@ use super::init;
 pub extern "C" fn audio_system_add_output(
     name: *mut c_char,
     priv_data: *mut c_void,
-    open: extern "C" fn() -> (),
-    set_volume: extern "C" fn(u8, u8) -> (),
-    set_rate: extern "C" fn(u32) -> (),
-    write: extern "C" fn(*const u8, usize) -> (),
-    close: extern "C" fn() -> (),
+    open: OnDeviceOpenFn,
+    set_volume: OnDeviceSetVolumeFn,
+    set_rate: OnDeviceSetRateFn,
+    write: OnDeviceWriteFn,
+    close: OnDeviceCloseFn,
 ) {
     let name = unsafe { CStr::from_ptr(unsafe { name }) };
     let name = name.to_string_lossy();
@@ -31,8 +31,8 @@ pub extern "C" fn audio_system_add_output(
                 on_open: core::mem::transmute(open),
                 on_set_volume: core::mem::transmute(set_volume),
                 on_set_rate: core::mem::transmute(set_rate),
-                on_write: core::mem::transmute::<extern "C" fn(*const u8, usize), fn(*mut c_void, *const u8, usize)>(write),
-                on_close: core::mem::transmute::<extern "C" fn(), fn(*mut c_void)>(close),
+                on_write: core::mem::transmute(write),
+                on_close: core::mem::transmute(close),
             }))
     };
 

@@ -241,7 +241,7 @@ void init_idt(void) {
     idt_flush((uint32_t) &idt_ptr);
 }
 
-void init_descriptor_tables(void){
+void init_descriptor_tables(void) {
     init_gdt();
     init_idt();
 }

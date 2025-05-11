@@ -2,6 +2,7 @@
 
 #include <common.h>
 #include "lib/string.h"
+#include "multiboot.h"
 
 #define punch() memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
 // #define punch()
@@ -133,3 +134,5 @@ void setPixelAlpha(uint32_t x, uint32_t y, rgba_color color);
 void rect_copy(int x, int y, int width, int height);
 void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch);
 
+
+void init_vbe(const multiboot_header_t *mboot);

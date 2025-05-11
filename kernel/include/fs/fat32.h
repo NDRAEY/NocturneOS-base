@@ -106,11 +106,11 @@ typedef struct {
 } fat_file_info_t;
 
 size_t fs_fat32_read(char Disk,const char* Path, size_t Offset, size_t Size,void* Buffer);
-size_t fs_fat32_write(char Disk,const char* Path,size_t Offset,size_t Size,void* Buffer);
+size_t fs_fat32_write(char Disk,const char* Path,size_t Offset,size_t Size,const void* Buffer);
 FSM_FILE fs_fat32_info(char Disk,const char* Path);
 void fs_fat32_dir(char Disk,const char* Path, FSM_DIR* out);
-int fs_fat32_create(char Disk,const char* Path,int Mode);
-int fs_fat32_delete(char Disk,const char* Path,int Mode);
+int fs_fat32_create(char Disk,const char* Path,FSM_ENTITY_TYPE Mode);
+int fs_fat32_delete(char Disk,const char* Path,FSM_ENTITY_TYPE Mode);
 void fs_fat32_label(char Disk, char* Label);
 int fs_fat32_detect(char Disk);
 vector_t* fs_fat32_get_clusters(char Disk, size_t cluster_number);

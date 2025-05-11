@@ -10,6 +10,7 @@
 #include <stdarg.h>
 #include <io/ports.h>
 #include <lib/sprintf.h>
+#include <lib/asprintf.h>
 #include "io/serial_port.h"
 #include "sys/scheduler.h"
 #include "mem/vmm.h"

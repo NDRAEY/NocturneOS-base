@@ -131,3 +131,6 @@ SAYORI_INLINE void yield() {
 
 bool process_exists(size_t pid);
 void process_wait(size_t pid);
+
+
+__attribute__((noreturn)) void thread_exit_entrypoint();

@@ -38,3 +38,5 @@ uint8_t  mouse_get_b5();
 
 void mouse_set_state(MouseDrawState_t state);
 void mouse_install();
+
+void ps2_mouse_install_irq();

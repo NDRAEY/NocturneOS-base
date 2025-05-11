@@ -15,3 +15,5 @@ extern vector_t* windows;
 void gui_render_window(Window_t* window);
 // Render GUI
 void gui_render();
+
+void gui_restore();

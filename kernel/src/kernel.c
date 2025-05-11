@@ -31,6 +31,8 @@
 #include <lib/pixel.h>
 #include <net/socket.h>
 
+#include <sys/sse.h>
+#include <user/env.h>
 #include <arch/init.h>
 
 size_t VERSION_MAJOR = 0;    /// Версия ядра
@@ -47,8 +49,6 @@ bool test_pcs = true;
 bool test_network = true;
 bool initRD = false;
 size_t kernel_start_time = 0;
-
-void kHandlerCMD(char *);
 
 /**
  * @brief Обработка команд указаных ядру при загрузке
@@ -97,29 +97,16 @@ void kHandlerCMD(char *cmd)
                 qemu_log("\t Sorry, no support bootscreen mode!");
             }
         }
-        /*if (strcmpn(out_data[0], "ramdisk"))
-        {
-            ramdisk_size = atoi(out_data[1]);
-        }
-        */
         if (strcmpn(out_data[0], "disable"))
         {
             if (strcmpn(out_data[1], "coms"))
             {
-                // FIXME: If uncomment following line of code, it willn't boot
                 __com_setInit(1, 0);
                 __com_setInit(2, 0);
                 __com_setInit(3, 0);
                 __com_setInit(4, 0);
                 qemu_log("\t COM-OUT DISABLED");
             }
-      /*
-            else if (strcmpn(out_data[1], "floppy"))
-            {
-                test_floppy = false;
-                qemu_log("\t FLOPPY DISABLED");
-            }
-            */
             else if (strcmpn(out_data[1], "network"))
             {
                 test_network = false;
@@ -135,7 +122,6 @@ void kHandlerCMD(char *cmd)
                 qemu_log("\t Sorry, no support!");
             }
         }
-        // qemu_log("[kCMD] [%d] %s >\n\tKey: %s\n\tValue:%s",i,out[i],out_data[0],out_data[1]);
     }
 }
 
@@ -156,10 +142,13 @@ extern size_t BSS_start;
 extern size_t BSS_end;
 
 extern void fs_tarfs_register();
+extern void fs_noctfs_init();
 extern void rust_main();
 extern void keyboard_buffer_init();
 extern void audio_system_init();
 extern void ipc_init();
+
+extern void fpu_save();
 
 void new_nsh();
 
@@ -279,7 +268,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     ipc_init();
 
-    drv_vbe_init(mboot);
+    // drv_vbe_init(mboot);
 
     qemu_log("Audio system init");
     audio_system_init();
@@ -414,8 +403,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
             acpi_scan_all_tables(rsdp->RSDTaddress);
 
             find_facp(rsdp->RSDTaddress);
-
-            lapic_init(rsdp);
         }
         else
         {

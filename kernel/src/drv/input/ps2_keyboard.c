@@ -11,6 +11,7 @@ extern void tty_backspace();
 #include <lib/string.h>
 #include <io/ports.h>
 #include "drv/input/keyboard.h"
+#include "io/keyboard.h"
 #include "sys/sync.h"
 #include "sys/timer.h"
 #include "io/tty.h"

@@ -2,9 +2,13 @@
 name = "noct-iso9660"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 iso9660_simple = { version = "0.1.8", default-features = false }
 noct-dpm-sys = { path = "../noct-dpm-sys" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }
+
+[build-dependencies]
+cbindgen = { version = "0.28.0", default-features = false }

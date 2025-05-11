@@ -51,3 +51,5 @@ void tty_backspace();
 
 void tty_set_autoupdate(bool value);
 bool tty_get_autoupdate();
+
+void tty_taskInit();

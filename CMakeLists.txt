@@ -49,7 +49,7 @@ set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11 -Werror=return-type")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wno-div-by-zero -Wno-address-of-packed-member -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11 -Werror=return-type")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z noexecstack")
 
 
@@ -197,7 +197,6 @@ set(C_SRC
 	kernel/src/extra/plain_runner.c
 	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
-	kernel/src/toys/gfxbench.c 
 	kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
@@ -234,7 +233,6 @@ set(C_SRC
 	# kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
-	kernel/src/sys/lapic.c 
 	kernel/src/drv/video/intel.c 
 	kernel/src/extra/command_parser.c
     kernel/src/lib/libvector/src/vector.c

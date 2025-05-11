@@ -17,6 +17,7 @@
 #include <lib/math.h>
 #include <io/rgb_image.h>
 #include "lib/sprintf.h"
+#include "lib/asprintf.h"
 #include "drv/psf.h"
 
 // TODO: Eurica! Split tty.c into 2 files:
@@ -45,7 +46,7 @@ void animTextCursor();
 /**
  * @brief Инициализация потоков
  */
-void tty_taskInit(){
+void tty_taskInit() {
     qemu_log("Starting task...");
     process_t* proc = get_current_proc();
     qemu_log("Process at: %p", proc);

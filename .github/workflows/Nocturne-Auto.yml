@@ -36,7 +36,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest-unstable"
           prerelease: true
-          title: "💽 NocturneOS Soul - [Autobuild] Unstable release"
+          title: "💽 NocturneOS Sea - [Autobuild] Unstable release"
           description: "Внимание! Данный релиз собран из последних изменений в ядре! Это не окончательная версия содержит ошибки и не рекомендуется к запуску без проверки на виртуальной машине."
           files: |
             cmake-build-debug/NocturneOS_Debug.iso

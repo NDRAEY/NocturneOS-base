@@ -39,7 +39,7 @@ size_t fs_fat32_read(char Disk, const char* Path, size_t Offset, size_t Size,voi
 	return Size;
 }
 
-size_t fs_fat32_write(char Disk, const char* Path,size_t Offset,size_t Size,void* Buffer){
+size_t fs_fat32_write(const char Disk, const char* Path,size_t Offset,size_t Size,const void* Buffer){
 	return 0;
 }
 
@@ -169,11 +169,11 @@ void fs_fat32_dir(char Disk, const char* Path, FSM_DIR* out) {
     // return Dir;
 }
 
-int fs_fat32_create(char Disk,const char* Path,int Mode){
+int fs_fat32_create(char Disk,const char* Path,FSM_ENTITY_TYPE Mode){
 	return 0;
 }
 
-int fs_fat32_delete(char Disk,const char* Path,int Mode){
+int fs_fat32_delete(char Disk,const char* Path,FSM_ENTITY_TYPE Mode){
 	return 0;
 }
 
@@ -285,7 +285,7 @@ void fs_fat32_read_clusters_to_memory_precise(char Disk, size_t cluster_number, 
 
     qemu_log("Byte offset: %d; Size of read: %d; Cluster size: %d", byte_offset, len, desc->cluster_size);
 
-    size_t starting_cluster = byte_offset / desc->cluster_size;
+    //size_t starting_cluster = byte_offset / desc->cluster_size;
     size_t read_clutser_count = len / desc->cluster_size;
 
     if(len % desc->cluster_size > 0) {
@@ -403,7 +403,7 @@ size_t fs_fat32_read_lfn(char* data, char* out) {
 
         char* x = kcalloc(1, encoded_characters);
 
-        utf16_to_utf8((short*)prepared_chunk,
+        utf16_to_utf8((const unsigned short*)prepared_chunk,
                       (int)encoded_characters / 2,
                       x);
 

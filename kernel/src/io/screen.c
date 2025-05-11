@@ -80,7 +80,7 @@ void create_back_framebuffer() {
  *
  * @param mboot - информация полученная от загрузчика
  */
-void init_vbe(multiboot_header_t *mboot) {
+void init_vbe(const multiboot_header_t *mboot) {
     framebuffer_addr = (uint8_t *) mboot->framebuffer_addr;
     framebuffer_pitch = mboot->framebuffer_pitch;
     framebuffer_bpp = mboot->framebuffer_bpp;

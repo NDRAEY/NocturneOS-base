@@ -664,7 +664,7 @@ size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
     return Size;
 }
 
-size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer){
+size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
     qemu_err("TODO: SATA DPM WRITE");
 
 //    DPM_Disk dpm = dpm_info(Disk + 65);
@@ -752,7 +752,9 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 		    qemu_err("[SATA/DPM] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
 		} else {
 		    qemu_ok("[SATA/DPM] [Successful] Registering OK");
-		    dpm_fnc_write(disk_inx + 65, &ahci_dpm_read, &ahci_dpm_write);
+		    // dpm_fnc_write(disk_inx + 65, &ahci_dpm_read, &ahci_dpm_write);
+			dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
+			dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
 		}
 	}
 

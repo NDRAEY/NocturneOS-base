@@ -209,24 +209,3 @@ void window_send_signal(Window_t* window, WindowSignal_t signal, void* data) {
 
     qemu_log("Func end");
 }
-
-// For debugging purposes only!!!
-void log_window_manager_state() {
-    qemu_log("===============[WINDOW MANAGER STATE]===================");
-    qemu_log("Window next global ID to be specified to next window: %d", window_global_id);
-    qemu_log("Window count: %d", window_count);
-    qemu_log("Address of windows array: %x", windows);
-
-    for(size_t i = 0; i < window_count; i++) {
-        qemu_log("Window #%d (%x): ID: %d", i, windows[i], WINDOW(i)->id);
-        if(WINDOW(i) != 0) {
-            qemu_log("Widgets:");
-            for (size_t j = 0; j < WINDOW(i)->widgets->size; j++) {
-                qemu_log("|- Widget #%d: at %x", j, WINDOW(i)->widgets[j]);
-            }
-            
-        }
-    }
-
-    qemu_log("========================================================");
-}

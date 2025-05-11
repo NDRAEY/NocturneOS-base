@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::CStr;
+use core::ffi::{c_void, CStr};
 
 use alloc::{string::String, vec::Vec};
 use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
@@ -56,7 +56,7 @@ unsafe extern "C" fn fun_read(
     path: *const i8,
     offset: u32,
     count: u32,
-    buffer: *mut i8,
+    buffer: *mut c_void,
 ) -> u32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
@@ -84,7 +84,7 @@ unsafe extern "C" fn fun_read(
     rd as _
 }
 
-unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const i8) -> u32 {
+unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }

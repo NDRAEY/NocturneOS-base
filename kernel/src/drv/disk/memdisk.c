@@ -29,7 +29,7 @@ size_t memdisk_dpm_read(size_t disk, uint64_t high_offset, uint64_t low_offset, 
     return size;
 }
 
-size_t memdisk_dpm_write(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, void* Buffer){
+size_t memdisk_dpm_write(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, const void* Buffer){
     qemu_printf("WRITE? => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
 
     while(1)
@@ -85,7 +85,9 @@ bool memdisk_create(char letter, void* memory, size_t size) {
         
         return false;
     } else {
-        dpm_fnc_write(letter, &memdisk_dpm_read, &memdisk_dpm_write);
+        // dpm_fnc_write(letter, &memdisk_dpm_read, &memdisk_dpm_write);
+        dpm_set_read_func(letter, &memdisk_dpm_read);
+        dpm_set_write_func(letter, &memdisk_dpm_write);
         qemu_ok("[MEMDISK] [Successful] Registering OK");
 
         return true;

@@ -482,6 +482,7 @@ dependencies = [
 name = "noct-iso9660"
 version = "0.1.0"
 dependencies = [
+ "cbindgen",
  "iso9660_simple",
  "noct-dpm-sys",
  "noct-fs-sys",
