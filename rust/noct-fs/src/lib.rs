@@ -52,7 +52,7 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
     }
 
     let result = unsafe {
-        CStr::from_ptr(buffer.as_ptr() as *const i8)
+        CStr::from_ptr(buffer.as_ptr() as *const _)
             .to_str()
             .unwrap()
     };
@@ -163,7 +163,7 @@ impl File {
 
         buffer.push(0);
 
-        let raw = unsafe { CStr::from_ptr(buffer.as_mut_ptr()) };
+        let raw = unsafe { CStr::from_ptr(buffer.as_mut_ptr() as *const _) };
         let s = raw.to_string_lossy();
 
         buf.push_str(&s);
