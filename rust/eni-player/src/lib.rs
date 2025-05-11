@@ -224,7 +224,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         }
     };
 
-    let mut audio = noct_audio::get_device(0).unwrap();
+    let audio = noct_audio::get_device(0).unwrap();
     audio.set_rate(48000);
 
     let cache_line: Arc<Mutex<Vec<Box<[u8]>>>> = Arc::new(Mutex::new(Vec::new()));
@@ -268,7 +268,6 @@ pub fn player(args: &[String]) -> Result<(), usize> {
     let arced_running = is_running.clone();
     let arced_file = file.clone();
     let arced_cache = cache_line.clone();
-    let arced_status = status.clone();
     let arced_br = bytes_read.clone();
     spawn(move || {
         while *arced_running.lock() {
@@ -277,7 +276,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
                 task_yield();
                 continue;
             }
-            
+
             if arced_cache.lock().len() > 5 {
                 task_yield();
                 continue;
@@ -287,7 +286,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
             let datasize = core::cmp::min(CACHE_SIZE, filesize - *arced_br.lock());
             let mut buffer = vec![0u8; datasize];
-            
+
             let mut file_bnd = arced_file.lock();
             file_bnd.read(buffer.as_mut()).unwrap();
             arced_cache.lock().push(buffer.into_boxed_slice());
@@ -298,23 +297,25 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         qemu_ok!("Exit!");
     });
 
-    let meta = metadata.map(|a| {
-        let artist = a
-            .iter()
-            .filter(|x| x.0 == "IART")
-            .map(|x| x.1.clone())
-            .next()
-            .unwrap_or("Unknown artist".to_string());
+    let meta = metadata
+        .map(|a| {
+            let artist = a
+                .iter()
+                .filter(|x| x.0 == "IART")
+                .map(|x| x.1.clone())
+                .next()
+                .unwrap_or("Unknown artist".to_string());
 
-        let title = a
-            .iter()
-            .filter(|x| x.0 == "INAM")
-            .map(|x| x.1.clone())
-            .next()
-            .unwrap_or("Unknown".to_string());
+            let title = a
+                .iter()
+                .filter(|x| x.0 == "INAM")
+                .map(|x| x.1.clone())
+                .next()
+                .unwrap_or("Unknown".to_string());
 
-        (artist, title)
-    }).unwrap_or(("Unknown artist".to_string(), "Unknown".to_string()));
+            (artist, title)
+        })
+        .unwrap_or(("Unknown artist".to_string(), "Unknown".to_string()));
 
     loop {
         let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
@@ -329,13 +330,13 @@ pub fn player(args: &[String]) -> Result<(), usize> {
             *status.lock() = match curstat {
                 PlayerStatus::Stop => {
                     qemu_note!("STOP!");
-                    
+
                     file.lock().rewind();
                     bytes_played = 0;
                     *bytes_read.lock() = 0;
 
                     PlayerStatus::Playing
-                },
+                }
                 PlayerStatus::Playing => PlayerStatus::Paused,
                 _ => PlayerStatus::Playing,
             };
@@ -344,7 +345,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         }
 
         let curstat = *status.lock();
-        
+
         if curstat == PlayerStatus::Playing {
             qemu_log!("PLAYING!");
             let block = {
@@ -357,20 +358,18 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
                 block
             };
-            
+
             if let Some(a) = block {
                 audio.write(&a);
 
                 bytes_played += a.len();
-            } else {
-                if *bytes_read.lock() >= filesize {
-                    qemu_note!("No block!");
+            } else if *bytes_read.lock() >= filesize {
+                qemu_note!("No block!");
 
-                    *status.lock() = PlayerStatus::Stop;
-                }
+                *status.lock() = PlayerStatus::Stop;
             }
         }
-        
+
         draw_ui(
             &mut canvas,
             &curstat,

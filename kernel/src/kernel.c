@@ -141,11 +141,8 @@ extern size_t RODATA_end;
 extern size_t BSS_start;
 extern size_t BSS_end;
 
-extern void fs_tarfs_register();
-extern void fs_noctfs_init();
 extern void rust_main();
 extern void keyboard_buffer_init();
-extern void audio_system_init();
 extern void ipc_init();
 
 extern void fpu_save();

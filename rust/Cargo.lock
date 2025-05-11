@@ -509,6 +509,7 @@ dependencies = [
 name = "noct-noctfs"
 version = "0.1.0"
 dependencies = [
+ "cbindgen",
  "no_std_io",
  "noct-dpm-sys",
  "noct-fs-sys",
@@ -561,6 +562,7 @@ version = "0.1.0"
 name = "noct-tarfs"
 version = "0.1.0"
 dependencies = [
+ "cbindgen",
  "no_std_io",
  "noct-dpm-sys",
  "noct-fs-sys",

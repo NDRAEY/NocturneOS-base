@@ -8,7 +8,7 @@ use crate::*;
 use super::init;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn audio_system_add_output(
+pub unsafe extern "C" fn audio_system_add_output(
     name: *mut c_char,
     priv_data: *mut c_void,
     open: OnDeviceOpenFn,
@@ -17,7 +17,7 @@ pub extern "C" fn audio_system_add_output(
     write: OnDeviceWriteFn,
     close: OnDeviceCloseFn,
 ) {
-    let name = unsafe { CStr::from_ptr(unsafe { name }) };
+    let name = unsafe { CStr::from_ptr(name) };
     let name = name.to_string_lossy();
 
     #[allow(static_mut_refs)]
@@ -57,10 +57,10 @@ pub extern "C" fn audio_system_rate(index: usize, rate: u32) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn audio_system_write(index: usize, data: *const u8, len: usize) {
+pub unsafe extern "C" fn audio_system_write(index: usize, data: *const u8, len: usize) {
     get_device(index)
         .expect("No device!")
-        .write(unsafe { core::slice::from_raw_parts(unsafe { data }, len) });
+        .write(unsafe { core::slice::from_raw_parts(data, len) });
 }
 
 #[unsafe(no_mangle)]

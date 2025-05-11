@@ -74,3 +74,5 @@
 
 #include "generated/audiosystem_headers.h"
 #include "generated/iso9660.h"
+#include "generated/tarfs.h"
+#include "generated/noctfs.h"

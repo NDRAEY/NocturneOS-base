@@ -129,7 +129,7 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
 
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
     let path = {
-        let c_str = unsafe { CStr::from_ptr(path as *const i8) };
+        let c_str = unsafe { CStr::from_ptr(path) };
         c_str.to_string_lossy().into_owned()
     };
 
@@ -156,8 +156,8 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
                 elem.name.clone(),
                 0,
                 elem.record.data_length.lsb,
-                Some(iso_datetime_to_fsm(&elem)),
-                iso_type_to_fsm_type(&elem),
+                Some(iso_datetime_to_fsm(elem)),
+                iso_type_to_fsm_type(elem),
                 FSM_MOD_READ,
             )
         })

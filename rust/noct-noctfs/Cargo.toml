@@ -2,6 +2,7 @@
 name = "noct-noctfs"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
 
 [dependencies]
 noctfs = { git = "https://github.com/NDRAEY/noctfs", default-features=false }
@@ -9,3 +10,6 @@ noct-dpm-sys = { path = "../noct-dpm-sys" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }
 no_std_io = { version = "0.6.0", features = ["alloc"] }
+
+[build-dependencies]
+cbindgen = { version = "0.28.0", default-features = false }
