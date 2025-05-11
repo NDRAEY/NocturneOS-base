@@ -6,9 +6,6 @@ use pavi::pavi as pavi_view;
 
 pub static PAVI_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("pavi", pavi, Some("The Image Viewer."));
 
-pub fn pavi(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
-    let mut args = Vec::from(_args);
-    args.insert(0, String::from("pavi"));
-
+pub fn pavi(_context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     pavi_view(&args)
 }

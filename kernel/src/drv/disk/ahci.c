@@ -733,6 +733,8 @@ void ahci_identify(size_t port_num, bool is_atapi) {
     *(((uint8_t*)model) + 39) = 0;
 
     tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
+	
+	kfree(model);
 
 	if(!is_atapi) {
 		int disk_inx = dpm_reg(
@@ -761,5 +763,4 @@ void ahci_identify(size_t port_num, bool is_atapi) {
     ports[port_num].is_atapi = is_atapi;
 
     kfree(memory);
-    kfree(model);
 }

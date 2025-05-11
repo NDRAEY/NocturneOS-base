@@ -285,14 +285,13 @@ void fs_fat32_read_clusters_to_memory_precise(char Disk, size_t cluster_number, 
 
     qemu_log("Byte offset: %d; Size of read: %d; Cluster size: %d", byte_offset, len, desc->cluster_size);
 
-    //size_t starting_cluster = byte_offset / desc->cluster_size;
     size_t read_clutser_count = len / desc->cluster_size;
 
     if(len % desc->cluster_size > 0) {
         read_clutser_count++;
     }
 
-    qemu_log("Calculated: Starting cluster: %d; Cluster count: %d", starting_cluster, read_clutser_count);
+    qemu_log("Calculated: Starting cluster: %d; Cluster count: %d", (byte_offset / desc->cluster_size), read_clutser_count);
     qemu_log("Reading file data...");
 
 #if FAT32_LINEAR_OPTIMIZATION==1
@@ -305,9 +304,8 @@ void fs_fat32_read_clusters_to_memory_precise(char Disk, size_t cluster_number, 
 
         qemu_note("START: %u; END: %u; COUNT: %u", start_cluster, end_cluster, count);
 
-
         qemu_note("BUFFER INDEX: %u", buffer_index);
-        qemu_note("STARTING_CLUSTER: %u", starting_cluster);
+        qemu_note("STARTING_CLUSTER: %u", (byte_offset / desc->cluster_size));
 
         size_t addr = ((desc->info.reserved_sectors + (desc->info.fat_size_in_sectors * 2)) \
  						+ ((start_cluster - 2) * desc->info.sectors_per_cluster)) * desc->info.bytes_per_sector;

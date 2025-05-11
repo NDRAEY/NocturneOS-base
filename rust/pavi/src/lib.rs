@@ -211,7 +211,7 @@ impl Pavi {
 }
 
 pub fn pavi(argv: &[String]) -> Result<(), usize> {
-    let filename = argv.iter().skip(1).last();
+    let filename = argv.first();
 
     if filename.is_none() {
         println!("Provide a file!");

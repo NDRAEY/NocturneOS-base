@@ -376,8 +376,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     bootScreenClose(0x000000, 0xFFFFFF);
     tty_set_bgcolor(COLOR_BG);
 
-    tty_printf("NocturneOS v%d.%d.%d\nДата компиляции: %s\n",
+    tty_printf("NocturneOS v%d.%d.%d '%s'\nДата компиляции: %s\n",
                VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, // Версия ядра
+               VERSION_NAME,
                __TIMESTAMP__                                // Время окончания компиляции ядра
     );
 

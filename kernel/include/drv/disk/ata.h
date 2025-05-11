@@ -94,8 +94,8 @@
 #define ATA_PRIMARY_IRQ 14
 #define ATA_SECONDARY_IRQ 15
 
-#define PRIM_SEC(bus) ((bus) == ATA_PRIMARY?"Primary  ":"Secondary")
-#define MAST_SLV(drive) ((drive) == ATA_MASTER?"master":"slave ")
+#define PRIM_SEC(bus) ((bus) == ATA_PRIMARY?"Primary":"Secondary")
+#define MAST_SLV(drive) ((drive) == ATA_MASTER?"master":"slave")
 #define DRIVE(bus, drive) ((bus) << 1 | (drive))
 #define ATA_PORT(bus) ((bus) == ATA_PRIMARY ? ATA_PRIMARY_IO : ATA_SECONDARY_IO)
 
@@ -124,7 +124,14 @@ typedef struct {
 } ata_drive_t;
 
 
-void ide_select_drive(uint8_t bus, bool slave);
+SAYORI_INLINE void ide_select_drive(uint8_t bus, bool slave) {
+	if(bus == ATA_PRIMARY) {
+		outb(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL, (0xA0 | ((uint8_t)slave << 4)));
+	} else {
+		outb(ATA_SECONDARY_IO + ATA_REG_HDDEVSEL, (0xA0 | ((uint8_t)slave << 4)));
+	}
+}
+
 void ide_poll(uint16_t io);
 bool ide_poll_drq(uint16_t io);
 bool ide_poll_bsy(uint16_t io);

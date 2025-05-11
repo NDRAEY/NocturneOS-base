@@ -40,29 +40,12 @@ bool ide_poll_bsy(uint16_t io) {
 	}
 }
 
-void ide_select_drive(uint8_t bus, bool slave) {
-	if(bus == ATA_PRIMARY)
-		outb(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL, (0xA0 | ((uint8_t)slave << 4)));
-	else
-		outb(ATA_SECONDARY_IO + ATA_REG_HDDEVSEL, (0xA0 | ((uint8_t)slave << 4)));
-}
-
 void ide_primary_irq(__attribute__((unused)) registers_t regs) {
-//	qemu_log("=================== Got ATA interrupt. PRIMARY");
-
-//	uint8_t status = inb(ATA_PRIMARY_IO + ATA_REG_STATUS);
 	inb(ATA_PRIMARY_IO + ATA_REG_STATUS);
-
-//	qemu_log("Status: %d (%x); Altstatus: %x", status, status, altstatus);
 }
 
 void ide_secondary_irq(__attribute__((unused)) registers_t regs) {
-//	qemu_log("=================== Got ATA interrupt. SECONDARY");
-
-//	size_t status = inb(ATA_SECONDARY_IO + ATA_REG_STATUS);
 	inb(ATA_SECONDARY_IO + ATA_REG_STATUS);
-
-//	qemu_log("Status: %d (%x); Altstatus: %x", status, status, altstatus);
 }
 
 void ide_soft_reset(size_t io) {
@@ -94,6 +77,30 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
     return Size;
 }
 
+void ide_name_convert_individual(uint16_t* ide_buf, size_t offset, size_t len, char** out) {
+	uint16_t* prepared = kcalloc(len, 1);
+
+	memcpy(prepared, ide_buf + offset, len);
+
+	for(register int i = 0; i < (len / 2); i++) {
+		prepared[i] = bit_flip_short(prepared[i]);
+	}
+
+	char* prep_end = ((char*)prepared) + len - 1;
+	while(*prep_end == ' ') {
+		*prep_end-- = 0;
+	}
+
+	prepared = krealloc(prepared, strlen((char*)prepared) + 1);
+
+	*out = (char*)prepared;
+}
+
+void ide_name_convert(const uint16_t* ide_buf, char** fw_out, char** serial_out, char** model_name_out) {
+	ide_name_convert_individual(ide_buf, 10, 20, serial_out);
+	ide_name_convert_individual(ide_buf, 23, 8, fw_out);
+	ide_name_convert_individual(ide_buf, 27, 40, model_name_out);
+}
 
 uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 	uint16_t io = (bus == ATA_PRIMARY) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
@@ -147,53 +154,19 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
                 *(uint16_t *)(ide_buf + i) = inw(io + ATA_REG_DATA);
             }
 
-			uint16_t* fwver = kcalloc(8, 1);
-			uint16_t* model_name = kcalloc(40, 1);
-			uint16_t* serial = kcalloc(20, 1);
-
-			memcpy(serial, ide_buf + 10, 20);
-			memcpy(fwver, ide_buf + 23, 8);
-			memcpy(model_name, ide_buf + 27, 40);
-
-			for(int i = 0; i < 10; i++) {
-				serial[i] = bit_flip_short(serial[i]);
-			}
-
-			for(int i = 0; i < 4; i++) {
-				fwver[i] = bit_flip_short(fwver[i]);
-			}
-
-			for(int i = 0; i < 20; i++) {
-				model_name[i] = bit_flip_short(model_name[i]);
-			}
-
-			// Zero-terminate the strings
-			((uint8_t*)serial)[19] = 0;
-			((uint8_t*)fwver)[7] = 0;
-			((uint8_t*)model_name)[39] = 0;
-
-
 			// Do my best for processing packet device.
 
 			drives[drive_num].capacity = atapi_read_size(bus, drive);
 			drives[drive_num].block_size = atapi_read_block_size(bus, drive);
 
-            drives[drive_num].fwversion = (char *) fwver;
-            drives[drive_num].model_name = (char *) model_name;
-            drives[drive_num].serial_number = (char *) serial;
+			ide_name_convert(ide_buf, &drives[drive_num].fwversion, &drives[drive_num].serial_number, &drives[drive_num].model_name);
 
             qemu_log("Size is: %d", drives[drive_num].capacity);
-
-            qemu_note("DRIVE: %d", drive_num);
-
-            qemu_note("Serial: %s", (char*)serial);
-            qemu_note("Firmware version: %s", (char*)fwver);
-            qemu_note("Model name: %s", (char*)model_name);
 
             // (drive_num) is an index (0, 1, 2, 3) of disk
             int disk_inx = dpm_reg(
                     possible_dpm_letters_for_ata[drive_num],
-                    "CD\\DVD drive",
+                    "CD/DVD drive",
                     "Unknown",
                     1,
                     drives[drive_num].capacity * drives[drive_num].block_size,
@@ -271,34 +244,7 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 		}
 
 		// Dump model and firmware version
-		drives[drive_num].fwversion = kcalloc(8, 1);
-		drives[drive_num].model_name = kcalloc(40, 1);
-		drives[drive_num].serial_number = kcalloc(20, 1);
-
-		uint16_t* fwver = (uint16_t *) drives[drive_num].fwversion;
-		uint16_t* model_name = (uint16_t *) drives[drive_num].model_name;
-		uint16_t* serial = (uint16_t *) drives[drive_num].serial_number;
-
-		memcpy(serial, ide_buf + 10, 20);
-		memcpy(fwver, ide_buf + 23, 8);
-		memcpy(model_name, ide_buf + 27, 40);
-
-		for(int i = 0; i < 10; i++) {
-			serial[i] = bit_flip_short(serial[i]);
-		}
-
-		for(int i = 0; i < 4; i++) {
-			fwver[i] = bit_flip_short(fwver[i]);
-		}
-
-		for(int i = 0; i < 20; i++) {
-			model_name[i] = bit_flip_short(model_name[i]);
-		}
-
-		// Zero-terminate the strings
-		((uint8_t*)serial)[19] = 0;
-		((uint8_t*)fwver)[7] = 0;
-		((uint8_t*)model_name)[39] = 0;
+		ide_name_convert(ide_buf, &drives[drive_num].fwversion, &drives[drive_num].serial_number, &drives[drive_num].model_name);
 
         // size_t capacity = (ide_buf[61] << 16) | ide_buf[60];  // 28-bit value
         size_t capacity = (ide_buf[101] << 16) | ide_buf[100];  // 64-bit value
@@ -332,7 +278,6 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			dpm_set_read_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read);
 			dpm_set_write_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_write);
         }
-
 
 		qemu_log("Identify finished");
 	}else{
@@ -395,13 +340,15 @@ void ata_read(uint8_t drive, uint8_t* buf, uint32_t location, uint32_t length) {
 
 //	qemu_log("Reading %d sectors...", sector_count);
 
+	// qemu_log("Reading: %d bytes", real_length);
+
 	uint8_t* real_buf = kmalloc(real_length);
 
 	// Add DMA support
-	if(!drives[drive].is_packet) {
-        ata_pio_read_sectors(drive, real_buf, start_sector, sector_count);
-	} else {
+	if(drives[drive].is_packet) {
 		atapi_read_sectors(drive, real_buf, start_sector, sector_count);
+	} else {
+        ata_pio_read_sectors(drive, real_buf, start_sector, sector_count);
 	}
 
 	memcpy(buf, real_buf + (location % drives[drive].block_size), length);
@@ -438,10 +385,10 @@ void ata_write(uint8_t drive, const uint8_t* buf, size_t location, size_t length
 
 void ata_list() {
 	for (size_t i = 0; i < 4; i++) {
-		_tty_printf("\tATA: %s %s:  %s ",
+		_tty_printf("\tATA: %-9s %-9s:  %-7s ",
 					PRIM_SEC((i >> 1) & 1),
 					MAST_SLV(i & 1),
-					drives[i].online?"online ":"offline"
+					drives[i].online?"online":"offline"
 		);
 
 		if(!drives[i].online) {
