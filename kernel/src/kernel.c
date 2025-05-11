@@ -2,7 +2,7 @@
  * @file kernel.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Основная точка входа в ядро
- * @version 0.4.0
+ * @version 0.4.1
  * @date 2022-11-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
@@ -35,23 +35,18 @@
 
 size_t VERSION_MAJOR = 0;    /// Версия ядра
 size_t VERSION_MINOR = 4;    /// Пре-релиз
-size_t VERSION_PATCH = 0;    /// Патч
+size_t VERSION_PATCH = 1;    /// Патч
 
 char* OS_ARCH = "i386";      /// Архитектура
-char* VERSION_NAME = "Aura"; /// Имя версии (изменяется вместе с минорной части версии)
-
-//#define INITRD_RW_SIZE (1474560) /// Размер виртуального диска 1.44mb floppy
+char* VERSION_NAME = "Sea";  /// Имя версии (изменяется вместе с минорной части версии)
 
 extern bool ps2_channel2_okay;
 
 uint32_t init_esp = 0;
 bool test_pcs = true;
-//bool test_floppy = true;
 bool test_network = true;
-bool is_rsdp = true;
 bool initRD = false;
 size_t kernel_start_time = 0;
-//size_t ramdisk_size = INITRD_RW_SIZE;
 
 void kHandlerCMD(char *);
 
@@ -134,11 +129,6 @@ void kHandlerCMD(char *cmd)
             {
                 test_pcs = false;
                 qemu_log("\t PC-Speaker DISABLED");
-            }
-            else if (strcmpn(out_data[1], "rdsp"))
-            {
-                is_rsdp = false;
-                qemu_log("\t RDSP DISABLED");
             }
             else
             {
@@ -415,7 +405,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     tty_taskInit();
 
-    if (is_rsdp)
     {
         RSDPDescriptor *rsdp = rsdp_find();
         qemu_log("RSDP at: %p", rsdp);
