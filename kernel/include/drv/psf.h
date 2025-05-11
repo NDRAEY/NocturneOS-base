@@ -16,10 +16,8 @@
 #define PSF1_MAGIC0     0X36
 #define PSF1_MAGIC1     0X04
 
+extern void psf_init(char* file_path);
 extern void rs_draw_character(volatile void* psf, uint16_t ch, size_t pos_x, size_t pos_y, uint32_t color);
-void draw_character(uint16_t ch, size_t pos_x, size_t pos_y, uint32_t color);
 
-bool fonts_init(char* psf);
+void draw_character(uint16_t ch, size_t pos_x, size_t pos_y, uint32_t color);
 void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color);
-size_t psf1_get_w();
-size_t psf1_get_h();

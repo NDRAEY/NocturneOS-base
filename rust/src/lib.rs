@@ -41,20 +41,6 @@ fn panic(_info: &PanicInfo) -> ! {
     }
 }
 
-#[no_mangle]
-pub static mut PSF_FONT: OnceCell<PSF> = OnceCell::new();
-
-#[no_mangle]
-pub unsafe extern "C" fn psf_init(ptr: *const u8, len: u32) {
-    unsafe {
-        let psf = PSF::from_raw_ptr(ptr, len as _).expect("Failed to initialize PSF font.");
-
-        PSF_FONT.set(psf).unwrap()
-    };
-
-    qemu_note!("Font initialized!");
-}
-
 /// Main entry point for testing.
 #[no_mangle]
 #[inline(never)]

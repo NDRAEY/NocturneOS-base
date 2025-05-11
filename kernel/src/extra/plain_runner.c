@@ -4,7 +4,7 @@
 #include <mem/pmm.h>
 #include <io/ports.h>
 
-uint32_t plain_runner(char* filename, size_t address)
+uint32_t plain_runner(const char* filename, size_t address)
 {
     qemu_note("Address is: %x", address);
 

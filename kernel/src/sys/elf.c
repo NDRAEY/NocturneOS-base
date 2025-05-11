@@ -115,14 +115,14 @@ int32_t spawn_prog(const char *name, int argc, char* eargv[]) {
 
     thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, true, false);
 
-    list_add(&thread_list, &thread->list_item);
+    list_add(&thread_list, (list_item_t*)&thread->list_item);
 
-    void* virt = clone_kernel_page_directory(proc->page_tables_virts);
+    void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
 
     proc->page_dir = phys;
 
-    list_add(&process_list, &proc->list_item);
+    list_add(&process_list, (list_item_t*)&proc->list_item);
 
     qemu_log("PROCESS CREATED");
 

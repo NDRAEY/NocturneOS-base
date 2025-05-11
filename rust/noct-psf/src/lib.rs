@@ -68,6 +68,19 @@ impl PSF {
         })
     }
 
+    pub fn from_file(path: &str) -> Option<Self> {
+        let data = match noct_fs::read(path) {
+            Ok(f) => f,
+            Err(e) => {
+                qemu_err!("Error: {e}");
+
+                return None;
+            },
+        };
+
+        Self::from_data_vec(data)
+    }
+
     fn psf1_rupatch(c: u16) -> u16 {
         let hi: u8 = (c >> 8) as u8;
         let lo: u8 = (c & 0xff) as u8;

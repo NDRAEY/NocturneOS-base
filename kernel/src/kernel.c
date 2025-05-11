@@ -301,7 +301,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     heap_dump();
 
-    fonts_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
+    psf_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
 
     qemu_log("Initializing Task Manager...");
     init_task_manager();

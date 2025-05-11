@@ -17,36 +17,6 @@
 
 extern volatile void* PSF_FONT;
 
-extern void psf_init(uint8_t* data, uint32_t len);
-
-bool fonts_init(char* psf) {
-	ON_NULLPTR(psf, {
-		qemu_log("Filename is nullptr!");
-		return false;
-	});
-
-    FILE* psf_file = fopen(psf, "r");
-
-    if (!psf_file) {
-        qemu_log("[Core] [PSF] Не удалось найти файл `%s`. \n",psf);
-        return false;
-    }
-
-    size_t rfsize = fsize(psf_file);
-
-    char* buffer = kmalloc(rfsize);
-	fread(psf_file, rfsize, 1, buffer);
-    fclose(psf_file);
-
-    // hexview_advanced(buffer, rfsize, 24, false, new_qemu_printf);
-
-    psf_init(buffer, rfsize);
-
-    kfree(buffer);
-
-    return true;
-}
-
 void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color) {
 	ON_NULLPTR(text, {
 		return;

@@ -77,7 +77,7 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
     return Size;
 }
 
-void ide_name_convert_individual(uint16_t* ide_buf, size_t offset, size_t len, char** out) {
+void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t len, char** out) {
 	uint16_t* prepared = kcalloc(len, 1);
 
 	memcpy(prepared, ide_buf + offset, len);

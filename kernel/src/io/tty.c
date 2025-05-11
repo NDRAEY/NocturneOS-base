@@ -232,7 +232,7 @@ void tty_backspace() {
  *
  * @param str - строка
  */
-void _tty_puts(const char str[]) {
+void _tty_puts(const char* str) {
     for (size_t i = 0, len = strlen(str); i < len; i++) {
         uint16_t ch = (uint16_t)(uint8_t)str[i];
 
