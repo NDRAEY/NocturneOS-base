@@ -49,16 +49,11 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Additional software installation
-        run: |
-          sudo apt install ffmpeg -y
-
       - name: Generate warnings badge
         run: bash tools/generate_warning_badge.sh
 
       - name: Copy badge to gh-pages
         run: |
-          cp warn_badge.png gh-pages/warn_badge.png
           cp warning_count.txt gh-pages/warning_count.txt
 
       - name: Commit and push badge
