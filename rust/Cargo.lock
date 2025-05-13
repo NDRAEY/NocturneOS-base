@@ -207,6 +207,7 @@ dependencies = [
  "noct-logger",
  "noct-sched",
  "noct-screen",
+ "noct-timer",
  "noct-tty",
  "nwav",
  "spin 0.10.0",

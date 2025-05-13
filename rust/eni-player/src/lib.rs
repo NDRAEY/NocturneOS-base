@@ -25,6 +25,7 @@ use noct_fs::File;
 use noct_input::kbd::{Key, SpecialKey};
 use noct_logger::{qemu_log, qemu_note, qemu_ok};
 use noct_sched::{spawn, task_yield};
+use noct_timer::timestamp;
 use noct_tty::println;
 use nwav::Chunk::{Format, List};
 use spin::Mutex;
@@ -229,7 +230,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     let cache_line: Arc<Mutex<Vec<Box<[u8]>>>> = Arc::new(Mutex::new(Vec::new()));
 
-    let mut file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(filepath).unwrap()));
+    let file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(filepath).unwrap()));
 
     let (fmtdata, metadata) = {
         let mut bytes = vec![0; 2048];
@@ -257,9 +258,9 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     let filesize = file.lock().size();
 
-    let mut is_running = Arc::new(Mutex::new(true));
-    let mut status = Arc::new(Mutex::new(PlayerStatus::Playing));
-    let mut bytes_read = Arc::new(Mutex::new(0));
+    let is_running = Arc::new(Mutex::new(true));
+    let status = Arc::new(Mutex::new(PlayerStatus::Playing));
+    let bytes_read = Arc::new(Mutex::new(0));
     let mut bytes_played: usize = 0;
     let total_time_seconds: usize = bytes_to_seconds(&fmtdata, filesize);
 
@@ -319,10 +320,7 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     loop {
         let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
-        let (key, is_pressed) = match noct_input::kbd::parse_scancode(key as u8) {
-            Some(x) => x,
-            None => (Key::Unknown, false)
-        };
+        let (key, is_pressed) = noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
 
         if key == Key::Special(SpecialKey::ESCAPE) {
             noct_screen::fill(0);
@@ -373,6 +371,8 @@ pub fn player(args: &[String]) -> Result<(), usize> {
             }
         }
 
+        let st = timestamp();
+
         draw_ui(
             &mut canvas,
             &curstat,
@@ -384,6 +384,8 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         );
 
         render_canvas(&mut canvas);
+
+        qemu_note!("Rendered in: {} ms", timestamp() - st);
     }
 
     audio.close();
