@@ -24,24 +24,16 @@ impl Directory<'_> {
             return None;
         }
 
-        // qemu_note!("Data: {:#?}", data);
-
         let dirs = data.CountDir;
         let files = data.CountFiles;
         let others = data.CountOther;
         let overall = dirs + files + others;
 
-        let m_self = Self {
+        Some(Self {
             // path: st,
             files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },            
             nvfs_dir: data,
-        };
-
-        qemu_note!("Files at: {:x}", m_self.files.as_ptr() as usize);
-
-        // qemu_note!("{:?}", &m_self);
-
-        Some(m_self)
+        })
     }
 
     pub fn directory_count(&self) -> u32 {

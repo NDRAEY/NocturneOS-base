@@ -1,4 +1,6 @@
-use alloc::{string::String, vec::Vec};
+use core::ffi::CStr;
+
+use alloc::string::String;
 
 use crate::FSM_FILE;
 
@@ -10,12 +12,10 @@ pub struct File {
 
 impl File {
     pub fn from_fsm(file: FSM_FILE) -> Self {
-        let lsi = file.Name.iter().position(|&a| a == 0).unwrap();
-
-        let name_raw = &file.Name[..lsi];
-        let prep: Vec<u8> = name_raw.iter().map(|a| *a as u8).collect();
-
-        let name = String::from_utf8_lossy(prep.as_slice()).into_owned();
+        let name = {
+            let a = unsafe { CStr::from_ptr(file.Name.as_ptr()) };
+            a.to_string_lossy()
+        }.into_owned();
 
         File {
             file,
