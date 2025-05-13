@@ -60,7 +60,7 @@ void page_fault(registers_t regs);
 /* INT 10h - FPU fault */
 void fpu_fault(registers_t regs);
 
-uint32_t extern read_cr2();
+extern uint32_t read_cr2();
 
 void bsod_screen(registers_t regs, char* title, char* msg, uint32_t code);
 #endif

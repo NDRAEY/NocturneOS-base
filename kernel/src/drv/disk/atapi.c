@@ -99,7 +99,7 @@ size_t ata_scsi_receive_size_of_transfer(uint16_t bus) {
  * @param buffer Буффер для хранения данных
  */
 void ata_scsi_read_result(uint16_t bus, size_t size, uint16_t* buffer) {
-	insw(ATA_PORT(bus) + ATA_REG_DATA, buffer, size);
+	insw(ATA_PORT(bus) + ATA_REG_DATA, buffer, size / 2);
 }
 
 /**
@@ -288,7 +288,7 @@ atapi_error_code atapi_request_sense(uint8_t bus, bool slave, uint8_t out[18]) {
 
 	ata_scsi_receive_size_of_transfer(bus);
 
-    ata_scsi_read_result(bus, 18, (uint16_t*)out);
+  ata_scsi_read_result(bus, 18, (uint16_t*)out);
 
 	// First byte should be 0xf0
 
