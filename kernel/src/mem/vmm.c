@@ -178,7 +178,7 @@ void *alloc_no_map(size_t size, size_t align)
 	// 	}
 	// }
 
-	for (int i = 0; i < system_heap.allocated_count; i++)
+	for (size_t i = 0; i < system_heap.allocated_count; i++)
 	{
 		struct heap_entry cur = system_heap.memory[i];
 		struct heap_entry next = system_heap.memory[i + 1];
@@ -553,7 +553,7 @@ void *krealloc(void *ptr, size_t memory_size)
 
 				size_t reg_addr = block->address & ~0xfff;
 
-				for (int addr_offset = 0; addr_offset <= ALIGN(memory_size, 4096); addr_offset += PAGE_SIZE)
+				for (size_t addr_offset = 0; addr_offset <= ALIGN(memory_size, 4096); addr_offset += PAGE_SIZE)
 				{
 					size_t region = phys_get_page_data(get_kernel_page_directory(),
 													   reg_addr); // is allocated region there?

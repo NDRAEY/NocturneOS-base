@@ -63,11 +63,11 @@ void kHandlerCMD(char *cmd)
     if (strlen(cmd) == 0)
         return;
 
-    uint32_t kCMDc = str_cdsp(cmd, " ");
+    size_t kCMDc = str_cdsp(cmd, " ");
     uint32_t kCMDc_c = 0;
     char *out[128] = {0};
     str_split(cmd, out, " ");
-    for (int i = 0; kCMDc >= i; i++)
+    for (size_t i = 0; kCMDc >= i; i++)
     {
         kCMDc_c = str_cdsp(out[i], "=");
         char *out_data[128] = {0};
