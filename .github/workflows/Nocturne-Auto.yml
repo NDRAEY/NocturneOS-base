@@ -59,6 +59,7 @@ jobs:
       - name: Copy badge to gh-pages
         run: |
           cp warn_badge.png gh-pages/warn_badge.png
+          cp warning_count.txt gh-pages/warning_count.txt
 
       - name: Commit and push badge
         run: |
