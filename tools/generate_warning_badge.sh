@@ -2,7 +2,7 @@
 
 count=$(python3 tools/warnanalyzer.py analyzer.txt)
 
-echo $count > warning_count.txt
+echo "{\"color\": \"yellow\", \"status\": \"$count\", \"subject\": \"Warnings\"}" > warning_count.txt
 
 ffmpeg -f lavfi -i "color=#cccc11:size=120x28" \
  -filter_complex "[v]drawtext=text=\'$count warnings\'
