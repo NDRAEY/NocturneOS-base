@@ -13,7 +13,7 @@ jobs:
 
       - name: Step 1 - Software installation
         run: |
-          sudo apt install nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
+          sudo apt install nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake -y
 
       - name: Step 1.1 - Install Rust
         run: |
@@ -26,7 +26,7 @@ jobs:
         run: bash tools/build/make_builds.sh
 
       - name: Step 3 - Build all
-        run: bash tools/build/compile_builds.sh
+        run: bash -c 'bash tools/build/compile_builds.sh 2>&1 | tee analyzer.txt'
 
       - name: Step 8 - Update to the latest unstable release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -37,8 +37,35 @@ jobs:
           automatic_release_tag: "latest-unstable"
           prerelease: true
           title: "💽 NocturneOS Sea - [Autobuild] Unstable release"
-          description: "Внимание! Данный релиз собран из последних изменений в ядре! Это не окончательная версия содержит ошибки и не рекомендуется к запуску без проверки на виртуальной машине."
+          description: "Attention! This release is built from the latest kernel changes! This is not the final version and contains bugs and is not recommended to run without testing on a virtual machine."
           files: |
             cmake-build-debug/NocturneOS_Debug.iso
             cmake-build-release/NocturneOS_Release.iso
             cmake-build-release-opt/NocturneOS_ReleaseOptimized.iso
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Additional software installation
+        run: |
+          sudo apt install ffmpeg -y
+
+      - name: Generate warnings badge
+        run: bash tools/generate_warning_badge.sh
+
+      - name: Copy badge to gh-pages
+        run: |
+          cp warn_badge.png gh-pages/warn_badge.png
+
+      - name: Commit and push badge
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add warn_badge.png
+          git commit -m "Update warning badge" || echo "No changes to commit"
+          git push origin gh-pages
+

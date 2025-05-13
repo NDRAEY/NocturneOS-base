@@ -24,3 +24,4 @@ compile_commands.json
 test_*
 *.wav
 /kernel/include/generated
+/analyzer.txt
