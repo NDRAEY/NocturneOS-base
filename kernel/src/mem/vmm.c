@@ -96,7 +96,7 @@ void heap_dump()
 	qemu_note("Heap info: %d entries of %d possible", system_heap.allocated_count, system_heap.capacity);
 	qemu_note("           %d bytes of ? bytes used", system_heap.used_memory);
 
-	for (int i = 0; i < system_heap.allocated_count; i++)
+	for (size_t i = 0; i < system_heap.allocated_count; i++)
 	{
 		qemu_log("[%d] [%x, %d => %x]",
 				 i,

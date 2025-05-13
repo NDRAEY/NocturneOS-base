@@ -46,7 +46,7 @@ physical_addr_t phys_alloc_single_page() {
 		phys_not_enough_memory();
 	}
 
-	for(int i = 0; i < PAGE_BITMAP_SIZE; i++) {
+	for(size_t i = 0; i < PAGE_BITMAP_SIZE; i++) {
 		if(pages_bitmap[i] == 0xff) {
 			// 0xff is eight ones in 8 bit.
 			// 8 ones - all pages in this index is used.
@@ -91,7 +91,7 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 	// They used for saving start indexes of our pages.
 	size_t si, sj = 0;
 
-	for(int i = 0; i < PAGE_BITMAP_SIZE; i++) {
+	for(size_t i = 0; i < PAGE_BITMAP_SIZE; i++) {
 		if(pages_bitmap[i] == 0xff) {
 			// 0xff is eight ones in 8 bit.
 			// 8 ones - all pages in this index is used.
@@ -493,7 +493,7 @@ void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t 
 		size_t length = entry->len_low;
 
 		if(entry->type != 1) {
-			for(int j = 0; j < length; j += PAGE_SIZE) {
+			for(size_t j = 0; j < length; j += PAGE_SIZE) {
 				phys_mark_page_entry(addr + j, 1);  // Mark as used
 			}
 		}
