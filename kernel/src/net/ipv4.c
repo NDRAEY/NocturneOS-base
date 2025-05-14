@@ -55,9 +55,13 @@ void ipv4_handle_packet(netcard_entry_t *card, char *packet, size_t packet_size)
 
         	tcp_handle_packet(card, (tcp_packet_t*)(packet + sizeof(ipv4_packet_t)));
 	} else {
+		#ifndef RELEASE
 		qemu_log("  | |--- Header: [%x] %s", ipv4_pkt->Protocol, "Unknown");
 		qemu_log("  | |--- RAW: %d bytes", packet_size - sizeof(ipv4_packet_t));
 		qemu_log("  | |");
+		#else
+		(void)packet_size;
+		#endif
 	}
 }
 
@@ -68,7 +72,7 @@ uint16_t ipv4_checksum(ipv4_packet_t* packet) {
 	uint16_t* array = (uint16_t*)packet;
 	uint32_t sum = 0;
 
-	for(int i = 0; i < array_size; i++) {
+	for(size_t i = 0; i < array_size; i++) {
 		sum += bit_flip_short(array[i]);
 	}
 

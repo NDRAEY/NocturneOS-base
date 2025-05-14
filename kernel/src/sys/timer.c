@@ -75,7 +75,7 @@ void sleep_ms(uint32_t milliseconds) {
  *
  * @param regs - Регистры процессора
  */
-void timer_callback(__attribute__((unused)) registers_t regs){
+void timer_callback(SAYORI_UNUSED registers_t regs){
     tick++;
 
     if (is_multitask() && scheduler_working) {

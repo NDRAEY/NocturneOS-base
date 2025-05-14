@@ -154,6 +154,8 @@ __attribute__((noreturn)) void thread_exit_entrypoint() {
  */
 thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
                                    bool kernel, bool suspend) {
+    (void)kernel;
+
     void*	stack = nullptr;
     uint32_t	eflags;
 
@@ -213,8 +215,9 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     return tmp_thread;
 }
 
-thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size,
-    bool kernel, bool suspend, size_t arg1) {
+thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size, bool kernel, bool suspend, size_t arg1) {
+    (void)kernel;
+
     void*	stack = nullptr;
     uint32_t	eflags;
 
@@ -366,7 +369,7 @@ bool is_multitask(void){
     return multi_task;
 }
 
-void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
+void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
     if(!multi_task) {
         // qemu_err("Scheduler is disabled!");
         return;
@@ -383,12 +386,12 @@ void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
             process_t* process = next_thread->process;
             qemu_log("REMOVING DEAD THREAD: #%u", next_thread->id);
 
-            list_remove(&next_thread->list_item);
+            list_remove((void*)&next_thread->list_item);
 
             qemu_log("REMOVED FROM LIST");
 
             kfree(next_thread->stack);
-            kfree(next_thread);
+            kfree((void*)next_thread);
 
             qemu_log("FREED MEMORY");
 
@@ -415,12 +418,12 @@ void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs) {
 
                 qemu_log("FREED SPACE FOR TABLES");
 
-                list_remove(&process->list_item);
+                list_remove((void*)&process->list_item);
 
                 qemu_log("REMOVED PROCESS FROM LIST");
 
                 kfree(process->name);
-                kfree(process);
+                kfree((void*)process);
 
                 qemu_log("FREED PROCESS LIST ITEM");
             }

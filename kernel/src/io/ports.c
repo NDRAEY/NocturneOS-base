@@ -28,11 +28,11 @@ void switch_qemu_logging() {
  * @param buffer - данные
  * @param times - сколько данных прочесть
  */
-void insl(uint16_t port, uint32_t *buffer, int32_t times) {
-    for (uint32_t index = 0; index < times; index++) {
-        buffer[index] = inl(port);
-    }
-}
+// void insl(uint16_t port, uint32_t *buffer, uint32_t times) {
+//     for (uint32_t index = 0; index < times; index++) {
+//         buffer[index] = inl(port);
+//     }
+// }
 
 
 /**
@@ -71,12 +71,9 @@ int32_t is_transmit_empty(uint16_t port) {
 
 // Read 1 byte (char) from port.
 uint8_t serial_readchar(uint16_t port) {
-   //size_t to = 0;
-    while (is_signal_received(port) == 0){
-       //to++;
-       //qemu_warn("TIMEOUT: %d",to);
-   }
-   return inb(port);
+    while (is_signal_received(port) == 0)
+        ;
+    return inb(port);
 }
 
 
@@ -87,7 +84,9 @@ int8_t serial_readchar_timeout(uint16_t port,size_t timeout, bool Alert) {
         to++;
         //qemu_warn("TIMEOUT: %d",to);
         if (to >= timeout){
-            if (Alert) qemu_warn("TIMEOUT: %d",to);
+            if (Alert) {
+                qemu_warn("TIMEOUT: %d",to);
+            }
             return -1;
         }
     }

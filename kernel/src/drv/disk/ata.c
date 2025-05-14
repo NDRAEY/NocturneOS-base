@@ -15,7 +15,7 @@
 
 #define DEFAULT_TIMEOUT (65535 * 2)
 
-const char possible_dpm_letters_for_ata[4] = "CDEF";
+const char* possible_dpm_letters_for_ata = "CDEF";
 ata_drive_t drives[4] = {0};
 
 bool ide_poll_drq(uint16_t io) {
@@ -40,11 +40,11 @@ bool ide_poll_bsy(uint16_t io) {
 	}
 }
 
-void ide_primary_irq(__attribute__((unused)) registers_t regs) {
+void ide_primary_irq(SAYORI_UNUSED registers_t regs) {
 	inb(ATA_PRIMARY_IO + ATA_REG_STATUS);
 }
 
-void ide_secondary_irq(__attribute__((unused)) registers_t regs) {
+void ide_secondary_irq(SAYORI_UNUSED registers_t regs) {
 	inb(ATA_SECONDARY_IO + ATA_REG_STATUS);
 }
 
@@ -54,27 +54,35 @@ void ide_soft_reset(size_t io) {
 	outb(io + ATA_REG_CONTROL, 0);
 }
 
-size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer){
-    /// Функции для чтения
+/// Функция для чтения
+size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer) {
+	// TODO: Add support for using high offset.
+	(void)high_offset;
+
     DPM_Disk dpm = dpm_info(Disk + 65);
-//    qemu_note("[ATA] [DPM] [DISK %d] [READ] Off: %d | Size: %d", dpm.Point, Offset, Size);
+	// qemu_note("[ATA] [DPM] [DISK %d] [READ] Off: %d | Size: %d", dpm.Point, Offset, Size);
     // TODO: @ndraey не забудь для своей функции сделать кол-во полученных байт
-	// FIXME: For those who want to see thid piece of code: I literally burned my eyes with this.
-    size_t disk_nr = (size_t)dpm.Point;
+    
+	size_t disk_nr = (size_t)dpm.Point;
     ata_read(disk_nr, Buffer, low_offset, Size);
-    return Size;
+    
+	return Size;
 }
 
 
+/// Функция для записи
 size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
-    /// Функции для записи
+	// TODO: Add support for using high offset.
+	(void)high_offset;
+
     DPM_Disk dpm = dpm_info(Disk + 65);
-//    qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
+	// qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
     // TODO: @ndraey не забудь для своей функции сделать кол-во записанных байт
-	// FIXME: For those who want to see thid piece of code: I literally burned my eyes with this.
-    size_t disk_nr = (size_t)dpm.Point;
+	
+	size_t disk_nr = (size_t)dpm.Point;
     ata_write(disk_nr, Buffer, low_offset, Size);
-    return Size;
+    
+	return Size;
 }
 
 void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t len, char** out) {
@@ -82,7 +90,7 @@ void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t 
 
 	memcpy(prepared, ide_buf + offset, len);
 
-	for(register int i = 0; i < (len / 2); i++) {
+	for(register size_t i = 0; i < (len / 2); i++) {
 		prepared[i] = bit_flip_short(prepared[i]);
 	}
 
@@ -294,7 +302,7 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 void ide_poll(uint16_t io) {
 	ide_400ns_delay(io);
 
-	uint8_t status __attribute__((unused)) = inb(io + ATA_REG_STATUS);
+	uint8_t status SAYORI_UNUSED = inb(io + ATA_REG_STATUS);
 	
 	while(1) {
 		status = inb(io + ATA_REG_STATUS);

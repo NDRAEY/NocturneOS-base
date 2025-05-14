@@ -12,7 +12,7 @@ uint8_t default_broadcast_mac_address[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 arp_table_entry_t arp_table[ARP_TABLE_MAX_SIZE] = {0};
 size_t arp_table_curr = 0;
 
-void arp_handle_packet(netcard_entry_t* card, arp_packet_t* arp_packet, size_t len) {
+void arp_handle_packet(netcard_entry_t* card, arp_packet_t* arp_packet, SAYORI_UNUSED size_t len) {
     uint8_t dest_mac[6];
     uint8_t dest_ip[4];
     

@@ -27,7 +27,7 @@ void fsm_init() {
 }
 
 int fsm_getIDbyName(const char* Name){
-	for (int i = 0; i < fsm_entries->size; i++) {
+	for (size_t i = 0; i < fsm_entries->size; i++) {
         vector_result_t res = vector_get(fsm_entries, i);
         FSM* fsm = (FSM*)res.element;
 
@@ -43,7 +43,8 @@ int fsm_getIDbyName(const char* Name){
 	return -1;
 }
 
-void fsm_dump(FSM_FILE file){
+#ifndef RELEASE
+void fsm_dump(FSM_FILE file) {
 	qemu_log("  |--- Ready  : %d",file.Ready);
 	qemu_log("  |--- Name   : %s",file.Name);
 	qemu_log("  |--- Path   : %s",file.Path);
@@ -52,6 +53,7 @@ void fsm_dump(FSM_FILE file){
 	qemu_log("  |--- Type   : %d",file.Type);
 	qemu_log("  |--- Date   : %d",file.LastTime.year);
 }
+#endif
 
 size_t fsm_read(int FIndex, char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer){
     if (fsm_debug) {
@@ -187,7 +189,7 @@ void fsm_dpm_update(char Letter){
             	continue;
             }
 
-            for(int f = 0; f < fsm_entries->size; f++) {
+            for(size_t f = 0; f < fsm_entries->size; f++) {
                 FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;
 
                 qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm->Name);
@@ -221,7 +223,7 @@ void fsm_dpm_update(char Letter){
         dpm_LabelUpdate(DISKID, NULL);
         dpm_FileSystemUpdate(DISKID, NULL);
 
-        for(int f = 0; f < fsm_entries->size; f++) {
+        for(size_t f = 0; f < fsm_entries->size; f++) {
             FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;
 
             qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm->Name);

@@ -18,6 +18,7 @@
 #endif
 
 #define SAYORI_INLINE static inline __attribute__((always_inline))
+#define SAYORI_UNUSED __attribute__((unused))
 
 #define KB (1 << 10)
 #define MB (1 << 20)
@@ -37,7 +38,7 @@ typedef	unsigned short	uint16_t;
 typedef	short		int16_t;
 /* 8-bit types */
 typedef	unsigned char	uint8_t;
-typedef	char		int8_t;
+typedef	signed char		int8_t;
 
 #ifdef SAYORI64
 typedef	uint64_t		size_t;
@@ -48,6 +49,7 @@ typedef	int32_t			ssize_t;
 #endif
 
 typedef size_t uintptr_t;
+typedef size_t ptrdiff_t;
 
 #define allocate_one(T) kcalloc(sizeof(T), 1)
 

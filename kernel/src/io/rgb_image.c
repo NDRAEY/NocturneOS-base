@@ -16,7 +16,7 @@
  * @param sy Начальная координата Y
  */
 void draw_rgb_image(const char *data, size_t width, size_t height, size_t bpp, int sx, int sy) {
-	int x = 0, y = 0;
+	size_t x = 0, y = 0;
 
     size_t bytes_pp = bpp >> 3;
 

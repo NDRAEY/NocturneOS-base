@@ -18,7 +18,7 @@ WAVHeader miniplay_hdr;
 
 size_t miniplay_anim_pos = 0;
 
-#define BUFFER_SIZE (128 << 10)
+#define BUFFER_SIZE (128u << 10)
 
 // Duration = File Size / (Sample Rate * Number of Channels * Sample Width)
 

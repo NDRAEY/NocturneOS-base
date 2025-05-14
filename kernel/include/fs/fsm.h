@@ -90,6 +90,10 @@ FSM_FILE fsm_info(int FIndex, char DIndex, const char *Name);
 void fsm_reg(const char *Name, fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cmd_info_t Info, fsm_cmd_create_t Create, fsm_cmd_delete_t Delete, fsm_cmd_dir_t Dir, fsm_cmd_label_t Label, fsm_cmd_detect_t Detect);
 int fsm_delete(int FIndex, char DIndex, const char *Name, int Mode);
 int fsm_create(int FIndex, char DIndex, const char *Name, int Mode);
+
+#ifndef RELEASE
 void fsm_dump(FSM_FILE file);
+#endif
+
 void fsm_dir(int FIndex, const char DIndex, const char *Name, FSM_DIR *out);
 void fsm_dpm_update(char Letter);

@@ -87,14 +87,15 @@ _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t co
 }
 
 void print_regs(registers_t regs) {
-    qemu_log("EAX = %x", regs.eax);
-    qemu_log("EBX = %x", regs.ebx);
-    qemu_log("ECX = %x", regs.ecx);
-    qemu_log("EDX = %x", regs.edx);
-    qemu_log("ESP = %x", regs.esp);
-    qemu_log("EBP = %x", regs.ebp);
-    qemu_log("EIP = %x", regs.eip);
-    qemu_log("EFLAGS = %x", regs.eflags);
+
+    qemu_printf("EAX = %x\n", regs.eax);
+    qemu_printf("EBX = %x\n", regs.ebx);
+    qemu_printf("ECX = %x\n", regs.ecx);
+    qemu_printf("EDX = %x\n", regs.edx);
+    qemu_printf("ESP = %x\n", regs.esp);
+    qemu_printf("EBP = %x\n", regs.ebp);
+    qemu_printf("EIP = %x\n", regs.eip);
+    qemu_printf("EFLAGS = %x\n", regs.eflags);
 }
 
 void division_by_zero(registers_t regs)

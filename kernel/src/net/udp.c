@@ -6,7 +6,7 @@
 #include "debug/hexview.h"
 #include "net/dhcp.h"
 
-uint16_t udp_calculate_checksum(udp_packet_t * packet) {
+uint16_t udp_calculate_checksum(SAYORI_UNUSED udp_packet_t * packet) {
 	// UDP checksum is optional in IPv4
 	return 0;
 }
@@ -28,12 +28,12 @@ void udp_send_packet(netcard_entry_t* card, uint8_t * dst_ip, uint16_t src_port,
 }
 
 void udp_handle_packet(netcard_entry_t *card, udp_packet_t *packet) {
-	uint16_t src_port = ntohs(packet->src_port);
+	SAYORI_UNUSED uint16_t src_port = ntohs(packet->src_port);
 	uint16_t dst_port = ntohs(packet->dst_port);
-	uint16_t length = ntohs(packet->length);
-
+	SAYORI_UNUSED uint16_t length = ntohs(packet->length);
+	
 	void* data_ptr = (char*)packet + sizeof(udp_packet_t);
-
+	
 	qemu_log("UDP: Source port: %d; Destination port: %d; Length: %d", src_port, dst_port, length);
 
 //	hexview_advanced(data_ptr, data_len, 16, true, new_qemu_printf);

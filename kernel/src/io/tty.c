@@ -181,12 +181,12 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
  * @param c - символ
  */
 void _tty_putchar(uint16_t c) {
-    if ((tty_pos_x + tty_off_pos_x) >= (int) VESA_WIDTH || c == '\n') {
+    if ((tty_pos_x + tty_off_pos_x) >= VESA_WIDTH || c == '\n') {
         tty_pos_x = 0;
 
         tty_pos_y += tty_off_pos_h;
         
-        if ((tty_pos_y + tty_off_pos_h) >= (int) VESA_HEIGHT) {
+        if ((tty_pos_y + tty_off_pos_h) >= VESA_HEIGHT) {
             tty_scroll(1);
         }
 
@@ -198,7 +198,7 @@ void _tty_putchar(uint16_t c) {
     } else if(c == '\b') {
         tty_backspace();
     } else if(c != '\n') {
-        if (tty_pos_y + tty_off_pos_h >= (int) VESA_HEIGHT) {
+        if (tty_pos_y + tty_off_pos_h >= VESA_HEIGHT) {
             tty_scroll(1);
         }
 
@@ -213,7 +213,7 @@ void _tty_putchar(uint16_t c) {
  *
  */
 void tty_backspace() {
-    if (tty_pos_x < tty_off_pos_x) { // Old: == 0
+    if (tty_pos_x < (uint32_t)tty_off_pos_x) {
         if (tty_pos_y >= tty_off_pos_h) {
             tty_pos_y -= tty_off_pos_h;
         }

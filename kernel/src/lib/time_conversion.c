@@ -16,7 +16,7 @@ size_t fsm_DateConvertToUnix(FSM_TIME time) {
         month_days[1] = 29;
     }
 
-    for (uint32_t month = 0; month < time.month - 1; month++) {
+    for (uint8_t month = 0; month < time.month - 1; month++) {
         unix_time += month_days[month] * seconds_per_day;
     }
 
@@ -41,7 +41,7 @@ void fsm_convertUnix(uint32_t unix_time, FSM_TIME* time) {
         years++;
     }
     
-    int8_t month_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    uint8_t month_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     if (years % 4 == 0 && (years % 100 != 0 || years % 400 == 0)) {
         month_days[1] = 29;
     }

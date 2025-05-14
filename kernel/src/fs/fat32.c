@@ -223,7 +223,7 @@ void fs_fat32_read_clusters_to_memory(char Disk, size_t cluster_number, void* bu
 
     vector_t* cluster_list = fs_fat32_get_clusters(Disk, cluster_number);
 
-    for(int i = 0; i < cluster_list->size; i++) {
+    for(size_t i = 0; i < cluster_list->size; i++) {
         size_t current_cluster = vector_get(cluster_list, i).element;
 
         size_t addr = ((desc->info.reserved_sectors + (desc->info.fat_size_in_sectors * 2)) \
@@ -241,7 +241,7 @@ vector_t* fs_fat32_optimize(vector_t* cluster_list) {
     size_t old = vector_get(cluster_list, 0).element;
     size_t start = vector_get(cluster_list, 0).element;
 
-    for(int i = 1; i < cluster_list->size; i++) {
+    for(size_t i = 1; i < cluster_list->size; i++) {
         size_t current = vector_get(cluster_list, i).element;
 
         if (current - 1 != old) {
@@ -272,7 +272,7 @@ void fs_fat32_read_clusters_to_memory_precise(char Disk, size_t cluster_number, 
 
     qemu_printf("Optimized: ");
 
-    for(int i = 0; i < optimized->size; i++) {
+    for(size_t i = 0; i < optimized->size; i++) {
         qemu_printf("%u ", vector_get(optimized, i).element);
     }
 
@@ -297,7 +297,7 @@ void fs_fat32_read_clusters_to_memory_precise(char Disk, size_t cluster_number, 
 #if FAT32_LINEAR_OPTIMIZATION==1
     size_t buffer_index = 0;
 
-    for(int i = 0; i < cluster_list->size; i+=2) {
+    for(size_t i = 0; i < cluster_list->size; i+=2) {
         size_t start_cluster = vector_get(cluster_list, i).element;
         size_t end_cluster = vector_get(cluster_list, i + 1).element;
         size_t count = end_cluster - start_cluster + 1;
@@ -590,7 +590,7 @@ size_t fs_fat32_evaluate(char Disk, const char* path, bool error_on_file) {
 
     fat_file_info_t temp_info = {0};
 
-    for(int i = 0; i < pieces->size; i++) {
+    for(size_t i = 0; i < pieces->size; i++) {
         char* value = ADDR2STRING(pieces->data[i])->data;
         qemu_note("%s", value);
 
@@ -693,7 +693,7 @@ int fs_fat32_detect(char Disk) {
         vector_t* root_directory = fs_fat32_get_clusters(Disk, 2);
 
         qemu_note("[%d] Root occupies folllwing clusters:", root_directory->size);
-        for(int i = 0; i < root_directory->size; i++) {
+        for(size_t i = 0; i < root_directory->size; i++) {
             qemu_note("Cluster: %d", vector_get(root_directory, i).element);
         }
 

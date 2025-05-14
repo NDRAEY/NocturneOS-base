@@ -378,10 +378,8 @@ bool vmm_is_page_used_by_entries(size_t address)
 
 struct heap_entry heap_get_block(size_t address)
 {
-	for (int i = 0; i < system_heap.allocated_count; i++)
-	{
-		if (system_heap.memory[i].address == address)
-		{
+	for (size_t i = 0; i < system_heap.allocated_count; i++) {
+		if (system_heap.memory[i].address == address) {
 			return system_heap.memory[i];
 		}
 	}
@@ -392,10 +390,8 @@ struct heap_entry heap_get_block(size_t address)
 // NOTE: Returns nullptr if block does not exist
 struct heap_entry *heap_get_block_ref(size_t address)
 {
-	for (int i = 0; i < system_heap.allocated_count; i++)
-	{
-		if (system_heap.memory[i].address == address)
-		{
+	for (size_t i = 0; i < system_heap.allocated_count; i++) {
+		if (system_heap.memory[i].address == address) {
 			return system_heap.memory + i;
 		}
 	}
@@ -510,13 +506,11 @@ void *krealloc(void *ptr, size_t memory_size)
 
 			size_t reg_addr = block->address & ~0xfff;
 
-			for (int addr_offset = 0; addr_offset <= ALIGN(memory_size, 4096); addr_offset += PAGE_SIZE)
-			{
+			for (size_t addr_offset = 0; addr_offset <= ALIGN(memory_size, 4096); addr_offset += PAGE_SIZE) {
 				size_t region = phys_get_page_data(get_kernel_page_directory(),
 												   reg_addr); // is allocated region there?
 
-				if (!region)
-				{
+				if (!region) {
 					//					qemu_warn("Region is not yet mapped: %x", reg_addr);
 
 					size_t page = phys_alloc_single_page();
@@ -659,9 +653,11 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 
 	page_dir[1023] = physaddr | 3;
 
-	for (int i = 0; i < 1024; i++)
-		if (page_dir[i])
+	for (int i = 0; i < 1024; i++) {
+		if (page_dir[i]) {
 			qemu_log("[%d] %x = %x", i, kern_dir[i], page_dir[i]);
+		}
+	}
 
 	qemu_log("Page directory at: V%x (P%x); Here you are!", (size_t)page_dir, physaddr);
 

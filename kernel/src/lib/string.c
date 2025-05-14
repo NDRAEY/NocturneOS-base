@@ -45,26 +45,6 @@ bool isSymbol(char c){
     }
     return false;
 }
-/**
- * @brief Возращает индекс символа
- *
- * @param с - Символ хз зачем
- * @param с1 - Символ нафига
- * @param с2 - Символ хз
- *
- * @return Индекс символа
- */
-uint32_t SymConvert(char c, char c1, char c2){
-    uint32_t s = 0;
-    if (c == -62){
-        s = 1000;
-    } else if (c == -106){
-        s = 2000+(((int) c1)* -1);
-    } else if (c == -30){
-        s = 3000+(((int) c1)* -1);
-    }
-    return (isSymbol(c)?((((int) c)* -1)+(((int) c1)* -1)+s):((int) c));
-}
 
 /**
  * @brief Возращает индекс символа
@@ -606,7 +586,7 @@ size_t htoi(const char* hex) {
 void strver(char *str) {
     size_t j = strlen(str) - 1;
 
-    for (int32_t i = 0; i < j; i++) {
+    for (size_t i = 0; i < j; i++) {
         char c = str[i];
         str[i] = str[j];
         str[j] = c;
@@ -670,7 +650,7 @@ size_t itou(size_t n, char *buffer) {
 }
 
 size_t itoh(size_t i, char *buffer) {
-	const unsigned char hex[16] = "0123456789ABCDEF";
+	const char* hex = "0123456789ABCDEF";
     uint32_t n, d = 0x10000000;
     char* p = buffer;
 

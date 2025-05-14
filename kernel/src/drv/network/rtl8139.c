@@ -154,7 +154,7 @@ void rtl8139_init_buffer() {
 	outl(rtl8139_io_base + RBSTART, rtl8139_phys_buffer);
 }
 
-void rtl8139_handler(__attribute__((unused)) registers_t regs) {
+void rtl8139_handler(SAYORI_UNUSED registers_t regs) {
 	qemu_log("Received RTL8139 interrupt!");
 
 	rtl8139_in_irq = true;

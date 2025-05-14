@@ -119,18 +119,15 @@ void mala_control() {
 
     draw_vga_str("Mala v0.2", 9, 16, 10, 0);
 
-    itoh(current_color, text_buffer);
+    memset(text_buffer, 0, 16);
+    sprintf(text_buffer, "%06x", current_color);
     drawRect(100, 0, 2, STATUSBAR_HEIGHT, 0);
     draw_vga_str(text_buffer, strlen(text_buffer), 108, 10, 0);
 
     memset(text_buffer, 0, 16);
-    itoa(cursor_pos_x, text_buffer);
+    sprintf(text_buffer, "%d : %d", cursor_pos_x, cursor_pos_y);
     drawRect(172, 0, 2, STATUSBAR_HEIGHT, 0);
-    draw_vga_str(text_buffer, 4, 180, 10, 0);
-
-    memset(text_buffer, 0, 16);
-    itoa(cursor_pos_y, text_buffer);
-    draw_vga_str(text_buffer, 4, 212, 10, 0);
+    draw_vga_str(text_buffer, strlen(text_buffer), 180, 10, 0);
 
     cursor_pos_x = mouse_get_x();
     cursor_pos_y = mouse_get_y();

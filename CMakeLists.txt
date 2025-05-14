@@ -49,7 +49,7 @@ set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11 -Werror=return-type")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -mno-red-zone -MMD -MP -fdiagnostics-color -m32 -march=i386 -Wl,--build-id=none ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z noexecstack")
 
 
@@ -153,7 +153,7 @@ set(C_SRC
 	kernel/src/lib/pixel.c 
 	kernel/src/sys/bootscreen.c 
 	kernel/src/debug/hexview.c 
-	kernel/src/drv/video/vbe.c 
+	# kernel/src/drv/video/vbe.c 
 	kernel/src/drv/input/ps2_keyboard.c 
 	kernel/src/drv/input/ps2_mouse.c 
 	kernel/src/sys/syscalls.c 
@@ -194,7 +194,7 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	kernel/src/extra/plain_runner.c
+	# kernel/src/extra/plain_runner.c
 	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
 	kernel/src/toys/miniplay.c 

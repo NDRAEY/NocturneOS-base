@@ -99,7 +99,7 @@ size_t syscall_datetime(sayori_time_t* out_time) {
     return 0;
 }
 
-size_t syscall_exit(uint32_t status) {
+size_t syscall_exit(SAYORI_UNUSED uint32_t status) {
 	process_t* proc = get_current_proc();
 	
 	qemu_log("Exit requested (status %d) by PID %d\n", status, proc->pid);

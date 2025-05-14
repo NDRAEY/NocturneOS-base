@@ -83,7 +83,7 @@ typedef volatile struct
 void init_task_manager(void);
 
 extern void task_switch(registers_t regs);
-void task_switch_v2_wrapper(__attribute__((unused)) registers_t regs);
+void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs);
 extern void task_switch_v2(thread_t*, thread_t*);
 
 thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,

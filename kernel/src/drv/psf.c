@@ -23,8 +23,8 @@ void draw_vga_str(const char* text, size_t len, int x, int y, uint32_t color) {
 	});
 
     size_t scrwidth = getScreenWidth();
-    for(int i = 0; i < len; i++) {
-        if (x + 8 <= scrwidth) {
+    for(size_t i = 0; i < len; i++) {
+        if (x + 8 <= (int)scrwidth) {
             uint16_t ch = (uint16_t)(uint8_t)text[i];
             if(ch == 0xd0 || ch == 0xd1) {
                 i++;

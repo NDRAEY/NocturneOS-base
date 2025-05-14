@@ -37,37 +37,6 @@ uint16_t __com_getInit(uint16_t key){
     return com_init[key];
 }
 
-void __com_readBigData(uint16_t port, uint32_t *buffer, size_t times) {
-    for (int32_t index = 0; index < times; index++) {
-        buffer[index] = inl(port);
-    }
-}
-
-
-/**
- * @brief Запись длинного слова через порт
- *
- * @param port - порт
- * @param buffer - данные
- * @param times - сколько данных отправить
- */
-void __com_writeBigData(uint16_t port, uint32_t *buffer, size_t times) {
-    for (int32_t index = 0; index < times; index++) {
-        outl(port, buffer[index]);
-    }
-}
-
-/**
- * @brief Чтение строки через порт
- *
- * @param port - порт
- * @param buf - данные
- * @param size - сколько данных прочесть
- */
-void __com_readString(uint16_t port, uint32_t *buf, size_t size){
-    __com_readBigData(port, buf, size);
-}
-
 /**
  * @brief Проверка занятости com-порта
  *
@@ -149,7 +118,7 @@ void __com_writeUInt(int16_t port, size_t i){
 
 
 void __com_writeHex(int16_t port, uint32_t i) {
-    const unsigned char hex[16] = "0123456789ABCDEF";
+    const char* hex = "0123456789ABCDEF";
     uint32_t n = i;
     uint32_t d = 0x10000000;
 

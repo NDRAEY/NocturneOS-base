@@ -4,7 +4,6 @@
 #define SAYORI_PIXEL_H
 
 void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color);
-void drawRectLine(int x,int y,int w, int h,int color,int color2, int c);
 void drawRectBorder(int x, int y, int w, int h, int color);
 void drawHorizontalLine(int x1, int x2, int y, uint32_t color);
 void drawVerticalLine(int y1, int y2, int x, uint32_t color);

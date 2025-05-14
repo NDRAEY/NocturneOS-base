@@ -23,7 +23,7 @@ extern void tty_backspace();
 /**
  * @brief Обработчик клавиатуры
  */
-void keyboardHandler(registers_t regs){
+void keyboardHandler(SAYORI_UNUSED registers_t regs){
     uint32_t kbdstatus = inb(PS2_STATE_REG);
 
     if (kbdstatus & 0x01) {

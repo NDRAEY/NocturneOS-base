@@ -5,7 +5,7 @@
 #include "io/ports.h"
 #include "mem/vmm.h"
 
-void widget_label_renderer(struct Widget* this, __attribute__((unused)) struct Window* container) {
+void widget_label_renderer(struct Widget* this, SAYORI_UNUSED struct Window* container) {
     Widget_Label_t* this_object = (Widget_Label_t*)(this->custom_widget_data);
     
     // uint32_t color = getColorFont();

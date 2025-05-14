@@ -8,7 +8,11 @@
 #include "net/stack.h"
 
 void ethernet_dump(void* data, size_t size, uint16_t type){
+	#ifndef RELEASE
 	qemu_log("Types: %x", type);
+	#else
+	(void)type;
+	#endif
 
 	char* pkg = (char*) data;
 
@@ -22,7 +26,8 @@ void ethernet_dump(void* data, size_t size, uint16_t type){
 		qemu_log("  |--- Flow: %x %x %x",ipv6->Flow[0],ipv6->Flow[1],ipv6->Flow[2]);
 		qemu_log("  |--- PayLoad: %x",ipv6->PayLoad);
 		qemu_log("  |--- NextHead: %x",ipv6->NextHead);
-		
+
+		#ifndef RELEASE
 		if (ipv6->NextHead == ETH_IPv6_HEAD_ICMPv6){
 			ETH_ICMPv6_PKG* icmpv6 = (ETH_ICMPv6_PKG*)(pkg + sizeof(ETH_IPv6_PKG));
 
@@ -48,6 +53,9 @@ void ethernet_dump(void* data, size_t size, uint16_t type){
 			qemu_log("  | |--- RAW: %d bytes", size - sizeof(ETH_IPv6_PKG));
 			qemu_log("  | |");
 		}
+		#else
+		(void)size;
+		#endif
 
 		ipv6->Source[0] = htons(ipv6->Source[0]);
 		ipv6->Source[1] = htons(ipv6->Source[1]);

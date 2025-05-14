@@ -81,7 +81,7 @@ void create_back_framebuffer() {
  * @param mboot - информация полученная от загрузчика
  */
 void init_vbe(const multiboot_header_t *mboot) {
-    framebuffer_addr = (uint8_t *) mboot->framebuffer_addr;
+    framebuffer_addr = (uint8_t *)(size_t)mboot->framebuffer_addr;
     framebuffer_pitch = mboot->framebuffer_pitch;
     framebuffer_bpp = mboot->framebuffer_bpp;
     framebuffer_width = mboot->framebuffer_width;
@@ -101,16 +101,13 @@ void init_vbe(const multiboot_header_t *mboot) {
     physical_addr_t frame = (physical_addr_t)framebuffer_addr;
     virtual_addr_t virt = (virtual_addr_t)framebuffer_addr;
 
-    size_t start_tk = getTicks();
-
 	map_pages(get_kernel_page_directory(),
 			  frame,
 			  virt,
 			  framebuffer_size,
 			  PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 
-    size_t time = (getTicks() - start_tk)/(getFrequency()/1000);
-    qemu_log("Okay mapping! (took %d millis)", time);
+    qemu_log("Okay mapping!");
 
     create_back_framebuffer();
 

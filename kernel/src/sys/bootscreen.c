@@ -156,8 +156,9 @@ void bootScreenPaint(char* title){
         return;
     }
 
-    if (bs_logs)
+    if (bs_logs) {
         qemu_log("[BOOT] %s",title);
+    }
     
     if (mode == 1){
         tty_changeState(true);
@@ -204,7 +205,9 @@ void bootScreenPaint(char* title){
 void bootScreenInit(uint32_t count){
     // Предварительная настройка BootScreen
     maxElem = count;
-    if (bs_logs) qemu_log("Init...");
+    if (bs_logs) {
+        qemu_log("Init...");
+    }
     tty_changeState(false);  // Disabling print functions
     maxStrLine = (getScreenWidth() / 8) - 2;
     maxHeightLine = getScreenHeight() / 16;

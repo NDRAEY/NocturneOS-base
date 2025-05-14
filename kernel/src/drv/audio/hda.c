@@ -293,7 +293,7 @@ void hda_initialize_afg() {
     }
 }
 
-void hda_interrupt_handler(__attribute__((unused)) registers_t regs) {
+void hda_interrupt_handler(SAYORI_UNUSED registers_t regs) {
 //    qemu_warn("HDA Interrupt!");
 
     size_t interrupt_status = READ32(0x24);

@@ -2,7 +2,6 @@
 
 extern "C" {
     fn drawRect(x: u32, y: u32, w: u32, h: u32, color: u32);
-    fn drawRectLine(x: u32, y: u32, w: u32, h: u32, color: u32, color2: u32, c: i32);
     fn drawRectBorder(x: u32, y: u32, w: u32, h: u32, color: u32);
     fn drawHorizontalLine(x1: u32, x2: u32, y: u32, color: u32);
     fn drawVerticalLine(y1: u32, y2: u32, x: u32, color: u32);
@@ -49,12 +48,6 @@ impl Color {
 pub fn draw_rect(x: u32, y: u32, w: u32, h: u32, color: Color) {
     unsafe {
         drawRect(x, y, w, h, color.as_hex());
-    }
-}
-
-pub fn draw_rect_line(x: u32, y: u32, w: u32, h: u32, color: Color, color2: Color, c: i32) {
-    unsafe {
-        drawRectLine(x, y, w, h, color.as_hex(), color2.as_hex(), c);
     }
 }
 

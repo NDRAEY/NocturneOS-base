@@ -289,10 +289,7 @@ int ftell(FILE* stream) {
 		return -1;
 	});
 
-	if (!stream->open
-		|| stream->size < 0
-		|| stream->fmode == 0
-	) {
+	if (!stream->open || stream->fmode == 0) {
 		qemu_err("ftell(): invalid stream (open: %d; size: %d; mode: %x)", stream->open, stream->size, stream->fmode);
 		fcheckerror(stream);
 		return -1;
@@ -335,7 +332,7 @@ ssize_t fseek(FILE* stream, ssize_t offset, uint8_t whence){
 		lsk = stream->size;
 	} else if (whence == SEEK_SET) {
 		//lsk = 0;
-		if(offset >= 0 && offset <= stream->size) {
+		if(offset >= 0 && (size_t)offset <= stream->size) {
 			stream->pos = offset;
 			qemu_log("Whence = SET; Value = %d", offset);
 			return 0;

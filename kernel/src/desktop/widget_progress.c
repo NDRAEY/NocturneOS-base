@@ -3,7 +3,7 @@
 #include "gui/basics.h"
 #include "mem/vmm.h"
 
-void widget_progress_renderer(struct Widget* this, __attribute__((unused)) struct Window* container) {
+void widget_progress_renderer(struct Widget* this, SAYORI_UNUSED struct Window* container) {
 //    Widget_Progress_t* this_object = (Widget_Progress_t*)(this->custom_widget_data);
 
     size_t cost = this->width / 100;

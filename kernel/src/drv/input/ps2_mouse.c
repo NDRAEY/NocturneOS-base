@@ -15,8 +15,8 @@
 
 uint8_t mouse_ready = 0;        /// Готова ли мышь к работе
 
-uint32_t mouse_x  = 0;           /// Позиция мыши по X
-uint32_t mouse_y  = 0;           /// Позиция мыши по Y
+int32_t mouse_x  = 0;           /// Позиция мыши по X
+int32_t mouse_y  = 0;           /// Позиция мыши по Y
 
 
 int32_t mouse_ox  = 0;           /// Позиция мыши по X (старое значение)
@@ -113,7 +113,7 @@ void mouse_parse_packet(const char *buf, uint8_t has_wheel, uint8_t has_5_button
  *
  * @warning Не нужно вызывать самостоятельно, только для обработчика ядра!
  */
-void mouse_handler(__attribute__((unused)) struct registers r) {
+void mouse_handler(SAYORI_UNUSED struct registers r) {
     uint8_t status = inb(0x64);
     if ((status & 1) == 0 || (status >> 5 & 1) == 0) {
         return;
@@ -220,8 +220,8 @@ void ps2_mouse_install_irq() {
     mouse_ready = 1;
 }
 
-uint32_t mouse_get_x() {return mouse_x;}
-uint32_t mouse_get_y() {return mouse_y;}
+uint32_t mouse_get_x() {return (uint32_t)mouse_x;}
+uint32_t mouse_get_y() {return (uint32_t)mouse_y;}
 uint8_t  mouse_get_b1() {return mouse_b1;}
 uint8_t  mouse_get_b2() {return mouse_b2;}
 uint8_t  mouse_get_b3() {return mouse_b3;}

@@ -57,7 +57,7 @@ struct vbe_mode_info_structure {
 	uint8_t reserved1[206];
 } __attribute__ ((packed));
 
-void drv_vbe_init(multiboot_header_t *mboot){
+void drv_vbe_init(const multiboot_header_t *mboot){
 	/// Кароче, эта функция должна была, считать с структуры смещение, прочитать 512 байт и пройтись циклом для получения доступных режимов, но ядро крашилось, и я затер пока функцию
 	qemu_log("vbe: init");
 	

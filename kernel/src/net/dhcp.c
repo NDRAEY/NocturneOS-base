@@ -135,7 +135,7 @@ void dhcp_handle_packet(netcard_entry_t* card, dhcp_packet_t* packet) {
 	uint8_t* options = packet->options + 4;
 
 	char* my_ip = (char*)&packet->your_ip;
-	char* sv_ip = (char*)&packet->server_ip;
+	SAYORI_UNUSED char* sv_ip = (char*)&packet->server_ip;
 
 	qemu_log("DHCP");
 	qemu_log("Operation: %d", packet->op);
@@ -165,7 +165,7 @@ void dhcp_handle_packet(netcard_entry_t* card, dhcp_packet_t* packet) {
 }
 
 void dhcp_init_all_cards() {
-	for(int i = 0; i < netcards_get_count(); i++) {
+	for(size_t i = 0; i < netcards_get_count(); i++) {
 		netcard_entry_t* card = netcard_get(i);
 
 		qemu_log("Initializing DHCP for: %s", card->name);

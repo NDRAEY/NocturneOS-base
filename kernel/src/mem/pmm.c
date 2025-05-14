@@ -486,7 +486,7 @@ size_t getInstalledRam(){
 void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length) {
 	size_t n = length / sizeof(memory_map_entry_t);
 
-	for (int i = 0; i < n; i++){
+	for (size_t i = 0; i < n; i++){
 		const memory_map_entry_t* entry = mmap_addr + i;
 
 		size_t addr = entry->addr_low;

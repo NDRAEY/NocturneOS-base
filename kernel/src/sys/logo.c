@@ -7,7 +7,7 @@
  *
  * @param mode - Режим COM OR TTY
  */
-void drawASCIILogo(int mode){
+void drawASCIILogo(){
 qemu_log("\n\n\
  .d8888b.                                      d8b  .d88888b.   .d8888b.    |   SayoriOS v%d.%d.%d\n\
 d88P  Y88b                                     Y8P d88P\" \"Y88b d88P  Y88b   |   Code name: %s\n \

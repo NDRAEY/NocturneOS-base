@@ -182,8 +182,9 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 	{
 		// Диск является частью ОЗУ, поэтому мы просто копируем данные туда
 		// Опастна! Если не знать, что делать!
-		if (dpm_debug)
+		if (dpm_debug) {
 			qemu_log("[DPM] [2] An attempt to write data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+		}
 		memcpy((void *)(DPM_Disks[Index].Point + low_offset), Buffer, Size);
 
 		return Size;
@@ -191,8 +192,10 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 	else if (DPM_Disks[Index].AddrMode == 3)
 	{
 		// Режим 3, предполагает что вы указали функцию для чтения и записи с диска
-		if (dpm_debug)
+		if (dpm_debug) {
 			qemu_log("[DPM] [3] An attempt to write data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+		}
+
 		if (DPM_Disks[Index].Write == 0)
 		{
 			qemu_err("[DPM] [3] No function");
@@ -202,8 +205,9 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 	}
 	else
 	{
-		if (dpm_debug)
+		if (dpm_debug) {
 			qemu_log("[DPM] This functionality has not been implemented yet.");
+		}
 	}
 
 	return DPM_ERROR_CANT_READ;
