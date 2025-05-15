@@ -427,6 +427,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-dpm"
+version = "0.1.0"
+dependencies = [
+ "noct-dpm-sys",
+]
+
+[[package]]
 name = "noct-dpm-sys"
 version = "0.1.0"
 dependencies = [
@@ -605,6 +612,7 @@ dependencies = [
  "lazy_static",
  "noct-alloc",
  "noct-audio",
+ "noct-dpm",
  "noct-dpm-sys",
  "noct-elfloader",
  "noct-fileio",
