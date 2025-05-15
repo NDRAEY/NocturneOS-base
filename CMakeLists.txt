@@ -234,7 +234,6 @@ set(C_SRC
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
 	kernel/src/drv/video/intel.c 
-	kernel/src/extra/command_parser.c
     kernel/src/lib/libvector/src/vector.c
     kernel/src/lib/libstring/src/string.c
     # kernel/src/lib/intrin.c
