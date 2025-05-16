@@ -5,7 +5,7 @@
 #define RTL8139_VENDOR 0x10EC
 #define RTL8139_DEVICE 0x8139
 
-#define RTL8139_BUFFER_PAGE_COUNT 4
+#define RTL8139_BUFFER_SIZE 65536
 
 enum RTL8139_regs {
     MAC0_5   = 0x00,  // 6 bytes long

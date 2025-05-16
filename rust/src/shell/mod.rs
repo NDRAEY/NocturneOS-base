@@ -52,7 +52,28 @@ static COMMANDS: &[ShellCommandEntry] = &[
     ("eni", |_, args| {
         eni_player::player(args)
     }, Some("New player")),
-    ("m", miniplay::mp, None),
+    // ("R:/input", |_, _| {
+    //     println!("key = 0xFFFFFFFC");
+    //     println!("key = 0xFFFFFFFC");
+    //     println!("key = 0xFFFFFF1A");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+    //     println!("key = 0xFFFFFFFF");
+
+    //     Ok(())
+    // }, None),
     ("help", help, Some("Prints help message")),
 ];
 

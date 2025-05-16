@@ -89,10 +89,11 @@ void rtl8139_init() {
 	rtl8139_wake_up();
 	rtl8139_sw_reset();
 
-	rtl8139_virt_buffer = kmalloc_common(RTL8139_BUFFER_PAGE_COUNT, PAGE_SIZE);
+	// FIXME: TODO: Look up the RTL8139 documentation for exact size (RBSTART register)
+	rtl8139_virt_buffer = kmalloc_common(RTL8139_BUFFER_SIZE, PAGE_SIZE);
 	rtl8139_phys_buffer = virt2phys(get_kernel_page_directory(), (virtual_addr_t) rtl8139_virt_buffer);
 
-	rtl8139_transfer_buffer = kmalloc_common(65535, PAGE_SIZE);
+	rtl8139_transfer_buffer = kmalloc_common(RTL8139_BUFFER_SIZE, PAGE_SIZE);
 	rtl8139_transfer_buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)rtl8139_transfer_buffer);
 
 	rtl8139_init_buffer();
