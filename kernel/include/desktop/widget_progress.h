@@ -2,7 +2,7 @@
 
 #include "desktop/widget.h"
 #include "gui/basics.h"
-#include "io/serial_port.h"
+#include "common.h"
 
 typedef struct Widget_Progress {
     size_t current;

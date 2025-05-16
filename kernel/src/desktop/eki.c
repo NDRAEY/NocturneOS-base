@@ -4,6 +4,7 @@
 #include "desktop/widget_label.h"
 #include "drv/disk/dpm.h"
 #include "io/ports.h"
+#include "desktop/widget.h"
 #include "../lib/libstring/include/string.h"
 
 extern DPM_Disk DPM_Disks[32];

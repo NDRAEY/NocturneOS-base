@@ -1,5 +1,6 @@
 #pragma once
 
+#include <desktop/widget.h>
 #include <common.h>
 
 typedef struct Widget_Button {

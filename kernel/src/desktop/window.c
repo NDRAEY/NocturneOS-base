@@ -1,4 +1,5 @@
 #include "desktop/window.h"
+#include "desktop/widget.h"
 #include "desktop/render.h"
 #include "io/ports.h"
 #include "mem/vmm.h"

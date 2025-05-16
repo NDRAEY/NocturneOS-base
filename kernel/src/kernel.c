@@ -176,7 +176,7 @@ void scan_kernel(const multiboot_header_t *mboot) {
     size_t count = mboot->mods_count;
 
     for (size_t i = 0; i < count; i++) {
-        multiboot_module_t *mod = module_list + i;
+        const multiboot_module_t *mod = module_list + i;
         (void)mod;
 
         qemu_log("Module #%d: Start: %x; End: %x; Size: %d k",
@@ -187,9 +187,10 @@ void scan_kernel(const multiboot_header_t *mboot) {
         );
     }
 
-    multiboot_module_t* last_module = module_list + count - 1;
-    (void)last_module;
+#ifndef RELEASE
+    const multiboot_module_t* last_module = module_list + count - 1;
     qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
+#endif
 }
 
 /*

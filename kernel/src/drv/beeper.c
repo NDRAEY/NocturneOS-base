@@ -19,17 +19,14 @@ uint32_t config = 0;            /// Корректировка
  * @param frequency - Частота звука
  */
 void beeperPlay(uint32_t frequency) {
-    uint32_t Div;
-    uint8_t tmp;
-
-    Div = getFrequency() * 1000;
+    uint32_t Div = getFrequency() * 1000;
     Div /= frequency;
     
     outb(0x43, 0xb6);
     outb(0x42, (uint8_t) (Div) );
     outb(0x42, (uint8_t) (Div >> 8));
     
-    tmp = inb(0x61);
+    uint8_t tmp = inb(0x61);
     
     if (tmp != (tmp | 3)) {
         outb(0x61, tmp | 3);

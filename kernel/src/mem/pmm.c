@@ -443,14 +443,12 @@ void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) 
 void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags) {	
 	physical_addr_t phys = physical;
 	physical_addr_t virt = virtual;
-	
-	virtual_addr_t vend = ALIGN(virt + size, PAGE_SIZE);
 
-	for(;
-		virt <= vend;
-		phys += PAGE_SIZE,
-		virt += PAGE_SIZE
-		) {
+	for(virtual_addr_t vend = ALIGN(virt + size, PAGE_SIZE);
+	    virt <= vend;
+	    phys += PAGE_SIZE,
+	    virt += PAGE_SIZE
+	) {
 			map_single_page(page_dir, phys, virt, flags);
 	}
 

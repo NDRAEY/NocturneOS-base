@@ -117,7 +117,7 @@ SAYORI_INLINE void outw(uint16_t port, uint16_t data) {
 void insw(uint16_t __port, void *__buf, unsigned long __n);
 void outsw(uint16_t __port, const void *__buf, unsigned long __n);
 // void insl(uint16_t reg, uint32_t *buffer, int32_t quads);
-void outsl(uint16_t reg, uint32_t *buffer, int32_t quads);
+void outsl(uint16_t reg, const uint32_t *buffer, int32_t quads);
 
 void outl(uint16_t port, uint32_t val);
 uint32_t inl(uint16_t port);

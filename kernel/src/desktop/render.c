@@ -1,10 +1,12 @@
 #include "gui/basics.h"
 #include "gui/pointutils.h"
 #include "desktop/window.h"
+#include "desktop/widget.h"
 #include "desktop/render.h"
 #include "drv/psf.h"
 #include "io/ports.h"
 #include "drv/input/mouse.h"
+#include "io/tty.h"
 
 // getConfigFonts(2) - is height of current font
 
