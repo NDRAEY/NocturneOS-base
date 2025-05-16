@@ -133,9 +133,26 @@ pub extern "C" fn pci_read32(bus: u8, slot: u8, function: u8, offset: u8) -> u32
 
     unsafe {
         outl(PCI_ADDRESS_PORT, addr);
+        
+        inl(PCI_DATA_PORT)
     }
-    unsafe { inl(PCI_DATA_PORT) }
 }
+
+#[no_mangle]
+pub extern "C" fn pci_read16(bus: u8, slot: u8, function: u8, offset: u8) -> u16 {
+    let addr: u32 = ((bus as u32) << 16)
+        | ((slot as u32) << 11)
+        | ((function as u32) << 8)
+        | ((offset & 0xFC) as u32)
+        | 0x80000000; //yes, this line is copied from osdev
+
+    unsafe {
+        outl(PCI_ADDRESS_PORT, addr);
+        
+        (inl(PCI_DATA_PORT) >> ((offset & 2) * 8)) as u16
+    }
+}
+
 
 #[no_mangle]
 pub extern "C" fn pci_write(bus: u8, slot: u8, func: u8, offset: u8, value: u32) {
@@ -151,14 +168,6 @@ pub extern "C" fn pci_write(bus: u8, slot: u8, func: u8, offset: u8, value: u32)
 }
 
 impl PCIDevice {
-    /**
-     * @brief Чтение данных из шины PCI
-     * @param bus Шина
-     * @param slot Слот
-     * @param function Функция
-     * @param offset Отступ
-     * @return Значение поля
-     */
     pub fn read(&self, offset: u8) -> u32 {
         pci_read32(self.bus, self.slot, self.function, offset)
     }
@@ -229,7 +238,7 @@ pub fn find_device_by_class_and_subclass(class: u8, subclass: u8) -> Option<PCID
 
 #[inline(always)]
 pub fn pci_get_vendor(bus: u8, slot: u8, function: u8) -> u16 {
-    (pci_read32(bus, slot, function, 0) & 0xffff) as u16
+    pci_read16(bus, slot, function, 0)
 }
 
 #[no_mangle]
@@ -250,11 +259,11 @@ pub fn pci_scan_everything() {
             let mut vendor: u16 = pci_get_vendor(bus, slot, 0);
 
             if vendor != 0xFFFF {
-                let clid: u8 = (pci_read32(bus, slot, 0, 0xB) & 0xff) as u8;
-                let sclid: u8 = (pci_read32(bus, slot, 0, 0xA) & 0xff) as u8;
-                let device: u16 = (pci_read32(bus, slot, 0, 0x2) & 0xffff) as u16;
+                let clid: u8 = ((pci_read16(bus, slot, 0, 0xA) >> 8) & 0xff) as u8;
+                let sclid: u8 = ((pci_read16(bus, slot, 0, 0xA)) & 0xff) as u8;
+                let device: u16 = (pci_read16(bus, slot, 0, 0x2) & 0xffff) as u16;
 
-                hdrtype = (pci_read32(bus, slot, 0, 0xE) & 0xff) as u8;
+                hdrtype = (pci_read16(bus, slot, 0, 0xE) & 0xff) as u8;
 
                 unsafe {
                     let dev = PCIDevice {
@@ -279,9 +288,9 @@ pub fn pci_scan_everything() {
                     vendor = pci_get_vendor(bus, slot, func);
 
                     if vendor != 0xFFFF {
-                        let clid = (pci_read32(bus, slot, func, 0xB) & 0xff) as u8;
-                        let sclid = (pci_read32(bus, slot, func, 0xA) & 0xff) as u8;
-                        let device = (pci_read32(bus, slot, func, 0x2) & 0xffff) as u16;
+                        let clid = ((pci_read16(bus, slot, func, 0xA) >> 8) & 0xff) as u8;
+                        let sclid = (pci_read16(bus, slot, func, 0xA) & 0xff) as u8;
+                        let device = (pci_read16(bus, slot, func, 0x2) & 0xffff) as u16;
 
                         unsafe {
                             let dev = PCIDevice {
