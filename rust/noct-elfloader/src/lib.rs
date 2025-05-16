@@ -45,10 +45,14 @@ impl ProgramHandle {
         let argc: u32 = ptrs.len() as u32;
         let argv = ptrs.as_ptr();
 
-        unsafe { 
+        unsafe {
             let entry: fn(u32, *const *const u8) = core::mem::transmute(self.entry_point);
 
-            qemu_note!("program < argc: {argc}; argv: {:x?}; entry: {:x?}", argv as usize, entry as usize);
+            qemu_note!(
+                "program < argc: {argc}; argv: {:x?}; entry: {:x?}",
+                argv as usize,
+                entry as usize
+            );
 
             (entry)(argc, argv);
         }

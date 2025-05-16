@@ -328,7 +328,8 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     loop {
         let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
-        let (key, is_pressed) = noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
+        let (key, is_pressed) =
+            noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
 
         if key == Key::Special(SpecialKey::ESCAPE) {
             noct_screen::fill(0);

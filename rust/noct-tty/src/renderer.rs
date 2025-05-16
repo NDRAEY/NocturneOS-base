@@ -20,7 +20,14 @@ pub fn render(console: &Console) {
                 continue;
             }
 
-            unsafe { PSF_FONT.get().unwrap().draw_character(char.character as u16, column * 8, row * 16, char.attribute.color()) };
+            unsafe {
+                PSF_FONT.get().unwrap().draw_character(
+                    char.character as u16,
+                    column * 8,
+                    row * 16,
+                    char.attribute.color(),
+                )
+            };
         }
     }
 }

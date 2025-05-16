@@ -29,13 +29,20 @@ impl Manager {
 
         self.channels.push(chan);
 
-        Some(Cookie { name: name.to_string() })
+        Some(Cookie {
+            name: name.to_string(),
+        })
     }
 
-    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie> where String: PartialEq<S> {
+    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie>
+    where
+        String: PartialEq<S>,
+    {
         for i in &self.channels {
             if i.name == name {
-                return Some(Cookie { name: name.to_string() })
+                return Some(Cookie {
+                    name: name.to_string(),
+                });
             }
         }
 
@@ -65,11 +72,23 @@ pub struct Cookie {
 
 impl Cookie {
     pub fn read(&self, data: &mut [u8]) {
-        unsafe { NAMED_CHANNELS.write().get_mut().unwrap().read(&self.name, data) };
+        unsafe {
+            NAMED_CHANNELS
+                .write()
+                .get_mut()
+                .unwrap()
+                .read(&self.name, data)
+        };
     }
-    
+
     pub fn write(&self, data: &[u8]) {
-        unsafe { NAMED_CHANNELS.write().get_mut().unwrap().write(&self.name, data) };
+        unsafe {
+            NAMED_CHANNELS
+                .write()
+                .get_mut()
+                .unwrap()
+                .write(&self.name, data)
+        };
     }
 }
 
@@ -82,6 +101,9 @@ pub fn create_named_channel<S: ToString>(name: S) -> Option<Cookie> {
     unsafe { NAMED_CHANNELS.write().get_mut()?.create(name) }
 }
 
-pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie> where String: PartialEq<S> {
+pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie>
+where
+    String: PartialEq<S>,
+{
     unsafe { NAMED_CHANNELS.read().get()?.find(name) }
 }

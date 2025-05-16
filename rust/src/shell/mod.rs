@@ -17,9 +17,10 @@ use noct_path::Path;
 pub mod cat;
 pub mod cd;
 pub mod cls;
-pub mod disks;
 pub mod dir;
+pub mod disks;
 pub mod file_ops;
+pub mod gfxinfo;
 pub mod mala;
 pub mod meminfo;
 pub mod miniplay;
@@ -27,7 +28,6 @@ pub mod parallel_desktop;
 pub mod pavi;
 pub mod pci;
 pub mod reboot;
-pub mod gfxinfo;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -51,9 +51,11 @@ static COMMANDS: &[ShellCommandEntry] = &[
     miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,
-    ("eni", |_, args| {
-        eni_player::player(args)
-    }, Some("New player")),
+    (
+        "eni",
+        |_, args| eni_player::player(args),
+        Some("New player"),
+    ),
     ("help", help, Some("Prints help message")),
 ];
 

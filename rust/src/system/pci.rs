@@ -133,7 +133,7 @@ pub extern "C" fn pci_read32(bus: u8, slot: u8, function: u8, offset: u8) -> u32
 
     unsafe {
         outl(PCI_ADDRESS_PORT, addr);
-        
+
         inl(PCI_DATA_PORT)
     }
 }
@@ -148,11 +148,10 @@ pub extern "C" fn pci_read16(bus: u8, slot: u8, function: u8, offset: u8) -> u16
 
     unsafe {
         outl(PCI_ADDRESS_PORT, addr);
-        
+
         (inl(PCI_DATA_PORT) >> ((offset & 2) * 8)) as u16
     }
 }
-
 
 #[no_mangle]
 pub extern "C" fn pci_write(bus: u8, slot: u8, func: u8, offset: u8, value: u32) {

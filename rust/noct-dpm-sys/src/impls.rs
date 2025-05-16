@@ -31,7 +31,6 @@ impl Disk {
     }
 }
 
-
 pub fn get_disk(letter: char) -> Option<Disk> {
     let letter = letter.to_ascii_uppercase();
 
@@ -44,6 +43,6 @@ pub fn get_disk(letter: char) -> Option<Disk> {
 
     Some(Disk {
         // disk: rdisk as *mut DPM_Disk,
-        letter
+        letter,
     })
 }

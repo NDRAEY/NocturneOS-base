@@ -59,7 +59,7 @@ where
         self.value.top = value;
         self
     }
-    
+
     pub const fn left(mut self, value: u32) -> Self {
         self.value.left = value;
         self
@@ -112,7 +112,10 @@ where
     }
 }
 
-impl<T> Transform for Margin<T> where T: Drawable + Dimensions + Clone + Transform {
+impl<T> Transform for Margin<T>
+where
+    T: Drawable + Dimensions + Clone + Transform,
+{
     fn translate(&self, by: Point) -> Self {
         let mut new = Self::clone(self);
 

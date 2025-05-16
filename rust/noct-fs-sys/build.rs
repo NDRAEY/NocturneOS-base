@@ -18,6 +18,7 @@ fn main() {
 
     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
 
-    bindings.write_to_file(out.join("bindings.rs"))
+    bindings
+        .write_to_file(out.join("bindings.rs"))
         .expect("Could not write result to bindings.rs");
 }

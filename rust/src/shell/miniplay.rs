@@ -1,9 +1,13 @@
 use core::ffi::c_char;
 
-use alloc::{string::{String, ToString}, vec::Vec};
 use super::ShellContext;
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 
-pub static MINIPLAY_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("miniplay", miniplay_w, Some("Media player."));
+pub static MINIPLAY_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
+    ("miniplay", miniplay_w, Some("Media player."));
 
 extern "C" {
     fn miniplay(argc: u32, argv: *const *const c_char);

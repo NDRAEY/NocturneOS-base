@@ -31,7 +31,7 @@ impl Directory<'_> {
 
         Some(Self {
             // path: st,
-            files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },            
+            files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },
             nvfs_dir: data,
         })
     }
@@ -54,7 +54,7 @@ impl Directory<'_> {
 
     pub fn is_accessible<PathPattern: ToString>(path: &PathPattern) -> bool {
         let dir = Directory::from_path(path);
-        
+
         dir.is_some()
     }
 }

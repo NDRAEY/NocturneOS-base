@@ -1,7 +1,7 @@
 use alloc::{string::String, vec::Vec};
 
-use noct_tty::print;
 use crate::std::io::screen::screen_update;
+use noct_tty::print;
 
 extern "C" {
     pub fn getchar() -> u32;

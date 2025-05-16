@@ -1,6 +1,9 @@
 #![no_std]
 
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 
 extern crate alloc;
 
@@ -12,7 +15,6 @@ pub struct NamedChannel {
 
     // creator: usize, // Process PID
     // connected_processes: Vec<usize>,
-
     data: Vec<u8>,
 }
 

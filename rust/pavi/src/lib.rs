@@ -35,7 +35,7 @@ impl Pavi {
     pub fn new(fpath: &String) -> Result<Self, String> {
         let data = match noct_fs::read(fpath) {
             Ok(x) => x,
-            Err(e) => return Err(e.to_string())
+            Err(e) => return Err(e.to_string()),
         };
 
         let image = match nimage::tga::from_tga_data(data.as_slice()) {
@@ -94,7 +94,7 @@ impl Pavi {
                 (width, height) = (im_w, im_h);
             }
         }
-        
+
         let new_image = self.image.scale_to_new(width, height);
 
         let mut text = Text::new()

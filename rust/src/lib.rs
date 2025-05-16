@@ -23,8 +23,8 @@ use noct_alloc::Allocator;
 pub use noct_logger::*;
 use noct_tty::println;
 
-pub use noct_ipc::manager::ipc_init;
 pub use noct_audio::c_api;
+pub use noct_ipc::manager::ipc_init;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
@@ -114,7 +114,14 @@ pub extern "C" fn rust_main() {
     //     program.run(&[]);
     // }
 
-    let symbols = ["unknownfunction_0", "dpm_LabelUpdate", "virt2phys", "eps_eps", "aaaa", "nvfs_write"];
+    let symbols = [
+        "unknownfunction_0",
+        "dpm_LabelUpdate",
+        "virt2phys",
+        "eps_eps",
+        "aaaa",
+        "nvfs_write",
+    ];
 
     for i in symbols {
         qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));

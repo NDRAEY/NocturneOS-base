@@ -25,19 +25,19 @@ pub const fn symbols() -> Option<&'static [u8]> {
 
 pub fn resolve(name: &str) -> Option<usize> {
     let symbols = symbols()?;
-	let symlen = symbols.len();
+    let symlen = symbols.len();
 
     let mut index = 0;
     while index < symlen {
         let address = u32::from_le_bytes(*array_ref![symbols[index..index + 4], 0, 4]);
         let namelen = symbols[index + 4] as usize;
-		let sym_name = &symbols[index + 5..][..namelen];
+        let sym_name = &symbols[index + 5..][..namelen];
 
-		if sym_name == name.as_bytes() {
-			return Some(address as usize);
-		}
+        if sym_name == name.as_bytes() {
+            return Some(address as usize);
+        }
 
-		index += 4 + 1 + namelen;
+        index += 4 + 1 + namelen;
     }
 
     None

@@ -80,12 +80,14 @@ impl Console {
     pub fn current_line_length(&self) -> usize {
         let line = self.current_line();
 
-        line.iter().filter(|&a| a.character != char::default()).count()
+        line.iter()
+            .filter(|&a| a.character != char::default())
+            .count()
     }
 
     pub fn move_right(&mut self) {
         self.column += 1;
-        
+
         if self.column >= self.dimensions.columns {
             self.column = 0;
             self.row += 1;
@@ -98,9 +100,8 @@ impl Console {
 
             self.column = self.current_line_length();
         }
-        
+
         self.column -= 1;
-        
     }
 
     pub fn move_down(&mut self) {
@@ -128,7 +129,8 @@ impl Console {
         if character == '\n' {
             self.move_down();
             return;
-        } else if character as u32 == 8 {  // Backspace
+        } else if character as u32 == 8 {
+            // Backspace
             self.move_left();
             return;
         } else if character == '\r' {

@@ -13,15 +13,13 @@ pub fn cd(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     let path = {
         match args.first() {
             Some(elem) => elem.clone(),
-            None => {
-                String::from_str(".").unwrap()
-            },
+            None => String::from_str(".").unwrap(),
         }
     };
 
     let mut dir = context.current_path.clone();
     dir.apply(&path);
-    
+
     if !Directory::is_accessible(&dir) {
         println!("Cannot access: `{}`", dir.as_str());
 

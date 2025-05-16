@@ -76,9 +76,7 @@ pub fn generate_id() -> usize {
 #[inline]
 #[allow(static_mut_refs)]
 pub fn get_device(index: usize) -> Option<&'static Box<dyn AudioDevice>> {
-    let devs = unsafe {
-        AUDIO_DEVICES.as_mut().expect("Not initialized!")
-    };
+    let devs = unsafe { AUDIO_DEVICES.as_mut().expect("Not initialized!") };
 
     devs.get(index)
 }

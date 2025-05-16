@@ -4,7 +4,10 @@ extern crate alloc;
 
 use core::fmt::Display;
 
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 
 #[cfg(test)]
 pub mod tests;
@@ -19,14 +22,12 @@ impl Path {
         let mut buf = String::new();
         buf.push(letter);
 
-        Path {
-            buffer: buf + ":/",
-        }
+        Path { buffer: buf + ":/" }
     }
 
     pub fn from_path(path: &str) -> Option<Self> {
         Some(Path {
-            buffer: path.to_string()
+            buffer: path.to_string(),
         })
     }
 
@@ -51,7 +52,7 @@ impl Path {
                 self.buffer = path.to_string();
 
                 self.remove_trailing();
-                
+
                 return self;
             }
         }
@@ -88,10 +89,10 @@ impl Path {
             self.buffer.pop();
         }
     }
-    
+
     pub fn parent(&mut self) {
         // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
-        
+
         // IDK why it doesn't work, it gives random string array.
         let stems = self.sep();
 

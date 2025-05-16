@@ -31,7 +31,7 @@ pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), us
         None => {
             println!("Failed to create file: {}", dir);
             Err(1)
-        },
+        }
     }
 }
 
@@ -103,15 +103,18 @@ pub fn copy_file(_context: &mut ShellContext, args: &[String]) -> Result<(), usi
     match noct_fs::read(src_path) {
         Ok(data) => {
             if let Err(e) = noct_fs::write(dest_path, &data) {
-                println!("Error: failed to write a destination file: `{}`: {}", dest_path, e);
+                println!(
+                    "Error: failed to write a destination file: `{}`: {}",
+                    dest_path, e
+                );
                 return Err(1);
             }
 
             Ok(())
-        },
+        }
         Err(error) => {
             println!("Error: {error}");
             Err(1)
-        },
+        }
     }
 }

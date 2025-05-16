@@ -1,8 +1,15 @@
 extern crate alloc;
 
-use alloc::{boxed::Box, format, string::{String, ToString}};
+use alloc::{
+    boxed::Box,
+    format,
+    string::{String, ToString},
+};
 
-use crate::{size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_TIME};
+use crate::{
+    size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE,
+    FSM_FILE, FSM_TIME,
+};
 
 impl FSM_FILE {
     pub fn with_data<T: ToString>(
@@ -62,7 +69,7 @@ impl FSM_DIR {
         for i in files.iter() {
             if i.Type == FSM_ENTITY_TYPE_TYPE_FILE {
                 files_c += 1;
-            } else if i.Type == FSM_ENTITY_TYPE_TYPE_DIR  {
+            } else if i.Type == FSM_ENTITY_TYPE_TYPE_DIR {
                 dirs += 1;
             } else {
                 other += 1;
@@ -84,13 +91,15 @@ impl FSM_DIR {
     pub const fn missing() -> Self {
         unsafe { core::mem::zeroed() }
     }
-
 }
 
 impl FSM_TIME {
     pub fn format(&self) -> String {
         let yr = self.year;
 
-        format!("{:02}.{:02}.{:04} {:02}:{:02}:{:02}", self.day, self.month, yr, self.hour, self.minute, self.second)
+        format!(
+            "{:02}.{:02}.{:04} {:02}:{:02}:{:02}",
+            self.day, self.month, yr, self.hour, self.minute, self.second
+        )
     }
 }

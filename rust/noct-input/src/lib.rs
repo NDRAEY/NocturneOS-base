@@ -3,8 +3,8 @@
 
 extern crate alloc;
 
-use core::cell::OnceCell;
 use alloc::vec::Vec;
+use core::cell::OnceCell;
 
 use noct_logger::{qemu_err, qemu_ok};
 use noct_sched::task_yield;

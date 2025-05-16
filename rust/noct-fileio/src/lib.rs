@@ -1,5 +1,4 @@
 #![no_std]
-
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
@@ -12,7 +11,7 @@ extern crate alloc;
 
 pub enum EntityType {
     Directory,
-    File
+    File,
 }
 
 pub fn delete_file(path: &str) -> Option<()> {
@@ -21,11 +20,13 @@ pub fn delete_file(path: &str) -> Option<()> {
 
     let rpath = fpath.as_ptr();
 
-    let result = unsafe {
-        unlink(rpath as *const _)
-    };
+    let result = unsafe { unlink(rpath as *const _) };
 
-    if result { Some(()) } else { None }
+    if result {
+        Some(())
+    } else {
+        None
+    }
 }
 
 pub fn create_new_file(path: &str) -> Option<()> {
@@ -34,11 +35,13 @@ pub fn create_new_file(path: &str) -> Option<()> {
 
     let rpath = fpath.as_ptr();
 
-    let result = unsafe {
-        touch(rpath as *const _)
-    };
+    let result = unsafe { touch(rpath as *const _) };
 
-    if result { Some(()) } else { None }
+    if result {
+        Some(())
+    } else {
+        None
+    }
 }
 
 pub fn create_new_directory(path: &str) -> Option<()> {
@@ -47,11 +50,13 @@ pub fn create_new_directory(path: &str) -> Option<()> {
 
     let rpath = fpath.as_ptr();
 
-    let result = unsafe {
-        mkdir(rpath as *const _)
-    };
+    let result = unsafe { mkdir(rpath as *const _) };
 
-    if result { Some(()) } else { None }
+    if result {
+        Some(())
+    } else {
+        None
+    }
 }
 
 pub fn get_type(path: &str) -> Option<EntityType> {
@@ -60,13 +65,9 @@ pub fn get_type(path: &str) -> Option<EntityType> {
 
     let rpath = fpath.as_ptr();
 
-    let is_f = unsafe {
-        is_file(rpath as *const _)
-    };
+    let is_f = unsafe { is_file(rpath as *const _) };
 
-    let is_d = unsafe {
-        is_dir(rpath as *const _)
-    };
+    let is_d = unsafe { is_dir(rpath as *const _) };
 
     if is_f && !is_d {
         Some(EntityType::File)
@@ -83,9 +84,7 @@ pub fn size(path: &str) -> usize {
 
     let rpath = fpath.as_ptr();
 
-    let size = unsafe {
-        filesize(rpath as *const _)
-    };
+    let size = unsafe { filesize(rpath as *const _) };
 
     size as _
 }
@@ -96,11 +95,13 @@ pub fn remove_file(path: &str) -> Option<()> {
 
     let rpath = fpath.as_ptr();
 
-    let result = unsafe {
-        unlink(rpath as *const _)
-    };
+    let result = unsafe { unlink(rpath as *const _) };
 
-    if result { Some(()) } else { None }
+    if result {
+        Some(())
+    } else {
+        None
+    }
 }
 
 pub fn remove_directory(path: &str) -> Option<()> {
@@ -109,9 +110,11 @@ pub fn remove_directory(path: &str) -> Option<()> {
 
     let rpath = fpath.as_ptr();
 
-    let result = unsafe {
-        rmdir(rpath as *const _)
-    };
+    let result = unsafe { rmdir(rpath as *const _) };
 
-    if result { Some(()) } else { None }
+    if result {
+        Some(())
+    } else {
+        None
+    }
 }
