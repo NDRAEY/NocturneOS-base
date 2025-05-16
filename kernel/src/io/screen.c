@@ -9,11 +9,11 @@
 #include "sys/mtrr.h"
 
 uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана
-uint32_t framebuffer_pitch;				/// Частота обновления экрана
-uint32_t framebuffer_bpp;				/// Глубина цвета экрана
-uint32_t framebuffer_width;				/// Длина экрана
-uint32_t framebuffer_height;			/// Высота экрана
-uint32_t framebuffer_size;				/// Кол-во пикселей
+volatile uint32_t framebuffer_pitch;				/// Частота обновления экрана
+volatile uint32_t framebuffer_bpp;				/// Глубина цвета экрана
+volatile uint32_t framebuffer_width;				/// Длина экрана
+volatile uint32_t framebuffer_height;			/// Высота экрана
+volatile size_t framebuffer_size;				/// Кол-во пикселей
 uint8_t *back_framebuffer_addr = 0;		/// Позиция буфера экрана
 
 size_t fb_mtrr_idx = 0;
@@ -209,6 +209,11 @@ uint32_t getScreenHeight(){
 void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch) {
     unmap_pages_overlapping(get_kernel_page_directory(), (virtual_addr_t)framebuffer_addr, framebuffer_size);
 
+    framebuffer_width = new_width;
+    framebuffer_height = new_height;
+    framebuffer_pitch = new_pitch;
+    framebuffer_bpp = (new_pitch / new_width) << 3;
+
     framebuffer_size = ALIGN((new_width + 32) * new_height * 4, PAGE_SIZE);
 
     map_pages(get_kernel_page_directory(),
@@ -218,12 +223,12 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
               PAGE_WRITEABLE | PAGE_CACHE_DISABLE
     );
 
-    framebuffer_width = new_width;
-    framebuffer_height = new_height;
-    framebuffer_pitch = new_pitch;
 
-    back_framebuffer_addr = krealloc(back_framebuffer_addr, framebuffer_size);
-    memset(back_framebuffer_addr, 0x00, framebuffer_size);
+    //back_framebuffer_addr = krealloc(back_framebuffer_addr, framebuffer_size);
+    //memset(back_framebuffer_addr, 0x00, framebuffer_size);
+   kfree(back_framebuffer_addr);
+  back_framebuffer_addr = kmalloc_common(framebuffer_size, PAGE_SIZE);
+  memset(back_framebuffer_addr, 0, framebuffer_size);
 
 	phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 

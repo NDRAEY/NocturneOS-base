@@ -27,6 +27,7 @@ pub mod parallel_desktop;
 pub mod pavi;
 pub mod pci;
 pub mod reboot;
+pub mod gfxinfo;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -49,6 +50,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     pavi::PAVI_COMMAND_ENTRY,
     miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
+    gfxinfo::GFXINFO_COMMAND_ENTRY,
     ("eni", |_, args| {
         eni_player::player(args)
     }, Some("New player")),

@@ -201,7 +201,7 @@ void igfx_init() {
 
     clean_tty_screen();
 
-	tty_printf("Screen now tuned to: %dx%d;  Size: %d; BackFB: %x\n", igfx_width, igfx_height, framebuffer_size, back_framebuffer_addr);
+	tty_printf("Screen now tuned to: %dx%d; Size: %d; BackFB: %x\n", igfx_width, igfx_height, framebuffer_size, back_framebuffer_addr);
 
 	__asm__ volatile("sti");
 }

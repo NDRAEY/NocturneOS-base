@@ -2,8 +2,9 @@
 
 #include <kernel.h>
 #include <io/keyboard.h>
+#include <io/screen.h>
 
-#define BUFSIZE(width, height) (width * height * 4)
+#define BUFSIZE(width, height) (width * height * (getDisplayBpp() >> 3))
 #define STATUSBAR_HEIGHT 32
 
 uint8_t* buffer = 0;
@@ -46,7 +47,7 @@ ColorZone_t colors[COLORS] = {
     {610, 4, 25, 25, 0xFFFFFF}
 };
 
-char text_buffer[16] = {0};
+char text_buffer[32] = {0};
 
 void mala_init() {
     canvas_width = getScreenWidth();
@@ -119,13 +120,13 @@ void mala_control() {
 
     draw_vga_str("Mala v0.2", 9, 16, 10, 0);
 
-    memset(text_buffer, 0, 16);
+    memset(text_buffer, 0, 32);
     sprintf(text_buffer, "%06x", current_color);
     drawRect(100, 0, 2, STATUSBAR_HEIGHT, 0);
     draw_vga_str(text_buffer, strlen(text_buffer), 108, 10, 0);
 
-    memset(text_buffer, 0, 16);
-    sprintf(text_buffer, "%d : %d", cursor_pos_x, cursor_pos_y);
+    memset(text_buffer, 0, 32);
+    sprintf(text_buffer, "%d : %d (%dx%d)", cursor_pos_x, cursor_pos_y, canvas_width, canvas_height);
     drawRect(172, 0, 2, STATUSBAR_HEIGHT, 0);
     draw_vga_str(text_buffer, strlen(text_buffer), 180, 10, 0);
 

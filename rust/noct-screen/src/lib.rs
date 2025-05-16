@@ -40,10 +40,10 @@ pub fn back_framebuffer() -> &'static [u8] {
 
 #[inline]
 pub fn back_framebuffer_mut() -> &'static mut [u8] {
-    let (w, h) = dimensions();
-    let len = w * h * (bits_per_pixel() >> 3);
+    // let (w, h) = dimensions();
+    // let len = w * h * (bits_per_pixel() >> 3);
 
-    unsafe { core::slice::from_raw_parts_mut(back_framebuffer_addr, len) }
+    unsafe { core::slice::from_raw_parts_mut(back_framebuffer_addr, framebuffer_size as _) }
 }
 
 #[inline]
