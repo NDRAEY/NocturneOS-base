@@ -33,23 +33,15 @@ struct Pavi {
 
 impl Pavi {
     pub fn new(fpath: &String) -> Result<Self, String> {
-        let data = noct_fs::read(fpath);
+        let data = match noct_fs::read(fpath) {
+            Ok(x) => x,
+            Err(e) => return Err(e.to_string())
+        };
 
-        if let Err(e) = data {
-            // println!("{}: {}", fpath, e.to_string());
-            return Err(e.to_string());
-        }
-
-        let data = data.unwrap();
-
-        let image = nimage::tga::from_tga_data(data.as_slice());
-
-        if image.is_none() {
-            // println!("{}: Invalid file format.", fpath);
-            return Err("Invalid file format.".to_string());
-        }
-
-        let image = image.unwrap();
+        let image = match nimage::tga::from_tga_data(data.as_slice()) {
+            Some(x) => x,
+            None => return Err("Invalid file format.".to_string()),
+        };
 
         Ok(Self {
             filepath: fpath.to_string(),
