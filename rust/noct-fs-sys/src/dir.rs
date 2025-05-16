@@ -36,19 +36,19 @@ impl Directory<'_> {
         })
     }
 
-    pub fn directory_count(&self) -> u32 {
+    pub const fn directory_count(&self) -> u32 {
         self.nvfs_dir.CountDir as _
     }
 
-    pub fn file_count(&self) -> u32 {
+    pub const fn file_count(&self) -> u32 {
         self.nvfs_dir.CountFiles as _
     }
 
-    pub fn other_count(&self) -> u32 {
+    pub const fn other_count(&self) -> u32 {
         self.nvfs_dir.CountOther as _
     }
 
-    pub fn all_count(&self) -> usize {
+    pub const fn all_count(&self) -> usize {
         self.files.len() as _
     }
 

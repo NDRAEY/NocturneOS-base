@@ -7,7 +7,7 @@ pub struct DiskDevice {
 }
 
 impl DiskDevice {
-    pub fn new(disk: Disk) -> Self {
+    pub const fn new(disk: Disk) -> Self {
         DiskDevice {
             disk,
             position: 0

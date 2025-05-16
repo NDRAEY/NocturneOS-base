@@ -8,7 +8,7 @@ unsafe extern "C" {
 }
 
 #[inline]
-pub fn symbols() -> Option<&'static [u8]> {
+pub const fn symbols() -> Option<&'static [u8]> {
     unsafe {
         if NOCTURNE_ksym_data_start == 0 || NOCTURNE_ksym_data_end == 0 {
             return None;

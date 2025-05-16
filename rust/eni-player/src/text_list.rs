@@ -26,7 +26,7 @@ where
     TR: TextRenderer + Clone,
     TR::Color: Default,
 {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             elements: Vec::new(),
             selected_index: 0,
@@ -80,19 +80,19 @@ where
         self.elements.remove(index);
     }
 
-    pub fn elements(&self) -> &Vec<String> {
+    pub const fn elements(&self) -> &Vec<String> {
         &self.elements
     }
 
-    pub fn elements_mut(&mut self) -> &mut Vec<String> {
+    pub const fn elements_mut(&mut self) -> &mut Vec<String> {
         &mut self.elements
     }
 
-    pub fn move_down(&mut self) {
+    pub const fn move_down(&mut self) {
         self.selected_index = (self.selected_index + 1).clamp(0, self.elements.len());
     }
 
-    pub fn move_up(&mut self) {
+    pub const fn move_up(&mut self) {
         if self.selected_index == 0 {
             return;
         }

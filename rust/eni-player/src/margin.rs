@@ -35,12 +35,12 @@ where
         }
     }
 
-    pub fn with_margin(mut self, value: MarginValue) -> Self {
+    pub const fn with_margin(mut self, value: MarginValue) -> Self {
         self.value = value;
         self
     }
 
-    pub fn with_all_constraints(mut self, value: u32) -> Self {
+    pub const fn with_all_constraints(mut self, value: u32) -> Self {
         self.value = MarginValue {
             top: value,
             bottom: value,
@@ -50,31 +50,31 @@ where
         self
     }
 
-    pub fn bottom(mut self, value: u32) -> Self {
+    pub const fn bottom(mut self, value: u32) -> Self {
         self.value.bottom = value;
         self
     }
 
-    pub fn top(mut self, value: u32) -> Self {
+    pub const fn top(mut self, value: u32) -> Self {
         self.value.top = value;
         self
     }
     
-    pub fn left(mut self, value: u32) -> Self {
+    pub const fn left(mut self, value: u32) -> Self {
         self.value.left = value;
         self
     }
 
-    pub fn right(mut self, value: u32) -> Self {
+    pub const fn right(mut self, value: u32) -> Self {
         self.value.right = value;
         self
     }
 
-    pub fn drawable(&self) -> &T {
+    pub const fn drawable(&self) -> &T {
         &self.drawable
     }
 
-    pub fn drawable_mut(&mut self) -> &mut T {
+    pub const fn drawable_mut(&mut self) -> &mut T {
         &mut self.drawable
     }
 }

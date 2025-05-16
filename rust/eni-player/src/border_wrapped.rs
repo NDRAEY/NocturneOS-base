@@ -20,7 +20,7 @@ where
     T: Drawable + Dimensions,
     T::Color: Default,
 {
-    pub fn new(drawable: T) -> Self {
+    pub const fn new(drawable: T) -> Self {
         Self {
             drawable,
             border_color: T::Color::default(),

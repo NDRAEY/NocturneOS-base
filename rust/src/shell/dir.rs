@@ -1,5 +1,5 @@
 use alloc::string::{String, ToString};
-use noct_fs_sys::FSM_ENTITY_TYPE_TYPE_DIR;
+use noct_fs_sys::{dir::Directory, FSM_ENTITY_TYPE_TYPE_DIR};
 
 use crate::println;
 
@@ -17,16 +17,13 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
         }
     };
 
-    let dir = noct_fs_sys::dir::Directory::from_path(&path);
-
-    // qemu_note!("{:?}", dir);
-
-    if dir.is_none() {
-        println!("`{}` read error", path);
-        return Err(1);
-    }
-
-    let dir = dir.unwrap();
+    let dir = match Directory::from_path(&path) {
+        Some(x) => x,
+        None => {
+            println!("`{}` read error", path);
+            return Err(1);
+        },
+    };
 
     println!("Listing directory: `{}`\n", path);
 
