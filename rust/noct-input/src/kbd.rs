@@ -22,7 +22,7 @@ pub enum SpecialKey {
     DOWN,
     PageDown,
     INSERT,
-    DELETE
+    DELETE,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -30,7 +30,7 @@ pub enum Key {
     Unknown,
     Special(SpecialKey),
     Functional(u8),
-    Character(char)
+    Character(char),
 }
 
 static KEYS: &[Key] = &[

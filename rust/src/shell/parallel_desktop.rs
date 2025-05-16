@@ -1,7 +1,8 @@
-use alloc::string::String;
 use super::ShellContext;
+use alloc::string::String;
 
-pub static PD_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("desktop", desktop, Some("Run Parallel Desktop."));
+pub static PD_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
+    ("desktop", desktop, Some("Run Parallel Desktop."));
 
 extern "C" {
     fn parallel_desktop_start();

@@ -75,7 +75,7 @@ impl PSF {
                 qemu_err!("Error: {e}");
 
                 return None;
-            },
+            }
         };
 
         Self::from_data_vec(data)

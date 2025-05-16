@@ -1,6 +1,9 @@
 use core::ffi::{c_char, CStr};
 
-use alloc::{borrow::ToOwned, string::{String, ToString}};
+use alloc::{
+    borrow::ToOwned,
+    string::{String, ToString},
+};
 
 extern "C" {
     static VERSION_MAJOR: usize;

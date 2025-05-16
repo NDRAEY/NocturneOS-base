@@ -176,7 +176,7 @@ void scan_kernel(const multiboot_header_t *mboot) {
     size_t count = mboot->mods_count;
 
     for (size_t i = 0; i < count; i++) {
-        multiboot_module_t *mod = module_list + i;
+        const multiboot_module_t *mod = module_list + i;
         (void)mod;
 
         qemu_log("Module #%d: Start: %x; End: %x; Size: %d k",
@@ -187,9 +187,10 @@ void scan_kernel(const multiboot_header_t *mboot) {
         );
     }
 
-    multiboot_module_t* last_module = module_list + count - 1;
-    (void)last_module;
+#ifndef RELEASE
+    const multiboot_module_t* last_module = module_list + count - 1;
     qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
+#endif
 }
 
 /*
@@ -259,11 +260,16 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     vmm_init();
     qemu_ok("VMM OK!");
     
+    init_syscalls();
+    
     switch_qemu_logging();
     
     kHandlerCMD((char *)mboot->cmdline);
     
-    ipc_init();
+    qemu_log("Initializing Task Manager...");
+    init_task_manager();
+
+     ipc_init();
 
     // drv_vbe_init(mboot);
 
@@ -285,7 +291,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     fs_noctfs_init();
     // fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
     //         &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
-
     
     grub_modules_init(mboot);
 
@@ -297,23 +302,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);
 
-    dpm_dump('R');
-
-    heap_dump();
-
     psf_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
-
-    qemu_log("Initializing Task Manager...");
-    init_task_manager();
-
-    clean_screen();
-
-    // *((char*)0x5FFF98FF) = 0;
 
     qemu_log("Initalizing fonts...");
     tty_fontConfigurate();
-
-    draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
 
     clean_screen();
 
@@ -328,11 +320,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     if (ps2_channel2_okay)
     {
-        bootScreenPaint("Настройка PS/2 Мыши...");
         mouse_install();
     }
 
-    bootScreenPaint("Пост-настройка PS/2...");
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
 
@@ -342,22 +332,17 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     bootScreenPaint("Инициализация ATA...");
     ata_init();
     ata_dma_init();
+    
+    bootScreenPaint("Инициализация AHCI...");
+    ahci_init();
 
     bootScreenPaint("Калибровка датчика температуры процессора...");
     cputemp_calibrate();
 
-    bootScreenPaint("Настройка файловых дескрипторов...");
     file_descriptors_init();
 
-    bootScreenPaint("Настройка системных вызовов...");
-    qemu_log("Registering System Calls...");
-    init_syscalls();
-
-    bootScreenPaint("Настройка ENV...");
-    qemu_log("Registering ENV...");
     configure_env();
 
-    bootScreenPaint("Инициализация списка сетевых карт...");
     netcards_list_init();
 
     bootScreenPaint("Инициализация сетевого стека...");
@@ -437,7 +422,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     }
 
     ac97_init();
-    ahci_init();
 
     /// Обновим данные обо всех дисках
     fsm_dpm_update(-1);

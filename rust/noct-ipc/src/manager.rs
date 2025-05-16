@@ -18,28 +18,31 @@ pub struct Manager {
 }
 
 impl Manager {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             channels: Vec::new(),
         }
     }
 
     pub fn create<S: ToString>(&mut self, name: S) -> Option<Cookie> {
-        let chan = NamedChannel::new(name.to_string().clone());
+        let chan = NamedChannel::new(name.to_string().clone())?;
 
-        if chan.is_none() {
-            return None;
-        }
+        self.channels.push(chan);
 
-        self.channels.push(chan.unwrap());
-
-        Some(Cookie { name: name.to_string() })
+        Some(Cookie {
+            name: name.to_string(),
+        })
     }
 
-    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie> {
+    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie>
+    where
+        String: PartialEq<S>,
+    {
         for i in &self.channels {
-            if i.name == name.to_string() {
-                return Some(Cookie { name: name.to_string() })
+            if i.name == name {
+                return Some(Cookie {
+                    name: name.to_string(),
+                });
             }
         }
 
@@ -69,11 +72,23 @@ pub struct Cookie {
 
 impl Cookie {
     pub fn read(&self, data: &mut [u8]) {
-        unsafe { NAMED_CHANNELS.write().get_mut().unwrap().read(&self.name, data) };
+        unsafe {
+            NAMED_CHANNELS
+                .write()
+                .get_mut()
+                .unwrap()
+                .read(&self.name, data)
+        };
     }
-    
+
     pub fn write(&self, data: &[u8]) {
-        unsafe { NAMED_CHANNELS.write().get_mut().unwrap().write(&self.name, data) };
+        unsafe {
+            NAMED_CHANNELS
+                .write()
+                .get_mut()
+                .unwrap()
+                .write(&self.name, data)
+        };
     }
 }
 
@@ -83,9 +98,12 @@ pub fn ipc_init() {
 }
 
 pub fn create_named_channel<S: ToString>(name: S) -> Option<Cookie> {
-    unsafe { NAMED_CHANNELS.write().get_mut().unwrap().create(name) }
+    unsafe { NAMED_CHANNELS.write().get_mut()?.create(name) }
 }
 
-pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie> {
-    unsafe { NAMED_CHANNELS.read().get().unwrap().find(name) }
+pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie>
+where
+    String: PartialEq<S>,
+{
+    unsafe { NAMED_CHANNELS.read().get()?.find(name) }
 }

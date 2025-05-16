@@ -42,7 +42,7 @@ void switch_qemu_logging() {
  * @param buffer - данные
  * @param times - сколько данных отправить
  */
-void outsl(uint16_t port, uint32_t *buffer, int32_t times) {
+void outsl(uint16_t port, const uint32_t *buffer, int32_t times) {
     for (int32_t index = 0; index < times; index++) {
         outl(port, buffer[index]);
     }

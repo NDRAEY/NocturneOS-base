@@ -183,7 +183,6 @@ void fsm_dpm_update(char Letter){
             DPM_Disk dpm = dpm_info(DISKID);
 
             if (dpm.Ready != 1) {
-                dpm_LabelUpdate(DISKID, NULL);
                 dpm_FileSystemUpdate(DISKID, NULL);
         
             	continue;
@@ -200,18 +199,11 @@ void fsm_dpm_update(char Letter){
                 	continue;
                 }
 
-                char* lab_test = kcalloc(1, 64);
-
-                fsm->Label(DISKID, lab_test);
-
-                dpm_LabelUpdate(DISKID, lab_test);
                 dpm_FileSystemUpdate(DISKID, fsm->Name);
 
                 // qemu_note("                       | Label: %s", lab_test);
 
-                dpm_dump(DISKID);
-
-                kfree(lab_test);
+                // dpm_dump(DISKID);
 
                 break;
             }
@@ -220,7 +212,7 @@ void fsm_dpm_update(char Letter){
         // Personal update
         int DISKID  = Letter;
 
-        dpm_LabelUpdate(DISKID, NULL);
+        // dpm_LabelUpdate(DISKID, NULL);
         dpm_FileSystemUpdate(DISKID, NULL);
 
         for(size_t f = 0; f < fsm_entries->size; f++) {
@@ -233,14 +225,14 @@ void fsm_dpm_update(char Letter){
                 continue;
             }
 
-            char* lab_test = kcalloc(1,129);
+            // char* lab_test = kcalloc(1,129);
 
-            fsm->Label(DISKID, lab_test);
-            dpm_LabelUpdate(DISKID, lab_test);
+            // fsm->Label(DISKID, lab_test);
+            // dpm_LabelUpdate(DISKID, lab_test);
             dpm_FileSystemUpdate(DISKID, fsm->Name);
-            qemu_note("[FSM] [DPM] ^^^ Disk %c | Label: %s", DISKID, lab_test);
+            // qemu_note("[FSM] [DPM] ^^^ Disk %c | Label: %s", DISKID, lab_test);
 
-            kfree(lab_test);
+            // kfree(lab_test);
 
             break;
         }

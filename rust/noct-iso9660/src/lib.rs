@@ -142,7 +142,7 @@ unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
         None => {
             *out = FSM_DIR::missing();
             return;
-        },
+        }
     };
 
     let root = fl.read_directory(root.record.lba.lsb as _);

@@ -5,7 +5,6 @@ extern crate alloc;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::sync::Arc;
-use alloc::vec::Vec;
 use alloc::{format, vec};
 use embedded_canvas::Canvas;
 use embedded_graphics::Drawable;
@@ -29,6 +28,8 @@ use noct_timer::timestamp;
 use noct_tty::println;
 use nwav::Chunk::{Format, List};
 use spin::Mutex;
+
+use alloc::collections::LinkedList;
 
 const CACHE_SIZE: usize = 128 << 10;
 
@@ -225,10 +226,16 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         }
     };
 
-    let audio = noct_audio::get_device(0).unwrap();
+    let audio = match noct_audio::get_device(0) {
+        Some(dev) => dev,
+        None => {
+            println!("No available audio device found!");
+            return Err(1);
+        }
+    };
     audio.set_rate(48000);
 
-    let cache_line: Arc<Mutex<Vec<Box<[u8]>>>> = Arc::new(Mutex::new(Vec::new()));
+    let cache_line: Arc<Mutex<LinkedList<Box<[u8]>>>> = Arc::new(Mutex::new(LinkedList::new()));
 
     let file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(filepath).unwrap()));
 
@@ -283,14 +290,15 @@ pub fn player(args: &[String]) -> Result<(), usize> {
                 continue;
             }
 
-            qemu_note!("Cache fetch");
+            // qemu_note!("Cache fetch");
 
             let datasize = core::cmp::min(CACHE_SIZE, filesize - *arced_br.lock());
             let mut buffer = vec![0u8; datasize];
 
             let mut file_bnd = arced_file.lock();
             file_bnd.read(buffer.as_mut()).unwrap();
-            arced_cache.lock().push(buffer.into_boxed_slice());
+            // arced_cache.lock().push(buffer.into_boxed_slice());
+            arced_cache.lock().push_back(buffer.into_boxed_slice());
 
             *arced_br.lock() += CACHE_SIZE;
         }
@@ -320,7 +328,8 @@ pub fn player(args: &[String]) -> Result<(), usize> {
 
     loop {
         let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
-        let (key, is_pressed) = noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
+        let (key, is_pressed) =
+            noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
 
         if key == Key::Special(SpecialKey::ESCAPE) {
             noct_screen::fill(0);
@@ -348,13 +357,12 @@ pub fn player(args: &[String]) -> Result<(), usize> {
         let curstat = *status.lock();
 
         if curstat == PlayerStatus::Playing {
-            qemu_log!("PLAYING!");
             let block = {
                 let mut x = cache_line.lock();
-                let block = x.first().cloned();
+                let block = x.front().cloned();
 
                 if block.is_some() {
-                    x.remove(0);
+                    x.pop_front();
                 }
 
                 block

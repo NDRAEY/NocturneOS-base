@@ -248,7 +248,7 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2025-01-11")
+set(RUST_COMPILER_TOOLCHAIN "nightly-2025-04-01")
 set(RUST_TARGET "${RUST_TARGET_TRIPLE}.json")
 set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
 set(RUST_TOOLCHAIN_FULLNAME "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
@@ -428,6 +428,13 @@ add_custom_target(
 add_custom_target(
         run_with_disk
         COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -hda ${CMAKE_SOURCE_DIR}/test_disk.img
+        USES_TERMINAL
+        DEPENDS iso
+)
+
+add_custom_target(
+        run_with_disk_ahci
+        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} 	-device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/cdrom,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
         USES_TERMINAL
         DEPENDS iso
 )

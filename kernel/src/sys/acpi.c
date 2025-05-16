@@ -46,7 +46,7 @@ bool acpi_checksum_sdt(ACPISDTHeader *tableHeader) {
     return sum == 0;
 }
 
-ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, char* signature) {
+ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, const char* signature) {
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
 
     map_pages_overlapping(

@@ -1,32 +1,28 @@
 use alloc::string::{String, ToString};
-use noct_fs_sys::FSM_ENTITY_TYPE_TYPE_DIR;
+use noct_fs_sys::{dir::Directory, FSM_ENTITY_TYPE_TYPE_DIR};
 
 use crate::println;
 
 use super::ShellContext;
 
-pub static DIR_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("dir", dir, Some("Lists a directory"));
+pub static DIR_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
+    ("dir", dir, Some("Lists a directory"));
 
 pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     let path = {
         match args.first() {
             Some(elem) => elem.clone(),
-            None => {
-                context.current_path.as_str().to_string()
-            },
+            None => context.current_path.as_str().to_string(),
         }
     };
 
-    let dir = noct_fs_sys::dir::Directory::from_path(&path);
-
-    // qemu_note!("{:?}", dir);
-
-    if dir.is_none() {
-        println!("`{}` read error", path);
-        return Err(1);
-    }
-
-    let dir = dir.unwrap();
+    let dir = match Directory::from_path(&path) {
+        Some(x) => x,
+        None => {
+            println!("`{}`: no such directory", path);
+            return Err(1);
+        }
+    };
 
     println!("Listing directory: `{}`\n", path);
 
@@ -35,9 +31,19 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
         let ftype = file.file.Type;
         let fsize = file.file.Size;
 
-        println!("{} [{:4}] [{:8} bytes]\t{}", fdatetime.format(), {
-            if ftype == FSM_ENTITY_TYPE_TYPE_DIR { "DIR" } else { "FILE" }
-        }, fsize, file.name);
+        println!(
+            "{} [{:4}] [{:8} bytes]\t{}",
+            fdatetime.format(),
+            {
+                if ftype == FSM_ENTITY_TYPE_TYPE_DIR {
+                    "DIR"
+                } else {
+                    "FILE"
+                }
+            },
+            fsize,
+            file.name
+        );
     }
 
     Ok(())

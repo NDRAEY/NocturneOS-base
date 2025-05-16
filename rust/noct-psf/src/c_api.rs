@@ -1,4 +1,7 @@
-use core::{cell::OnceCell, ffi::{c_char, CStr}};
+use core::{
+    cell::OnceCell,
+    ffi::{c_char, CStr},
+};
 use noct_logger::qemu_note;
 
 use crate::PSF;

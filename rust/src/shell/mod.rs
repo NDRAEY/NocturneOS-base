@@ -18,7 +18,9 @@ pub mod cat;
 pub mod cd;
 pub mod cls;
 pub mod dir;
+pub mod disks;
 pub mod file_ops;
+pub mod gfxinfo;
 pub mod mala;
 pub mod meminfo;
 pub mod miniplay;
@@ -32,6 +34,7 @@ pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 
 static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
+    disks::DISKS_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY,
     file_ops::CREATE_DIR_COMMAND_ENTRY,
@@ -47,10 +50,12 @@ static COMMANDS: &[ShellCommandEntry] = &[
     pavi::PAVI_COMMAND_ENTRY,
     miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
-    ("eni", |_, args| {
-        eni_player::player(args)
-    }, Some("New player")),
-    ("m", miniplay::mp, None),
+    gfxinfo::GFXINFO_COMMAND_ENTRY,
+    (
+        "eni",
+        |_, args| eni_player::player(args),
+        Some("New player"),
+    ),
     ("help", help, Some("Prints help message")),
 ];
 

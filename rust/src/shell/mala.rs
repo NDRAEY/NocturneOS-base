@@ -1,9 +1,10 @@
 use core::ffi::c_char;
 
-use alloc::{string::String, vec::Vec};
 use super::ShellContext;
+use alloc::{string::String, vec::Vec};
 
-pub static MALA_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("mala", mala, Some("A drawing program"));
+pub static MALA_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
+    ("mala", mala, Some("A drawing program"));
 
 extern "C" {
     fn mala_draw(argc: u32, argv: *const *const c_char) -> u32;

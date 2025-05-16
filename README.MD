@@ -90,8 +90,8 @@ curl https://sh.rustup.rs -sSf | sh
 
 На данный момент используется версия Rust 1.84, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
 ```bash
-rustup toolchain install nightly-2025-01-11
-rustup component add rust-src --toolchain nightly-2025-01-11-x86_64-unknown-linux-gnu
+rustup toolchain install nightly-2025-04-11
+rustup component add rust-src --toolchain nightly-2025-04-11-x86_64-unknown-linux-gnu
 ```
 
 Если вы планируете запускать эту систему в виртуальной машине, то ещё нужно установить QEMU:

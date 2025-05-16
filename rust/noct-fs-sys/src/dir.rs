@@ -31,30 +31,30 @@ impl Directory<'_> {
 
         Some(Self {
             // path: st,
-            files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },            
+            files: unsafe { core::slice::from_raw_parts(data.Files, overall as _) },
             nvfs_dir: data,
         })
     }
 
-    pub fn directory_count(&self) -> u32 {
+    pub const fn directory_count(&self) -> u32 {
         self.nvfs_dir.CountDir as _
     }
 
-    pub fn file_count(&self) -> u32 {
+    pub const fn file_count(&self) -> u32 {
         self.nvfs_dir.CountFiles as _
     }
 
-    pub fn other_count(&self) -> u32 {
+    pub const fn other_count(&self) -> u32 {
         self.nvfs_dir.CountOther as _
     }
 
-    pub fn all_count(&self) -> usize {
+    pub const fn all_count(&self) -> usize {
         self.files.len() as _
     }
 
     pub fn is_accessible<PathPattern: ToString>(path: &PathPattern) -> bool {
         let dir = Directory::from_path(path);
-        
+
         dir.is_some()
     }
 }

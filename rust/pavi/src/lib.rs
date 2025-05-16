@@ -33,23 +33,15 @@ struct Pavi {
 
 impl Pavi {
     pub fn new(fpath: &String) -> Result<Self, String> {
-        let data = noct_fs::read(fpath);
+        let data = match noct_fs::read(fpath) {
+            Ok(x) => x,
+            Err(e) => return Err(e.to_string()),
+        };
 
-        if let Err(e) = data {
-            // println!("{}: {}", fpath, e.to_string());
-            return Err(e.to_string());
-        }
-
-        let data = data.unwrap();
-
-        let image = nimage::tga::from_tga_data(data.as_slice());
-
-        if image.is_none() {
-            // println!("{}: Invalid file format.", fpath);
-            return Err("Invalid file format.".to_string());
-        }
-
-        let image = image.unwrap();
+        let image = match nimage::tga::from_tga_data(data.as_slice()) {
+            Some(x) => x,
+            None => return Err("Invalid file format.".to_string()),
+        };
 
         Ok(Self {
             filepath: fpath.to_string(),
@@ -103,11 +95,6 @@ impl Pavi {
             }
         }
 
-        // qemu_note!(
-        //     "Mode: {:?}; X: {start_x}; Y: {start_y}; W: {width}; Height: {height}",
-        //     self.render_mode
-        // );
-
         let new_image = self.image.scale_to_new(width, height);
 
         let mut text = Text::new()
@@ -115,7 +102,7 @@ impl Pavi {
             .with_kerning(1)
             .with_size(12)
             .with_text(format!(
-                "{} - [{}x{}] ({:?} | {:?})",
+                "{} - [{}x{}] ({:?} | {:?}) ({scr_w}x{scr_h})",
                 self.filepath,
                 self.image.width(),
                 self.image.height(),
@@ -166,6 +153,8 @@ impl Pavi {
                 noct_screen::set_pixel(x, y, pixel);
             }
         }
+
+        noct_screen::flush();
     }
 
     pub fn run(&self) {

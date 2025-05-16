@@ -83,7 +83,7 @@ impl SMBIOS {
 
         loop {
             let c_str = unsafe { CStr::from_ptr(addr as *const i8) };
-    
+
             let data = c_str.to_bytes();
 
             if data.is_empty() {
@@ -123,15 +123,10 @@ impl SMBIOS {
                 break;
             }
 
-            let data = unsafe {
-                core::slice::from_raw_parts(
-                    addr as *const u8,
-                    header.length as usize,
-                )
-            };
+            let data =
+                unsafe { core::slice::from_raw_parts(addr as *const u8, header.length as usize) };
 
-            let mut table_end =
-                addr + header.length as u32;
+            let mut table_end = addr + header.length as u32;
 
             match header.header_type {
                 0 => {

@@ -7,7 +7,7 @@ use crate::FSM_FILE;
 #[derive(Debug)]
 pub struct File {
     pub file: FSM_FILE,
-    pub name: String
+    pub name: String,
 }
 
 impl File {
@@ -15,11 +15,9 @@ impl File {
         let name = {
             let a = unsafe { CStr::from_ptr(file.Name.as_ptr()) };
             a.to_string_lossy()
-        }.into_owned();
-
-        File {
-            file,
-            name
         }
+        .into_owned();
+
+        File { file, name }
     }
 }

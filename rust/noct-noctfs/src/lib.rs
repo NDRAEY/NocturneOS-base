@@ -2,9 +2,12 @@
 
 extern crate alloc;
 
-use core::ffi::{c_void, CStr};
+use core::ffi::{CStr, c_void};
 
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 use disk_device::DiskDevice;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
@@ -107,8 +110,22 @@ unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
     let (path, name) = {
-        let mut rest_path = path.split('/').filter(|a| !a.is_empty()).rev().skip(1).collect::<Vec<&str>>().iter().rev().map(|&a| String::from(a)).collect::<Vec<_>>().join("/");
-        let name = path.split('/').filter(|a| !a.is_empty()).next_back().unwrap();
+        let mut rest_path = path
+            .split('/')
+            .filter(|a| !a.is_empty())
+            .rev()
+            .skip(1)
+            .collect::<Vec<&str>>()
+            .iter()
+            .rev()
+            .map(|&a| String::from(a))
+            .collect::<Vec<_>>()
+            .join("/");
+        let name = path
+            .split('/')
+            .filter(|a| !a.is_empty())
+            .next_back()
+            .unwrap();
 
         if rest_path.is_empty() {
             rest_path = "/".to_string();
@@ -121,8 +138,9 @@ unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
 
     let directory_block = match find_by_path(&mut fs, &path).map(|a| a.1) {
         Some(blk) => blk,
-        None => return 0
-    }.start_block;
+        None => return 0,
+    }
+    .start_block;
 
     match mode {
         FSM_ENTITY_TYPE_TYPE_DIR => {

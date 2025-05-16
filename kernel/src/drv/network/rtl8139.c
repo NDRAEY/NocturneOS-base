@@ -89,10 +89,11 @@ void rtl8139_init() {
 	rtl8139_wake_up();
 	rtl8139_sw_reset();
 
-	rtl8139_virt_buffer = kmalloc_common(RTL8139_BUFFER_PAGE_COUNT, PAGE_SIZE);
+	// FIXME: TODO: Look up the RTL8139 documentation for exact size (RBSTART register)
+	rtl8139_virt_buffer = kmalloc_common(RTL8139_BUFFER_SIZE, PAGE_SIZE);
 	rtl8139_phys_buffer = virt2phys(get_kernel_page_directory(), (virtual_addr_t) rtl8139_virt_buffer);
 
-	rtl8139_transfer_buffer = kmalloc_common(65535, PAGE_SIZE);
+	rtl8139_transfer_buffer = kmalloc_common(RTL8139_BUFFER_SIZE, PAGE_SIZE);
 	rtl8139_transfer_buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)rtl8139_transfer_buffer);
 
 	rtl8139_init_buffer();
@@ -214,18 +215,7 @@ size_t rtl8139_current_packet_ptr = 0;
 void rtl8139_receive_packet() {
 	uint16_t* packet = (uint16_t*)(rtl8139_virt_buffer + rtl8139_current_packet_ptr);
 
-	EthernetPacked* e_pack = (EthernetPacked*)packet;
-
-	qemu_log("[Net] [RTL8139] Получен пакет!");
-	qemu_log("  |-- Заголовок данных: %x",e_pack->Header);
-	qemu_log("  |-- Длина данных: %d",e_pack->Size);
-	qemu_log("  |-- Источник: %x:%x:%x:%x:%x:%x",e_pack->MAC_SOURCE[0] ,e_pack->MAC_SOURCE[1],e_pack->MAC_SOURCE[2], e_pack->MAC_SOURCE[3] ,e_pack->MAC_SOURCE[4] ,e_pack->MAC_SOURCE[5]);
-	qemu_log("  |-- Кому: %x:%x:%x:%x:%x:%x", e_pack->MAC_DEVICE[0], e_pack->MAC_DEVICE[1], e_pack->MAC_DEVICE[2], e_pack->MAC_DEVICE[3], e_pack->MAC_DEVICE[4], e_pack->MAC_DEVICE[5]);
-	qemu_log("  |-- Тип данных: %x", bit_flip_short(e_pack->Type));
-
-	// Skip packet header, get packet length
-	//^ Может быть и верно, но теряется сама логика пакета, из-за этого я не мог понять некоторые моменты
-	// NDRAEY: Это сырая реализция!!!1
+	RTL8139_packet_t* e_pack = (RTL8139_packet_t*)packet;
 
 	uint16_t packet_header = e_pack->Header;
 	uint16_t packet_length = e_pack->Size;
@@ -234,13 +224,10 @@ void rtl8139_receive_packet() {
 
 	qemu_log("[Net] [RTL8139] Данные с пакета:\n");
 
-//	hexview_advanced((char *) packet_data, packet_length, 10, true, new_qemu_printf);
-
 	if(packet_header == HARDWARE_TYPE_ETHERNET) {
 		qemu_note("Processing packet...");
 		
 		netstack_transfer(&rtl8139_netcard, packet_data, packet_length);
-		//ethernet_handle_packet(&rtl8139_netcard, (ethernet_frame_t *) packet_data, packet_length);
 		
 		qemu_ok("Packet processing is finished!");
 	}

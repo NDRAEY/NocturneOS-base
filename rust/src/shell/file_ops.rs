@@ -31,7 +31,7 @@ pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), us
         None => {
             println!("Failed to create file: {}", dir);
             Err(1)
-        },
+        }
     }
 }
 
@@ -95,17 +95,26 @@ pub fn copy_file(_context: &mut ShellContext, args: &[String]) -> Result<(), usi
     let src_path = &args[0];
     let dest_path = &args[1];
 
-    noct_fileio::create_new_file(dest_path).unwrap();
+    if noct_fileio::create_new_file(dest_path).is_none() {
+        println!("Error: failed to create a destination file: {}", dest_path);
+        return Err(1);
+    }
 
     match noct_fs::read(src_path) {
         Ok(data) => {
-            noct_fs::write(dest_path, &data).unwrap();
+            if let Err(e) = noct_fs::write(dest_path, &data) {
+                println!(
+                    "Error: failed to write a destination file: `{}`: {}",
+                    dest_path, e
+                );
+                return Err(1);
+            }
 
             Ok(())
-        },
+        }
         Err(error) => {
             println!("Error: {error}");
             Err(1)
-        },
+        }
     }
 }

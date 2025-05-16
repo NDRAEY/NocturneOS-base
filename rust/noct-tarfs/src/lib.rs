@@ -4,8 +4,13 @@ extern crate alloc;
 
 use core::ffi::c_void;
 
-use alloc::{string::{String, ToString}, vec::Vec};
-use noct_fs_sys::{FSM_DIR, FSM_FILE, FSM_MOD_READ, FSM_ENTITY_TYPE_TYPE_FILE, FSM_ENTITY_TYPE_TYPE_DIR};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
+use noct_fs_sys::{
+    FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
+};
 use noct_logger::{qemu_err, qemu_log};
 
 static FSNAME: &[u8] = b"TARFS2\0";
@@ -39,7 +44,7 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
 fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
     match tarfs_type {
         tarfs::Type::Dir => FSM_ENTITY_TYPE_TYPE_DIR,
-        _ => FSM_ENTITY_TYPE_TYPE_FILE
+        _ => FSM_ENTITY_TYPE_TYPE_FILE,
     }
 }
 
@@ -153,7 +158,11 @@ unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
 
     let fl = tarfs::TarFS::from_device(device);
 
-    if fl.is_some() { 1 } else { 0 }
+    if fl.is_some() {
+        1
+    } else {
+        0
+    }
 }
 
 #[no_mangle]

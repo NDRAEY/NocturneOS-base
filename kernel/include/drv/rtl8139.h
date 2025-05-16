@@ -5,7 +5,7 @@
 #define RTL8139_VENDOR 0x10EC
 #define RTL8139_DEVICE 0x8139
 
-#define RTL8139_BUFFER_PAGE_COUNT 4
+#define RTL8139_BUFFER_SIZE 65536
 
 enum RTL8139_regs {
     MAC0_5   = 0x00,  // 6 bytes long
@@ -22,14 +22,10 @@ enum RTL8139_regs {
 #define CAPR 0x38
 #define RX_READ_POINTER_MASK (~3)
 
-// Ethernet II header (w/o VLAN 802.11Q tag)
 typedef struct {
 	uint16_t Header;		/// Заголовок (?)
 	uint16_t Size;			/// Размер пакета
-	char MAC_DEVICE[6];		/// Куда (на какой мак-устройства)
-	char MAC_SOURCE[6];		/// Источник (от какого мак-устройства)
-	uint16_t Type;			/// Тип источника
-} __attribute__((packed)) EthernetPacked;
+} __attribute__((packed)) RTL8139_packet_t;
 
 void rtl8139_init();
 void rtl8139_wake_up();

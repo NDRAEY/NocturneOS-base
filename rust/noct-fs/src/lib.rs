@@ -5,7 +5,7 @@
 extern crate alloc;
 
 use alloc::string::String;
-use core::ffi::{c_void, CStr};
+use core::ffi::{CStr, c_void};
 
 use alloc::vec::Vec;
 use alloc::{str, vec};
@@ -60,7 +60,6 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
     Ok(result)
 }
 
-
 pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
     let mut file_path_string = String::from(file_path);
     file_path_string.push('\0');
@@ -100,11 +99,10 @@ pub fn write(file_path: &str, data: &[u8]) -> Result<usize, &'static str> {
         let written = fwrite(file, data.len(), 1, data.as_ptr() as *const _);
 
         fclose(file);
-        
+
         Ok(written)
     }
 }
-
 
 pub struct File {
     raw_file: &'static mut CFile,

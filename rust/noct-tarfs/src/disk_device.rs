@@ -1,17 +1,14 @@
-use noct_dpm_sys::Disk;
 use no_std_io::io::{Read, Seek};
+use noct_dpm_sys::Disk;
 
 pub struct DiskDevice {
     disk: Disk,
-    position: u64
+    position: u64,
 }
 
 impl DiskDevice {
-    pub fn new(disk: Disk) -> Self {
-        DiskDevice {
-            disk,
-            position: 0
-        }
+    pub const fn new(disk: Disk) -> Self {
+        DiskDevice { disk, position: 0 }
     }
 }
 
@@ -28,7 +25,7 @@ impl Seek for DiskDevice {
         match pos {
             no_std_io::io::SeekFrom::Start(pos) => {
                 self.position = pos;
-            },
+            }
             no_std_io::io::SeekFrom::End(_pos) => {
                 // let disk_size = self.disk.size();
                 // self.position = disk_size + pos;
