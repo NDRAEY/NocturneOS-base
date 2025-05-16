@@ -49,18 +49,9 @@ impl FSM_FILE {
         file
     }
 
-    pub fn missing() -> Self {
-        // `core::mem::zeroed`?
-        FSM_FILE {
-            Ready: false,
-            Name: [0; 1024],
-            Path: [0; 1024],
-            Mode: 0,
-            Size: 0,
-            LastTime: unsafe { core::mem::zeroed() },
-            Type: 0,
-            CHMOD: 0,
-        }
+    #[inline]
+    pub const fn missing() -> Self {
+        unsafe { core::mem::zeroed() }
     }
 }
 
@@ -89,15 +80,9 @@ impl FSM_DIR {
         }
     }
 
-    pub fn missing() -> Self {
-        // `core::mem::zeroed`?
-        FSM_DIR {
-            Ready: false,
-            CountFiles: 0,
-            CountDir: 0,
-            CountOther: 0,
-            Files: core::ptr::null_mut(),
-        }
+    #[inline]
+    pub const fn missing() -> Self {
+        unsafe { core::mem::zeroed() }
     }
 
 }

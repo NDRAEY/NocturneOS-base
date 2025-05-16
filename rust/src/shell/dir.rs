@@ -20,7 +20,7 @@ pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
     let dir = match Directory::from_path(&path) {
         Some(x) => x,
         None => {
-            println!("`{}` read error", path);
+            println!("`{}`: no such directory", path);
             return Err(1);
         },
     };

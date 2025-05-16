@@ -32,9 +32,9 @@ impl Manager {
         Some(Cookie { name: name.to_string() })
     }
 
-    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie> {
+    pub fn find<S: ToString>(&self, name: S) -> Option<Cookie> where String: PartialEq<S> {
         for i in &self.channels {
-            if i.name == name.to_string() {
+            if i.name == name {
                 return Some(Cookie { name: name.to_string() })
             }
         }
@@ -82,6 +82,6 @@ pub fn create_named_channel<S: ToString>(name: S) -> Option<Cookie> {
     unsafe { NAMED_CHANNELS.write().get_mut()?.create(name) }
 }
 
-pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie> {
+pub fn find_named_channel<S: ToString>(name: S) -> Option<Cookie> where String: PartialEq<S> {
     unsafe { NAMED_CHANNELS.read().get()?.find(name) }
 }
