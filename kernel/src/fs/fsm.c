@@ -230,7 +230,7 @@ void fsm_dpm_update(char Letter){
             // fsm->Label(DISKID, lab_test);
             // dpm_LabelUpdate(DISKID, lab_test);
             dpm_FileSystemUpdate(DISKID, fsm->Name);
-            qemu_note("[FSM] [DPM] ^^^ Disk %c | Label: %s", DISKID, lab_test);
+            // qemu_note("[FSM] [DPM] ^^^ Disk %c | Label: %s", DISKID, lab_test);
 
             // kfree(lab_test);
 
