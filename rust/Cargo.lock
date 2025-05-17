@@ -470,6 +470,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-il"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "noct-timer",
+ "spin 0.10.0",
+]
+
+[[package]]
 name = "noct-input"
 version = "0.1.0"
 dependencies = [
@@ -618,6 +627,7 @@ dependencies = [
  "noct-fileio",
  "noct-fs",
  "noct-fs-sys",
+ "noct-il",
  "noct-input",
  "noct-ipc",
  "noct-iso9660",

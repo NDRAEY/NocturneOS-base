@@ -8,7 +8,7 @@ extern "C" {
 
 pub static CLS_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("cls", cls, Some("Clear screen"));
 
-pub fn cls(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+pub fn cls(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     unsafe {
         clean_tty_screen();
     }

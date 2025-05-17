@@ -7,8 +7,8 @@ use super::ShellContext;
 pub static CAT_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("cat", cat, Some("Prints out a file"));
 
-pub fn cat(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
-    let filepath = &args[0];
+pub fn cat(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
+    let filepath = args[0];
 
     let mut fullpath = context.current_path.clone();
     fullpath.apply(filepath);

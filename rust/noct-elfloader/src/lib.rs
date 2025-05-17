@@ -35,9 +35,9 @@ pub struct ProgramHandle {
 }
 
 impl ProgramHandle {
-    pub fn run(&mut self, args: &[String]) {
-        let mut normalized = Vec::with_capacity(1 + args.len());
-        normalized.push(self.path.clone());
+    pub fn run(&mut self, args: &[&str]) {
+        let mut normalized: Vec<&str> = Vec::with_capacity(1 + args.len());
+        normalized.push(&self.path);
         normalized.extend_from_slice(args);
 
         let ptrs = normalized.iter().map(|a| a.as_ptr()).collect::<Vec<_>>();

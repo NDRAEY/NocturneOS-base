@@ -8,11 +8,11 @@ use super::ShellContext;
 pub static DIR_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("dir", dir, Some("Lists a directory"));
 
-pub fn dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let path = {
         match args.first() {
-            Some(elem) => elem.clone(),
-            None => context.current_path.as_str().to_string(),
+            Some(elem) => elem,
+            None => context.current_path.as_str(),
         }
     };
 

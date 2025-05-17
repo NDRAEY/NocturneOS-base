@@ -2,8 +2,7 @@ use core::ffi::c_char;
 
 use super::ShellContext;
 use alloc::{
-    string::{String, ToString},
-    vec::Vec,
+    borrow::ToOwned, string::{String, ToString}, vec::Vec
 };
 
 pub static MINIPLAY_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
@@ -13,9 +12,9 @@ extern "C" {
     fn miniplay(argc: u32, argv: *const *const c_char);
 }
 
-pub fn miniplay_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
-    let mut args = Vec::from(_args);
-    args.insert(0, String::from("miniplay"));
+pub fn miniplay_w(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
+    let mut args: Vec<String> = args.into_iter().map(|a| a.to_string()).collect();
+    args.insert(0, "miniplay".to_owned());
 
     for i in &mut args {
         i.push('\0');
@@ -29,6 +28,6 @@ pub fn miniplay_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), u
     Ok(())
 }
 
-pub fn mp(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
-    miniplay_w(_context, &["R:/test_sound.wav".to_string()])
+pub fn mp(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
+    miniplay_w(_context, &["R:/test_sound.wav"])
 }

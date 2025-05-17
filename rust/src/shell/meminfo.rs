@@ -7,7 +7,7 @@ use super::ShellContext;
 pub static MEMINFO_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("meminfo", meminfo, Some("Memory info"));
 
-pub fn meminfo(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+pub fn meminfo(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     let data = mem::get_stats();
 
     let p_used = data.used_physical;

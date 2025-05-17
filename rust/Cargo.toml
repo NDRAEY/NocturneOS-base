@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "eni-player", "noct-alloc", "noct-audio", "noct-dpm", "noct-dpm-sys", "noct-elfloader", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-input", "noct-ipc", "noct-iso9660", "noct-ksymparser", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
+members = [ "eni-player", "noct-alloc", "noct-audio", "noct-dpm", "noct-dpm-sys", "noct-elfloader", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-il", "noct-input", "noct-ipc", "noct-iso9660", "noct-ksymparser", "noct-logger", "noct-noctfs", "noct-path", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
 
 [target.'cfg(target_arch = "x86")'.dependencies]
 x86 = "0.52.0"
@@ -42,6 +42,7 @@ noct-ksymparser = { path = "./noct-ksymparser" }
 noct-audio = { path = "./noct-audio" }
 eni-player = { path = "./eni-player" }
 noct-dpm = { path = "./noct-dpm" }
+noct-il = { path = "./noct-il" }
 
 [profile.release]
 panic = "abort"

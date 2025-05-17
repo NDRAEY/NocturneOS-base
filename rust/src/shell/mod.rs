@@ -28,8 +28,9 @@ pub mod parallel_desktop;
 pub mod pavi;
 pub mod pci;
 pub mod reboot;
+pub mod log;
 
-pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[String]) -> Result<(), E>;
+pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 
 static COMMANDS: &[ShellCommandEntry] = &[
@@ -51,6 +52,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,
+    log::LOG_COMMAND_ENTRY,
     (
         "eni",
         |_, args| eni_player::player(args),
@@ -73,7 +75,7 @@ impl ShellContext {
     }
 }
 
-fn help(_ctx: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+fn help(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     for i in COMMANDS {
         println!("{:12} - {}", i.0, i.2.unwrap_or("No help at this moment"));
     }
@@ -264,7 +266,8 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
 
     match object {
         Some(descriptor) => {
-            let status = descriptor.1(context, arguments);
+            let args: Vec<&str> = arguments.iter().map(|a| a.as_str()).collect();
+            let status = descriptor.1(context, &args);
 
             if let Err(err) = status {
                 qemu_err!(
@@ -292,7 +295,8 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
 
                             match program {
                                 Ok(mut prog) => {
-                                    prog.run(arguments);
+                                    let args: Vec<&str> = arguments.iter().map(|a| a.as_str()).collect();
+                                    prog.run(&args);
                                 }
                                 Err(e) => {
                                     println!("Error: {e:?}");

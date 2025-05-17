@@ -8,7 +8,7 @@ extern "C" {
     fn parallel_desktop_start();
 }
 
-pub fn desktop(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+pub fn desktop(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     unsafe { parallel_desktop_start() };
 
     Ok(())

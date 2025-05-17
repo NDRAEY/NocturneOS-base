@@ -5,7 +5,7 @@ use super::{ShellCommandEntry, ShellContext};
 
 pub static GFXINFO_COMMAND_ENTRY: ShellCommandEntry = ("gfxinfo", gfxinfo, None);
 
-pub fn gfxinfo(_ctx: &mut ShellContext, _argv: &[String]) -> Result<(), usize> {
+pub fn gfxinfo(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     let (width, height) = noct_screen::dimensions();
     let pitch = noct_screen::pitch();
     let bpp = noct_screen::bits_per_pixel();
