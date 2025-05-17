@@ -57,14 +57,6 @@ pub extern "C" fn rust_main() {
         qemu_note!("{i:?}");
     }
 
-    noct_sched::spawn(move || {
-        for _ in (0..16) {
-            log!("Hello!");
-
-            unsafe { sleep_ms(1000) };
-        }
-    });
-
     // let mut p = Path::from_path("R:/").unwrap();
     // qemu_log!("{:?}", p);
     // qemu_log!("{:?}", p.apply(".."));
