@@ -110,11 +110,13 @@ set(ASM_SRC kernel/asm/init.s
 	kernel/asm/regs.s 
 	kernel/src/lib/setjmp.s 
 	kernel/asm/switch_task.s 
-	# kernel/asm/64bit_on_32bit.s
 )
 
 if(NOCTURNE_ARCH STREQUAL "x86")
-	set(C_SRC kernel/src/arch/x86/init.c)
+	set(C_SRC
+		kernel/src/arch/x86/init.c
+		kernel/src/drv/cmos.c
+		kernel/src/drv/video/intel.c)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
 endif()
@@ -159,7 +161,6 @@ set(C_SRC
 	kernel/src/sys/syscalls.c 
 	kernel/src/sys/testing.c 
 	kernel/src/lib/rand.c 
-	kernel/src/drv/cmos.c 
 	kernel/src/drv/beeper.c 
 	kernel/src/user/env.c
 	kernel/src/gui/line.c 
@@ -233,7 +234,6 @@ set(C_SRC
 	# kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
-	kernel/src/drv/video/intel.c 
     kernel/src/lib/libvector/src/vector.c
     kernel/src/lib/libstring/src/string.c
     # kernel/src/lib/intrin.c
