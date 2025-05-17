@@ -146,11 +146,11 @@ pub extern "C" fn ps2_init() {
     let test_ok = ps2_test();
 
     if test_ok.is_none() {
-        qemu_err!("PS/2 TEST ERROR!");
+        noct_il::error!("PS/2 TEST ERROR!");
         return;
     }
 
-    qemu_ok!("PS/2 test ok!");
+    noct_il::ok!("PS/2 test ok!");
 
     // Test first port
 
@@ -161,10 +161,10 @@ pub extern "C" fn ps2_init() {
     let mut result: u8 = unsafe { inb(PS2_DATA_PORT) };
 
     if result == 0x00 {
-        qemu_ok!("Passed test for channel 1!");
+        noct_il::ok!("Passed test for channel 1!");
         unsafe { ps2_channel1_okay = true };
     } else {
-        qemu_err!("Channel 1: Test failed! Result: {:x}", result);
+        noct_il::error!("Channel 1: Test failed! Result: {:x}", result);
     }
 
     // Test second port
@@ -178,10 +178,10 @@ pub extern "C" fn ps2_init() {
     result = unsafe { inb(PS2_DATA_PORT) };
 
     if result == 0x00 {
-        qemu_ok!("Passed test for channel 2!");
+        noct_il::ok!("Passed test for channel 2!");
         unsafe { ps2_channel2_okay = true };
     } else {
-        qemu_err!("Channel 2: Test failed! Result: {:x}", result);
+        noct_il::error!("Channel 2: Test failed! Result: {:x}", result);
     }
 
     unsafe {

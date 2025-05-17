@@ -423,6 +423,7 @@ name = "noct-audio"
 version = "0.1.0"
 dependencies = [
  "cbindgen",
+ "noct-il",
  "noct-logger",
 ]
 

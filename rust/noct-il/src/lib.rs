@@ -96,25 +96,35 @@ pub fn get_logs() -> spin::RwLockReadGuard<'static, Logger> {
 
 #[macro_export]
 macro_rules! debug {
-    ($($arg:tt)*) => ($crate::debug(alloc::format!($($arg)*)));
+    ($($arg:tt)*) => {
+        $crate::debug(alloc::format!("{}", format_args!($($arg)*)));
+    };
 }
 
 #[macro_export]
 macro_rules! log {
-    ($($arg:tt)*) => ($crate::info(alloc::format!($($arg)*)));
+    ($($arg:tt)*) => {
+        $crate::info(alloc::format!("{}", format_args!($($arg)*)));
+    };
 }
 
 #[macro_export]
 macro_rules! error {
-    ($($arg:tt)*) => ($crate::error(alloc::format!($($arg)*)));
+    ($($arg:tt)*) => {
+        $crate::error(alloc::format!("{}", format_args!($($arg)*)));
+    };
 }
 
 #[macro_export]
 macro_rules! warn {
-    ($($arg:tt)*) => ($crate::warn(alloc::format!($($arg)*)));
+    ($($arg:tt)*) => {
+        $crate::warn(alloc::format!("{}", format_args!($($arg)*)));
+    };
 }
 
 #[macro_export]
 macro_rules! ok {
-    ($($arg:tt)*) => ($crate::ok(alloc::format!($($arg)*)));
+    ($($arg:tt)*) => {
+        $crate::ok(alloc::format!("{}", format_args!($($arg)*)));
+    };
 }

@@ -6,6 +6,7 @@ build = "build.rs"
 
 [dependencies]
 noct-logger = { path = "../noct-logger" }
+noct-il = { path = "../noct-il" }
 
 [build-dependencies]
 cbindgen = { version = "0.28.0", default-features = false }
