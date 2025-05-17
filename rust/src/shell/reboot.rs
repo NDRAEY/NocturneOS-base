@@ -9,7 +9,7 @@ extern "C" {
     fn reboot();
 }
 
-pub fn reboot_w(_context: &mut ShellContext, _args: &[String]) -> Result<(), usize> {
+pub fn reboot_w(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     unsafe { reboot() };
 
     Ok(())

@@ -315,10 +315,10 @@ pub fn pci_scan_everything() {
 
     let elapsed = timestamp() - start_time;
 
-    qemu_log!("PCI scan end in {} ms", elapsed);
+    noct_il::log!("PCI: scan end in {} ms", elapsed);
 
     unsafe {
-        qemu_log!("Found {} devices", PCI_DEVICES.get().unwrap().read().len());
+        noct_il::log!("PCI: Found {} devices", PCI_DEVICES.get().unwrap().read().len());
     }
 }
 

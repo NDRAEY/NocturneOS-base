@@ -15,7 +15,7 @@ pub static REMOVE_DIR_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
 pub static COPY_FILE_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("cp", copy_file, Some("Copies a file"));
 
-pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn create_file(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     if args.is_empty() {
         println!("Usage: mkfile <filename>");
         return Err(1);
@@ -35,7 +35,7 @@ pub fn create_file(context: &mut ShellContext, args: &[String]) -> Result<(), us
     }
 }
 
-pub fn create_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn create_dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     if args.is_empty() {
         println!("Usage: mkdir <filename>");
         return Err(1);
@@ -52,7 +52,7 @@ pub fn create_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usi
     }
 }
 
-pub fn remove_file(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn remove_file(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     if args.is_empty() {
         println!("Usage: rmfile <filename>");
         return Err(1);
@@ -69,7 +69,7 @@ pub fn remove_file(context: &mut ShellContext, args: &[String]) -> Result<(), us
     }
 }
 
-pub fn remove_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn remove_dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     if args.is_empty() {
         println!("Usage: rmdir <filename>");
         return Err(1);
@@ -86,7 +86,7 @@ pub fn remove_dir(context: &mut ShellContext, args: &[String]) -> Result<(), usi
     }
 }
 
-pub fn copy_file(_context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn copy_file(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     if args.len() < 2 {
         println!("Usage: cp <source filename> <destination filename>");
         return Err(1);

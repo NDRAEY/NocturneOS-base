@@ -5,21 +5,23 @@
 #include <lib/keymap.h>
 
 volatile uint32_t keyboard_states = 0;
-static const char keyboard_layout[128] = {
+static const uint8_t keyboard_layout[128] = {
     0,   27,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,   'a', 's',
     'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,   '\\', 'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',', '.', '/', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0
+    0,   0, 0, 0, 0, 0, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9,0xaa,
+    0xab, 0xac, 0xad, 0xae, 0xaf
 };
 
 // Определяем таблицу символов для клавиш при зажатой клавише Shift
-static const char shifted_keyboard_layout[128] = {
+static const uint8_t shifted_keyboard_layout[128] = {
     0,   27,  '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b', '\t',
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,   'A', 'S',
     'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0,   '|', 'Z', 'X', 'C', 'V',
     'B', 'N', 'M', '<', '>', '?', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0
+    0,   0, 0, 0, 0, 0, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9,0xaa,
+    0xab, 0xac, 0xad, 0xae, 0xaf
 };
 
 uint32_t getchar() {

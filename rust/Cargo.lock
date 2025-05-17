@@ -423,6 +423,7 @@ name = "noct-audio"
 version = "0.1.0"
 dependencies = [
  "cbindgen",
+ "noct-il",
  "noct-logger",
 ]
 
@@ -467,6 +468,15 @@ version = "0.1.0"
 dependencies = [
  "bindgen",
  "noct-logger",
+]
+
+[[package]]
+name = "noct-il"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "noct-timer",
+ "spin 0.10.0",
 ]
 
 [[package]]
@@ -618,6 +628,7 @@ dependencies = [
  "noct-fileio",
  "noct-fs",
  "noct-fs-sys",
+ "noct-il",
  "noct-input",
  "noct-ipc",
  "noct-iso9660",

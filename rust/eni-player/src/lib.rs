@@ -217,7 +217,7 @@ fn bytes_to_seconds(fmtdata: &nwav::Fmt, byte_count: usize) -> usize {
             * (fmtdata.bits_per_sample as u32 >> 3)) as usize
 }
 
-pub fn player(args: &[String]) -> Result<(), usize> {
+pub fn player(args: &[&str]) -> Result<(), usize> {
     let filepath = match args.first() {
         Some(fp) => fp,
         None => {

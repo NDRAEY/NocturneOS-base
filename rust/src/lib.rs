@@ -13,6 +13,7 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+use noct_il::log;
 pub use noct_iso9660;
 pub use noct_noctfs;
 pub use noct_psf;
@@ -21,6 +22,7 @@ pub use noct_tarfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
+use noct_timer::sleep_ms;
 use noct_tty::println;
 
 pub use noct_audio::c_api;
@@ -63,7 +65,7 @@ pub extern "C" fn rust_main() {
     // qemu_log!("{:?}", p);
 
     // crate::std::thread::spawn(move || {
-    //     for i in (1..=16) {
+    //     for i in (1..=128) {
     //         qemu_ok!("{}", i);
     //     }
     // })

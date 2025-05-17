@@ -9,11 +9,11 @@ use super::ShellContext;
 
 pub static CD_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("cd", cd, Some("Change directory"));
 
-pub fn cd(context: &mut ShellContext, args: &[String]) -> Result<(), usize> {
+pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let path = {
         match args.first() {
-            Some(elem) => elem.clone(),
-            None => String::from_str(".").unwrap(),
+            Some(elem) => elem,
+            None => "."
         }
     };
 

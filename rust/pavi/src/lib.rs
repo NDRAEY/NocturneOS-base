@@ -32,7 +32,7 @@ struct Pavi {
 }
 
 impl Pavi {
-    pub fn new(fpath: &String) -> Result<Self, String> {
+    pub fn new(fpath: &str) -> Result<Self, String> {
         let data = match noct_fs::read(fpath) {
             Ok(x) => x,
             Err(e) => return Err(e.to_string()),
@@ -199,26 +199,24 @@ impl Pavi {
     }
 }
 
-pub fn pavi(argv: &[String]) -> Result<(), usize> {
-    let filename = argv.first();
+pub fn pavi(argv: &[&str]) -> Result<(), usize> {
+    let filename = match argv.first() {
+        Some(fl) => fl,
+        None => {
+            println!("Provide a file!");
+            println!("Usage: pavi <filename>");
+    
+            return Err(1);
+        },
+    };
 
-    if filename.is_none() {
-        println!("Provide a file!");
-        println!("Usage: pavi <filename>");
-
-        return Err(1);
-    }
-
-    let filename = filename.unwrap();
-
-    let pavi = Pavi::new(filename);
-
-    if let Err(e) = pavi {
-        println!("{filename}: {e}");
-        return Err(1);
-    }
-
-    let pavi = pavi.unwrap();
+    let pavi = match Pavi::new(filename) {
+        Ok(pavi) => pavi,
+        Err(e) => {
+            println!("{filename}: {e}");
+            return Err(1);
+        }
+    };
 
     pavi.run();
 

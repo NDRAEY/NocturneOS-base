@@ -36,7 +36,7 @@ pub unsafe extern "C" fn audio_system_add_output(
             }))
     };
 
-    qemu_note!("Added!");
+    noct_il::ok!("Audiosystem: New device added: {name}");
 }
 
 #[unsafe(no_mangle)]
