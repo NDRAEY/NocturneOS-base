@@ -89,7 +89,7 @@ fn process_input(context: &mut ShellContext) -> String {
     loop {
         let raw_ch = unsafe { getchar() };
 
-        qemu_note!("{raw_ch}");
+        qemu_note!("{raw_ch:x}");
 
         let ch = char::from_u32(raw_ch).unwrap();
 
@@ -101,6 +101,13 @@ fn process_input(context: &mut ShellContext) -> String {
                     print!("\x08 \x08");
                 }
                 continue;
+            }
+            '\u{ab}' => {
+                if let Some(command) = context.command_history.last() {
+                    print!("{command}");
+                    input.push_str(&command);
+                    break;
+                }
             }
             '\t' => {
                 qemu_warn!("Tab!");
