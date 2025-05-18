@@ -10,8 +10,6 @@
 #include "mem/pmm.h"
 #include "lib/string.h"
 
-// #define LAZY_KREALLOC
-
 struct heap_entry {
 	size_t address;
 	size_t length;

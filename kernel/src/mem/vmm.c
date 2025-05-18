@@ -459,29 +459,6 @@ void kfree(void *ptr)
 	scheduler_mode(true);
 }
 
-#ifdef LAZY_KREALLOC
-void *krealloc(void *ptr, size_t memory_size)
-{
-	if(!ptr) {
-		return 0;
-	}
-
-	struct heap_entry *block = heap_get_block_ref((size_t)ptr);
-	if (!block) {
-		return 0;
-	}
-
-	void* newptr = kmalloc(memory_size);
-
-	if(!newptr) {
-		return 0;
-	}
-
-	memcpy(newptr, ptr, MIN(memory_size, block->length));
-
-	return newptr;
-}
-#else
 void *krealloc(void *ptr, size_t memory_size)
 {
 	if (!ptr)
@@ -578,9 +555,13 @@ void *krealloc(void *ptr, size_t memory_size)
 			}
 			else
 			{
-				//				qemu_err("No space between blocks! :(");  // IT'S NORMAL
+				// qemu_note("No space between blocks! :(");  // IT'S NORMAL
 
-				void *new_block = kmalloc(memory_size);
+				// void *new_block = kmalloc(memory_size);
+
+				// Try to detect alignment automatically
+				// In this case alignment will be 1, 4, 8 and 12
+				void *new_block = kmalloc_common(memory_size, (block->address & 0x1100) ?: 1);
 
 				memcpy(new_block, (const void *)block->address, block->length);
 
@@ -603,7 +584,6 @@ void *krealloc(void *ptr, size_t memory_size)
 
 	return (void *)block->address;
 }
-#endif
 
 /**
  * @brief Копирует адресное пространство ядра в новое адресное пространство

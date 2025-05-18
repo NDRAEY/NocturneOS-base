@@ -8,6 +8,7 @@ use core::ffi::c_void;
 extern "C" {
     fn kmalloc_common(size: usize, align: usize) -> *mut c_void;
     fn kfree(ptr: *mut c_void);
+    fn krealloc(ptr: *mut c_void, memory_size: usize) -> *mut c_void;
 }
 
 pub struct Allocator;
@@ -24,5 +25,9 @@ unsafe impl GlobalAlloc for Allocator {
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         kfree(ptr as *mut c_void);
+    }
+
+    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
+        krealloc(ptr as *mut c_void, new_size) as *mut u8
     }
 }

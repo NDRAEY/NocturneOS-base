@@ -312,9 +312,9 @@ dependencies = [
 
 [[package]]
 name = "iso9660_simple"
-version = "0.1.16"
+version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "513e164d6cfbaa0be4216901853f7e25e0043f7e4acdc7c6e9745949bec4dea1"
+checksum = "4fe62fa2eeed0aff534d2d41cb0d57c1e5ddf5d9d7c3c739472a29b781b1b52b"
 
 [[package]]
 name = "itertools"
@@ -882,9 +882,9 @@ dependencies = [
 
 [[package]]
 name = "tarfs"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0148abe66722c8eca8ccf1f9dd2d3c02e4bf8dd1f32706d5988ce3e8f3101525"
+checksum = "bef3256affb82ed8e0a959a1f082959d72d6d2c18b86bd16230031dd4ca3d02c"
 dependencies = [
  "no_std_io",
 ]
