@@ -53,7 +53,6 @@
 
 #include <fs/fsm.h>
 
-#include <fs/fat32.h>
 #include <fs/nvfs.h>
 #include <fs/tempfs.h>
 
@@ -76,3 +75,4 @@
 #include "generated/iso9660.h"
 #include "generated/tarfs.h"
 #include "generated/noctfs.h"
+#include "generated/fatfs.h"

@@ -1,0 +1,16 @@
+[package]
+name = "noct-fatfs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+fatfs = { git = "https://github.com/rafalh/rust-fatfs", features = ["lfn", "alloc"], default-features = false }
+
+noct-dpm-sys = { path = "../noct-dpm-sys" }
+noct-fs-sys = { path = "../noct-fs-sys" }
+noct-logger = { path = "../noct-logger" }
+noct-path = { path = "../noct-path" }
+noct-timer = { path = "../noct-timer" }
+
+[build-dependencies]
+cbindgen = { version = "0.28.0", default-features = false }

@@ -1,7 +1,7 @@
-use crate::{dpm_read, dpm_write, DPM_Disk, DPM_Disks};
+use crate::{dpm_info, dpm_read, dpm_write, DPM_Disk, DPM_Disks};
 
 pub struct Disk {
-    // disk: *mut DPM_Disk,
+    disk: *mut DPM_Disk,
     letter: char,
 }
 
@@ -29,6 +29,13 @@ impl Disk {
             ) as usize
         }
     }
+
+    pub fn capacity(&self) -> u64 {
+        // let info = unsafe { dpm_info(self.letter as _) };
+        let info = unsafe { self.disk.read_unaligned() };
+
+        info.Sectors as u64 * info.SectorSize as u64
+    }
 }
 
 pub const fn get_disk(letter: char) -> Option<Disk> {
@@ -42,7 +49,7 @@ pub const fn get_disk(letter: char) -> Option<Disk> {
     }
 
     Some(Disk {
-        // disk: rdisk as *mut DPM_Disk,
+        disk: rdisk as *mut DPM_Disk,
         letter,
     })
 }

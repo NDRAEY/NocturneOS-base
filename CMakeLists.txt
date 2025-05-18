@@ -196,7 +196,6 @@ set(C_SRC
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
 	# kernel/src/extra/plain_runner.c
-	kernel/src/fs/fat32.c 
 	kernel/src/sys/fxsave_region.c 
 	kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 

@@ -29,6 +29,7 @@ pub mod pavi;
 pub mod pci;
 pub mod reboot;
 pub mod log;
+pub mod file;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -53,6 +54,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,
     log::LOG_COMMAND_ENTRY,
+    file::FILE_COMMAND_ENTRY,
     (
         "eni",
         |_, args| eni_player::player(args),

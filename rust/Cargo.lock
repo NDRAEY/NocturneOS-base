@@ -236,6 +236,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
+name = "fatfs"
+version = "0.4.0"
+source = "git+https://github.com/rafalh/rust-fatfs#4eccb50d011146fbed20e133d33b22f3c27292e7"
+dependencies = [
+ "bitflags 2.9.1",
+ "log",
+]
+
+[[package]]
 name = "float-cmp"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -452,6 +461,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-fatfs"
+version = "0.1.0"
+dependencies = [
+ "cbindgen",
+ "fatfs",
+ "noct-dpm-sys",
+ "noct-fs-sys",
+ "noct-logger",
+ "noct-path",
+ "noct-timer",
+]
+
+[[package]]
 name = "noct-fileio"
 version = "0.1.0"
 dependencies = [
@@ -625,6 +647,7 @@ dependencies = [
  "noct-dpm",
  "noct-dpm-sys",
  "noct-elfloader",
+ "noct-fatfs",
  "noct-fileio",
  "noct-fs",
  "noct-fs-sys",

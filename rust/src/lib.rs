@@ -28,6 +28,8 @@ use noct_tty::println;
 pub use noct_audio::c_api;
 pub use noct_ipc::manager::ipc_init;
 
+pub use noct_fatfs;
+
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
 
