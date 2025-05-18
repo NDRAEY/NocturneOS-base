@@ -89,7 +89,7 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 	size_t addr = 0;
 
 	// They used for saving start indexes of our pages.
-	size_t si, sj = 0;
+	size_t si = 0, sj = 0;
 
 	for(size_t i = 0; i < PAGE_BITMAP_SIZE; i++) {
 		if(pages_bitmap[i] == 0xff) {
