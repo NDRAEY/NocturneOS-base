@@ -312,9 +312,9 @@ dependencies = [
 
 [[package]]
 name = "iso9660_simple"
-version = "0.1.15"
+version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9536145b641d1f27e8bc53edf6ddee0e93eac4599f2db96fad364d19a7e8f283"
+checksum = "513e164d6cfbaa0be4216901853f7e25e0043f7e4acdc7c6e9745949bec4dea1"
 
 [[package]]
 name = "itertools"
