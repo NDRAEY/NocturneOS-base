@@ -5,13 +5,13 @@ extern crate alloc;
 use core::ffi::{CStr, c_void};
 
 use alloc::{string::String, vec::Vec};
-use fatfs::{File, FsOptions, IntoStorage, Read, Seek, SeekFrom};
+use fatfs::{File, FsOptions, Read, Seek, SeekFrom};
 use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE,
     FSM_MOD_READ, FSM_TIME,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_ok};
+use noct_logger::{qemu_err, qemu_note, qemu_ok};
 use noct_path::Path;
 use noct_timer::timestamp;
 
@@ -74,34 +74,34 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
     c_str.to_string_lossy().into_owned()
 }
 
-fn optimize_extents<A, B, C>(file: &mut File<'_, A, B, C>) -> Vec<(u64, u32)>
-where
-    A: fatfs::Read,
-    A: fatfs::Seek,
-    A: fatfs::Write,
-{
-    let mut result = Vec::<(u64, u32)>::new();
-    let mut iterator = file.extents();
+// fn optimize_extents<A, B, C>(file: &mut File<'_, A, B, C>) -> Vec<(u64, u32)>
+// where
+//     A: fatfs::Read,
+//     A: fatfs::Seek,
+//     A: fatfs::Write,
+// {
+//     let mut result = Vec::<(u64, u32)>::new();
+//     let mut iterator = file.extents();
 
-    let first = iterator.next().unwrap().unwrap();
-    let mut addr = first.offset;
-    let mut size = first.size;
+//     let first = iterator.next().unwrap().unwrap();
+//     let mut addr = first.offset;
+//     let mut size = first.size;
 
-    for i in iterator {
-        if addr + size as u64 == i.as_ref().unwrap().offset {
-            size += i.as_ref().unwrap().size;
-        } else {
-            result.push((addr, size));
+//     for i in iterator {
+//         if addr + size as u64 == i.as_ref().unwrap().offset {
+//             size += i.as_ref().unwrap().size;
+//         } else {
+//             result.push((addr, size));
 
-            addr = i.as_ref().unwrap().offset;
-            size = i.as_ref().unwrap().size;
-        }
-    }
+//             addr = i.as_ref().unwrap().offset;
+//             size = i.as_ref().unwrap().size;
+//         }
+//     }
 
-    result.push((addr, size));
+//     result.push((addr, size));
 
-    result
-}
+//     result
+// }
 
 unsafe extern "C" fn fun_read(
     letter: i8,
@@ -190,7 +190,7 @@ unsafe extern "C" fn fun_read(
 
     // let stt = timestamp();
 
-    let cnt = file.read_exact(&mut out_slice).unwrap();
+    file.read_exact(&mut out_slice).unwrap();
 
     // qemu_note!("Read in: {} ms", timestamp() - stt);
 
