@@ -736,7 +736,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 	
 	kfree(model);
 
-	if(!is_atapi) {
+	// if(!is_atapi) {
 		int disk_inx = dpm_reg(
 	           (char)dpm_searchFreeIndex(0),
 	           "SATA Disk",
@@ -758,7 +758,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 			dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
 			dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
 		}
-	}
+	// }
 
     ports[port_num].is_atapi = is_atapi;
 
