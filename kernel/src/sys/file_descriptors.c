@@ -43,7 +43,7 @@ size_t file_descriptor_allocate(const char *filename, size_t mode, int *out) {
 }
 
 struct fd_info* file_descriptor_get(int descriptor_number) {
-    for(int i = 0; i < descriptors->size; i++) {
+    for(size_t i = 0; i < descriptors->size; i++) {
         struct fd_info *inf = (struct fd_info *) vector_get(descriptors, i).element;
 
         if (inf->fd == descriptor_number) {
@@ -104,7 +104,7 @@ size_t file_descriptor_close(int descriptor_number) {
     if(descriptor_number < 0 || descriptor_number >= last_descriptor_number)
         return 0;
 
-    for(int i = 0; i < descriptors->size; i++) {
+    for(size_t i = 0; i < descriptors->size; i++) {
         struct fd_info *inf = (struct fd_info *) vector_get(descriptors, i).element;
 
         if (inf->fd == descriptor_number) {

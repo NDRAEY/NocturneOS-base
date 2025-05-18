@@ -420,7 +420,7 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 
 	// FIXME: Simplify statements
 	int index = 0;
-	int i;
+	size_t i;
 	for(i = 0; i < bytes; i += (4 * MB) - 1) {
 		table->prdt_entry[index].dba = buffer_phys + i;
 		table->prdt_entry[index].dbau = 0;
@@ -515,9 +515,13 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 
 	qemu_warn("\033[7mAHCI WRITE STARTED\033[0m");
 
-	char* buffer_mem = kmalloc_common(sector_count * 512, PAGE_SIZE);
-	memset(buffer_mem, 0, sector_count * 512);
-    memcpy(buffer_mem, buffer, sector_count * 512);
+    struct ahci_port_descriptor desc = ports[port_num];
+
+    size_t block_size = desc.is_atapi ? 2048 : 512;
+
+	char* buffer_mem = kmalloc_common(sector_count * block_size, PAGE_SIZE);
+	memset(buffer_mem, 0, sector_count * block_size);
+    memcpy(buffer_mem, buffer, sector_count * block_size);
 
 	size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
 
@@ -538,11 +542,11 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 
 	memset(table, 0, sizeof(HBA_CMD_TBL));
 
-    size_t bytes = sector_count * 512;
+    size_t bytes = sector_count * block_size;
 
 	// FIXME: Simplify statements
 	int index = 0;
-	int i;
+	size_t i;
 	for(i = 0; i < bytes; i += (4 * MB) - 1) {
 		table->prdt_entry[index].dba = buffer_phys + i;
 		table->prdt_entry[index].dbau = 0;
