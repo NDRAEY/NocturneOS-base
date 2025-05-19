@@ -141,12 +141,14 @@ void ac97_init() {
     outw(native_audio_mixer + NAM_RESET, 1);
     qemu_log("Cold reset");
 
+    #ifndef RELEASE
     const uint32_t status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
 
     qemu_log("Status: %d (%x)", status, status);
-    //qemu_log("Status Reserved: %d", status.reserved);
-    //qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
-    //qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
+    qemu_log("Status Reserved: %d", status.reserved);
+    qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
+    qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");
+    #endif
     
     uint16_t extended_audio = inw(native_audio_mixer + NAM_EXTENDED_AUDIO);
     qemu_log("Status: %d", extended_audio);
@@ -275,7 +277,7 @@ void ac97as_set_volume(void* priv, uint8_t left, uint8_t right) {
     qemu_log("Converted to: %d %d %d %d!\n", lch_mas, rch_mas, lch_pcm, rch_pcm);
 
     ac97_set_master_volume(lch_mas, rch_mas, false);
-	ac97_set_pcm_volume(lch_pcm, rch_mas, false);
+	ac97_set_pcm_volume(lch_pcm, rch_pcm, false);
 }
 
 void ac97as_set_rate(void* priv, uint32_t rate) {
