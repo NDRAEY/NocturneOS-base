@@ -36,10 +36,10 @@ RSDPDescriptor* rsdp_find() {
     return rsdp;
 }
 
-bool acpi_checksum_sdt(ACPISDTHeader *tableHeader) {
+bool acpi_checksum_sdt(const ACPISDTHeader *tableHeader) {
     unsigned char sum = 0;
  
-    for (int i = 0; i < tableHeader->Length; i++) {
+    for (size_t i = 0; i < tableHeader->Length; i++) {
         sum += ((char*)tableHeader)[i];
     }
  

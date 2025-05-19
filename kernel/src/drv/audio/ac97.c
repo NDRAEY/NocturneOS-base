@@ -128,9 +128,11 @@ void ac97_init() {
 
     const uint16_t extended_id = inw(native_audio_mixer + NAM_EXTENDED_ID);
 
+    #ifndef RELEASE
     const size_t rev = (extended_id >> 10) & 0b11;
     const char* rev_strs[] = {"r < 21", "r22", "r23"};
     qemu_log("Codec revision: (%d) %s", rev, rev_strs[rev]);
+    #endif
 
     uint32_t gc = inl(native_audio_bus_master + NABM_GLOBAL_CONTROL);
     qemu_log("Received global control: (%d) %x", gc, gc);
@@ -215,7 +217,7 @@ void ac97_FillBDLs() {
     ac97_update_lvi(ac97_lvi);
 }
 
-void ac97_WriteAll(void* buffer, size_t size) {
+void ac97_WriteAll(const void* buffer, size_t size) {
     qemu_log("Start");
 
     size_t loaded = 0;

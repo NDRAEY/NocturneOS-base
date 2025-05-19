@@ -412,7 +412,7 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 
 	if(!drives[drive].is_packet) {
 		// Okay, ATA can only read 256 sectors (128 KB of memory) at one request, so subdivide our data to clusters to manage.
-		int i = 0;
+		size_t i = 0;
 		size_t cluster_count = sector_count / 256;
 		size_t remaining_count = sector_count % 256;
 

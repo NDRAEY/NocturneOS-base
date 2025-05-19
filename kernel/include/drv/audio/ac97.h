@@ -49,7 +49,7 @@ void ac97_update_lvi(uint8_t index);
 void ac97_set_play_sound(bool play);
 void ac97_init();
 void ac97_FillBDLs();
-void ac97_WriteAll(void* buffer, size_t size);
+void ac97_WriteAll(const void* buffer, size_t size);
 bool ac97_is_initialized();
 
 

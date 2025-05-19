@@ -221,7 +221,7 @@ set(C_SRC
 	kernel/src/sys/mtrr.c 
 	kernel/src/net/net_info_cli.c 
 	kernel/src/toys/mala.c 
-	kernel/src/debug/memmeter.c 
+  #kernel/src/debug/memmeter.c 
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
 	# kernel/src/toys/minesweeper.c 
