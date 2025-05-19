@@ -403,7 +403,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
         uint8_t mac_buffer[6] = {0};
 
-        for (int i = 0; i < netcards_get_count(); i++)
+        for (size_t i = 0; i < netcards_get_count(); i++)
         {
             netcard_entry_t *entry = netcard_get(i);
 

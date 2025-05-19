@@ -76,6 +76,7 @@ void ata_dma_set_prdt_entry(prdt_t* prdt, uint16_t index, uint32_t address, uint
     prdt[index].mark_end = is_last ? ATA_DMA_MARK_END : 0;
 }
 
+/*
 void dump_prdt(prdt_t* prdt) {
 	int i = 0;
 	size_t bytes = 0;
@@ -83,10 +84,11 @@ void dump_prdt(prdt_t* prdt) {
 	do {
 		size_t size;
 
-		if(prdt[i].transfer_size == 0)
+		if(prdt[i].transfer_size == 0) {
 			size = 65536;
-		else
+    } else {
 			size = prdt[i].transfer_size;
+    }
 
 		qemu_log("[%d:%d] [Address: %x] -> %d", i, prdt[i].mark_end, prdt[i].buffer_phys, size);
 
@@ -96,6 +98,7 @@ void dump_prdt(prdt_t* prdt) {
 
 	qemu_ok("Entries: %d; Bytes to process: %d", i, bytes);
 }
+*/
 
 status_t ata_dma_read_sector(uint8_t drive, uint8_t *buf, uint32_t lba) {
 	ON_NULLPTR(buf, {
@@ -463,7 +466,7 @@ status_t ata_dma_write(uint8_t drive, const char *buf, uint32_t location, uint32
 
 	if(!drives[drive].is_packet) {
 		// Okay, ATA can only operate with 256 sectors (128 KB of memory) at one request, so subdivide our data to clusters to manage.
-		int i = 0;
+		size_t i = 0;
 		size_t cluster_count = sector_count / 256;
 		size_t remaining_count = sector_count % 256;
 

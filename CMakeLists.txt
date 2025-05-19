@@ -219,7 +219,7 @@ set(C_SRC
 	kernel/src/desktop/eki.c 
 	kernel/src/desktop/parallel_desktop.c 
 	kernel/src/sys/mtrr.c 
-	kernel/src/net/net_info_cli.c 
+  #kernel/src/net/net_info_cli.c 
 	kernel/src/toys/mala.c 
   #kernel/src/debug/memmeter.c 
 	kernel/src/drv/disk/ahci.c 
