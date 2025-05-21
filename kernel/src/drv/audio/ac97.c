@@ -142,9 +142,11 @@ void ac97_init() {
     qemu_log("Cold reset");
 
     #ifndef RELEASE
-    const uint32_t status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
+    const uint32_t raw_status = inl(native_audio_bus_master + NABM_GLOBAL_STATUS);
 
-    qemu_log("Status: %d (%x)", status, status);
+    qemu_log("Status: %d (%x)", raw_status, raw_status);
+
+	const ac97_global_status_t status = *(ac97_global_status_t*)(&status);
     qemu_log("Status Reserved: %d", status.reserved);
     qemu_log("Status Channels: %d", (status.channel==0 ? 2 : (status.channel==1 ? 4 : (status.channel==2 ? 6 : 0))));
     qemu_log("Status Samples: %s", status.sample==1?"16 and 20 bits":"only 16 bits");

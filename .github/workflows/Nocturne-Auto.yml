@@ -28,7 +28,7 @@ jobs:
         run: bash tools/build/make_builds.sh
 
       - name: Step 3 - Build all
-        run: bash -c 'bash tools/build/compile_builds.sh 2>&1 | tee analyzer.txt'
+        run: bash -c 'set -e; bash tools/build/compile_builds.sh 2>&1 | tee analyzer.txt'
 
       - name: Step 8 - Update to the latest unstable release
         uses: "marvinpinto/action-automatic-releases@latest"
