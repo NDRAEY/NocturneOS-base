@@ -64,8 +64,8 @@ struct dev_ps2m_mouse_packet {
  *
  * @return bool - Да/Нет
  */
-bool isMouseInit(){
-    return mouse_ready==1?true:false;
+bool isMouseInit() {
+    return mouse_ready == 1;
 }
 
 /**
@@ -92,12 +92,10 @@ void mouse_parse_packet(const char *buf, uint8_t has_wheel, uint8_t has_5_button
     ps2m_buffer.button_r = mouse_b2;
     ps2m_buffer.button_m = mouse_b3;
 
-
 	if (mouse_b1 || mouse_b2 || mouse_b3 || (mouse_x != mouse_ox) || (mouse_y != mouse_oy)){
         mouse_ox = mouse_x;
         mouse_oy = mouse_y;
 	}
-	//qemu_log("MPP: B1: %d | B2: %d | B3: %d | X:%d | Y:%d",mouse_b1,mouse_b2,mouse_b3,mouse_x,mouse_y);
 
     if (has_wheel) {
         mouse_wheel += (char) ((!!(buf[3] & 0x8)) * 0xf8 | (buf[3] & 0x7));

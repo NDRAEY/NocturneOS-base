@@ -15,13 +15,13 @@
 
 #define MAX_CONNECTIONS 64
 
-tcp_connection_t tcp_connections[MAX_CONNECTIONS] = {};
+tcp_connection_t TCP_CONNECTIONS[MAX_CONNECTIONS] = {};
 
 int tcp_find_connection(uint8_t address[4], size_t port) {
 	for(int i = 0; i < MAX_CONNECTIONS; i++) {
-		if(memcmp((uint8_t*)&tcp_connections[i].dest_ip_addr, address, 4) == 0
-			&& tcp_connections[i].source_port == port
-			&& tcp_connections[i].status != TCP_NONE) {
+		if(memcmp((uint8_t*)&TCP_CONNECTIONS[i].dest_ip_addr, address, 4) == 0
+			&& TCP_CONNECTIONS[i].source_port == port
+			&& TCP_CONNECTIONS[i].status != TCP_NONE) {
 			return i;
 		}
 	}
@@ -34,9 +34,9 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 	int index = -1;
 
 	for(int i = 0; i < MAX_CONNECTIONS; i++) {
-		if(memcmp((uint8_t*)&tcp_connections[i].dest_ip_addr, empty_addr, 4) == 0
-				&& tcp_connections[i].source_port == 0
-				&& tcp_connections[i].status == TCP_NONE) {
+		if(memcmp((uint8_t*)&TCP_CONNECTIONS[i].dest_ip_addr, empty_addr, 4) == 0
+				&& TCP_CONNECTIONS[i].source_port == 0
+				&& TCP_CONNECTIONS[i].status == TCP_NONE) {
 			index = i;
 			break;
 		}
@@ -46,11 +46,11 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 		return false;
 	}
 
-	memcpy(&tcp_connections[index].dest_ip_addr, address, 4);
-	tcp_connections[index].source_port = port;
-	tcp_connections[index].status = TCP_CREATED;
-	tcp_connections[index].seq = seq_nr;
-	tcp_connections[index].card = card;
+	memcpy(&TCP_CONNECTIONS[index].dest_ip_addr, address, 4);
+	TCP_CONNECTIONS[index].source_port = port;
+	TCP_CONNECTIONS[index].status = TCP_CREATED;
+	TCP_CONNECTIONS[index].seq = seq_nr;
+	TCP_CONNECTIONS[index].card = card;
 
 	return true;
 }
@@ -136,9 +136,18 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	}
 	idx = tcp_find_connection(ipv4->Source, packet->source);
 
-	qemu_note("Connection idx: %d", idx);
-
+	tcp_connection_status_t current_status = TCP_CONNECTIONS[idx].status;
+	
+	qemu_note("Connection idx: %d; Status: %x", idx, current_status);
+	
+	// Stage 1. Packet arrived to create connection with us.
+	//          SYN is set; Connection is created by `tcp_new_connection` automatically.
+	//          We send SYN + ACK and wait for ACK. Mark connection as tcp_connection_status_t::TCP_CREATED.
 	bool is_stage_1 = packet->syn && !packet->ack && !packet->psh && !packet->fin;
+	
+	// Stage 2. Packet arrived with connection establishment confirmation.
+	//          ACK is set; Connection is known as tcp_connection_status_t::TCP_CREATED;
+	//          We send nothing. Mark connection as tcp_connection_status_t::TCP_ESTABLISHED.
 	bool is_stage_2 = !packet->syn && packet->ack && !packet->psh && !packet->fin;
 	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
@@ -148,13 +157,13 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t)/* + 8*/, 1);
 		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));	
 
-		tcp_connections[idx].seq = rand();
-		tcp_connections[idx].ack = packet->seq + 1; // Use the received packet's seq (host order)
+		TCP_CONNECTIONS[idx].seq = rand();
+		TCP_CONNECTIONS[idx].ack = packet->seq + 1; // Use the received packet's seq (host order)
 	
 		sendable_packet->ack = 1;
 		sendable_packet->syn = 1; // Ensure SYN is set in response
-		sendable_packet->seq = htonl(tcp_connections[idx].seq);
-		sendable_packet->ack_seq = htonl(tcp_connections[idx].ack);
+		sendable_packet->seq = htonl(TCP_CONNECTIONS[idx].seq);
+		sendable_packet->ack_seq = htonl(TCP_CONNECTIONS[idx].ack);
 	
 		uint16_t dest_port = sendable_packet->destination;
 		uint16_t src_port = sendable_packet->source;
@@ -172,11 +181,15 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		sendable_packet->check = 0; // Reset checksum before calculation
 		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length);
 	
-		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t), ETH_IPv4_HEAD_TCP);
+		ipv4_send_packet(TCP_CONNECTIONS[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t), ETH_IPv4_HEAD_TCP);
 
 		kfree(sendable_packet);
+
+		TCP_CONNECTIONS[idx].status = TCP_CREATED;
 	} else if(is_stage_2) {
-		qemu_note("Stage 2");
+		qemu_note("== STAGE 2 ==");
+
+		// TCP_CONNECTIONS[idx].status = TCP_ESTABLISHED;
 
 		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + 7, 1);
 		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
@@ -185,14 +198,14 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 
 		memcpy(data, "Hello!\n", 7);
 
-		tcp_connections[idx].seq = packet->ack_seq;
-		tcp_connections[idx].ack = packet->seq;
+		TCP_CONNECTIONS[idx].seq = packet->ack_seq;
+		TCP_CONNECTIONS[idx].ack = packet->seq;
 	
 		sendable_packet->psh = 1;
 		sendable_packet->ack = 1;
 		sendable_packet->syn = 0;
-		sendable_packet->seq = htonl(tcp_connections[idx].seq);
-		sendable_packet->ack_seq = htonl(tcp_connections[idx].ack);
+		sendable_packet->seq = htonl(TCP_CONNECTIONS[idx].seq);
+		sendable_packet->ack_seq = htonl(TCP_CONNECTIONS[idx].ack);
 	
 		uint16_t dest_port = sendable_packet->destination;
 		uint16_t src_port = sendable_packet->source;
@@ -207,10 +220,11 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		memcpy(&dst_ip, ipv4->Source, 4);      // Client's IP (from received packet's source)
 		uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
 	
-		sendable_packet->check = 0; // Reset checksum before calculation
 		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length + 7);
 	
-		ipv4_send_packet(tcp_connections[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 7, ETH_IPv4_HEAD_TCP);
+		ipv4_send_packet(TCP_CONNECTIONS[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 7, ETH_IPv4_HEAD_TCP);
+
+		qemu_note("Control packet sent.");
 
 		kfree(sendable_packet);
 	} else {

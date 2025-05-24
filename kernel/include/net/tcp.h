@@ -27,10 +27,10 @@ typedef struct {
 } __attribute__((packed)) tcp_packet_t;
 
 typedef enum {
-	TCP_NONE,
-	TCP_CREATED,
-	TCP_LISTENING,
-	TCP_ESTABLISHED
+	TCP_NONE = 0,
+	TCP_CREATED = 1,
+	TCP_LISTENING = 2,
+	TCP_ESTABLISHED = 3
 } tcp_connection_status_t;
 
 typedef struct {
