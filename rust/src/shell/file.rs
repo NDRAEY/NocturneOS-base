@@ -26,8 +26,8 @@ pub fn file(_ctx: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     println!("File {filepath:?}\n");
 
     println!("Date: {}", file.LastTime.format());
-    println!("Size: {}", { let x = file.Size; x });
-    println!("Mode: {:08x}", { let x = file.Mode; x });
+    println!("Size: {}", {  file.Size });
+    println!("Mode: {:08x}", {  file.Mode });
 
     Ok(())
 }

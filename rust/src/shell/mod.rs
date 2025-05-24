@@ -107,7 +107,7 @@ fn process_input(context: &mut ShellContext) -> String {
             '\u{ab}' => {
                 if let Some(command) = context.command_history.last() {
                     print!("{command}");
-                    input.push_str(&command);
+                    input.push_str(command);
                     break;
                 }
             }

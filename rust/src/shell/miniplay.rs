@@ -13,7 +13,7 @@ extern "C" {
 }
 
 pub fn miniplay_w(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
-    let mut args: Vec<String> = args.into_iter().map(|a| a.to_string()).collect();
+    let mut args: Vec<String> = args.iter().map(|a| a.to_string()).collect();
     args.insert(0, "miniplay".to_owned());
 
     for i in &mut args {

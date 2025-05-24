@@ -395,13 +395,12 @@ add_custom_target(
 )
 
 add_custom_target(
-  check
+	check
 	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} check
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
 )
-
 
 add_custom_target(
 	doc
@@ -411,7 +410,6 @@ add_custom_target(
 	VERBATIM
 )
 
-
 add_custom_target(
     ramdisk
     COMMAND tar cvf ${ISO_DIR}/ramdisk -C ramdisk/ .
@@ -420,28 +418,28 @@ add_custom_target(
 )
 
 add_custom_target(
-        iso
-        COMMAND ${MKRESCUE} ${MKRESCUE_FLAGS}
-        DEPENDS ramdisk
+	iso
+	COMMAND ${MKRESCUE} ${MKRESCUE_FLAGS}
+	DEPENDS ramdisk
 )
 
 add_custom_target(
-        run
-        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS}
-        USES_TERMINAL
-        DEPENDS iso
+	run
+	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS}
+	USES_TERMINAL
+	DEPENDS iso
 )
 
 add_custom_target(
-        run_with_disk
-        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -hda ${CMAKE_SOURCE_DIR}/test_disk.img
-        USES_TERMINAL
-        DEPENDS iso
+	run_with_disk
+	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -hda ${CMAKE_SOURCE_DIR}/test_disk.img
+	USES_TERMINAL
+	DEPENDS iso
 )
 
 add_custom_target(
-        run_with_disk_ahci
-        COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} 	-device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/cdrom,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
-        USES_TERMINAL
-        DEPENDS iso
+	run_with_disk_ahci
+	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} 	-device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/cdrom,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
+	USES_TERMINAL
+	DEPENDS iso
 )

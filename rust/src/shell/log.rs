@@ -31,13 +31,10 @@ pub fn log(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
 
         loop {
             let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
-            match noct_input::kbd::parse_scancode(key as _) {
-                Some((key, _)) => {
-                    if key == Key::Special(SpecialKey::ESCAPE) {
-                        break;
-                    }
+            if let Some((key, _)) = noct_input::kbd::parse_scancode(key as _) {
+                if key == Key::Special(SpecialKey::ESCAPE) {
+                    break;
                 }
-                None => (),
             };
 
             let log_len = noct_il::get_logs().get().len();

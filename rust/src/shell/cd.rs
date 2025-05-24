@@ -18,7 +18,7 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     };
 
     let mut dir = context.current_path.clone();
-    dir.apply(&path);
+    dir.apply(path);
 
     if !Directory::is_accessible(&dir) {
         println!("Cannot access: `{}`", dir.as_str());

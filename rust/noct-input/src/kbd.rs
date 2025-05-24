@@ -128,3 +128,7 @@ pub fn parse_scancode(scancode: u8) -> Option<(Key, bool)> {
 
     key.map(|&a| (a, is_pressed))
 }
+
+// pub fn getchar() -> u32 {
+
+// }

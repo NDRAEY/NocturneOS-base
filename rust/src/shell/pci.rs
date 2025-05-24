@@ -138,7 +138,7 @@ pub fn pci(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     
     let devices = noct_pci::devices();
     for dev in devices.iter() {
-        pci_print_nth(&dev);
+        pci_print_nth(dev);
     }
 
     Ok(())
