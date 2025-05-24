@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 x86 = "0.52.0"
 noct-logger = { path = "../noct-logger" }
+noct-input = { path = "../noct-input" }
+noct-interrupts = { path = "../noct-interrupts" }

@@ -2,8 +2,7 @@ use core::arch::asm;
 
 use x86::io::{inb, outb};
 
-static PS2_DATA_PORT: u16 = 0x60;
-static PS2_STATE_REG: u16 = 0x64;
+use crate::{PS2_DATA_PORT, PS2_STATE_REG};
 
 #[unsafe(no_mangle)]
 #[allow(non_upper_case_globals)]

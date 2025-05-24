@@ -40,7 +40,7 @@ void irq_handler(registers_t regs){
 
 /* @param n - Номер обработчика */
 /* @param handler - Функция обработчик */
-void register_interrupt_handler(uint8_t n, isr_t handler){
+void register_interrupt_handler(uint8_t n, isr_t handler) {
     qemu_warn("Updated handler for IRQ%d", n);
 
     interrupt_handlers[n] = handler;
