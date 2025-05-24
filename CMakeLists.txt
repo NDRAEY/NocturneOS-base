@@ -49,9 +49,8 @@ set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -mno-red-zone -fdiagnostics-color -m32 -march=i386 ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z noexecstack")
-
 
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")
@@ -66,6 +65,10 @@ else()
 	endif()
 	
     set(CMAKE_C_FLAGS "-fuse-ld=lld ${CMAKE_C_FLAGS} -Wl,--build-id=none")
+endif()
+
+if(NOCTURNE_ARCH STREQUAL "x86")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -100,19 +103,20 @@ set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} --loc
 
 # Sources
 
-set(ASM_SRC kernel/asm/init.s 
-	kernel/asm/interrupt.s 
-	kernel/asm/sys_calls.s 
-	kernel/asm/usr.s 
-	kernel/asm/sse.s 
-	kernel/asm/gdt.s 
-	kernel/asm/paging.s 
-	kernel/asm/regs.s 
-	kernel/src/lib/setjmp.s 
-	kernel/asm/switch_task.s 
-)
-
 if(NOCTURNE_ARCH STREQUAL "x86")
+	set(ASM_SRC
+		kernel/asm/init.s 
+		kernel/asm/interrupt.s 
+		kernel/asm/sys_calls.s 
+		kernel/asm/usr.s 
+		kernel/asm/sse.s 
+		kernel/asm/gdt.s 
+		kernel/asm/paging.s 
+		kernel/asm/regs.s 
+		kernel/src/lib/setjmp.s 
+		kernel/asm/switch_task.s 
+	)
+
 	set(C_SRC
 		kernel/src/arch/x86/init.c
 		kernel/src/drv/cmos.c
