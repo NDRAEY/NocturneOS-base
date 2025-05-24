@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(NocturneOS VERSION 0.4.0)
+project(NocturneOS VERSION 0.4.1)
 enable_language(C ASM)
 
 # Options
@@ -50,7 +50,6 @@ set(KERNEL kernel.elf)
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
 set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
-set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/asm/link.ld -static -z noexecstack")
 
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")
@@ -68,7 +67,11 @@ else()
 endif()
 
 if(NOCTURNE_ARCH STREQUAL "x86")
+	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386")
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
+	
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -105,16 +108,16 @@ set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} --loc
 
 if(NOCTURNE_ARCH STREQUAL "x86")
 	set(ASM_SRC
-		kernel/asm/init.s 
-		kernel/asm/interrupt.s 
-		kernel/asm/sys_calls.s 
-		kernel/asm/usr.s 
-		kernel/asm/sse.s 
-		kernel/asm/gdt.s 
-		kernel/asm/paging.s 
-		kernel/asm/regs.s 
+		kernel/src/arch/x86/asm/init.s
+		kernel/src/arch/x86/asm/interrupt.s
+		kernel/src/arch/x86/asm/sys_calls.s
+		kernel/src/arch/x86/asm/usr.s
+		kernel/src/arch/x86/asm/sse.s
+		kernel/src/arch/x86/asm/gdt.s
+		kernel/src/arch/x86/asm/paging.s
+		kernel/src/arch/x86/asm/regs.s 
 		kernel/src/lib/setjmp.s 
-		kernel/asm/switch_task.s 
+		kernel/src/arch/x86/asm/switch_task.s 
 	)
 
 	set(C_SRC
