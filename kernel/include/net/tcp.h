@@ -44,3 +44,4 @@ typedef struct {
 } tcp_connection_t;
 
 void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet);
+void tcp_send_packet(tcp_connection_t* connection, void* data, size_t len);

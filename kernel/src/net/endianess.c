@@ -6,9 +6,11 @@ uint8_t bit_flip_byte(uint8_t byte, int num_bits) {
 }
 
 uint16_t bit_flip_short(uint16_t short_int) {
-    uint32_t first_byte = *((uint8_t*)(&short_int));
-    uint32_t second_byte = *((uint8_t*)(&short_int) + 1);
-    return (first_byte << 8) | (second_byte);
+    // uint32_t first_byte = *((uint8_t*)(&short_int));
+    // uint32_t second_byte = *((uint8_t*)(&short_int) + 1);
+    // return (first_byte << 8) | (second_byte);
+
+    return ((short_int & 0x00ff) << 8) | ((short_int & 0xff00) >> 8);
 }
 
 uint32_t bit_flip_int(uint32_t long_int) {

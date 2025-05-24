@@ -123,7 +123,7 @@ void rtl8139_read_mac() {
 	rtl8139_mac[4] = mac_part2 >> 0;
 	rtl8139_mac[5] = mac_part2 >> 8;
 
-	qemu_log("Mac is: %x:%x:%x:%x:%x:%x", rtl8139_mac[0], rtl8139_mac[1], rtl8139_mac[2], rtl8139_mac[3], rtl8139_mac[4], rtl8139_mac[5]);
+	qemu_log("Mac is: %02x:%02x:%02x:%02x:%02x:%02x", rtl8139_mac[0], rtl8139_mac[1], rtl8139_mac[2], rtl8139_mac[3], rtl8139_mac[4], rtl8139_mac[5]);
 }
 
 void rtl8139_enable_rx_tx() {

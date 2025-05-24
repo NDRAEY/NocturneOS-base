@@ -15,12 +15,12 @@
 
 #define MAX_CONNECTIONS 64
 
-tcp_connection_t TCP_CONNECTIONS[MAX_CONNECTIONS] = {};
+volatile tcp_connection_t TCP_CONNECTIONS[MAX_CONNECTIONS] = {};
 
 int tcp_find_connection(uint8_t address[4], size_t port) {
 	for(int i = 0; i < MAX_CONNECTIONS; i++) {
 		if(memcmp((uint8_t*)&TCP_CONNECTIONS[i].dest_ip_addr, address, 4) == 0
-			&& TCP_CONNECTIONS[i].source_port == port
+			&& (TCP_CONNECTIONS[i].source_port == port || TCP_CONNECTIONS[i].dest_port == port)
 			&& TCP_CONNECTIONS[i].status != TCP_NONE) {
 			return i;
 		}
@@ -128,13 +128,13 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	packet->ack_seq = ntohl(packet->ack_seq);
 	packet->seq = ntohl(packet->seq);
 
-	
 	int idx = -1;
-	if(tcp_find_connection(ipv4->Source, packet->source) == -1) {
-		tcp_new_connection(card, ipv4->Source, packet->source, packet->seq);
-		qemu_ok("Created new connection!");
+	uint16_t sp_port = ntohs(packet->source);
+	if(tcp_find_connection(ipv4->Source, sp_port) == -1) {
+		tcp_new_connection(card, ipv4->Source, sp_port, packet->seq);
+		qemu_ok("Created new connection (port: %d)!", sp_port);
 	}
-	idx = tcp_find_connection(ipv4->Source, packet->source);
+	idx = tcp_find_connection(ipv4->Source, sp_port);
 
 	tcp_connection_status_t current_status = TCP_CONNECTIONS[idx].status;
 	
@@ -143,12 +143,12 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	// Stage 1. Packet arrived to create connection with us.
 	//          SYN is set; Connection is created by `tcp_new_connection` automatically.
 	//          We send SYN + ACK and wait for ACK. Mark connection as tcp_connection_status_t::TCP_CREATED.
-	bool is_stage_1 = packet->syn && !packet->ack && !packet->psh && !packet->fin;
+	bool is_stage_1 = current_status == TCP_CREATED && packet->syn && !packet->ack && !packet->psh && !packet->fin;
 	
 	// Stage 2. Packet arrived with connection establishment confirmation.
 	//          ACK is set; Connection is known as tcp_connection_status_t::TCP_CREATED;
 	//          We send nothing. Mark connection as tcp_connection_status_t::TCP_ESTABLISHED.
-	bool is_stage_2 = !packet->syn && packet->ack && !packet->psh && !packet->fin;
+	bool is_stage_2 = current_status == TCP_CREATED && !packet->syn && packet->ack && !packet->psh && !packet->fin;
 	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
 	if(is_stage_1) {
@@ -185,48 +185,22 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 
 		kfree(sendable_packet);
 
+		// TCP_CONNECTIONS[idx].source_port = ntohs(packet->destination);
+		TCP_CONNECTIONS[idx].dest_port = ntohs(packet->destination);
 		TCP_CONNECTIONS[idx].status = TCP_CREATED;
 	} else if(is_stage_2) {
 		qemu_note("== STAGE 2 ==");
 
-		// TCP_CONNECTIONS[idx].status = TCP_ESTABLISHED;
+		tcp_connection_t* connection = TCP_CONNECTIONS + idx;
 
-		tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + 7, 1);
-		memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
+		connection->status = TCP_ESTABLISHED;
 
-		char* data = (char*)(sendable_packet + 1);
+		qemu_ok("Connection established!");
 
-		memcpy(data, "Hello!\n", 7);
+		char* data = "Hello, world!\n";
+		size_t length = strlen(data);
 
-		TCP_CONNECTIONS[idx].seq = packet->ack_seq;
-		TCP_CONNECTIONS[idx].ack = packet->seq;
-	
-		sendable_packet->psh = 1;
-		sendable_packet->ack = 1;
-		sendable_packet->syn = 0;
-		sendable_packet->seq = htonl(TCP_CONNECTIONS[idx].seq);
-		sendable_packet->ack_seq = htonl(TCP_CONNECTIONS[idx].ack);
-	
-		uint16_t dest_port = sendable_packet->destination;
-		uint16_t src_port = sendable_packet->source;
-		sendable_packet->source = ntohs(dest_port);
-		sendable_packet->destination = ntohs(src_port);
-	
-		sendable_packet->doff = 5; // Header length (5 * 4 = 20 bytes)
-	
-		// Calculate checksum with correct IPs and TCP length
-		uint32_t src_ip, dst_ip;
-		memcpy(&src_ip, ipv4->Destination, 4); // Server's IP (from received packet's destination)
-		memcpy(&dst_ip, ipv4->Source, 4);      // Client's IP (from received packet's source)
-		uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
-	
-		sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length + 7);
-	
-		ipv4_send_packet(TCP_CONNECTIONS[idx].card, ipv4->Source, sendable_packet, sizeof(tcp_packet_t) + 7, ETH_IPv4_HEAD_TCP);
-
-		qemu_note("Control packet sent.");
-
-		kfree(sendable_packet);
+		tcp_send_packet(TCP_CONNECTIONS + idx, data, length);
 	} else {
 		qemu_note("== ANOTHER STAGE! ==");
 		qemu_note("== ANOTHER STAGE! ==");
@@ -236,4 +210,48 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	}
 
 	qemu_log("Finished handling");
+}
+
+void tcp_send_packet(tcp_connection_t* connection, void* data, size_t len) {
+	qemu_note("S: %d; D: %d", connection->source_port, connection->dest_port);
+
+	tcp_packet_t* sendable_packet = kcalloc(sizeof(tcp_packet_t) + len, 1);
+	// memcpy(sendable_packet, packet, sizeof(tcp_packet_t));
+
+	char* inner_data = (char*)(sendable_packet + 1);
+
+	memcpy(inner_data, data, len);
+
+	// qemu_log("CS: %x; CA: %x; PS: %x; PA: %x", connection->seq, connection->ack, packet->seq, packet->ack_seq);
+	// qemu_log("Was: %x; %x", connection->seq, connection->ack);
+
+	connection->seq += 1;
+
+	// qemu_log("Became: %x; %x (Should be: %x; %x)", connection->seq, connection->ack, packet->ack_seq, packet->seq);
+
+	sendable_packet->source = connection->dest_port;
+	sendable_packet->destination = connection->source_port;
+	sendable_packet->window = 0xfffa;
+	sendable_packet->psh = 1;
+	sendable_packet->ack = 1;
+	sendable_packet->syn = 0;
+	sendable_packet->seq = htonl(connection->seq);
+	sendable_packet->ack_seq = htonl(connection->ack);
+
+	sendable_packet->doff = 5; // Header length (5 * 4 = 20 bytes)
+
+	// Calculate checksum with correct IPs and TCP length
+	uint32_t src_ip, dst_ip;
+	memcpy(&src_ip, connection->card->ipv4_addr, 4); // Server's IP (from received packet's destination)
+	memcpy(&dst_ip, &connection->dest_ip_addr, 4);      // Client's IP (from received packet's source)
+	uint16_t tcp_length = sizeof(tcp_packet_t); // Adjust if options are added
+
+	// CLARIFICATION: We set this field to zero to calculate checksum - the field should be zeroed.
+	//                If not, the checksum will be always invalid.
+	sendable_packet->check = 0;
+	sendable_packet->check = tcp_calculate_checksum(src_ip, dst_ip, sendable_packet, tcp_length + len);
+
+	ipv4_send_packet(connection->card, (uint8_t*)&connection->dest_ip_addr, sendable_packet, sizeof(tcp_packet_t) + len, ETH_IPv4_HEAD_TCP);
+
+	kfree(sendable_packet);
 }
