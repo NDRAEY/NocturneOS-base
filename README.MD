@@ -56,6 +56,8 @@ NocturneOS - это форк операционной системы SayoriOS.
   - Мышь PS/2
   - Пищалка (Buzzer, PC Speaker)
   - Realek RTL-8139 (Драйвер для работы с сетью)
+  - ATA (PIO + DMA; HD + Optical)
+  - AHCI (HD + Optical)
 - Файлы и папки
   - Виртуальная файловая система
   - TarFS
