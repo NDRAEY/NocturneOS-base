@@ -30,6 +30,7 @@ pub mod meminfo;
 pub mod miniplay;
 pub mod parallel_desktop;
 pub mod pavi;
+#[cfg(target_arch = "x86")]
 pub mod pci;
 pub mod reboot;
 
@@ -49,6 +50,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     cat::CAT_COMMAND_ENTRY,
     parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,
+    #[cfg(target_arch = "x86")]
     pci::PCI_COMMAND_ENTRY,
     mala::MALA_COMMAND_ENTRY,
     pavi::PAVI_COMMAND_ENTRY,

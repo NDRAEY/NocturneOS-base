@@ -29,7 +29,9 @@ pub use noct_audio::c_api;
 pub use noct_ipc::manager::ipc_init;
 
 pub use noct_fatfs;
+#[cfg(target_arch = "x86")]
 pub use noct_pci;
+#[cfg(target_arch = "x86")]
 pub use noct_ps2;
 
 #[global_allocator]
@@ -47,6 +49,7 @@ fn panic(_info: &PanicInfo) -> ! {
     println!("{}", _info);
 
     loop {
+        #[cfg(target_arch = "x86")]
         unsafe {
             asm!("hlt");
         }
@@ -59,12 +62,15 @@ fn panic(_info: &PanicInfo) -> ! {
 pub extern "C" fn rust_main() {
     println!("Привет, {}!", "Rust");
 
-    let smbios = noct_smbios::find_smbios().unwrap();
+    #[cfg(target_arch = "x86")]
+    {
+        let smbios = noct_smbios::find_smbios().unwrap();
 
-    qemu_note!("SMBIOS: {smbios:x?}");
+        qemu_note!("SMBIOS: {smbios:x?}");
 
-    for i in smbios.scan() {
-        qemu_note!("{i:?}");
+        for i in smbios.scan() {
+            qemu_note!("{i:?}");
+        }
     }
 
     // let mut p = Path::from_path("R:/").unwrap();

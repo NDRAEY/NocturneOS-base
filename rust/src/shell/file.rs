@@ -17,7 +17,7 @@ pub fn file(_ctx: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let filepath = args[0];
 
     let rawfp = CString::new(filepath).unwrap();
-    let rawfp: *mut i8 = rawfp.into_raw();
+    let rawfp = rawfp.into_raw();
 
     let file = unsafe { nvfs_info(rawfp) };
 
