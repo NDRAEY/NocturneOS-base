@@ -254,12 +254,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "font8x8"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "875488b8711a968268c7cf5d139578713097ca4635a76044e8fe8eedf831d07e"
-
-[[package]]
 name = "getrandom"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -269,26 +263,6 @@ dependencies = [
  "libc",
  "r-efi",
  "wasi",
-]
-
-[[package]]
-name = "gi-derive"
-version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#a6410e34bbae218943b6fcd0f40d1bb55b5e70eb"
-dependencies = [
- "quote",
- "syn",
-]
-
-[[package]]
-name = "gi-ui"
-version = "0.1.0"
-source = "git+https://github.com/NDRAEY/gi-ui#a6410e34bbae218943b6fcd0f40d1bb55b5e70eb"
-dependencies = [
- "embedded-graphics",
- "font8x8",
- "gi-derive",
- "tinytga",
 ]
 
 [[package]]
@@ -721,7 +695,10 @@ checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 name = "pavi"
 version = "0.1.0"
 dependencies = [
- "gi-ui",
+ "eg-seven-segment",
+ "embedded-canvas",
+ "embedded-graphics",
+ "embedded-layout",
  "nimage",
  "noct-fs",
  "noct-input",

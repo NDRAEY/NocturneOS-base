@@ -8,7 +8,17 @@ use alloc::{
     format,
     string::{String, ToString},
 };
-use gi_ui::{canvas::Canvas, components::text8x8::Text, draw::Draw, size::Size};
+use embedded_canvas::Canvas;
+use embedded_graphics::{
+    Drawable,
+    mono_font::{
+        MonoTextStyle,
+        ascii::{FONT_8X13, FONT_8X13_BOLD},
+    },
+    pixelcolor::Rgb888,
+    prelude::{Dimensions, Point, RgbColor, Size},
+    text::{Baseline, Text},
+};
 use nimage::Image;
 use noct_input::{
     kbd::{Key, SpecialKey, parse_scancode},
@@ -25,28 +35,32 @@ enum ShowMode {
     Stretch,
 }
 
-struct Pavi {
+struct Pavi<'a> {
     filepath: String,
     image: Image,
     render_mode: RefCell<ShowMode>,
+
+    text_ch_style: MonoTextStyle<'a, Rgb888>,
+    show_status: bool,
 }
 
-impl Pavi {
+impl Pavi<'_> {
     pub fn new(fpath: &str) -> Result<Self, String> {
         let data = match noct_fs::read(fpath) {
             Ok(x) => x,
             Err(e) => return Err(e.to_string()),
         };
 
-        let image = match nimage::tga::from_tga_data(data.as_slice()) {
-            Some(x) => x,
-            None => return Err("Invalid file format.".to_string()),
+        let Some(image) = nimage::tga::from_tga_data(data.as_slice()) else {
+            return Err("Invalid file format.".to_string());
         };
 
         Ok(Self {
             filepath: fpath.to_string(),
             image,
             render_mode: RefCell::new(ShowMode::BoundsX),
+            text_ch_style: MonoTextStyle::new(&FONT_8X13_BOLD, Rgb888::new(0, 0xcc, 0)),
+            show_status: true,
         })
     }
 
@@ -59,8 +73,6 @@ impl Pavi {
 
         let im_w = self.image.width();
         let im_h = self.image.height();
-
-        // qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
 
         match *self.render_mode.borrow() {
             ShowMode::BoundsX => {
@@ -83,36 +95,17 @@ impl Pavi {
                 (width, height) = (scr_w, scr_h);
             }
             ShowMode::Centered => {
-                if im_w < scr_w {
-                    start_x = (scr_w as isize - im_w as isize) / 2;
-                }
-
-                if im_h < scr_h {
-                    start_y = (scr_h as isize - im_h as isize) / 2;
-                }
+                start_x = (scr_w as isize - im_w as isize) / 2;
+                start_y = (scr_h as isize - im_h as isize) / 2;
 
                 (width, height) = (im_w, im_h);
             }
         }
 
+        qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
+        qemu_note!("{start_x} {start_y} {width} {height}");
+
         let new_image = self.image.scale_to_new(width, height);
-
-        let mut text = Text::new()
-            .with_color(0xff_00ff00)
-            .with_kerning(1)
-            .with_size(12)
-            .with_text(format!(
-                "{} - [{}x{}] ({:?} | {:?}) ({scr_w}x{scr_h})",
-                self.filepath,
-                self.image.width(),
-                self.image.height(),
-                self.render_mode.borrow(),
-                self.image.pixel_format()
-            ));
-
-        let mut canvas = Canvas::new(text.size().0, text.size().1);
-
-        text.draw(&mut canvas, 0, 0);
 
         noct_screen::fill(0);
 
@@ -140,24 +133,40 @@ impl Pavi {
             }
         }
 
-        let csz = canvas.size();
+        if self.show_status {
+            let fmted = format!(
+                "{} - [{}x{}] ({:?} | {:?}) ({scr_w}x{scr_h})",
+                self.filepath,
+                self.image.width(),
+                self.image.height(),
+                self.render_mode.borrow(),
+                self.image.pixel_format()
+            );
 
-        for x in 0..csz.0 {
-            for y in 0..csz.1 {
-                let pixel = canvas.get_pixel(x, y).unwrap();
+            let text =
+                Text::with_baseline(&fmted, Point::new(0, 0), self.text_ch_style, Baseline::Top);
 
-                if (pixel & 0xFF000000) == 0 {
-                    continue;
+            let sz = text.bounding_box().size;
+            let mut canvas: Canvas<Rgb888> = Canvas::new(Size::new(sz.width, sz.height));
+
+            text.draw(&mut canvas).unwrap();
+
+            for x in 0..sz.width {
+                for y in 0..sz.height {
+                    let coord = (y * sz.width) + x;
+                    let pixel = canvas.pixels[coord as usize]
+                        .map(|x| ((x.r() as u32) << 16) | ((x.g() as u32) << 8) | (x.b() as u32))
+                        .unwrap_or(0);
+
+                    noct_screen::set_pixel(x as _, y as _, pixel);
                 }
-
-                noct_screen::set_pixel(x, y, pixel);
             }
         }
 
         noct_screen::flush();
     }
 
-    pub fn run(&self) {
+    pub fn run(&mut self) {
         self.render_image();
 
         loop {
@@ -178,6 +187,11 @@ impl Pavi {
             match key {
                 Key::Special(SpecialKey::ESCAPE) => {
                     break;
+                }
+                Key::Character('s') => {
+                    self.show_status = !self.show_status;
+
+                    self.render_image();
                 }
                 Key::Character('t') => {
                     let next_mode = match *self.render_mode.borrow() {
@@ -205,12 +219,12 @@ pub fn pavi(argv: &[&str]) -> Result<(), usize> {
         None => {
             println!("Provide a file!");
             println!("Usage: pavi <filename>");
-    
+
             return Err(1);
-        },
+        }
     };
 
-    let pavi = match Pavi::new(filename) {
+    let mut pavi = match Pavi::new(filename) {
         Ok(pavi) => pavi,
         Err(e) => {
             println!("{filename}: {e}");
