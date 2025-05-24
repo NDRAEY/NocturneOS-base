@@ -8,7 +8,7 @@ typedef struct stackframe {
 } stackframe;
 
 #ifndef RELEASE
-void unwind_stack(uint32_t MaxFrames);
+void unwind_stack(uint32_t max_frames);
 #else
-#define unwind_stack(_)
+void unwind_stack(uint32_t max_frames);
 #endif

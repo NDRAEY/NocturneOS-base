@@ -8,7 +8,7 @@
 
 extern bool stateTTY;
 
-void tty_fontConfigurate();
+void tty_init();
 
 void _tty_putchar(uint16_t c);
 void _tty_puts(const char str[]);

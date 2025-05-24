@@ -44,7 +44,6 @@
 #include <drv/disk/ata_dma.h>
 
 #include <drv/cmos.h>
-#include <drv/pci.h>
 #include <drv/beeper.h>
 #include <drv/psf.h>
 #include "drv/disk/ata.h"
@@ -76,3 +75,4 @@
 #include "generated/tarfs.h"
 #include "generated/noctfs.h"
 #include "generated/fatfs.h"
+#include "generated/pci.h"

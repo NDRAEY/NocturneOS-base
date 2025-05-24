@@ -246,13 +246,10 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
 
         let wav = nwav::WAV::from_data(&bytes);
 
-        let chunk = match wav.read_chunk_by_name("fmt ") {
-            Some(Format(chunk)) => chunk,
-            _ => {
-                println!("Cannot read the `fmt ` chunk! Are you sure that's a WAV file?");
+        let Some(Format(chunk)) = wav.read_chunk_by_name("fmt ") else {
+            println!("Cannot read the `fmt ` chunk! Are you sure that's a WAV file?");
 
-                return Err(2);
-            }
+            return Err(2);
         };
 
         let meta = match wav.read_chunk_by_name("LIST") {

@@ -176,7 +176,7 @@ FSM_FILE nvfs_info(const char* Name){
 		);
     // }
 
-	FSM_FILE file = {};
+	FSM_FILE file = { .Ready = 0 };
 
 	if (vinfo->Ready != 1){
 		goto end;

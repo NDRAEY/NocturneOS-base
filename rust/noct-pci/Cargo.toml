@@ -1,0 +1,16 @@
+[package]
+name = "noct-pci"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+noct-logger = { path = "../noct-logger" }
+noct-il = { path = "../noct-il" }
+noct-timer = { path = "../noct-timer" }
+
+spin = "0.10.0"
+x86 = "0.52.0"
+
+[build-dependencies]
+cbindgen = { version = "0.28.0", default-features = false }

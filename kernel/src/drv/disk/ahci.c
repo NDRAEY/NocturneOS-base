@@ -2,7 +2,7 @@
 
 #include <lib/math.h>
 
-#include "drv/pci.h"
+#include "generated/pci.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
@@ -12,7 +12,6 @@
 #include "drv/atapi.h"
 #include "net/endianess.h"
 #include "drv/disk/dpm.h"
-//#include "debug/hexview.h"
 
 #define AHCI_CLASS 1
 #define AHCI_SUBCLASS 6
@@ -178,7 +177,7 @@ void ahci_init() {
         }
 	}
 
-	for(int i = 0; i < 32; i++) {
+	for(register int i = 0; i < 32; i++) {
 		if(abar->port_implemented & (1 << i)) {
 			volatile AHCI_HBA_PORT* port = abar->ports + i;
 

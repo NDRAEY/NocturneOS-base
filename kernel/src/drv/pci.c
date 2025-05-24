@@ -8,7 +8,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include <drv/pci.h>
+#include <generated/pci.h>
 
 /**
  * @brief [PCI] Поставщики устройств

@@ -64,7 +64,7 @@ pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
     let mut file_path_string = String::from(file_path);
     file_path_string.push('\0');
 
-    let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"r".as_ptr() as _) };
+    let file = unsafe { fopen(file_path_string.as_ptr(), c"r".as_ptr() as _) };
 
     if file.is_null() {
         return Err("Failed to open file.");

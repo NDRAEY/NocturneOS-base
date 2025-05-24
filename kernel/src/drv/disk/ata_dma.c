@@ -1,6 +1,6 @@
 #include "common.h"
 #include "drv/disk/ata_dma.h"
-#include "drv/pci.h"
+#include "generated/pci.h"
 #include "io/ports.h"
 #include "mem/vmm.h"
 #include "mem/pmm.h"
@@ -14,11 +14,11 @@
 #define ATA_DMA_READ 0xC8
 #define ATA_DMA_WRITE 0xCA
 
-uint8_t ata_busnum;
-uint8_t ata_slot;
-uint8_t ata_func;
+uint8_t ata_busnum = 0;
+uint8_t ata_slot = 0;
+uint8_t ata_func = 0;
 
-uint16_t ata_dma_bar4;
+uint16_t ata_dma_bar4 = 0;
 
 prdt_t* ata_dma_prdt = 0;
 size_t ata_dma_phys_prdt = 0;

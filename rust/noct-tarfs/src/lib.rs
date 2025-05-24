@@ -11,7 +11,7 @@ use alloc::{
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
 };
-use noct_logger::{qemu_err, qemu_log};
+use noct_logger::{qemu_err, qemu_log, qemu_note};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
@@ -73,7 +73,7 @@ unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *con
 }
 
 unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
-    //qemu_note!("INFO!!!!!");
+    // qemu_note!("INFO!!!!!");
 
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(dev);

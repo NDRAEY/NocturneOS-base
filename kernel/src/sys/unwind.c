@@ -44,14 +44,16 @@ bool get_func_name_by_addr(size_t addr) {
     return false;
 }
 
-void unwind_stack(uint32_t MaxFrames) {
+void unwind_stack(uint32_t max_frames) {
+    qemu_log("Unwind!");
+    
     struct stackframe *stk = 0;
     __asm__ volatile("movl %%ebp, %0" : "=r"(stk) :: );
 
     qemu_log("Stack trace:");
     tty_printf("Stack trace:\n");
 
-    for(uint32_t frame = 0; stk && frame < MaxFrames; ++frame) {
+    for(uint32_t frame = 0; stk && frame < max_frames; ++frame) {
         bool exists = get_func_name_by_addr(stk->eip);
 
         qemu_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
@@ -63,4 +65,10 @@ void unwind_stack(uint32_t MaxFrames) {
         stk = stk->ebp;
     }
 }
+#else
+
+void unwind_stack(uint32_t max_frames) {
+    (void)max_frames;
+}
+
 #endif

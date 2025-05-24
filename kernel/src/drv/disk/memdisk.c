@@ -2,7 +2,6 @@
 
 #include <lib/math.h>
 
-#include "drv/pci.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"

@@ -29,13 +29,20 @@ pub use noct_audio::c_api;
 pub use noct_ipc::manager::ipc_init;
 
 pub use noct_fatfs;
+pub use noct_pci;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;
 
+unsafe extern "C" {
+    fn unwind_stack(frames: u32);
+}
+
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     qemu_err!("{}", _info);
+    unsafe { unwind_stack(10) };
+    
     println!("{}", _info);
 
     loop {

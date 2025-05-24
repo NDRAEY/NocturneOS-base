@@ -6,7 +6,7 @@
 #include <lib/math.h>
 #include <drv/audio/ac97.h>
 #include "io/ports.h"
-#include "drv/pci.h"
+#include "generated/pci.h"
 #include "mem/pmm.h"
 #include "lib/stdio.h"
 #include "mem/vmm.h"

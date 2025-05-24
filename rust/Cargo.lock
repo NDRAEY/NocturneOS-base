@@ -533,7 +533,6 @@ dependencies = [
 name = "noct-ksymparser"
 version = "0.1.0"
 dependencies = [
- "arrayref",
  "noct-logger",
 ]
 
@@ -562,6 +561,18 @@ name = "noct-path"
 version = "0.1.0"
 dependencies = [
  "noct-logger",
+]
+
+[[package]]
+name = "noct-pci"
+version = "0.1.0"
+dependencies = [
+ "cbindgen",
+ "noct-il",
+ "noct-logger",
+ "noct-timer",
+ "spin 0.10.0",
+ "x86",
 ]
 
 [[package]]
@@ -659,6 +670,7 @@ dependencies = [
  "noct-logger",
  "noct-noctfs",
  "noct-path",
+ "noct-pci",
  "noct-psf",
  "noct-sched",
  "noct-screen",

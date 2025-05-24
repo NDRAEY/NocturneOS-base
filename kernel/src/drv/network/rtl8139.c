@@ -8,7 +8,7 @@
 
 #include <drv/rtl8139.h>
 #include <net/cards.h>
-#include <drv/pci.h>
+#include <generated/pci.h>
 #include <io/ports.h>
 #include <net/endianess.h>
 #include <net/ethernet.h>

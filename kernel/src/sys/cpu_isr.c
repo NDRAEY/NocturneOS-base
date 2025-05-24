@@ -32,15 +32,7 @@ _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint3
     qemu_printf("| \n");
     qemu_printf("======================================================\n");
 
-    /* extern char _temp_funcname[1024]; */
-
-    /* bool exists = get_func_name_by_addr(regs.eip); */
-
-    /* qemu_err("Failed on: %s", exists ? _temp_funcname : "???"); */
-
     unwind_stack(10);
-
-    /* heap_dump(); */
 
     qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
 

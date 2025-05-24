@@ -25,6 +25,7 @@
 //       default_console.c - TTY client
 
 // TODO: Keep here.
+static bool is_initialized = false;
 volatile uint8_t tty_feedback = 1;		/// ...
 uint32_t tty_pos_x = 0;						/// Позиция на экране по X
 uint32_t tty_pos_y = 0;						/// Позиция на экране по Y
@@ -57,10 +58,12 @@ void tty_taskInit() {
 			   false);
 }
 
-void tty_fontConfigurate() {
+void tty_init() {
     tty_off_pos_x = 8;
     tty_off_pos_p = 0;
     tty_off_pos_h = 16;
+
+    is_initialized = true;
 }
 
 void tty_changeState(bool state){
@@ -181,6 +184,10 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
  * @param c - символ
  */
 void _tty_putchar(uint16_t c) {
+    if(!is_initialized) {
+        return;
+    }
+
     if ((tty_pos_x + tty_off_pos_x) >= VESA_WIDTH || c == '\n') {
         tty_pos_x = 0;
 
@@ -213,6 +220,10 @@ void _tty_putchar(uint16_t c) {
  *
  */
 void tty_backspace() {
+    if(!is_initialized) {
+        return;
+    }
+    
     if (tty_pos_x < (uint32_t)tty_off_pos_x) {
         if (tty_pos_y >= tty_off_pos_h) {
             tty_pos_y -= tty_off_pos_h;
@@ -233,6 +244,10 @@ void tty_backspace() {
  * @param str - строка
  */
 void _tty_puts(const char* str) {
+    if(!is_initialized) {
+        return;
+    }
+    
     for (size_t i = 0, len = strlen(str); i < len; i++) {
         uint16_t ch = (uint16_t)(uint8_t)str[i];
 
@@ -254,7 +269,11 @@ void _tty_puts(const char* str) {
  * @param args - аргументы
  */
 void _tty_print(const char* format, va_list args) {
-	char* a = 0;
+	if(!is_initialized) {
+        return;
+    }
+    
+    char* a = 0;
 
 	vasprintf(&a, format, args);
 
@@ -264,7 +283,11 @@ void _tty_print(const char* format, va_list args) {
 }
 
 void _tty_printf(const char *text, ...) {
-	int sAT = (showAnimTextCursor?1:0);
+	if(!is_initialized) {
+        return;
+    }
+    
+    int sAT = (showAnimTextCursor?1:0);
     if (sAT == 1){
 		showAnimTextCursor = false;
 	}

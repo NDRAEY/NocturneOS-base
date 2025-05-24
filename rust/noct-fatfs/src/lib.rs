@@ -233,7 +233,7 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
 
     qemu_note!("{path:?} | {pardir:?}");
 
-    let mut dir = if pardir.as_str() == "/" {
+    let dir = if pardir.as_str() == "/" {
         Ok(fat.root_dir())
     } else {
         fat.root_dir().open_dir(pardir.as_str())

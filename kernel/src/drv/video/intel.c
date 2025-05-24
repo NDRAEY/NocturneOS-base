@@ -2,7 +2,7 @@
 // WARNING: Driver is in WIP STAGE
 // For SayoriOS ;)
 
-#include "drv/pci.h"
+#include "generated/pci.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
@@ -58,7 +58,7 @@ void igfx_init() {
 
     pci_enable_bus_mastering(igfx_bus, igfx_slot, igfx_func);
 
-    igfx_addr = pci_read32(igfx_bus, igfx_slot, igfx_func, PCI_BAR0) & ~0xF;
+    igfx_addr = pci_read32(igfx_bus, igfx_slot, igfx_func, 0x10) & ~0xF;  // BAR0
 
     map_pages(
         get_kernel_page_directory(),

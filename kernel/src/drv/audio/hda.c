@@ -2,7 +2,7 @@
 // Created by ndraey on 21.01.24.
 //
 
-#include "drv/pci.h"
+#include "generated/pci.h"
 #include "drv/audio/hda.h"
 #include "io/ports.h"
 #include "io/tty.h"

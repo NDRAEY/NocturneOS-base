@@ -223,10 +223,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     qemu_log("SSE: %s", sse_check() ? "Supported" : "Not supported");
 
-    if (sse_check()) {
-        fpu_save();
-    }
-
     qemu_log("Setting `Interrupt Descriptor Table`...");
     init_descriptor_tables();
     
@@ -306,7 +302,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     psf_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
 
     qemu_log("Initalizing fonts...");
-    tty_fontConfigurate();
+    tty_init();
 
     clean_screen();
 
