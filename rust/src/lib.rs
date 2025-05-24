@@ -30,6 +30,7 @@ pub use noct_ipc::manager::ipc_init;
 
 pub use noct_fatfs;
 pub use noct_pci;
+pub use noct_ps2;
 
 #[global_allocator]
 static ALLOCATOR: Allocator = noct_alloc::Allocator;

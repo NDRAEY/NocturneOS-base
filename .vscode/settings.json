@@ -8,5 +8,12 @@
     "rust-analyzer.linkedProjects": [
         "rust/Cargo.toml",
         "utils/chen/Cargo.toml"
-    ]
+    ],
+    "rust-analyzer.restartServerOnConfigChange": true,
+    "rust-analyzer.completion.fullFunctionSignatures.enable": true,
+    "rust-analyzer.completion.postfix.enable": false,
+    "rust-analyzer.completion.privateEditable.enable": false,
+    "rust-analyzer.inlayHints.genericParameterHints.type.enable": true,
+    "rust-analyzer.inlayHints.genericParameterHints.lifetime.enable": true,
+    "rust-analyzer.inlayHints.lifetimeElisionHints.enable": "skip_trivial",
 }

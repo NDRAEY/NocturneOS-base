@@ -557,6 +557,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-ps2"
+version = "0.1.0"
+dependencies = [
+ "noct-logger",
+ "x86",
+]
+
+[[package]]
 name = "noct-psf"
 version = "0.1.0"
 dependencies = [
@@ -645,6 +653,7 @@ dependencies = [
  "noct-noctfs",
  "noct-path",
  "noct-pci",
+ "noct-ps2",
  "noct-psf",
  "noct-sched",
  "noct-screen",
