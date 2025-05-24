@@ -38,5 +38,5 @@ pub fn read_to_string() -> String {
         // tty_printf("%c", ch);
     }
 
-    String::from_utf8_lossy(&st[..]).into_owned()
+    String::from_utf8_lossy(&st).into_owned()
 }

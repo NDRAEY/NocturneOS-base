@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::{CStr, c_void};
+use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{string::String, vec::Vec};
 use fatfs::{File, FsOptions, Read, Seek, SeekFrom};
@@ -69,7 +69,7 @@ impl fatfs::Seek for DiskFile {
     }
 }
 
-fn raw_ptr_to_string(ptr: *const i8) -> String {
+fn raw_ptr_to_string(ptr: *const c_char) -> String {
     let c_str = unsafe { CStr::from_ptr(ptr) };
     c_str.to_string_lossy().into_owned()
 }
@@ -104,8 +104,8 @@ fn raw_ptr_to_string(ptr: *const i8) -> String {
 // }
 
 unsafe extern "C" fn fun_read(
-    letter: i8,
-    path: *const i8,
+    letter: c_char,
+    path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *mut c_void,
@@ -196,12 +196,12 @@ unsafe extern "C" fn fun_read(
     count
 }
 
-unsafe extern "C" fn fun_write(_a: i8, _b: *const i8, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(_a: c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
+unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let fat = fatfs::FileSystem::new(
@@ -264,17 +264,17 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     }
 }
 
-unsafe extern "C" fn fun_create(_a: i8, _b: *const i8, _c: u32) -> i32 {
+unsafe extern "C" fn fun_create(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
+unsafe extern "C" fn fun_delete(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Deleting is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_dir(letter: i8, path: *const i8, out: *mut FSM_DIR) {
+unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_DIR) {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let fat = fatfs::FileSystem::new(
@@ -351,12 +351,12 @@ fn fat_time_to_fsm(modified: fatfs::DateTime) -> FSM_TIME {
     }
 }
 
-unsafe extern "C" fn fun_label(_a: i8, b: *mut i8) {
+unsafe extern "C" fn fun_label(_a: c_char, b: *mut c_char) {
     unsafe { b.copy_from(FSNAME.as_ptr() as *const _, 6) };
     // qemu_log!("Label!!");
 }
 
-unsafe extern "C" fn fun_detect(letter: i8) -> i32 {
+unsafe extern "C" fn fun_detect(letter: c_char) -> i32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     qemu_note!("Fatfs try to detect!");

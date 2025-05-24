@@ -46,11 +46,11 @@ impl FSM_FILE {
         };
 
         for (i, &byte) in name.as_bytes().iter().take(max_len).enumerate() {
-            file.Name[i] = byte as i8;
+            file.Name[i] = byte as _;
         }
 
         for (i, &byte) in path.as_bytes().iter().take(max_len).enumerate() {
-            file.Path[i] = byte as i8;
+            file.Path[i] = byte as _;
         }
 
         file

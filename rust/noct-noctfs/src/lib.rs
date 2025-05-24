@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::{CStr, c_void};
+use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{
     string::{String, ToString},
@@ -19,14 +19,14 @@ pub mod disk_device;
 
 static FSNAME: &[u8] = b"NoctFS\0";
 
-fn raw_ptr_to_string(ptr: *const i8) -> String {
+fn raw_ptr_to_string(ptr: *const c_char) -> String {
     let c_str = unsafe { CStr::from_ptr(ptr) };
     c_str.to_string_lossy().into_owned()
 }
 
 unsafe extern "C" fn fun_read(
-    letter: i8,
-    path: *const i8,
+    letter: c_char,
+    path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *mut c_void,
@@ -47,8 +47,8 @@ unsafe extern "C" fn fun_read(
 }
 
 unsafe extern "C" fn fun_write(
-    letter: i8,
-    path: *const i8,
+    letter: c_char,
+    path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *const c_void,
@@ -68,7 +68,7 @@ unsafe extern "C" fn fun_write(
     count
 }
 
-unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
+unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
     let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let mut diskdev = DiskDevice::new(disk);
@@ -100,7 +100,7 @@ unsafe extern "C" fn fun_info(letter: i8, path: *const i8) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
+unsafe extern "C" fn fun_create(letter: c_char, path: *const c_char, mode: u32) -> i32 {
     let path = raw_ptr_to_string(path);
     qemu_note!("Create: {}", &path);
 
@@ -157,7 +157,7 @@ unsafe extern "C" fn fun_create(letter: i8, path: *const i8, mode: u32) -> i32 {
     1
 }
 
-unsafe extern "C" fn fun_delete(_a: i8, _b: *const i8, _c: u32) -> i32 {
+unsafe extern "C" fn fun_delete(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
     todo!()
 }
 
@@ -190,7 +190,7 @@ fn find_by_path(fs: &mut NoctFS<'_>, path: &str) -> Option<(Entity, Entity)> {
     Some((previous, initial))
 }
 
-unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
+unsafe extern "C" fn fun_dir(letter: c_char, _b: *const c_char, out: *mut FSM_DIR) {
     let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let mut diskdev = DiskDevice::new(disk);
@@ -222,11 +222,11 @@ unsafe extern "C" fn fun_dir(letter: i8, _b: *const i8, out: *mut FSM_DIR) {
     unsafe { *out = FSM_DIR::with_files(files) };
 }
 
-unsafe extern "C" fn fun_label(_a: i8, b: *mut i8) {
+unsafe extern "C" fn fun_label(_a: c_char, b: *mut c_char) {
     unsafe { b.copy_from(FSNAME.as_ptr() as *const _, FSNAME.len()) };
 }
 
-unsafe extern "C" fn fun_detect(disk_letter: i8) -> i32 {
+unsafe extern "C" fn fun_detect(disk_letter: c_char) -> i32 {
     let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
     let mut device = disk_device::DiskDevice::new(dev);
 
@@ -256,6 +256,4 @@ pub extern "C" fn fs_noctfs_init() {
             Some(fun_detect),
         )
     };
-
-    unsafe { noct_fs_sys::fsm_dpm_update(-1) };
 }

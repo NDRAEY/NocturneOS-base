@@ -55,7 +55,8 @@ impl KeyboardBuffer {
     }
 }
 
-/// External function for C API that initializes the global keyboard buffer.
+///
+///  External function for C API that initializes the global keyboard buffer.
 ///
 /// # Safety
 /// - Keyboard buffer MUST be called before others

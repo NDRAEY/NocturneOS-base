@@ -10,11 +10,6 @@ publish = false
 [workspace]
 members = [ "eni-player", "noct-alloc", "noct-audio", "noct-dpm", "noct-dpm-sys", "noct-elfloader", "noct-fatfs", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-il", "noct-input", "noct-ipc", "noct-iso9660", "noct-ksymparser", "noct-logger", "noct-noctfs", "noct-path", "noct-pci", "noct-physmem", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-timer", "noct-tty", "pavi"]
 
-[target.'cfg(target_arch = "x86")'.dependencies]
-x86 = "0.52.0"
-raw-cpuid = "11.4.0"
-noct-smbios = { path = "./noct-smbios" }
-
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.10.0"
@@ -44,6 +39,11 @@ eni-player = { path = "./eni-player" }
 noct-dpm = { path = "./noct-dpm" }
 noct-il = { path = "./noct-il" }
 noct-fatfs = { path = "./noct-fatfs" }
+
+[target.'cfg(target_arch = "x86")'.dependencies]
+x86 = "0.52.0"
+raw-cpuid = "11.4.0"
+noct-smbios = { path = "./noct-smbios" }
 noct-pci = { path = "./noct-pci" }
 
 [profile.release]

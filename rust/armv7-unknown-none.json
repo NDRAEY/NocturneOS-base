@@ -1,15 +1,25 @@
 {
-    "llvm-target": "armv7a-none-eabi",
-	"data-layout": "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64",
-    "arch": "armv7a",
-    "target-endian": "little",
-    "target-pointer-width": "32",
-    "target-c-int-width": "32",
-    "os": "none",
-    "executables": true,
-    "linker-flavor": "ld.lld",
-    "linker": "rust-lld",
-    "panic-strategy": "abort",
-    "disable-redzone": true,
-    "features": ""
+  "abi": "eabi",
+  "arch": "arm",
+  "c-enum-min-bits": 8,
+  "crt-objects-fallback": "false",
+  "data-layout": "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64",
+  "disable-redzone": true,
+  "emit-debug-gdb-scripts": false,
+  "features": "+v7,+thumb2,-neon,+strict-align",
+  "linker": "rust-lld",
+  "linker-flavor": "gnu-lld",
+  "llvm-floatabi": "soft",
+  "llvm-target": "armv7a-none-eabi",
+  "max-atomic-width": 64,
+  "metadata": {
+    "description": "Bare Armv7-A",
+    "host_tools": false,
+    "std": false,
+    "tier": 2
+  },
+  "panic-strategy": "abort",
+  "relocation-model": "static",
+  "target-pointer-width": "32"
 }
+

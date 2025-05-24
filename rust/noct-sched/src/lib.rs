@@ -14,7 +14,7 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl process_t {
     pub fn cwd(&self) -> String {
-        let c_str = unsafe { CStr::from_ptr(self.cwd as *const i8) };
+        let c_str = unsafe { CStr::from_ptr(self.cwd as *const _) };
         c_str.to_string_lossy().into_owned()
     }
 }
