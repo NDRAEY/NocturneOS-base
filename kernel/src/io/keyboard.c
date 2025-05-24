@@ -6,67 +6,112 @@
 
 volatile uint32_t keyboard_states = 0;
 static const uint8_t keyboard_layout[128] = {
-    0,   27,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,   'a', 's',
+    0,    0,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',   0,   0,
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',    0,   0,  'a', 's',
     'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,   '\\', 'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',', '.', '/', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0, 0, 0, 0, 0, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9,0xaa,
-    0xab, 0xac, 0xad, 0xae, 0xaf
+    0,   0, 0, 0, 0, 0,
 };
 
 // Определяем таблицу символов для клавиш при зажатой клавише Shift
 static const uint8_t shifted_keyboard_layout[128] = {
-    0,   27,  '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b', '\t',
-    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,   'A', 'S',
+     0,   0,  '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',   0,   0,
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}',  0,   0,  'A', 'S',
     'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0,   '|', 'Z', 'X', 'C', 'V',
     'B', 'N', 'M', '<', '>', '?', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0, 0, 0, 0, 0, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9,0xaa,
-    0xab, 0xac, 0xad, 0xae, 0xaf
+    0,   0, 0, 0, 0, 0,
 };
 
-uint32_t getchar() {
+uint32_t parse_char(uint32_t key) {
     uint32_t character = 0;
 
-    while(1) {
-        uint32_t key = getkey();
+    bool pressed = (~key & 0x80);
 
-        bool pressed = (~key & 0x80);
+    // Can be simplified
+    if(pressed) {
+        keyboard_states |= (KEYBOARD_STATE_PRESSED);
+    } else {
+        keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
+    }
 
-        // Can be simplified
-        if(pressed) {
-            keyboard_states |= (KEYBOARD_STATE_PRESSED);
+    uint32_t keycode = key & 0x7F;
+
+    if(pressed) {
+        if(keycode == KEY_LSHIFT) {
+            keyboard_states |= (KEYBOARD_STATE_SHIFT);
+        } else if(keycode == KEY_LCTRL) {
+            keyboard_states ^= (KEYBOARD_STATE_CTRL);
         } else {
-            keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
+            if(key >= 256) {
+                qemu_err("Unknown key code: %d", key);
+                return 0;
+            }
+
+            // TODO: Multiple layouts
+            character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
+                                keyboard_layout[keycode] :
+                                shifted_keyboard_layout[keycode];
         }
-
-        uint32_t keycode = key & 0x7F;
-
-        if(pressed) {
-            if(keycode == KEY_LSHIFT) {
-                keyboard_states |= (KEYBOARD_STATE_SHIFT);
-            } else if(keycode == KEY_LCTRL) {
-                keyboard_states ^= (KEYBOARD_STATE_CTRL);
-            } else {
-                if(key >= 256) {
-                    qemu_err("Unknown key code: %d", key);
-                    return 0;
-                }
-
-                // TODO: Multiple layouts
-                character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
-                                    keyboard_layout[keycode] :
-                                    shifted_keyboard_layout[keycode];
-
-                break;
-            }
-        } else {
-            if(keycode == KEY_LSHIFT) {
-                keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-            }
+    } else {
+        if(keycode == KEY_LSHIFT) {
+            keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
         }
     }
 
     return character;
+}
+
+uint32_t getchar() {
+    // uint32_t character = 0;
+
+    // while(1) {
+    //     uint32_t key = getkey();
+
+    //     bool pressed = (~key & 0x80);
+
+    //     // Can be simplified
+    //     if(pressed) {
+    //         keyboard_states |= (KEYBOARD_STATE_PRESSED);
+    //     } else {
+    //         keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
+    //     }
+
+    //     uint32_t keycode = key & 0x7F;
+
+    //     if(pressed) {
+    //         if(keycode == KEY_LSHIFT) {
+    //             keyboard_states |= (KEYBOARD_STATE_SHIFT);
+    //         } else if(keycode == KEY_LCTRL) {
+    //             keyboard_states ^= (KEYBOARD_STATE_CTRL);
+    //         } else {
+    //             if(key >= 256) {
+    //                 qemu_err("Unknown key code: %d", key);
+    //                 return 0;
+    //             }
+
+    //             // TODO: Multiple layouts
+    //             character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
+    //                                 keyboard_layout[keycode] :
+    //                                 shifted_keyboard_layout[keycode];
+
+    //             break;
+    //         }
+    //     } else {
+    //         if(keycode == KEY_LSHIFT) {
+    //             keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
+    //         }
+    //     }
+    // }
+
+    // return character;
+
+    while(true) {
+        uint32_t ch = parse_char(getkey());
+
+        if(ch != 0) {
+            return ch;
+        }
+    }
 }
 
 void gets(char *buffer) {

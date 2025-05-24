@@ -72,20 +72,14 @@ pub unsafe extern "C" fn keyboard_buffer_init() {
 }
 
 /// External function for C API that puts a character into a buffer.
-///
-/// # Safety
-/// - Keyboard buffer MUST be initialized before using this function
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn keyboard_buffer_put(character: u32) {
+pub extern "C" fn keyboard_buffer_put(character: u32) {
     unsafe { KEYBOARD_BUFFER.get_mut().unwrap().push(character) };
 }
 
 /// External function for C API that gets a character from a buffer.
-///
-/// # Safety
-/// - Keyboard buffer MUST be initialized before using this function
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
+pub extern "C" fn keyboard_buffer_get() -> u32 {
     let v = unsafe { KEYBOARD_BUFFER.get_mut().unwrap() };
 
     v.get()
@@ -93,11 +87,8 @@ pub unsafe extern "C" fn keyboard_buffer_get() -> u32 {
 
 /// External function for C API that gets a character from a buffer.
 /// This function returns 0 if no characters in the buffer to make it compatible with C API.
-///
-/// # Safety
-/// - Keyboard buffer MUST be initialized before using this function
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn keyboard_buffer_get_or_nothing() -> u32 {
+pub extern "C" fn keyboard_buffer_get_or_nothing() -> u32 {
     let v = unsafe { KEYBOARD_BUFFER.get_mut().unwrap() };
 
     v.get_raw().unwrap_or(0)

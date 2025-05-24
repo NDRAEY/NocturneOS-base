@@ -1,3 +1,7 @@
+use noct_logger::qemu_note;
+
+use crate::keyboard_buffer_get;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SpecialKey {
     ESCAPE,
@@ -129,6 +133,28 @@ pub fn parse_scancode(scancode: u8) -> Option<(Key, bool)> {
     key.map(|&a| (a, is_pressed))
 }
 
-// pub fn getchar() -> u32 {
+#[derive(Debug)]
+pub enum CharKey {
+    Char(char),
+    Key(Key, bool)
+}
 
-// }
+unsafe extern "C" {
+    fn parse_char(ch: u32) -> u32;
+}
+
+pub fn get_key() -> CharKey {
+    let key = keyboard_buffer_get();
+
+    let ch = unsafe { parse_char(key) };
+
+    if ch == 0 {
+        let (pressed, key) = ((key & 0x80) == 0, key & !0x80);
+
+        let k = *KEYS.get(key as usize).unwrap_or(&Key::Unknown);
+
+        CharKey::Key(k, pressed)
+    } else {
+        CharKey::Char(char::from_u32(ch).unwrap())
+    }
+}

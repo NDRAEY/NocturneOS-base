@@ -3,6 +3,8 @@ use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
 use noct_fs_sys::dir::Directory;
+use noct_input::kbd::get_key;
+use noct_input::kbd::CharKey;
 use noct_input::kbd::Key;
 use noct_input::kbd::SpecialKey;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
@@ -19,8 +21,10 @@ pub mod cd;
 pub mod cls;
 pub mod dir;
 pub mod disks;
+pub mod file;
 pub mod file_ops;
 pub mod gfxinfo;
+pub mod log;
 pub mod mala;
 pub mod meminfo;
 pub mod miniplay;
@@ -28,8 +32,6 @@ pub mod parallel_desktop;
 pub mod pavi;
 pub mod pci;
 pub mod reboot;
-pub mod log;
-pub mod file;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -88,79 +90,95 @@ fn help(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
 fn process_input(context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
+    // loop {
+    //     let ch = get_key();
+
+    //     qemu_note!("{ch:?}");
+    // }
+
     loop {
-        let raw_ch = unsafe { getchar() };
+        let ch = get_key();
 
-        qemu_note!("{raw_ch:x}");
-
-        let ch = char::from_u32(raw_ch).unwrap();
+        // qemu_note!("{ch:?}");
 
         match ch {
-            '\0' => continue,
-            '\n' => break,
-            '\x08' => {
-                if input.pop().is_some() {
-                    print!("\x08 \x08");
-                }
-                continue;
-            }
-            '\u{ab}' => {
-                if let Some(command) = context.command_history.last() {
-                    print!("{command}");
-                    input.push_str(command);
-                    break;
-                }
-            }
-            '\t' => {
-                qemu_warn!("Tab!");
-
-                if input.trim().is_empty() {
+            CharKey::Key(key, pressed) => {
+                if !pressed {
                     continue;
                 }
 
-                let mut back_counter = input.len();
-
-                while back_counter > 0 && input.chars().nth(back_counter) != Some(' ') {
-                    back_counter -= 1;
-                }
-
-                qemu_warn!("Fin");
-
-                let stem = input.as_str()[back_counter..].trim();
-
-                qemu_note!("Finding completions for: `{}`", stem);
-
-                let completions = suggest_completions(stem);
-
-                qemu_note!("Completions: {:?}", completions);
-
-                if completions.is_empty() {
-                    qemu_note!("No variants found.");
-                } else if completions.len() == 1 {
-                    // Apply it
-                    let completion = &completions[0];
-                    let remnant = &completion[stem.len()..];
-
-                    input.push_str(remnant);
-
-                    print!("{}", remnant);
-                } else {
-                    // Show variants
-
-                    println!("\n- Available variants:");
-
-                    for i in &completions {
-                        print!("{i} ");
+                match key {
+                    Key::Unknown => continue,
+                    Key::Character(_) => continue,
+                    Key::Special(SpecialKey::ENTER) => break,
+                    Key::Special(SpecialKey::BACKSPACE) => {
+                        if input.pop().is_some() {
+                            print!("\x08 \x08");
+                        }
+                        continue;
                     }
+                    Key::Special(SpecialKey::INSERT) => {
+                        if let Some(command) = context.command_history.last() {
+                            print!("{command}");
+                            input.push_str(command);
+                            break;
+                        }
+                    }
+                    Key::Special(SpecialKey::TAB) => {
+                        qemu_warn!("Tab!");
 
-                    println!();
+                        if input.trim().is_empty() {
+                            continue;
+                        }
 
-                    print!("{}> {input}", context.current_path.as_str());
+                        let mut back_counter = input.len();
+
+                        while back_counter > 0 && input.chars().nth(back_counter) != Some(' ') {
+                            back_counter -= 1;
+                        }
+
+                        qemu_warn!("Fin");
+
+                        let stem = input.as_str()[back_counter..].trim();
+
+                        qemu_note!("Finding completions for: `{}`", stem);
+
+                        let completions = suggest_completions(stem);
+
+                        qemu_note!("Completions: {:?}", completions);
+
+                        if completions.is_empty() {
+                            qemu_note!("No variants found.");
+                        } else if completions.len() == 1 {
+                            // Apply it
+                            let completion = &completions[0];
+                            let remnant = &completion[stem.len()..];
+
+                            input.push_str(remnant);
+
+                            print!("{}", remnant);
+                        } else {
+                            // Show variants
+
+                            println!("\n- Available variants:");
+
+                            for i in &completions {
+                                print!("{i} ");
+                            }
+
+                            println!();
+
+                            print!("{}> {input}", context.current_path.as_str());
+                        }
+
+                        continue;
+                    }
+                    key => {
+                        qemu_warn!("Unknown key: {:?}", key);
+                    }
                 }
-
-                continue;
             }
-            _ => {
+            CharKey::Char(ch) => {
                 input.push(ch);
 
                 print!("{}", ch);
@@ -304,7 +322,8 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
 
                             match program {
                                 Ok(mut prog) => {
-                                    let args: Vec<&str> = arguments.iter().map(|a| a.as_str()).collect();
+                                    let args: Vec<&str> =
+                                        arguments.iter().map(|a| a.as_str()).collect();
                                     prog.run(&args);
                                 }
                                 Err(e) => {
