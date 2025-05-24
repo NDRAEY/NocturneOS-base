@@ -13,7 +13,7 @@ pub fn file(_ctx: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
         println!("No arguments!");
         return Err(1);
     }
-    
+
     let filepath = args[0];
 
     let rawfp = CString::new(filepath).unwrap();
@@ -26,8 +26,8 @@ pub fn file(_ctx: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     println!("File {filepath:?}\n");
 
     println!("Date: {}", file.LastTime.format());
-    println!("Size: {}", {  file.Size });
-    println!("Mode: {:08x}", {  file.Mode });
+    println!("Size: {}", { file.Size });
+    println!("Mode: {:08x}", { file.Mode });
 
     Ok(())
 }

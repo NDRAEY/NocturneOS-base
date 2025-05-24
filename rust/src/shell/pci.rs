@@ -116,26 +116,26 @@ pub fn pci(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
                 .map(|a| a.2)
                 .unwrap_or("Unknown")
         );
-    
+
         if (dev.header_type & 0x80) == 0 {
             print!(" [Multifunc]");
         }
-    
+
         let bar0 = dev.read_bar(0);
         let bar1 = dev.read_bar(1);
         let bar2 = dev.read_bar(2);
         let bar3 = dev.read_bar(3);
         let bar4 = dev.read_bar(4);
         let bar5 = dev.read_bar(5);
-    
+
         print!(
             "\n  Addresses: [{:08x}, {:08x}, {:08x}, {:08x}, {:08x}, {:08x}]",
             bar0, bar1, bar2, bar3, bar4, bar5
         );
-    
+
         println!();
     }
-    
+
     let devices = noct_pci::devices();
     for dev in devices.iter() {
         pci_print_nth(dev);

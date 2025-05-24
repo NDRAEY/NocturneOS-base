@@ -2,7 +2,9 @@ use core::ffi::c_char;
 
 use super::ShellContext;
 use alloc::{
-    borrow::ToOwned, string::{String, ToString}, vec::Vec
+    borrow::ToOwned,
+    string::{String, ToString},
+    vec::Vec,
 };
 
 pub static MINIPLAY_COMMAND_ENTRY: crate::shell::ShellCommandEntry =

@@ -2,10 +2,14 @@
 
 use core::cell::{OnceCell, RefCell};
 
-use alloc::{boxed::Box, collections::linked_list::LinkedList, string::{String, ToString}};
+use alloc::{
+    boxed::Box,
+    collections::linked_list::LinkedList,
+    string::{String, ToString},
+};
+use lazy_static::lazy_static;
 use noct_timer::timestamp;
 use spin::RwLock;
-use lazy_static::lazy_static;
 
 extern crate alloc;
 
@@ -14,45 +18,65 @@ pub enum LogType {
     INFO,
     WARNING,
     ERROR,
-    SUCCESS
+    SUCCESS,
 }
 
 pub struct LoggingEntry {
     pub time: usize,
     pub m_type: LogType,
-    pub message: String
+    pub message: String,
 }
 
 impl LoggingEntry {
     pub fn debug(message: String) -> Self {
-        Self { time: timestamp(), m_type: LogType::DEBUG, message }
+        Self {
+            time: timestamp(),
+            m_type: LogType::DEBUG,
+            message,
+        }
     }
 
     pub fn info(message: String) -> Self {
-        Self { time: timestamp(), m_type: LogType::INFO, message }
+        Self {
+            time: timestamp(),
+            m_type: LogType::INFO,
+            message,
+        }
     }
 
     pub fn warn(message: String) -> Self {
-        Self { time: timestamp(), m_type: LogType::WARNING, message }
+        Self {
+            time: timestamp(),
+            m_type: LogType::WARNING,
+            message,
+        }
     }
 
     pub fn error(message: String) -> Self {
-        Self { time: timestamp(), m_type: LogType::ERROR, message }
+        Self {
+            time: timestamp(),
+            m_type: LogType::ERROR,
+            message,
+        }
     }
 
     pub fn ok(message: String) -> Self {
-        Self { time: timestamp(), m_type: LogType::SUCCESS, message }
+        Self {
+            time: timestamp(),
+            m_type: LogType::SUCCESS,
+            message,
+        }
     }
 }
 
 pub struct Logger {
-    entries: LinkedList<LoggingEntry>
+    entries: LinkedList<LoggingEntry>,
 }
 
 impl Logger {
     pub fn new() -> Self {
         Self {
-            entries: LinkedList::new()
+            entries: LinkedList::new(),
         }
     }
 

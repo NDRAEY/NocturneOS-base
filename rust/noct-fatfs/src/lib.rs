@@ -176,8 +176,7 @@ unsafe extern "C" fn fun_read(
 
     // qemu_note!("{:?}", optd);
 
-    let mut out_slice =
-        unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
+    let mut out_slice = unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
 
     // let mut soff = 0u32;
     // for (off, sz) in optd {

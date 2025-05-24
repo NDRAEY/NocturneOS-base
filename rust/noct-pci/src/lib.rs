@@ -96,7 +96,10 @@ impl PCIDevice {
 
 pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
     let devs = devices();
-    let dev = devs.iter().find(|x| x.vendor == vendor && x.device == device).cloned();
+    let dev = devs
+        .iter()
+        .find(|x| x.vendor == vendor && x.device == device)
+        .cloned();
 
     dev
 }

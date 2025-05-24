@@ -1,4 +1,7 @@
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 
 use noct_input::kbd::{Key, SpecialKey};
 use noct_tty::{print, println};

@@ -1,4 +1,4 @@
-use crate::{find_device, find_device_by_class_and_subclass, pci_read32, pci_write, PCI_DEVICES};
+use crate::{PCI_DEVICES, find_device, find_device_by_class_and_subclass, pci_read32, pci_write};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn pci_find_device(
@@ -28,7 +28,7 @@ pub unsafe extern "C" fn pci_find_device(
 }
 
 #[unsafe(no_mangle)]
-pub unsafe  extern "C" fn pci_find_device_by_class_and_subclass(
+pub unsafe extern "C" fn pci_find_device_by_class_and_subclass(
     class: u8,
     subclass: u8,
     vendor_ret: *mut u16,

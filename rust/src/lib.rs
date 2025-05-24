@@ -42,7 +42,7 @@ unsafe extern "C" {
 fn panic(_info: &PanicInfo) -> ! {
     qemu_err!("{}", _info);
     unsafe { unwind_stack(10) };
-    
+
     println!("{}", _info);
 
     loop {

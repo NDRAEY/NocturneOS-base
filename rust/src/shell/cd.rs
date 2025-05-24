@@ -13,7 +13,7 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let path = {
         match args.first() {
             Some(elem) => elem,
-            None => "."
+            None => ".",
         }
     };
 

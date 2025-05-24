@@ -136,7 +136,7 @@ pub fn parse_scancode(scancode: u8) -> Option<(Key, bool)> {
 #[derive(Debug)]
 pub enum CharKey {
     Char(char),
-    Key(Key, bool)
+    Key(Key, bool),
 }
 
 unsafe extern "C" {
