@@ -21,12 +21,11 @@ __attribute__((force_align_arg_pointer)) void draw_rgb_image(const char *data, s
 		size_t prepos = line_size * y;
 		x = 0;
 		while(x < width) {
-			size_t px = prepos + (x * bytes_pp);
+			__m128i pix4 = _mm_loadu_si128((__m128i*)(data + prepos));
+			_mm_storeu_si128((__m128i*)(dp + (sx * fb_bpp) + prepos), pix4);
 
-			__m128i pix4 = _mm_loadu_si128((__m128i*)(data + px));
-			_mm_storeu_si128((__m128i*)(dp + (sx * fb_bpp) + px), pix4);
-
-			x+=4;
+			x += 4;
+            prepos += 4 * bytes_pp;
 		}
 		y++;
 	}
