@@ -30,4 +30,4 @@ jobs:
         run: bash tools/build/make_builds.sh
 
       - name: Step 3 - Build all
-        run: bash tools/build/compile_builds.sh
+        run: bash tools/build/ci.shs
