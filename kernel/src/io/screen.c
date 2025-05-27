@@ -200,7 +200,9 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
     write_mtrr_size(bfb_mtrr_idx, (uint32_t)bfb_new_phys, framebuffer_size, 1);
 }
 
+#ifdef __SSE2__
 #include <emmintrin.h>
+#endif
 
 /**
  * @brief Очистка экрана
