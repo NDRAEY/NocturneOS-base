@@ -324,8 +324,11 @@ void ahci_stop_cmd(size_t port_num) {
 	}
 }
 
+void il_log(const char* message);
+
 void ahci_irq_handler() {
-	qemu_warn("AHCI interrupt!");
+    qemu_warn("AHCI interrupt!");
+	il_log("AHCI interrupt!");
 
     uint32_t status = abar->interrupt_status;
 
@@ -408,8 +411,6 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 	hdr->a = desc.is_atapi ? 1 : 0;  // ATAPI / Not ATAPI
 	hdr->w = 0;  // Read
 	hdr->p = 0;  // No prefetch
-
-	qemu_log("FIS IS %d DWORDs long", hdr->cfl);
 
 	HBA_CMD_TBL* table = (HBA_CMD_TBL*)AHCI_COMMAND_TABLE(ports[port_num].command_list_addr_virt, 0);
 
@@ -495,8 +496,6 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 	memcpy(buffer, buffer_mem, bytes);
 
 	kfree(buffer_mem);
-
-	qemu_warn("\033[7mOK?\033[0m");
 }
 
 /**

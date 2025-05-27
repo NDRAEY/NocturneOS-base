@@ -1,3 +1,0 @@
-void arch_init() {
-	
-}

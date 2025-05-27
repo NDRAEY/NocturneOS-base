@@ -13,6 +13,7 @@ use spin::RwLock;
 
 extern crate alloc;
 
+pub mod c_api;
 pub enum LogType {
     DEBUG,
     INFO,

@@ -5,7 +5,7 @@ enable_language(C ASM)
 
 # Options
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;ReleaseOptimizedSSE;OptSym" CACHE STRING "Available configurations" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;OptSym" CACHE STRING "Available configurations" FORCE)
 
 set(VALID_ARCHITECTURES "x86" "armv7")
 set(SUPPORTED_ARMV7_BOARDS "opi-lite")
@@ -33,6 +33,7 @@ if(NOCTURNE_ARCH STREQUAL "armv7")
 endif()
 
 option(NOCTURNE_USE_CLANG "Use Clang compiler for building" OFF)
+option(NOCTURNE_USE_SSE2 "Use SSE2 instructuions" ON)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "LANG=en_US.UTF-8 ${COMMAND}")
 
@@ -69,6 +70,10 @@ endif()
 if(NOCTURNE_ARCH STREQUAL "x86")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386")
+	
+	if(NOCTURNE_USE_SSE2)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+	endif()
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
 	
@@ -89,7 +94,6 @@ set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -O0" CACHE STRING "Flags for Debug" FORCE)
 set(CMAKE_C_FLAGS_DEV "-O0" CACHE STRING "Flags for Dev" FORCE)
 set(CMAKE_C_FLAGS_RELEASE "-DRELEASE -O0" CACHE STRING "Flags for Release" FORCE)
 set(CMAKE_C_FLAGS_RELEASEOPTIMIZED "-DRELEASE -O2" CACHE STRING "Flags for ReleaseOptimized" FORCE)
-set(CMAKE_C_FLAGS_RELEASEOPTIMIZEDSSE "-DRELEASE -O2 -msse2" CACHE STRING "Flags for ReleaseOptimizedSSE" FORCE)
 set(CMAKE_C_FLAGS_OPTSYM "-DRELEASE -O2 -ggdb3" CACHE STRING "Flags for OptSym" FORCE)
 
 set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")

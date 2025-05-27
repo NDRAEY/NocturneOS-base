@@ -238,12 +238,28 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
     write_mtrr_size(bfb_mtrr_idx, (uint32_t)bfb_new_phys, framebuffer_size, 1);
 }
 
+#include <emmintrin.h>
+
 /**
  * @brief Очистка экрана
  *
  */
-void clean_screen(){
-    memset(back_framebuffer_addr, 0, framebuffer_size);  // Optimized variant
+__attribute__((force_align_arg_pointer)) void clean_screen() {
+#ifdef __SSE2__
+  if((size_t)back_framebuffer_addr % 16 == 0) {
+    __m128i* buffer = (__m128i*)back_framebuffer_addr;
+
+    for(size_t index = 0, chunks = framebuffer_size / sizeof(__m128i); index < chunks; index ++) {
+        _mm_store_si128(buffer, _mm_setzero_si128());
+
+        buffer++;
+    }
+  } else {
+    memset(back_framebuffer_addr, 0, framebuffer_size);
+  }
+#else
+    memset(back_framebuffer_addr, 0, framebuffer_size);
+#endif
 }
 
 void rect_copy(int x, int y, int width, int height) {
