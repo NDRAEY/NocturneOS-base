@@ -4,9 +4,6 @@
 #include "lib/string.h"
 #include "multiboot.h"
 
-#define punch() memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
-// #define punch()
-
 extern uint8_t* framebuffer_addr;
 extern volatile uint32_t framebuffer_bpp;
 extern volatile uint32_t framebuffer_pitch;
@@ -81,9 +78,6 @@ typedef struct svga_mode_info {
 	uint8_t reserved1[206];
 } __attribute__ ((packed)) svga_mode_info_t;
 
-//#define punch() sse_memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size)
-//#define punch() rect_copy(0, 0, VESA_WIDTH, VESA_HEIGHT)
-
 uint32_t getDisplayPitch();
 uint32_t getScreenWidth();
 uint32_t getScreenHeight();
@@ -136,3 +130,4 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
 
 
 void init_vbe(const multiboot_header_t *mboot);
+void punch();

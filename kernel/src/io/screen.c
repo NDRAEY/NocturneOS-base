@@ -149,44 +149,6 @@ void rgba_blend(uint8_t result[4], const uint8_t fg[4], const uint8_t bg[4])
     result[3] = 0xff;
 }
 
-void setPixelAlpha(uint32_t x, uint32_t y, rgba_color color) {
-    if (x >= VESA_WIDTH ||
-        y >= VESA_HEIGHT) {
-        return;
-    }
-
-    unsigned where = x * (framebuffer_bpp / 8) + y * framebuffer_pitch;
-
-    if (color.a != 255) {
-        if (color.a != 0) {
-            uint8_t bg[4] = {back_framebuffer_addr[where], back_framebuffer_addr[where + 1], back_framebuffer_addr[where + 2], 255};
-            uint8_t fg[4] = {(uint8_t)color.b, (uint8_t)color.g, (uint8_t)color.r, (uint8_t)color.a};
-            uint8_t res[4];
-
-            rgba_blend(res, fg, bg);
-
-            // framebuffer_addr[where] = res[0];
-            // framebuffer_addr[where + 1] = res[1];
-            // framebuffer_addr[where + 2] = res[2];
-
-            back_framebuffer_addr[where] = res[0];
-            back_framebuffer_addr[where + 1] = res[1];
-            back_framebuffer_addr[where + 2] = res[2];
-
-        } else { // if absolutely transparent don't draw anything
-            return;
-        }
-    } else { // if non transparent just draw rgb
-        // framebuffer_addr[where] = color.b & 255;
-        // framebuffer_addr[where + 1] = color.g & 255;
-        // framebuffer_addr[where + 2] = color.r & 255;
-
-        back_framebuffer_addr[where] = color.b & 255;
-        back_framebuffer_addr[where + 1] = color.g & 255;
-        back_framebuffer_addr[where + 2] = color.r & 255;
-    }
-}
-
 /**
  * @brief Получение длины экрана
  *
@@ -262,14 +224,19 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
 #endif
 }
 
-void rect_copy(int x, int y, int width, int height) {
-    unsigned char* src = (unsigned char*)back_framebuffer_addr + (y * framebuffer_pitch) + (x * (framebuffer_bpp/8));
-    unsigned char* dest = (unsigned char*)framebuffer_addr + (y * framebuffer_pitch) + (x * (framebuffer_bpp/8));
-    size_t bytes_per_line = width * (framebuffer_bpp/8);
-    
-    for(int i = 0; i < height; i++) {
-        memcpy(dest, src, bytes_per_line);
-        src += framebuffer_pitch;
-        dest += framebuffer_pitch;
+__attribute__((force_align_arg_pointer)) void punch() {
+#ifdef __SSE2__
+    if((size_t)back_framebuffer_addr % 16 == 0) {
+        __m128i* src_buffer = (__m128i*)back_framebuffer_addr;
+        __m128i* dest_buffer = (__m128i*)framebuffer_addr;
+
+        for(size_t index = 0, chunks = framebuffer_size / sizeof(__m128i); index < chunks; index ++) {
+            _mm_store_si128(dest_buffer++, _mm_load_si128(src_buffer++));
+        }
+    } else {
+        memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
     }
+#else
+    memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
+#endif
 }

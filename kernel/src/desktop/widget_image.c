@@ -49,12 +49,13 @@ Widget_t* new_widget_image(const char *path) {
     wgt->width = hdr.w;
     wgt->height = hdr.h;
 
-    void* buffer_image = kcalloc(hdr.w * hdr.h, 4);
+    void* buffer_image = kmalloc_common(hdr.w * hdr.h * 4, 16);
+    memset(buffer_image, hdr.w * hdr.h * 4, 0);
     wgt_data->image_data = buffer_image;
 
     tga_extract_pixels(path, buffer_image);
 
-    pixfmt_conv(buffer_image, 32, hdr.w, hdr.h, SCREEN_BGR, SCREEN_RGB);
+    // pixfmt_conv(buffer_image, 32, hdr.w, hdr.h, SCREEN_BGR, SCREEN_RGB);
 
 //    hexview_advanced(buffer_image, 512, 24, true, new_qemu_printf);
 

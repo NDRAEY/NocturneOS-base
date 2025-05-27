@@ -5,36 +5,28 @@
 #include <io/screen.h>
 #include "io/rgb_image.h"
 #include "io/ports.h"
+#include <emmintrin.h>
 
-/**
- * @brief Рисует изображение в виде массива байт в видеопамяти.
- * @param data Массив данных изображения
- * @param width Ширина изображения
- * @param height Высота изображения
- * @param bpp Количество бит на пиксель
- * @param sx Начальная координата X
- * @param sy Начальная координата Y
- */
-void draw_rgb_image(const char *data, size_t width, size_t height, size_t bpp, int sx, int sy) {
+// TODO: Care about remaining pixels of image.
+__attribute__((force_align_arg_pointer)) void draw_rgb_image(const char *data, size_t width, size_t height, size_t bpp, int sx, int sy) {
 	size_t x = 0, y = 0;
 
     size_t bytes_pp = bpp >> 3;
+	size_t line_size = width * bytes_pp;
+
+    const char* dp = back_framebuffer_addr + sy * framebuffer_pitch;
+	const size_t fb_bpp = framebuffer_bpp >> 3;
 
 	while(y < height) {
-		size_t prepos = (width * bytes_pp) * y;
+		size_t prepos = line_size * y;
 		x = 0;
 		while(x < width) {
-			int px = prepos + (x * bytes_pp);
+			size_t px = prepos + (x * bytes_pp);
 
-			char r = data[px];
-			char g = data[px + 1];
-			char b = data[px + 2];
+			__m128i pix4 = _mm_loadu_si128((__m128i*)(data + px));
+			_mm_storeu_si128((__m128i*)(dp + (sx * fb_bpp) + px), pix4);
 
-			size_t color = ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
-
-			set_pixel(sx + x, sy + y, color);
-
-			x++;
+			x+=4;
 		}
 		y++;
 	}
