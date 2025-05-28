@@ -20,9 +20,9 @@
 #define SAYORI_INLINE static inline __attribute__((always_inline))
 #define SAYORI_UNUSED __attribute__((unused))
 
-#define KB (1 << 10)
-#define MB (1 << 20)
-#define GB (1 << 30)
+#define KB (1U << 10)
+#define MB (1U << 20)
+#define GB (1U << 30)
 
 #define ALIGN(value, align) ((value) + ((-(value)) & ((align) - 1)))
 #define IS_ALIGNED(value, align) ((value) % (align) == 0)

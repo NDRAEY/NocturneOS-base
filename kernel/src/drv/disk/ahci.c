@@ -383,7 +383,7 @@ void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, size_t buffer_
 		table->prdt_entry[index].dba = buffer_phys + i;
 		table->prdt_entry[index].dbau = 0;
 		table->prdt_entry[index].rsv0 = 0;
-		table->prdt_entry[index].dbc = MIN((4 * MB), (bytes - i) % (4 * MB)) - 1;  // Size in bytes 4M max
+		table->prdt_entry[index].dbc = MIN((4U * MB), (bytes - i) % (4U * MB)) - 1;  // Size in bytes 4M max
 		table->prdt_entry[index].rsv1 = 0;
 		table->prdt_entry[index].i = 0;
 
@@ -611,7 +611,7 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
     ahci_send_cmd(port, 0);
 }
 
-void ahci_send_atapi(size_t port_num, uint8_t command[16], char* output, size_t size) {
+void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size_t size) {
 	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
@@ -671,31 +671,33 @@ void ahci_eject_cdrom(size_t port_num) {
 atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 	uint8_t command[16] = {
         ATAPI_CMD_RQ_SENSE, 0, 0, 0,
-		18, // Allocation Length: We need only 18 bytes (mininal respose length)
+		24, // Allocation Length: We need only 18 bytes (mininal respose length)
 		0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0
     };
 
-	ahci_send_atapi(port_num, command, output, 18);
+	ahci_send_atapi(port_num, command, output, 24);
 
-	hexview_advanced(output, 18, 16, false, new_qemu_printf);
+	hexview_advanced(output, 24, 16, false, new_qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
 }
 
 bool ahci_atapi_check_media_presence(size_t port_num) {
-	uint8_t command[12] = {
-        ATAPI_CMD_READY, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	uint8_t command[16] = {
+        ATAPI_CMD_READY, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
+	uint8_t errorcode[24] = {0};
+    
 	qemu_log("Sending READY command");
 	ahci_send_atapi_nomem(port_num, command);
-    
-	uint8_t errorcode[18];
 
 	qemu_log("Fetching sense");
 	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
+	hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
+	
 	return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
 }
 
@@ -726,8 +728,9 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 	kfree(real_buf);
 }
 
-size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer){
+size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer) {
 //    qemu_err("TODO: SATA DPM READ");
+	(void)high_offset;
 
 	DPM_Disk dpm = dpm_info(Disk + 65);
 
@@ -736,7 +739,8 @@ size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
     return Size;
 }
 
-size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
+size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t size, const void* buffer) {
+	(void)Disk; (void)high_offset; (void)low_offset; (void)size; (void)buffer;
     qemu_err("TODO: SATA DPM WRITE");
 
 //    DPM_Disk dpm = dpm_info(Disk + 65);
