@@ -5,6 +5,7 @@
 #include "generated/pci.h"
 #include "io/ports.h"
 #include "io/tty.h"
+#include "debug/hexview.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/isr.h"
@@ -581,7 +582,7 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 }
 
 void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
-	qemu_log("ATAPI command on port %d", port_num);
+	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
@@ -610,6 +611,50 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
     ahci_send_cmd(port, 0);
 }
 
+void ahci_send_atapi(size_t port_num, uint8_t command[16], char* output, size_t size) {
+	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
+
+	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
+
+	port->interrupt_status = (uint32_t)-1;
+
+	AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
+
+	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
+	hdr->a = 1;  // ATAPI
+	hdr->w = 0;  // Read
+	hdr->p = 0;  // No prefetch
+
+	HBA_CMD_TBL* table = (HBA_CMD_TBL*)AHCI_COMMAND_TABLE(ports[port_num].command_list_addr_virt, 0);
+	memset(table, 0, sizeof(HBA_CMD_TBL));
+
+    memcpy(table->acmd, command, 16);
+
+	size_t buffer_size = ALIGN(size, PAGE_SIZE);
+
+	// Allocate memory for buffer.
+	char* buffer_mem = kmalloc_common(buffer_size, PAGE_SIZE);
+	memset(buffer_mem, 0, buffer_size);
+
+	// Get its physical address
+	size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
+
+	// Use this data to fill out PRDT table.
+	ahci_fill_prdt(hdr, table, buffer_phys, buffer_size);
+
+	volatile AHCI_FIS_REG_HOST_TO_DEVICE *cmdfis = (volatile AHCI_FIS_REG_HOST_TO_DEVICE*)&(table->cfis);
+    memset((void*)cmdfis, 0, sizeof(AHCI_FIS_REG_HOST_TO_DEVICE));
+
+	cmdfis->fis_type = FIS_TYPE_REG_HOST_TO_DEVICE;
+	cmdfis->c = 1;	// Command
+	cmdfis->command = ATA_CMD_PACKET;
+
+    ahci_send_cmd(port, 0);
+
+	memcpy(output, buffer_mem, size);
+
+	kfree(buffer_mem);
+}
 
 // Call SCSI START_STOP command to eject a disc
 void ahci_eject_cdrom(size_t port_num) {
@@ -618,48 +663,41 @@ void ahci_eject_cdrom(size_t port_num) {
         0, 0, 0,  // Reserved
         1 << 1, // Eject the disc
         0, 0, 0, 0, 0,   // Reserved
-		0, 0, 0, 0, 0, 0 // Filler
     };
 
 	ahci_send_atapi_nomem(port_num, command);
 }
 
-// void ahci_eject_cdrom(size_t port_num) {
-// 	qemu_log("Trying to eject %d", port_num);
+atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
+	uint8_t command[16] = {
+        ATAPI_CMD_RQ_SENSE, 0, 0, 0,
+		18, // Allocation Length: We need only 18 bytes (mininal respose length)
+		0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0
+    };
 
-// 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
+	ahci_send_atapi(port_num, command, output, 18);
 
-// 	port->interrupt_status = (uint32_t)-1;
+	hexview_advanced(output, 18, 16, false, new_qemu_printf);
+	
+	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
+}
 
-// 	AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
+bool ahci_atapi_check_media_presence(size_t port_num) {
+	uint8_t command[12] = {
+        ATAPI_CMD_READY, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-// 	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
-// 	hdr->a = 1;  // ATAPI
-// 	hdr->w = 0;  // Read
-// 	hdr->p = 0;  // No prefetch
-// 	hdr->prdtl = 0;  // No entries
+	qemu_log("Sending READY command");
+	ahci_send_atapi_nomem(port_num, command);
+    
+	uint8_t errorcode[18];
 
-// 	HBA_CMD_TBL* table = (HBA_CMD_TBL*)AHCI_COMMAND_TABLE(ports[port_num].command_list_addr_virt, 0);
-// 	memset(table, 0, sizeof(HBA_CMD_TBL));
+	qemu_log("Fetching sense");
+	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
-//     uint8_t command[10] = {
-//         ATAPI_CMD_START_STOP,  // Command
-//         0, 0, 0,  // Reserved
-//         1 << 1, // Eject the disc
-//         0, 0, 0, 0, 0   // Reserved
-//     };
-
-//     memcpy(table->acmd, command, 10);
-
-// 	volatile AHCI_FIS_REG_HOST_TO_DEVICE *cmdfis = (volatile AHCI_FIS_REG_HOST_TO_DEVICE*)&(table->cfis);
-//     memset((void*)cmdfis, 0, sizeof(AHCI_FIS_REG_HOST_TO_DEVICE));
-
-// 	cmdfis->fis_type = FIS_TYPE_REG_HOST_TO_DEVICE;
-// 	cmdfis->c = 1;	// Command
-// 	cmdfis->command = ATA_CMD_PACKET;
-
-//     ahci_send_cmd(port, 0);
-// }
+	return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
+}
 
 void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length) {
 	ON_NULLPTR(buf, {
