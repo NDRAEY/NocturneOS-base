@@ -19,7 +19,7 @@ volatile tcp_connection_t TCP_CONNECTIONS[MAX_CONNECTIONS] = {};
 
 int tcp_find_connection(uint8_t address[4], size_t port) {
 	for(int i = 0; i < MAX_CONNECTIONS; i++) {
-		if(memcmp((uint8_t*)&TCP_CONNECTIONS[i].dest_ip_addr, address, 4) == 0
+		if(memcmp((const char*)&TCP_CONNECTIONS[i].dest_ip_addr, (char*)address, 4) == 0
 			&& (TCP_CONNECTIONS[i].source_port == port || TCP_CONNECTIONS[i].dest_port == port)
 			&& TCP_CONNECTIONS[i].status != TCP_NONE) {
 			return i;
@@ -34,7 +34,7 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 	int index = -1;
 
 	for(int i = 0; i < MAX_CONNECTIONS; i++) {
-		if(memcmp((uint8_t*)&TCP_CONNECTIONS[i].dest_ip_addr, empty_addr, 4) == 0
+		if(memcmp((const char*)&TCP_CONNECTIONS[i].dest_ip_addr, (const char*)empty_addr, 4) == 0
 				&& TCP_CONNECTIONS[i].source_port == 0
 				&& TCP_CONNECTIONS[i].status == TCP_NONE) {
 			index = i;
@@ -46,7 +46,7 @@ bool tcp_new_connection(netcard_entry_t* card, uint8_t address[4], size_t port, 
 		return false;
 	}
 
-	memcpy(&TCP_CONNECTIONS[index].dest_ip_addr, address, 4);
+	memcpy((void*)&TCP_CONNECTIONS[index].dest_ip_addr, address, 4);
 	TCP_CONNECTIONS[index].source_port = port;
 	TCP_CONNECTIONS[index].status = TCP_CREATED;
 	TCP_CONNECTIONS[index].seq = seq_nr;
@@ -149,7 +149,7 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	//          ACK is set; Connection is known as tcp_connection_status_t::TCP_CREATED;
 	//          We send nothing. Mark connection as tcp_connection_status_t::TCP_ESTABLISHED.
 	bool is_stage_2 = current_status == TCP_CREATED && !packet->syn && packet->ack && !packet->psh && !packet->fin;
-	bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
+	// bool is_push = !packet->syn && !packet->ack && packet->psh && !packet->fin;
 
 	if(is_stage_1) {
 		qemu_note("== STAGE 1 ==");
@@ -191,7 +191,7 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 	} else if(is_stage_2) {
 		qemu_note("== STAGE 2 ==");
 
-		tcp_connection_t* connection = TCP_CONNECTIONS + idx;
+		volatile tcp_connection_t* connection = TCP_CONNECTIONS + idx;
 
 		connection->status = TCP_ESTABLISHED;
 
@@ -200,7 +200,7 @@ void tcp_handle_packet(netcard_entry_t *card, tcp_packet_t *packet) {
 		char* data = "Hello, world!\n";
 		size_t length = strlen(data);
 
-		tcp_send_packet(TCP_CONNECTIONS + idx, data, length);
+		tcp_send_packet((tcp_connection_t*)(TCP_CONNECTIONS + idx), data, length);
 	} else {
 		qemu_note("== ANOTHER STAGE! ==");
 		qemu_note("== ANOTHER STAGE! ==");

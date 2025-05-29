@@ -34,7 +34,7 @@ void grub_modules_init(const multiboot_header_t* hdr) {
 
     multiboot_module_t* module_list = (multiboot_module_t*)hdr->mods_addr;
 
-    qemu_log("Module list at: %x", module_list);
+    qemu_log("Module list at: %p", module_list);
 
     for (size_t i = 0; i < hdr->mods_count; i++) {
         multiboot_module_t *mod = module_list + i;

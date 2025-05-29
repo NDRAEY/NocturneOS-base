@@ -13,7 +13,7 @@ use embedded_graphics::{
     Drawable,
     mono_font::{
         MonoTextStyle,
-        ascii::{FONT_8X13, FONT_8X13_BOLD},
+        ascii::FONT_8X13_BOLD,
     },
     pixelcolor::Rgb888,
     prelude::{Dimensions, Point, RgbColor, Size},
@@ -170,7 +170,7 @@ impl Pavi<'_> {
         self.render_image();
 
         loop {
-            let ckey = unsafe { keyboard_buffer_get() };
+            let ckey = keyboard_buffer_get();
             let key = parse_scancode(ckey as u8);
 
             if key.is_none() {

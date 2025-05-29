@@ -1,4 +1,4 @@
-use crate::{dpm_info, dpm_read, dpm_write, DPM_Disk, DPM_Disks};
+use crate::{dpm_read, dpm_write, DPM_Disk, DPM_Disks};
 
 pub struct Disk {
     disk: *mut DPM_Disk,

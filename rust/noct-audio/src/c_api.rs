@@ -1,7 +1,6 @@
 use core::ffi::{CStr, c_char, c_void};
 
 use alloc::{boxed::Box, string::ToString};
-use noct_logger::qemu_note;
 
 use crate::*;
 

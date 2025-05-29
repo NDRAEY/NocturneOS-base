@@ -57,7 +57,7 @@ void create_back_framebuffer() {
     
     back_framebuffer_addr = (uint8_t*)kmalloc_common(framebuffer_size, PAGE_SIZE);
 
-    qemu_log("^---- 2. Zeroing (%x - %x)", back_framebuffer_addr, back_framebuffer_addr + framebuffer_size);
+    qemu_log("^---- 2. Zeroing (%p - %p)", back_framebuffer_addr, back_framebuffer_addr + framebuffer_size);
     memset(back_framebuffer_addr, 0, framebuffer_size);
 
     qemu_ok("^---- Ready!");
@@ -72,7 +72,7 @@ void create_back_framebuffer() {
 	phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 	
     qemu_log("framebuffer_size = %d (%dK) (%dM)", framebuffer_size, framebuffer_size/1024, framebuffer_size/(1024*1024));
-    qemu_log("back_framebuffer_addr = %x", back_framebuffer_addr);
+    qemu_log("back_framebuffer_addr = %p", back_framebuffer_addr);
 }
 
 /**

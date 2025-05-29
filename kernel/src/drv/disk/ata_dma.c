@@ -63,7 +63,7 @@ void ata_dma_init() {
 
 	ata_dma_phys_prdt = virt2phys(get_kernel_page_directory(), (virtual_addr_t) ata_dma_prdt);
 
-	qemu_log("PRDT ON: V%x; P%x", ata_dma_prdt, ata_dma_phys_prdt);
+	qemu_log("PRDT ON: V%p; P%x", ata_dma_prdt, ata_dma_phys_prdt);
 }
 
 void ata_dma_clear_prdt() {
@@ -400,7 +400,7 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 		return E_DEVICE_NOT_ONLINE;
 	}
 
-    qemu_log("DRIVE: %d; Buffer: %x, Location: %x, len: %d", drive, buf, location, length);
+    qemu_log("DRIVE: %d; Buffer: %p, Location: %x, len: %d", drive, buf, location, length);
 
 	size_t start_sector = location / drives[drive].block_size;
 	size_t end_sector = (location + length - 1) / drives[drive].block_size;

@@ -317,7 +317,7 @@ bool atapi_check_media_presence(uint8_t bus, bool slave) {
 
 	uint8_t errorcode[18];
 
-	atapi_error_code error_code = atapi_request_sense(1, 0, errorcode);
+	atapi_error_code error_code = atapi_request_sense(bus, slave, errorcode);
 
 	return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
 }

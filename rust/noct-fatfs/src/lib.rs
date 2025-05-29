@@ -5,15 +5,13 @@ extern crate alloc;
 use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{string::String, vec::Vec};
-use fatfs::{File, FsOptions, Read, Seek, SeekFrom};
+use fatfs::{FsOptions, Read, Seek, SeekFrom};
 use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE,
     FSM_MOD_READ, FSM_TIME,
 };
 use noct_logger::{qemu_err, qemu_note, qemu_ok};
-use noct_path::Path;
-use noct_timer::timestamp;
 
 static FSNAME: &[u8] = b"FATFS\0";
 
@@ -56,9 +54,9 @@ impl fatfs::Seek for DiskFile {
             SeekFrom::Start(p) => {
                 self.position = p;
             }
-            SeekFrom::End(p) => {
+            SeekFrom::End(_p) => {
                 todo!("Check fatfs::SeekFrom::End!");
-                self.position = (self.disk.capacity() as i64 - p) as u64;
+                // self.position = (self.disk.capacity() as i64 - p) as u64;
             }
             SeekFrom::Current(p) => {
                 self.position = (self.position as i64 + p) as u64;
@@ -238,7 +236,7 @@ unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
         fat.root_dir().open_dir(pardir.as_str())
     };
 
-    let mut dir = match dir {
+    let dir = match dir {
         Err(e) => {
             qemu_err!("Failed to read dir: {:?}", e);
             return FSM_FILE::missing();

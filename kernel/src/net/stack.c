@@ -34,7 +34,7 @@ void netstack_push(netcard_entry_t* card, void* packet_data, size_t length) {
 	item->card = card;
 	item->length = length;
 
-	vector_push_back(system_network_outgoing_queue, (size_t) item);
+	vector_push_back((vector_t*)system_network_outgoing_queue, (size_t) item);
 }
 
 void netstack_transfer(netcard_entry_t* card, void* packet_data, size_t length) {
@@ -47,12 +47,12 @@ void netstack_transfer(netcard_entry_t* card, void* packet_data, size_t length) 
 	item->card = card;
 	item->length = length;
 
-	vector_push_back(system_network_incoming_queue, (size_t) item);
+	vector_push_back((vector_t*)system_network_incoming_queue, (size_t) item);
 }
 
 
 netqueue_item_t* netstack_pop() {
-    netqueue_item_t* data = (void *) vector_pop_back(system_network_incoming_queue).element;
+    netqueue_item_t* data = (void *) vector_pop_back((vector_t*)system_network_incoming_queue).element;
 
     return data;
 }
@@ -72,7 +72,7 @@ void netstack_processor_out() {
 		for(int i = system_network_outgoing_queue->size; i > 0; i--) {
 			qemu_log("%d packets remaining", i);
 
-			netqueue_item_t* item = (void*)vector_pop_back(system_network_outgoing_queue).element;
+			netqueue_item_t* item = (void*)vector_pop_back((vector_t*)system_network_outgoing_queue).element;
 			item->card->send_packet(item->data, item->length);
 		}
 

@@ -2,6 +2,7 @@
 
 #include <lib/math.h>
 
+#include "lib/asprintf.h"
 #include "generated/pci.h"
 #include "io/ports.h"
 #include "io/tty.h"
@@ -16,6 +17,8 @@
 
 #define AHCI_CLASS 1
 #define AHCI_SUBCLASS 6
+
+void il_log(const char* message);
 
 struct ahci_port_descriptor ports[32] = {0};
 
@@ -43,7 +46,7 @@ void ahci_irq_handler();
 
 void ahci_init() {
 	// Find controller
-    qemu_log("Finding AHCI...");
+    il_log("Finding AHCI...");
 
 	pci_find_device_by_class_and_subclass(AHCI_CLASS, AHCI_SUBCLASS, &ahci_vendor, &ahci_devid, &ahci_busnum, &ahci_slot, &ahci_func);
 
@@ -78,32 +81,31 @@ void ahci_init() {
 
 	qemu_log("Version: %x", abar->version);
 
-     if(abar->host_capabilities_extended & 1U) {
-         for(int i = 0; i < 5; i++) {
-             qemu_warn("PERFORMING BIOS HANDOFF!!!");
-         }
+	if(abar->host_capabilities_extended & 1U) {
+		for(int i = 0; i < 5; i++) {
+			qemu_warn("PERFORMING BIOS HANDOFF!!!");
+		}
 
-         abar->handoff_control_and_status = abar->handoff_control_and_status | (1 << 1);
+		abar->handoff_control_and_status = abar->handoff_control_and_status | (1 << 1);
 
-         while(1) {
-             size_t status = abar->handoff_control_and_status;
+		while(1) {
+			size_t status = abar->handoff_control_and_status;
 
-             if (~status & (1 << 0)) {
-                 break;
-             }
-         }
-     } else {
-         qemu_ok("No BIOS Handoff");
-     }
+			if (~status & (1 << 0)) {
+				break;
+			}
+		}
+	} else {
+		qemu_ok("No BIOS Handoff");
+	}
 
 	// Reset
-	 abar->global_host_control = (1 << 31) /* | (1 << 0) */; // Just enable AHCI
+	abar->global_host_control |= (1 << 31) | (1 << 0);
 
-	 // while(true) {
-		//  if((abar->global_host_control & 1) == 0) {
-		// 	 break;
-		//  }
-	 // }
+	while((abar->global_host_control & 1) == 1)
+		;
+	
+	tty_printf("Reset okay");
 
 	// Interrupts
 	ahci_irq = pci_read32(ahci_busnum, ahci_slot, ahci_func, 0x3C) & 0xFF; // All 0xF PCI register
@@ -111,26 +113,27 @@ void ahci_init() {
 
 	register_interrupt_handler(32 + ahci_irq, ahci_irq_handler);
 
-	// Init
-	abar->global_host_control |= (1 << 0);  // Reset
-
-	while((abar->global_host_control & 1) == 1)
-		;
-
-	tty_printf("Reset okay");
-
-	abar->global_host_control |= (1 << 31) | (1 << 1);  // AHCI Enable and AHCI Interrupts
+	abar->global_host_control |= (1U << 31) | (1U << 1);  // AHCI Enable and AHCI Interrupts
 
 	qemu_ok("Enabled AHCI and INTERRUPTS");
 
 	size_t caps = abar->capability;
-	size_t slotCount = ((caps >> 8) & 0x1f) + 1;
+	size_t slot_count = ((caps >> 8) & 0x1f) + 1;
 
-	qemu_log("Slot count: %d", slotCount);
+	qemu_log("Slot count: %d", slot_count);
+
+	char* a;
+	asprintf(&a, "Slot count: %d", slot_count);
+	il_log(a);
+	kfree(a);
 
 	size_t maxports = (caps & 0x1f) + 1;
 
 	qemu_log("Max port count: %d", maxports);
+
+	asprintf(&a, "Max port count: %d", maxports);
+	il_log(a);
+	kfree(a);
 
 	// Scan bus
 
@@ -138,27 +141,38 @@ void ahci_init() {
 
 	qemu_log("PI is: %x", implemented_ports);
 
+	if(implemented_ports == 0) {
+		implemented_ports = 0xffffffffu >> (32 - maxports);
+		qemu_log("updated pi is: %x", implemented_ports);
+	}
+
 	for(uint32_t i = 0; i < 32; i++) {
 		if (implemented_ports & (1 << i)) {
             AHCI_HBA_PORT* port = AHCI_PORT(i);
 
             // Additional initialization here
 
-            if((port->command_and_status & (1 << 2)) != (1 << 2)) {
+            if((port->command_and_status & (1 << 2)) == 0) {
 				port->command_and_status |= (1 << 2);
 
-				sleep_ms(200);  // Replace them with checks
+				// sleep_ms(200);  // Replace them with checks
+				while((port->command_and_status & (1 << 2)) != 0)
+					;
 			}
 
-			if((port->command_and_status & (1 << 1)) != (1 << 1)) {
+			if((port->command_and_status & (1 << 1)) == 0) {
 				port->sata_error = 0xFFFFFFFF;
 
 				port->sata_control = 0;
 
 				port->command_and_status |= (1 << 1); // Spin up.
 
-				sleep_ms(100); // Replace them with checks
+				while((port->command_and_status & (1 << 1)) != 0)
+					;
 			}
+
+			port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
+			port->command_and_status |= 1 << 4;
 
 			if (!ahci_is_drive_attached(i)) {
 				continue;
@@ -239,11 +253,9 @@ void ahci_rebase_memory_for(size_t port_num) {
 	AHCI_HBA_CMD_HEADER *cmdheader = (AHCI_HBA_CMD_HEADER*)virt;
 
 	for(int i = 0; i < 32; i++) {
-			cmdheader[i].prdtl = COMMAND_TABLE_PRDT_ENTRY_COUNT;
-
-			cmdheader[i].ctba = AHCI_COMMAND_TABLE_ENTRY(phys, 0, i);
-
-			cmdheader[i].ctbau = 0;
+		cmdheader[i].prdtl = COMMAND_TABLE_PRDT_ENTRY_COUNT;
+		cmdheader[i].ctba = AHCI_COMMAND_TABLE_ENTRY(phys, 0, i);
+		cmdheader[i].ctbau = 0;
 	}
 
 //	qemu_log("Port %d", port_num);
@@ -325,8 +337,6 @@ void ahci_stop_cmd(size_t port_num) {
 	}
 }
 
-void il_log(const char* message);
-
 void ahci_irq_handler() {
     qemu_warn("AHCI interrupt!");
     uint32_t status = abar->interrupt_status;
@@ -357,12 +367,12 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
     qemu_warn("DRIVE IS READY");
 
-    port->command_issue |= 1 << slot;
+    port->command_issue |= 1u << slot;
 
     qemu_warn("COMMAND IS ISSUED");
 
-    while (1) {
-        if (~port->command_issue & (1 << slot))  // Command is not running? Break
+    while(true) {
+        if (~port->command_issue & (1u << slot))  // Command is not running? Break
             break;
 
         if (port->interrupt_status & AHCI_HBA_TFES)	{  // Task file error? Tell about error and exit
@@ -592,7 +602,7 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 
 	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
 	hdr->a = 1;  // ATAPI
-	hdr->w = 0;  // Read
+	hdr->w = 1;  // Write
 	hdr->p = 0;  // No prefetch
 	hdr->prdtl = 0;  // No entries
 
@@ -607,6 +617,12 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	cmdfis->fis_type = FIS_TYPE_REG_HOST_TO_DEVICE;
 	cmdfis->c = 1;	// Command
 	cmdfis->command = ATA_CMD_PACKET;
+
+	// cmdfis->control = 0x08;
+	// cmdfis->device = 0xE0;
+
+	cmdfis->lba1 = 0;   // it really doesn't should be here, but set it to be noticed
+	cmdfis->lba2 = 0;
 
     ahci_send_cmd(port, 0);
 }
@@ -649,6 +665,12 @@ void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size
 	cmdfis->c = 1;	// Command
 	cmdfis->command = ATA_CMD_PACKET;
 
+	cmdfis->lba1 = (size & 0xff);
+	cmdfis->lba2 = ((size >> 8) & 0xff);
+	// cmdfis->lba3 = ((size >> 16) & 0xff);
+	// cmdfis->lba4 = ((size >> 24) & 0xff);
+	// cmdfis->lba5 = ((size >> 32) & 0xff);
+
     ahci_send_cmd(port, 0);
 
 	memcpy(output, buffer_mem, size);
@@ -663,6 +685,7 @@ void ahci_eject_cdrom(size_t port_num) {
         0, 0, 0,  // Reserved
         1 << 1, // Eject the disc
         0, 0, 0, 0, 0,   // Reserved
+		0, 0, 0, 0, 0, 0
     };
 
 	ahci_send_atapi_nomem(port_num, command);
@@ -671,34 +694,39 @@ void ahci_eject_cdrom(size_t port_num) {
 atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 	uint8_t command[16] = {
         ATAPI_CMD_RQ_SENSE, 0, 0, 0,
-		24, // Allocation Length: We need only 18 bytes (mininal respose length)
+		18, // Allocation Length: We need only 18 bytes (mininal respose length)
 		0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0
     };
 
-	ahci_send_atapi(port_num, command, output, 24);
+	ahci_send_atapi(port_num, command, output, 18);
 
-	hexview_advanced(output, 24, 16, false, new_qemu_printf);
+	hexview_advanced(output, 18, 16, false, new_qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
 }
 
 bool ahci_atapi_check_media_presence(size_t port_num) {
 	uint8_t command[16] = {
-        ATAPI_CMD_READY, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ATAPI_CMD_READY, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0
     };
 
-	uint8_t errorcode[24] = {0};
+	uint8_t errorcode[18] = {0};
     
 	qemu_log("Sending READY command");
 	ahci_send_atapi_nomem(port_num, command);
 
-	qemu_log("Fetching sense");
-	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
+	// qemu_log("Fetching sense");
+	// atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
-	hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
+	// hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
 	
-	return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
+	// return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
+
+	return true;
 }
 
 void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length) {
@@ -809,6 +837,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
     *(((uint8_t*)model) + 39) = 0;
 
     tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
+    qemu_log("[SATA] MODEL: '%s'; CAPACITY: %d sectors", model, capacity);
 	
 	kfree(model);
 

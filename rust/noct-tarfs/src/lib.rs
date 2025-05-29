@@ -11,7 +11,7 @@ use alloc::{
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_logger::{qemu_err, qemu_log};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 

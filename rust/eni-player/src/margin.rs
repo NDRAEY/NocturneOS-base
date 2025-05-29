@@ -35,20 +35,20 @@ where
         }
     }
 
-    pub const fn with_margin(mut self, value: MarginValue) -> Self {
-        self.value = value;
-        self
-    }
+    // pub const fn with_margin(mut self, value: MarginValue) -> Self {
+    //     self.value = value;
+    //     self
+    // }
 
-    pub const fn with_all_constraints(mut self, value: u32) -> Self {
-        self.value = MarginValue {
-            top: value,
-            bottom: value,
-            left: value,
-            right: value,
-        };
-        self
-    }
+    // pub const fn with_all_constraints(mut self, value: u32) -> Self {
+    //     self.value = MarginValue {
+    //         top: value,
+    //         bottom: value,
+    //         left: value,
+    //         right: value,
+    //     };
+    //     self
+    // }
 
     pub const fn bottom(mut self, value: u32) -> Self {
         self.value.bottom = value;
@@ -70,13 +70,13 @@ where
         self
     }
 
-    pub const fn drawable(&self) -> &T {
-        &self.drawable
-    }
+    // pub const fn drawable(&self) -> &T {
+    //     &self.drawable
+    // }
 
-    pub const fn drawable_mut(&mut self) -> &mut T {
-        &mut self.drawable
-    }
+    // pub const fn drawable_mut(&mut self) -> &mut T {
+    //     &mut self.drawable
+    // }
 }
 
 impl<T> Drawable for Margin<T>

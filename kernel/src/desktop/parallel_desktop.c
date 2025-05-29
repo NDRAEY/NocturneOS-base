@@ -117,7 +117,7 @@ void parallel_desktop_start() {
     root_window->closable = false;
     root_window->canvas_bgcolor = 0x404040;
 
-    qemu_log("Root window! at %x", root_window);
+    qemu_log("Root window! at %p", root_window);
 
     Widget_t* wallpaper = new_widget_image("R:/ParallelData/background.tga");
     window_add_widget(root_window, wallpaper);

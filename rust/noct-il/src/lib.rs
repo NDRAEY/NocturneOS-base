@@ -1,11 +1,8 @@
 #![no_std]
 
-use core::cell::{OnceCell, RefCell};
-
 use alloc::{
-    boxed::Box,
     collections::linked_list::LinkedList,
-    string::{String, ToString},
+    string::String,
 };
 use lazy_static::lazy_static;
 use noct_timer::timestamp;

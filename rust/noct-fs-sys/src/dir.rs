@@ -1,5 +1,4 @@
 use alloc::string::{String, ToString};
-use noct_logger::qemu_note;
 
 use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, FSM_DIR, FSM_FILE};
 

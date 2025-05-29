@@ -1,4 +1,4 @@
-use crate::{PCI_DEVICES, find_device, find_device_by_class_and_subclass, pci_read32, pci_write};
+use crate::{find_device, find_device_by_class_and_subclass, pci_read32, pci_write};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn pci_find_device(

@@ -159,9 +159,9 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     void*	stack = nullptr;
     uint32_t	eflags;
 
-    qemu_log("Process at: %x", proc);
+    qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
-    qemu_log("Entry point: %x", entry_point);
+    qemu_log("Entry point: %p", entry_point);
     qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
 
@@ -221,9 +221,9 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     void*	stack = nullptr;
     uint32_t	eflags;
 
-    qemu_log("Process at: %x", proc);
+    qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
-    qemu_log("Entry point: %x", entry_point);
+    qemu_log("Entry point: %p", entry_point);
     qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
 

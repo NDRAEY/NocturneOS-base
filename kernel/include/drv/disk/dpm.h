@@ -10,8 +10,11 @@
 typedef size_t (*dpm_disk_read_cmd)(size_t, uint64_t, uint64_t, size_t, void *);
 typedef size_t (*dpm_disk_write_cmd)(size_t, uint64_t, uint64_t, size_t, const void *);
 
-// disk, data, data_length
-typedef size_t (*dpm_disk_command_cmd)(size_t, const void *, size_t);
+#define DPM_COMMAND_EJECT      (0x00)
+#define DPM_COMMAND_GET_STATUS (0x01)
+
+// disk, command, data, data_length
+typedef size_t (*dpm_disk_command_cmd)(size_t, size_t, const void *, size_t);
 
 typedef struct
 {

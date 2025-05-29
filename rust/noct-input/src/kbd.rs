@@ -1,5 +1,3 @@
-use noct_logger::qemu_note;
-
 use crate::keyboard_buffer_get;
 
 #[derive(Debug, Clone, Copy, PartialEq)]

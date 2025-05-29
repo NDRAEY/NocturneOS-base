@@ -390,8 +390,8 @@ add_custom_target(
 
 add_custom_target(
 	clippy-fix
-    COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --target ${RUST_TARGET} ${RUST_FLAGS} --fix
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+  COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} clippy --fix --target ${RUST_TARGET} ${RUST_FLAGS}
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
 )

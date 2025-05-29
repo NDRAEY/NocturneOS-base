@@ -33,7 +33,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 	
 	info->DriverFS = -1;
 	
-	qemu_log("Decoding name: %s (%x)", Name, Name);
+	qemu_log("Decoding name: %s (%p)", Name, Name);
 
 	// Is path header valid?
 	bool is_valid_delim = struntil(Name, ':') == 1 && (struntil(Name, '/') == 2);

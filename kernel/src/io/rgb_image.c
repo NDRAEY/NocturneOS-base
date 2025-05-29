@@ -8,13 +8,13 @@
 #include <emmintrin.h>
 
 // TODO: Care about remaining pixels of image.
-__attribute__((force_align_arg_pointer)) void draw_rgb_image(const char *data, size_t width, size_t height, size_t bpp, int sx, int sy) {
+__attribute__((force_align_arg_pointer)) void draw_rgb_image(const uint8_t *data, size_t width, size_t height, size_t bpp, int sx, int sy) {
 	size_t x = 0, y = 0;
 
 	size_t bytes_pp = bpp >> 3;
 	size_t line_size = width * bytes_pp;
 
-	const char* dp = back_framebuffer_addr + sy * framebuffer_pitch;
+	const uint8_t* dp = back_framebuffer_addr + sy * framebuffer_pitch;
 	const size_t fb_bpp = framebuffer_bpp >> 3;
 
 	while(y < height) {

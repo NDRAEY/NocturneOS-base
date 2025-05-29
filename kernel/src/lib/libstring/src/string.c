@@ -7,7 +7,6 @@
 #include "lib/string.h"
 #include "lib/stdio.h"
 #include "../include/string.h"
-#include "io/ports.h"
 
 string_t* string_new() {
 	string_t* string = calloc(sizeof *string, 1);
@@ -99,8 +98,6 @@ string_t* string_from_charptr(const char* chars) {
 		return 0;
 	}
 
-	qemu_log("charptr to string: %s (%x)", chars, chars);
-
 	string->length = strlen(chars);
 	string->data = calloc(string->length + 1, 1);
 
@@ -139,8 +136,6 @@ vector_t* string_split(string_t* string, const char* delimiter) {
 	size_t delim_len = strlen(delimiter);
 
 	char* el = strstr(curptr, delimiter);
-
-	qemu_log("strstr(%s, %x): %x", curptr, delimiter, el);
 
 	if(!el) { // If no occurrences, just add whole string and return vector.
 		string_t* str = string_new();

@@ -22,7 +22,7 @@ use embedded_layout::prelude::Chain;
 use margin::Margin;
 use noct_fs::File;
 use noct_input::kbd::{Key, SpecialKey};
-use noct_logger::{qemu_log, qemu_note, qemu_ok};
+use noct_logger::{qemu_note, qemu_ok};
 use noct_sched::{spawn, task_yield};
 use noct_timer::timestamp;
 use noct_tty::println;
@@ -324,7 +324,7 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
         .unwrap_or(("Unknown artist".to_string(), "Unknown".to_string()));
 
     loop {
-        let key = unsafe { noct_input::keyboard_buffer_get_or_nothing() };
+        let key = noct_input::keyboard_buffer_get_or_nothing();
         let (key, is_pressed) =
             noct_input::kbd::parse_scancode(key as u8).unwrap_or((Key::Unknown, false));
 

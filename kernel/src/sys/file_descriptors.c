@@ -150,7 +150,7 @@ size_t file_descriptor_seek(int descriptor_number, ssize_t value, size_t whence)
 
 	struct fd_info* inf = file_descriptor_get(descriptor_number);
 
-	qemu_note("[%x] Seek: Value: %x; Whence: %x", inf, value, whence);
+	qemu_note("[%p] Seek: Value: %x; Whence: %x", inf, value, whence);
 
 	fseek(inf->file, value, whence);
 

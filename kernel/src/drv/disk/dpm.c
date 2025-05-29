@@ -126,7 +126,7 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
 		// Диск является частью ОЗУ, поэтому мы просто копируем данные оттуда
 		if (dpm_debug)
 		{
-			qemu_log("[DPM] [2] An attempt to read data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+			qemu_log("[DPM] [2] An attempt to read data in 'Disk %c' from position %p to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
 		}
 		memcpy(Buffer, (void *)(DPM_Disks[Index].Point + low_offset), Size);
 
@@ -137,7 +137,9 @@ size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t S
 		// Режим 3, предполагает что вы указали функцию для чтения и записи с диска
 		if (dpm_debug)
 		{
-			qemu_log("[DPM] [3] An attempt to read data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+			qemu_log("[DPM] [3] An attempt to read data in 'Disk %c' from position %p to the number of %d bytes.", Index + 65,
+				DPM_Disks[Index].Point + low_offset,
+				Size);
 		}
 
 		if (DPM_Disks[Index].Read == 0)
@@ -183,7 +185,10 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 		// Диск является частью ОЗУ, поэтому мы просто копируем данные туда
 		// Опастна! Если не знать, что делать!
 		if (dpm_debug) {
-			qemu_log("[DPM] [2] An attempt to write data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+			qemu_log("[DPM] [2] An attempt to write data in 'Disk %c' from position %p to the number of %u bytes.",
+				Index + 65,
+				DPM_Disks[Index].Point + low_offset,
+				Size);
 		}
 		memcpy((void *)(DPM_Disks[Index].Point + low_offset), Buffer, Size);
 
@@ -193,7 +198,7 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 	{
 		// Режим 3, предполагает что вы указали функцию для чтения и записи с диска
 		if (dpm_debug) {
-			qemu_log("[DPM] [3] An attempt to write data in 'Disk %c' from position %x to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
+			qemu_log("[DPM] [3] An attempt to write data in 'Disk %c' from position %p to the number of %d bytes.", Index + 65, DPM_Disks[Index].Point + low_offset, Size);
 		}
 
 		if (DPM_Disks[Index].Write == 0)
@@ -291,7 +296,7 @@ int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t S
 	qemu_log("  |-- Sectors: %d", DPM_Disks[Index].Sectors);
 	qemu_log("  |-- SectorSize: %d", DPM_Disks[Index].SectorSize);
 	qemu_log("  |-- AddrMode: %d", DPM_Disks[Index].AddrMode);
-	qemu_log("  |-- Point: %x", DPM_Disks[Index].Point);
+	qemu_log("  |-- Point: %p", DPM_Disks[Index].Point);
 
 	return Index;
 }
@@ -359,13 +364,13 @@ void dpm_dump(char Letter) {
 	DPM_Disk info = dpm_info(Letter);
   (void)info;
 
-	qemu_log("  |-- Name: %s (%x)", info.Name ?: "(null)", info.Name);
+	qemu_log("  |-- Name: %s (%p)", info.Name ?: "(null)", info.Name);
 	qemu_log("  |-- Serial: %s", info.Serial);
-	qemu_log("  |-- FileSystem: %s (%x)", info.FileSystem ?: "(null)", info.FileSystem);
+	qemu_log("  |-- FileSystem: %s (%p)", info.FileSystem ?: "(null)", info.FileSystem);
 	qemu_log("  |-- Status: %d", info.Status);
 	// qemu_log("  |-- Size: %d", info.Size);  // Most disks have capacity is greater than 4GB (32-bit space), so every disk with capacity greater than 4GB will give a bug. (We need to impelement BigInt?)
 	qemu_log("  |-- Sectors: %d", info.Sectors);
 	qemu_log("  |-- SectorSize: %d", info.SectorSize);
 	qemu_log("  |-- AddrMode: %d", info.AddrMode);
-	qemu_log("  |-- Point: %x", info.Point);
+	qemu_log("  |-- Point: %p", info.Point);
 }
