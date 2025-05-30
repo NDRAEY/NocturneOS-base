@@ -13,6 +13,7 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
 pub use noct_noctfs;
@@ -132,16 +133,18 @@ pub extern "C" fn rust_main() {
     //     program.run(&[]);
     // }
 
-    let symbols = [
-        "unknownfunction_0",
-        "dpm_LabelUpdate",
-        "virt2phys",
-        "eps_eps",
-        "aaaa",
-        "nvfs_write",
-    ];
+    // let symbols = [
+    //     "unknownfunction_0",
+    //     "dpm_LabelUpdate",
+    //     "virt2phys",
+    //     "eps_eps",
+    //     "aaaa",
+    //     "nvfs_write",
+    // ];
 
-    for i in symbols {
-        qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));
-    }
+    // for i in symbols {
+    //     qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));
+    // }
+
+    load_module("E:/test_module.ko");
 }
