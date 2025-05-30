@@ -417,6 +417,7 @@ version = "0.1.0"
 dependencies = [
  "elf",
  "noct-fs",
+ "noct-ksymparser",
  "noct-logger",
  "noct-physmem",
 ]

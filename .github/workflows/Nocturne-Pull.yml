@@ -12,7 +12,7 @@ jobs:
 
       - name: Step 1 - Software installation
         run: |
-          sudo apt install clang gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
+          sudo apt install libclang1-19 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
 
       - name: Step 1.1 - Install Rust
         run: |
