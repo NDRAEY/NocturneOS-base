@@ -12,7 +12,6 @@ noct-screen = { path = "../noct-screen" }
 noct-input = { path = "../noct-input" }
 noct-logger = { path = "../noct-logger" }
 
-eg-seven-segment = "0.2.0"
 embedded-canvas = "0.3.1"
 embedded-graphics = "0.8.1"
 embedded-layout = "0.4.2"

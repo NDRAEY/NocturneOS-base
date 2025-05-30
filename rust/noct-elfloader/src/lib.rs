@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+pub mod ko_modules;
+
 use alloc::{string::String, vec::Vec};
 use elf::{ParseError, endian::AnyEndian};
 use noct_logger::{qemu_err, qemu_note};

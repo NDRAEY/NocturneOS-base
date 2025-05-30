@@ -11,4 +11,4 @@ noct-logger = { path = "../noct-logger" }
 
 
 [build-dependencies]
-bindgen = "0.71.1"
+bindgen = { version = "0.71.1", default-features=false }
