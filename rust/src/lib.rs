@@ -146,5 +146,5 @@ pub extern "C" fn rust_main() {
     //     qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));
     // }
 
-    load_module("E:/test_module.ko");
+    // load_module("E:/test_module.ko");
 }

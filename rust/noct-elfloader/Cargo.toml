@@ -8,3 +8,4 @@ elf = { version = "0.7.4", default-features = false }
 noct-fs = { path = "../noct-fs" }
 noct-logger = { path = "../noct-logger" }
 noct-physmem = { path = "../noct-physmem" }
+noct-ksymparser = { path = "../noct-ksymparser" }

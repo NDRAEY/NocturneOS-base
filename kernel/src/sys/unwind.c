@@ -50,7 +50,7 @@ void unwind_stack(uint32_t max_frames) {
     struct stackframe *stk = 0;
     __asm__ volatile("movl %%ebp, %0" : "=r"(stk) :: );
 
-    qemu_log("Stack trace:");
+    qemu_printf("Stack trace:");
     tty_printf("Stack trace:\n");
 
     for(uint32_t frame = 0; stk && frame < max_frames; ++frame) {

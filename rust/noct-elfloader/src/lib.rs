@@ -5,7 +5,7 @@ extern crate alloc;
 pub mod ko_modules;
 
 use alloc::{string::String, vec::Vec};
-use elf::{ParseError, endian::AnyEndian};
+use elf::{abi::PT_LOAD, endian::AnyEndian, ParseError};
 use noct_logger::{qemu_err, qemu_note};
 use noct_physmem::{PAGE_PRESENT, PAGE_SIZE, PAGE_USER, PAGE_WRITEABLE};
 
@@ -102,8 +102,7 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
     let mut loaded_segments: Vec<LoadInfo> = Vec::new();
 
     for i in segments.iter() {
-        // 1 = PH_LOAD
-        if i.p_type != 1 {
+        if i.p_type != PT_LOAD {
             continue;
         }
 
