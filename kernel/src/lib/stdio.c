@@ -14,82 +14,6 @@
 #include <fs/nvfs.h>
 #include <io/tty.h>
 
-bool stdio_debug = true;
-
-
-/**
- * @brief Получение режима работы (маски файла)
- *
- * @param mode - Режии
- *
- * @todo Оптимизировать работу с битовыми флагами
- * @return Режим работы (маска)
- */
-uint32_t fmodecheck(const char* mode){
-	ON_NULLPTR(mode, {
-		qemu_log("Mode is nullptr!");
-		return 0;
-	});
-
-	uint32_t fmode = 0;
-	if (mode[0] == 'w') {
-		if (mode[1] == 'x') { // wx
-			fmode = O_WRITE | O_CREATE;
-		} else if (mode[1] == 'b') {
-			if (mode[2] == 'x') { // wbx
-				fmode = O_WRITE | O_CREATE;
-			} else if (mode[2] == '+') {
-				if (mode[3] == 'x') { // wb+x
-					fmode = O_WRITE | O_READ | O_CREATE;
-				} else { // wb+
-					fmode = O_WRITE | O_READ | O_CREATE | O_TRUNC;
-				}
-			} else { // wb
-				fmode = O_WRITE | O_CREATE | O_TRUNC;
-			}
-		} else if (mode[1] == '+') {
-			if (mode[2] == 'x') { // w+x
-				fmode = O_WRITE | O_READ | O_CREATE;
-			} else if (mode[2] == 'b') {
-				if (mode[3] == 'x') { // w+bx
-					fmode = O_WRITE | O_READ | O_CREATE;
-				} else { // w+b
-					fmode = O_WRITE | O_READ | O_CREATE | O_TRUNC;
-				}
-			} else { // w+
-				fmode = O_WRITE | O_READ | O_CREATE | O_TRUNC;
-			}
-		} else { // w
-			fmode = O_WRITE | O_CREATE | O_TRUNC;
-		}
-	} else if (mode[0] == 'r') {
-		if (mode[1] == 'b') {
-			if (mode[2] == '+') { // rb+
-				fmode = O_READ | O_WRITE;
-			} else { // rb
-				fmode = O_READ;
-			}
-		} else if (mode[1] == '+') { // r+ r+b
-			fmode = O_READ | O_WRITE;
-		} else { // r
-			fmode = O_READ;
-		}
-	} else if (mode[0] == 'a') {
-		if (mode[1] == 'b') {
-			if (mode[2] == '+') { // ab+
-				fmode = O_WRITE | O_READ | O_APPEND | O_CREATE;
-			} else { // ab
-				fmode = O_WRITE | O_APPEND | O_CREATE;
-			}
-		} else if (mode[1] == '+') { // a+ a+b
-			fmode = O_WRITE | O_READ | O_APPEND | O_CREATE;
-		} else { // a
-			fmode = O_WRITE | O_APPEND | O_CREATE;
-		}
-	}
-	return fmode;
-}
-
 /**
  * @brief Проверка файла на наличие ошибок при работе
  *
@@ -103,13 +27,13 @@ void fcheckerror(FILE* stream){
 	
 	FSM_FILE finfo = nvfs_info(stream->path);
 	if (finfo.Ready == 0){
-		stream->err = STDIO_ERR_NO_FOUND;
+		stream->err = STDIO_ERR_NOT_FOUND;
 	} else if (stream->fmode == 0){
 		stream->err = STDIO_ERR_MODE_ERROR;
 	} else if (stream->size <= 0){
 		stream->err = STDIO_ERR_SIZE;
 	} else if (stream->open == 0){
-		stream->err = STDIO_ERR_NO_OPEN;
+		stream->err = STDIO_ERR_FILE;
 	}
 }
 
@@ -125,37 +49,6 @@ uint32_t ferror(FILE* stream){
 }
 
 /**
- * @brief Выводит на экран ошибку с пользовательским сообщением
- *
- * @param stream - Поток (файл)
- * @param s - Пользовательская строка
- */
-void perror(FILE* stream,char* s){
-	switch(stream->err){
-		case STDIO_ERR_NO_FOUND:{
-			tty_printf("%s: %s\n",s, "File no found");
-			break;
-		}
-		case STDIO_ERR_MODE_ERROR:{
-			tty_printf("%s: %s\n",s, "Unknown operating mode");
-			break;
-		}
-		case STDIO_ERR_SIZE:{
-			tty_printf("%s: %s\n",s, "The file size has a non-standard value.");
-			break;
-		}
-		case STDIO_ERR_NO_OPEN:{
-			tty_printf("%s: %s\n",s, "The file has not been opened for work.");
-			break;
-		}
-		default: {
-			tty_printf("%s: %s\n",s, "Unknown");
-			break;
-		}
-	}
-}
-
-/**
  * @brief Открывает файл
  *
  * @param filename Путь к файлу
@@ -163,13 +56,8 @@ void perror(FILE* stream,char* s){
  *
  * @return Структура FILE*
  */
-FILE* fopen(const char* filename, const char* _mode){
-	uint32_t freal_mode = fmodecheck(_mode);
-	
-	return fopen_binmode(filename, freal_mode);
-}
 
-FILE* fopen_binmode(const char* filename, size_t mode) {
+FILE* fopen(const char* filename, size_t mode) {
 	ON_NULLPTR(filename, {
                qemu_log("Filename is nullptr!");
                return NULL;
@@ -185,18 +73,18 @@ FILE* fopen_binmode(const char* filename, size_t mode) {
        if (finfo.Ready == 0 || mode == 0) {
         kfree(file);
         qemu_err("Failed to open file: %s (Exists: %d; FMODE: %d)",
-                       filename,
-                       finfo.Ready,
-                       mode);
+					filename,
+					finfo.Ready,
+					mode);
                return 0;
        }
 
-       file->open = 1;                                                                         // Файл успешно открыт
-       file->fmode = mode;                                                               // Режим работы с файлом
+       file->open = 1;         // Файл успешно открыт
+       file->fmode = mode;     // Режим работы с файлом
        file->size = finfo.Size;                // Размер файла
-       file->path = kcalloc(strlen(filename) + 1, 1);                                           // Полный путь к файлу
-       file->pos = 0;                                                                          // Установка указателя в самое начало
-       file->err = 0;                                                                          // Ошибок в работе нет
+       file->path = kcalloc(strlen(filename) + 1, 1); // Полный путь к файлу
+       file->pos = 0; // Установка указателя в самое начало
+       file->err = 0; // Ошибок в работе нет
 
 	memcpy(file->path, filename, strlen(filename));
 
@@ -256,10 +144,6 @@ int fread(FILE* stream, size_t count, size_t size, void* buffer){
 		return -1;
 	});
 	
-	if (stdio_debug) {
-		qemu_log("Params '%s': count=%d, size=%d, toread=%d, seek=%d", stream->path, count, size, count*size, stream->pos);
-	}
-
 	FSM_FILE finfo = nvfs_info(stream->path);
 	
 	if (!stream->open || finfo.Ready == 0 || stream->size <= 0 || stream->fmode == 0){

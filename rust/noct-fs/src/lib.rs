@@ -1,52 +1,37 @@
 // note: возможно лучшим решением будет переделать под определенные файловые системмы, но пока сойдет и так
 
 #![no_std]
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 extern crate alloc;
 
+use alloc::ffi::CString;
 use alloc::string::String;
 use core::ffi::{CStr, c_void};
 
 use alloc::vec::Vec;
 use alloc::{str, vec};
 
-#[repr(C)]
-struct CFile {
-    path: *const i8,
-    size: i32,
-    fmode: u32,
-    open: bool,
-    pos: isize,
-    err: u32,
-}
-
-unsafe impl Send for CFile {}
-
-unsafe extern "C" {
-    fn fopen(filename: *const u8, mode: *const u8) -> *mut CFile;
-    fn fclose(stream: *mut CFile);
-    fn fseek(stream: *mut CFile, offset: isize, whence: u8);
-    fn fsize(stream: *mut CFile) -> usize;
-    fn fread(stream: *mut CFile, count: usize, size: usize, buffer: *mut c_void) -> i32;
-    fn fwrite(stream: *mut CFile, count: usize, size: usize, buffer: *const c_void) -> usize;
-}
+unsafe impl Send for File {}
 
 pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
-    let mut file_path_string = String::from(file_path);
-    file_path_string.push('\0');
+    let cs = CString::new(file_path).unwrap();
 
-    let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"r".as_ptr() as _) };
+    let file = unsafe { fopen(cs.as_ptr(), FileOpenMode_O_READ) };
 
     if file.is_null() {
         return Err("Failed to open file.");
     }
 
-    let size = unsafe { fsize(file) };
+    let size = unsafe { fsize(file) as usize };
     let mut buffer: Vec<u8> = vec![0; size + 1]; // Создаем буфер для строки
     let ptr = buffer.as_mut_ptr() as *mut c_void;
 
     unsafe {
-        fread(file, 1, size, ptr);
+        fread(file, 1, size as u32, ptr);
 
         fclose(file);
     }
@@ -61,21 +46,20 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
 }
 
 pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
-    let mut file_path_string = String::from(file_path);
-    file_path_string.push('\0');
+    let cs = CString::new(file_path).unwrap();
 
-    let file = unsafe { fopen(file_path_string.as_ptr(), c"r".as_ptr() as _) };
+    let file = unsafe { fopen(cs.as_ptr(), FileOpenMode_O_READ) };
 
     if file.is_null() {
         return Err("Failed to open file.");
     }
 
     let size = unsafe { fsize(file) };
-    let mut buffer: Vec<u8> = vec![0; size];
+    let mut buffer: Vec<u8> = vec![0; size as usize + 1];
     let ptr = buffer.as_mut_ptr() as *mut c_void;
 
     unsafe {
-        fread(file, size, 1, ptr);
+        fread(file, size as _, 1, ptr);
 
         fclose(file);
     }
@@ -84,28 +68,25 @@ pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
 }
 
 pub fn write(file_path: &str, data: &[u8]) -> Result<usize, &'static str> {
-    let mut file_path_string = String::from(file_path);
-    file_path_string.push('\0');
+    let cs = CString::new(file_path).unwrap();
 
-    let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"w".as_ptr() as _) };
+    let file = unsafe { fopen(cs.as_ptr(), FileOpenMode_O_WRITE) };
 
     if file.is_null() {
         return Err("Failed to open file.");
     }
 
-    // let size = unsafe { fsize(file) };
-
     unsafe {
-        let written = fwrite(file, data.len(), 1, data.as_ptr() as *const _);
+        let written = fwrite(file, data.len() as _, 1, data.as_ptr() as *const _);
 
         fclose(file);
 
-        Ok(written)
+        Ok(written as usize)
     }
 }
 
 pub struct File {
-    raw_file: &'static mut CFile,
+    raw_file: &'static mut FILE,
     // path: String,
 }
 
@@ -113,10 +94,9 @@ unsafe impl Sync for File {}
 
 impl File {
     pub fn open(path: &str) -> Result<File, ()> {
-        let mut file_path_string = String::from(path);
-        file_path_string.push('\0');
+        let cs = CString::new(path).unwrap();
 
-        let file = unsafe { fopen(file_path_string.as_bytes().as_ptr(), c"r".as_ptr() as _) };
+        let file = unsafe { fopen(cs.as_ptr(), FileOpenMode_O_READ) };
 
         if file.is_null() {
             return Err(());
@@ -131,7 +111,7 @@ impl File {
     pub fn read(&mut self, buf: &mut [u8]) -> Result<usize, &str> {
         let size = buf.len();
         let ptr = buf.as_mut_ptr() as *mut c_void;
-        let data = unsafe { fread(self.raw_file, 1, size, ptr) };
+        let data = unsafe { fread(self.raw_file, 1, size as _, ptr) };
 
         // if (data as usize) != size {
         //     return Err("Not enough data received");
@@ -143,7 +123,7 @@ impl File {
     pub fn write(&mut self, buf: &[u8]) -> Result<(), &str> {
         let size = buf.len();
         let ptr = buf.as_ptr() as *const c_void;
-        let data = unsafe { fwrite(self.raw_file, 1, size, ptr) };
+        let data = unsafe { fwrite(self.raw_file, 1, size as _, ptr) };
 
         if (data as usize) != size {
             return Err("Not enough data received");
@@ -154,10 +134,10 @@ impl File {
 
     pub fn read_to_string(&mut self, buf: &mut String) -> Result<(), &str> {
         let size = unsafe { fsize(self.raw_file) };
-        let mut buffer: Vec<i8> = vec![0; size]; // Создаем буфер для строки
+        let mut buffer: Vec<i8> = vec![0; size as usize]; // Создаем буфер для строки
         let ptr = buffer.as_mut_ptr() as *mut c_void;
 
-        let data = unsafe { fread(self.raw_file, 1, size, ptr) };
+        let data = unsafe { fread(self.raw_file, 1, size as _, ptr) };
 
         buffer.push(0);
 
@@ -166,7 +146,7 @@ impl File {
 
         buf.push_str(&s);
 
-        if (data as usize) != size {
+        if data != size {
             return Err("Not enough data received");
         }
 
@@ -178,6 +158,6 @@ impl File {
     }
 
     pub fn size(&mut self) -> usize {
-        unsafe { fsize(self.raw_file) }
+        unsafe { fsize(self.raw_file) as _ }
     }
 }

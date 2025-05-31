@@ -20,7 +20,7 @@ void file_descriptors_init() {
 
 // WARNING: Part of system calls! So every func needs to return size_t
 size_t file_descriptor_allocate(const char *filename, size_t mode, int *out) {
-    FILE* file = fopen_binmode(filename, mode);
+    FILE* file = fopen(filename, mode);
 
     if(!file) {
         *out = -1;

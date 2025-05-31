@@ -2,7 +2,13 @@ use core::alloc::Layout;
 
 use alloc::{collections::btree_map::Entry, string::String, vec::Vec};
 use elf::{
-    abi::{R_X86_64_32, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE, STT_SECTION}, endian::AnyEndian, ElfBytes
+    ElfBytes,
+    abi::{
+        R_X86_64_32, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE,
+        STT_SECTION,
+    },
+    endian::AnyEndian,
+    string_table::StringTable,
 };
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
@@ -16,8 +22,267 @@ pub struct ModuleHandle {
     loaded_segments: Vec<LoadInfo>,
 }
 
+pub struct ModuleLoader<'data> {
+    raw_data: Option<Vec<u8>>,
+    elf: Option<ElfBytes<'data, AnyEndian>>,
+
+    loaded_segments: Vec<(&'data str, usize)>,
+    exploreable_symbols: Vec<(usize, &'data str, usize)>,
+
+    section_nametable: Option<StringTable<'data>>,
+}
+
+impl<'data> ModuleLoader<'data> {
+    fn new() -> Self {
+        Self {
+            raw_data: None,
+            elf: None,
+            loaded_segments: Vec::new(),
+            exploreable_symbols: Vec::new(),
+            section_nametable: None,
+        }
+    }
+
+    fn load_data(mut self, path: &str) -> Result<Self, LoadError> {
+        self.raw_data = match noct_fs::read(path) {
+            Ok(data) => Some(data),
+            Err(e) => {
+                qemu_err!("Error: {e}");
+                return Err(LoadError::System(e));
+            }
+        };
+
+        Ok(self)
+    }
+
+    fn load_elf(&'data mut self) -> Result<(), LoadError> {
+        self.elf = match ElfBytes::<AnyEndian>::minimal_parse(&self.raw_data.as_ref().unwrap()) {
+            Ok(elf) => Some(elf),
+            Err(err) => {
+                qemu_err!("parser error: {err}");
+                return Err(LoadError::ElfParser(err));
+            }
+        };
+
+        Ok(())
+    }
+
+    fn load_segments(&'data mut self) -> Result<(), LoadError> {
+        let (all_progbits, secnamtable) = self
+            .elf
+            .as_ref()
+            .unwrap()
+            .section_headers_with_strtab()
+            .map(|x| {
+                (
+                    x.0.unwrap().iter().filter(|x| x.sh_type == SHT_PROGBITS),
+                    x.1.unwrap(),
+                )
+            })
+            .unwrap();
+
+        self.section_nametable = Some(secnamtable);
+
+        for i in all_progbits {
+            let memsize = i.sh_size as usize;
+
+            let (data, _) = self.elf.as_ref().unwrap().section_data(&i).unwrap();
+            let ptr = unsafe { alloc::alloc::alloc(Layout::array::<u8>(memsize).unwrap()) };
+
+            unsafe { ptr.copy_from(data.as_ptr(), data.len()) };
+
+            let name = secnamtable.get(i.sh_name as _).unwrap();
+            self.loaded_segments.push((name, ptr.addr()));
+
+            qemu_note!("{i:x?} {name} {ptr:x?}");
+        }
+
+        Ok(())
+    }
+
+    fn find_exploreable_symbols(&'data mut self) -> Result<&'data Self, LoadError> {
+        let (symtab, strtab) = self.elf.as_ref().unwrap().symbol_table().unwrap().unwrap();
+
+        for (idx, i) in symtab.iter().enumerate() {
+            let mut name = strtab.get(i.st_name as _).unwrap();
+            let total_offset: usize;
+
+            if i.st_symtype() == STT_FUNC || i.st_symtype() == STT_SECTION {
+                let base = match {
+                    let name_off = self
+                        .elf
+                        .as_ref()
+                        .unwrap()
+                        .section_headers()
+                        .unwrap()
+                        .get(i.st_shndx as _)
+                        .unwrap()
+                        .sh_name;
+                    let name = self
+                        .section_nametable
+                        .as_ref()
+                        .unwrap()
+                        .get(name_off as _)
+                        .unwrap();
+
+                    self.loaded_segments.iter().find(|x| x.0 == name)
+                } {
+                    Some(x) => x,
+                    None => {
+                        qemu_err!("Failed to look up section nr. {ndx}", ndx = i.st_shndx);
+                        continue;
+                    }
+                };
+
+                if name.is_empty() {
+                    name = base.0;
+                }
+
+                total_offset = i.st_value as usize + base.1;
+            } else if i.st_symtype() == STT_NOTYPE && i.st_bind() == STB_GLOBAL {
+                qemu_note!("IMPLEMENT: {name}");
+
+                if name == "_GLOBAL_OFFSET_TABLE_" {
+                    qemu_warn!("What the hell is the `_GLOBAL_OFFSET_TABLE_`?");
+                    continue;
+                }
+
+                let offset = noct_ksymparser::resolve(name).unwrap();
+
+                total_offset = offset;
+            } else {
+                continue;
+            }
+
+            qemu_note!("`{name}`: {total_offset:x}");
+            self.exploreable_symbols.push((idx, name, total_offset));
+        }
+
+        // qemu_note!("{exploreable_symbols:x?}");
+
+        Ok(self)
+    }
+
+    fn load_rels(&'data mut self) -> Result<&'data Self, LoadError> {
+        let elf = self.elf.as_ref().unwrap();
+
+        let rels = elf
+            .section_headers_with_strtab()
+            .map(|x| x.0.unwrap())
+            .unwrap()
+            .into_iter()
+            .filter(|x| x.sh_type == SHT_REL);
+
+        for rel in rels {
+            let data = elf.section_data_as_rels(&rel).unwrap();
+
+            // Assuming that every relocation section starts with ".rel"
+            let target_relocation_section = &self
+                .section_nametable
+                .as_ref()
+                .unwrap()
+                .get(rel.sh_name as _)
+                .unwrap()[4..];
+
+            if target_relocation_section == ".eh_frame" {
+                qemu_warn!("Skipping .eh_frame");
+                continue;
+            }
+
+            for i in data {
+                let segment_offset = self
+                    .loaded_segments
+                    .iter()
+                    .find(|&x| x.0 == target_relocation_section)
+                    .unwrap()
+                    .1;
+
+                let substitute = match self
+                    .exploreable_symbols
+                    .iter()
+                    .find(|x| x.0 == i.r_sym as usize)
+                    .map(|x| (x.1, x.2))
+                {
+                    Some(x) => x,
+                    None => {
+                        qemu_warn!("Not loading: {sym}", sym = i.r_sym);
+                        continue;
+                    }
+                }
+                .1;
+
+                let writing_address = (segment_offset + i.r_offset as usize) as *mut u32;
+                let inner_value = unsafe { writing_address.read_unaligned() as usize };
+
+                let value: usize;
+
+                if i.r_type == R_X86_64_PC32 {
+                    let s = substitute - segment_offset;
+                    let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+                    let p = i.r_offset as usize;
+
+                    value = s + a - p;
+                    unsafe { writing_address.write_unaligned(value as _) };
+                } else if i.r_type == 1
+                /* R_386_32 */
+                {
+                    let s = substitute;
+                    let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+
+                    value = s + a;
+                    unsafe { writing_address.write_unaligned(value as u32) };
+                } else {
+                    todo!("Other types of relocation: {}", i.r_type);
+                }
+
+                qemu_note!(
+                    "{rt} Rel: {writing_address:x?}; => {value:x?}",
+                    rt = i.r_type
+                );
+            }
+        }
+        Ok(self)
+    }
+
+    fn initialize(&'data mut self) -> Result<&'data Self, LoadError> {
+        let entry_point = self
+            .exploreable_symbols
+            .iter()
+            .find(|&&x| x.1 == "module_init")
+            .map(|x| x.2);
+
+        if entry_point.is_none() {
+            todo!("No entry point! Clean up and bail out!");
+        }
+
+        let entry_point = entry_point.unwrap();
+
+        qemu_note!("Entry point at: {entry_point:x}");
+
+        let ep: fn() -> () = unsafe { core::mem::transmute(entry_point) };
+
+        ep();
+
+        Ok(self)
+    }
+}
+
+// impl ModuleLoader<'_> {
+//     pub fn load_from_path(path: &str) -> Result<Self, LoadError> {
+//         let mut module = Self::new().load_data(path)?;
+
+//         module.load_elf()?;
+//         module.load_segments()?;
+//         module.find_exploreable_symbols()?;
+//         module.load_rels()?;
+//         module.initialize()?;
+
+//         Ok(module)
+//     }
+// }
+
 pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
-    let mut data = match noct_fs::read(path) {
+    let data = match noct_fs::read(path) {
         Ok(data) => data,
         Err(e) => {
             qemu_err!("Error: {e}");
@@ -35,27 +300,30 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     let (symtab, strtab) = elf.symbol_table().unwrap().unwrap();
 
-    let imports: Vec<_> = symtab
-        .iter()
-        .filter(|x| x.st_symtype() == 0 && x.st_name != 0)
-        // .map(|a| strtab.get(a.st_name as _))
-        .collect();
+    // let imports: Vec<_> = symtab
+    //     .iter()
+    //     .filter(|x| x.st_symtype() == 0 && x.st_name != 0)
+    //     // .map(|a| strtab.get(a.st_name as _))
+    //     .collect();
 
-    let exports: Vec<_> = symtab
-        .iter()
-        .filter(|x| x.st_symtype() == 2 && x.st_size > 0)
-        // .map(|a| strtab.get(a.st_name as _))
-        .collect();
+    // let exports: Vec<_> = symtab
+    //     .iter()
+    //     .filter(|x| x.st_symtype() == 2 && x.st_size > 0)
+    //     // .map(|a| strtab.get(a.st_name as _))
+    //     .collect();
 
-    qemu_note!("{imports:#?}");
-    qemu_note!("{exports:#?}");
+    // qemu_note!("{imports:#?}");
+    // qemu_note!("{exports:#?}");
 
     let (all_progbits, secnamtable) = elf
         .section_headers_with_strtab()
-        .map(|x| (x.0.unwrap(), x.1.unwrap()))
+        .map(|x| {
+            (
+                x.0.unwrap().iter().filter(|x| x.sh_type == SHT_PROGBITS),
+                x.1.unwrap(),
+            )
+        })
         .unwrap();
-
-    let all_progbits = all_progbits.iter().filter(|x| x.sh_type == SHT_PROGBITS);
 
     let mut loaded_segments: Vec<(&str, usize)> = Vec::new();
 
@@ -76,7 +344,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     qemu_note!("{loaded_segments:x?}");
 
-    let mut exploreable_symbols = Vec::new();
+    let mut exploreable_symbols: Vec<(usize, &str, usize)> = Vec::new();
 
     for (idx, i) in symtab.iter().enumerate() {
         let mut name = strtab.get(i.st_name as _).unwrap();
@@ -162,7 +430,8 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
                     qemu_warn!("Not loading: {sym}", sym = i.r_sym);
                     continue;
                 }
-            }.1;
+            }
+            .1;
 
             let writing_address = (segment_offset + i.r_offset as usize) as *mut u32;
             let inner_value = unsafe { writing_address.read_unaligned() as usize };
@@ -171,14 +440,16 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
             if i.r_type == R_X86_64_PC32 {
                 let s = substitute - segment_offset;
-                let a = inner_value;    // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+                let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
                 let p = i.r_offset as usize;
 
                 value = s + a - p;
                 unsafe { writing_address.write_unaligned(value as _) };
-            } else if i.r_type == 1 /* R_386_32 */ {
+            } else if i.r_type == 1
+            /* R_386_32 */
+            {
                 let s = substitute;
-                let a = inner_value;    // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+                let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
 
                 value = s + a;
                 unsafe { writing_address.write_unaligned(value as u32) };
@@ -186,7 +457,10 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
                 todo!("Other types of relocation: {}", i.r_type);
             }
 
-            qemu_note!("{rt} Rel: {writing_address:x?}; => {value:x?}", rt=i.r_type);
+            qemu_note!(
+                "{rt} Rel: {writing_address:x?}; => {value:x?}",
+                rt = i.r_type
+            );
         }
     }
 

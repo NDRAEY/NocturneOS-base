@@ -19,7 +19,7 @@ elf_t* load_elf(const char* name){
 	elf_t* elf = kcalloc(sizeof(elf_t), 1);
 
 	/* Open ELF file */
-	FILE *file_elf = fopen(name, "r");
+	FILE *file_elf = fopen(name, O_READ);
 
 	if (file_elf->err) {
 		qemu_err("Failed to open ELF file: %s / %d", name, file_elf->err);

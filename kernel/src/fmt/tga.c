@@ -7,7 +7,7 @@
 #include "mem/vmm.h"
 
 bool tga_extract_info(const char* path, tga_header_t* out_meta){
-	FILE* file = fopen(path, "rb");
+	FILE* file = fopen(path, O_READ);
 
 	if(!file){
         return false;
@@ -22,7 +22,7 @@ bool tga_extract_info(const char* path, tga_header_t* out_meta){
 
 // Pixel buffer needs to be 32-bit ARGB buffer
 int tga_extract_pixels(const char* path, uint32_t* pixel_buf) {
-	FILE* file = fopen(path, "rb");
+	FILE* file = fopen(path, O_READ);
 
 	if(!file){
 		return -1;
