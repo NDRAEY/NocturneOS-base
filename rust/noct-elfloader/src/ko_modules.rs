@@ -1,8 +1,8 @@
 use core::alloc::Layout;
 
-use alloc::{collections::btree_map::Entry, string::String, vec::Vec};
+use alloc::{string::String, vec::Vec};
 use elf::{
-    abi::{R_X86_64_32, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE, STT_SECTION}, endian::AnyEndian, ElfBytes
+    abi::{ET_REL, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE, STT_SECTION}, endian::AnyEndian, ElfBytes
 };
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
