@@ -8,7 +8,7 @@ uint32_t plain_runner(const char* filename, size_t address)
 {
     qemu_note("Address is: %x", address);
 
-    FILE *file = fopen(filename, "rb");
+    FILE *file = fopen(filename, O_READ);
 
     size_t filesize = fsize(file);
 

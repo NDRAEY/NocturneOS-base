@@ -16,4 +16,6 @@
     "rust-analyzer.inlayHints.genericParameterHints.type.enable": true,
     "rust-analyzer.inlayHints.genericParameterHints.lifetime.enable": true,
     "rust-analyzer.inlayHints.lifetimeElisionHints.enable": "skip_trivial",
+    "rust-analyzer.cargo.allTargets": false,
+    "rust-analyzer.cargo.target": "i686-unknown-uefi",
 }

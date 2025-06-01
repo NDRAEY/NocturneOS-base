@@ -76,7 +76,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	char* filename = args[1];
 	miniplay_filename = filename;
 
-	FILE* file = fopen(filename, "rb");
+	FILE* file = fopen(filename, O_READ);
 
 	if(!file) {
 		tty_error("Failed to open a file!\n");

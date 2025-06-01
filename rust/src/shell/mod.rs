@@ -33,6 +33,7 @@ pub mod pavi;
 #[cfg(target_arch = "x86")]
 pub mod pci;
 pub mod reboot;
+pub mod sysinfo;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -64,6 +65,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
         |_, args| eni_player::player(args),
         Some("New player"),
     ),
+    sysinfo::SYSINFO_COMMAND_ENTRY,
     ("help", help, Some("Prints help message")),
 ];
 

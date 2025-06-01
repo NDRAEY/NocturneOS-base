@@ -129,6 +129,7 @@ impl SMBIOS {
             let mut table_end = addr + header.length as u32;
 
             match header.header_type {
+                // Platform Firmware Information
                 0 => {
                     let ven = data[0x4];
                     let fw_ver = data[0x5];
@@ -154,6 +155,7 @@ impl SMBIOS {
                         rom_size: firmware_rom_size as usize,
                     });
                 }
+                // System Information
                 1 => {
                     let manufacturer = data[0x4];
                     let product_name = data[0x5];
@@ -196,6 +198,31 @@ impl SMBIOS {
                         family,
                     });
                 }
+                // Processor Information
+                // 4 => {
+                    // let socket_designation = data[0x4];
+                    // let processor_type = data[0x5];
+                    // let processor_family = data[0x6];
+                    // let processor_manufacturer = data[0x7];
+                    // let processor_id = u16::from_le_bytes(data[0x8..0x10]);
+                    // let processor_version = data[0x10];
+                    // let voltage = data[0x11];
+                    // let external_clock = u16::from_le_bytes(data[0x12..0x14]);
+                    // let max_speed = u16::from_le_bytes(data[0x14..0x16]);
+                    // let current_speed = u16::from_le_bytes(data[0x16..0x18]);
+                    // let status = data[0x18];
+                    // let processor_upgrade = data[0x19];
+
+                    // let socket_designation = self
+                    //     .parse_string(table_end as _, socket_designation as _)
+                    //     .unwrap_or("Unknown".to_string());
+                    // let processor_manufacturer = self
+                    //     .parse_string(table_end as _, processor_manufacturer as _)
+                    //     .unwrap_or("Unknown".to_string());
+                    // let processor_version = self
+                    //     .parse_string(table_end as _, processor_version as _)
+                    //     .unwrap_or("Unknown".to_string());
+                // }
                 _ => (),
             }
 
