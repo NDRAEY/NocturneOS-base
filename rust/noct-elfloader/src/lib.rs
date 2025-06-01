@@ -18,6 +18,7 @@ pub fn align_up(value: usize, align: usize) -> usize {
 #[derive(Debug)]
 pub enum LoadError {
     System(&'static str),
+    InvalidELFType,
     ElfParser(ParseError),
 }
 
