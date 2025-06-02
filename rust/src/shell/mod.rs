@@ -11,6 +11,7 @@ use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
+use crate::std::mm::memmeter;
 use crate::system::version::version;
 use noct_tty::{print, println};
 
@@ -246,7 +247,11 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
 
         print!("\n");
 
-        process_command(&mut context, &raw_input);
+        let memused = memmeter(|| process_command(&mut context, &raw_input));
+
+        qemu_note!("Memory delta: {} bytes", memused);
+
+        // process_command(&mut context, &raw_input);
 
         context.command_history.push(raw_input);
     }

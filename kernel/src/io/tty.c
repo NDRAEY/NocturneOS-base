@@ -54,8 +54,7 @@ void tty_taskInit() {
     threadTTY01 = thread_create(proc,
 			   &animTextCursor,
 			   0x4000,
-			   true,
-			   false);
+			   true);
 }
 
 void tty_init() {

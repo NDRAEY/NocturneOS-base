@@ -6,6 +6,7 @@
  * @date 2025-04-13
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
+
 #include	"sys/scheduler.h"
 #include	"lib/string.h"
 #include	"io/ports.h"
@@ -52,8 +53,6 @@ void init_task_manager(void){
 	kernel_proc->name = strdynamize("kernel");
 	kernel_proc->cwd = strdynamize("R:/");
 	
-    kernel_proc->suspend = false;
-
 	list_add(&process_list, (void*)&kernel_proc->list_item);
 
 	/* Create kernel thread */
@@ -65,7 +64,6 @@ void init_task_manager(void){
 	kernel_thread->list_item.list = nullptr;
 	kernel_thread->id = next_thread_id++;
 	kernel_thread->stack_size = DEFAULT_STACK_SIZE;
-	kernel_thread->suspend = false;
 	kernel_thread->esp = esp;
 	kernel_thread->stack_top = init_esp;
 
@@ -79,6 +77,8 @@ void init_task_manager(void){
 	/* Enable multitasking flag */
 	multi_task = true;
 
+    thread_create(kernel_proc, idle_thread, DEFAULT_STACK_SIZE, false);
+
     qemu_ok("OK");
 }
 
@@ -86,7 +86,7 @@ void scheduler_mode(bool on) {
 	scheduler_working = on;
 }
 
-size_t create_process(void* entry_point, char* name, bool suspend, bool is_kernel) {
+size_t create_process(void* entry_point, char* name, bool is_kernel) {
     scheduler_working = false;
 	__asm__ volatile("cli");
 
@@ -101,13 +101,11 @@ size_t create_process(void* entry_point, char* name, bool suspend, bool is_kerne
     // Inherit path
 	proc->cwd = strdynamize(get_current_proc()->cwd);
     
-	proc->suspend = suspend;
-
     list_add(&process_list, (void*)&proc->list_item);
 
-    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel, suspend);
+    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel);
 
-    qemu_log("PID: %d, DIR: %x; Threads: %d; Suspend: %d", proc->pid, proc->page_dir, proc->threads_count, proc->suspend);
+    qemu_log("PID: %d, DIR: %x; Threads: %d", proc->pid, proc->page_dir, proc->threads_count);
 
 	list_add(&thread_list, (void*)&thread->list_item);
 
@@ -148,12 +146,11 @@ __attribute__((noreturn)) void thread_exit_entrypoint() {
  * @param entry_point - Точка входа
  * @param stack_size - Размер стека
  * @param kernel - Функция ядра?
- * @param suspend - Остановлено?
  *
  * @return thread_t* - Поток
  */
 thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
-                                   bool kernel, bool suspend) {
+                                   bool kernel) {
     (void)kernel;
 
     void*	stack = nullptr;
@@ -162,7 +159,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
     qemu_log("Entry point: %p", entry_point);
-    qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
 
     /* Create new thread handler */
@@ -173,7 +169,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->list_item.list = nullptr;
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
-    tmp_thread->suspend = suspend;/* */
     tmp_thread->entry_point = (uint32_t) entry_point;
 
     /* Create thread's stack */
@@ -215,7 +210,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     return tmp_thread;
 }
 
-thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size, bool kernel, bool suspend, size_t arg1) {
+thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size, bool kernel, size_t arg1) {
     (void)kernel;
 
     void*	stack = nullptr;
@@ -224,7 +219,6 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
     qemu_log("Entry point: %p", entry_point);
-    qemu_log("Suspend: %d", suspend);
     qemu_log("Kernel: %d", kernel);
 
     /* Create new thread handler */
@@ -235,7 +229,6 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     tmp_thread->list_item.list = nullptr;
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
-    tmp_thread->suspend = suspend;/* */
     tmp_thread->entry_point = (uint32_t) entry_point;
 
     /* Create thread's stack */
@@ -258,7 +251,7 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     uint32_t* esp = (uint32_t*) ((char*)stack + stack_size);
 
     // Get EFL
-    __asm__ volatile ("pushf; pop %0":"=r"(eflags));
+    __asm__ volatile ("pushf; pop %0" :"=r"(eflags)::"memory");
 
     eflags |= (1 << 9);
 
@@ -280,7 +273,7 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
 }
 
 thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
-    bool kernel, bool suspend) {
+    bool kernel) {
     if(!multi_task) {
         qemu_err("Scheduler is disabled!");
         return NULL;
@@ -290,7 +283,7 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
     __asm__ volatile ("cli");
 
     /* Create new thread handler */
-    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, kernel, suspend);
+    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, kernel);
 
     /* Enable all interrupts */
     __asm__ volatile ("sti");
@@ -301,7 +294,7 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
 }
 
 thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size,
-    bool kernel, bool suspend, size_t arg1) {
+    bool kernel, size_t arg1) {
     if(!multi_task) {
         qemu_err("Scheduler is disabled!");
         return NULL;
@@ -309,17 +302,13 @@ thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_si
 
     __asm__ volatile ("cli");
 
-    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped_arg1(proc, entry_point, stack_size, kernel, suspend, arg1);
+    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped_arg1(proc, entry_point, stack_size, kernel, arg1);
 
     __asm__ volatile ("sti");
 
     qemu_ok("CREATED THREAD");
 
     return tmp_thread;
-}
-
-void thread_suspend(thread_t* thread, bool suspend) {
-	thread->suspend = suspend;
 }
 
 void thread_exit(thread_t* thread){
@@ -360,7 +349,7 @@ bool process_exists(size_t pid) {
 
 void process_wait(size_t pid) {
     while(process_exists(pid)) {
-        __asm__ volatile("nop");
+        __asm__ volatile("nop" ::: "memory");
         yield();
     }
 }
@@ -433,4 +422,10 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
     }
 
     task_switch_v2(current_thread, next_thread);
+}
+
+void idle_thread(void) {
+    while(1) {
+        __asm__ volatile("hlt" ::: "memory");
+    }
 }

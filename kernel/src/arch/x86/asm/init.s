@@ -37,11 +37,11 @@
 __pre_init:
         cli
 
+        call sse_enable
+
         # init FPU
         fninit
         fldcw (conword)
-
-        call sse_enable
 
         mov $stack_top, %esp
 

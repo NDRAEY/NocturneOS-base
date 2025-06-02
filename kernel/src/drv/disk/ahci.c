@@ -155,9 +155,9 @@ void ahci_init() {
             if((port->command_and_status & (1 << 2)) == 0) {
 				port->command_and_status |= (1 << 2);
 
-				// sleep_ms(200);  // Replace them with checks
-				while((port->command_and_status & (1 << 2)) != 0)
-					;
+				sleep_ms(200);  // Replace them with checks
+				// while((port->command_and_status & (1 << 2)) != 0)
+				// 	;
 			}
 
 			if((port->command_and_status & (1 << 1)) == 0) {
@@ -167,8 +167,9 @@ void ahci_init() {
 
 				port->command_and_status |= (1 << 1); // Spin up.
 
-				while((port->command_and_status & (1 << 1)) != 0)
-					;
+				// while((port->command_and_status & (1 << 1)) != 0)
+				// 	;
+				sleep_ms(200);  // Replace them with checks
 			}
 
 			port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
@@ -620,9 +621,6 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 
 	// cmdfis->control = 0x08;
 	// cmdfis->device = 0xE0;
-
-	cmdfis->lba1 = 0;   // it really doesn't should be here, but set it to be noticed
-	cmdfis->lba2 = 0;
 
     ahci_send_cmd(port, 0);
 }

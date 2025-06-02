@@ -103,7 +103,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	tty_set_autoupdate(false);
 
     // Thread.
-	thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true, false);
+	thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true);
 
 	ac97_set_pcm_sample_rate(miniplay_hdr.sampleRate);
 

@@ -95,8 +95,7 @@ void shutdown_system_activity() {
         get_current_proc(),
         shutdown_system_activity_real,
         0x1000,
-        true,
-        false
+        true
     );
 }
 

@@ -63,16 +63,7 @@ fn panic(_info: &PanicInfo) -> ! {
 pub extern "C" fn rust_main() {
     println!("Привет, {}!", "Rust");
 
-    #[cfg(target_arch = "x86")]
-    {
-        let smbios = noct_smbios::find_smbios().unwrap();
-
-        qemu_note!("SMBIOS: {smbios:x?}");
-
-        for i in smbios.scan() {
-            qemu_note!("{i:?}");
-        }
-    }
+    load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
     // qemu_log!("{:?}", p);
@@ -124,27 +115,4 @@ pub extern "C" fn rust_main() {
     //         qemu_ok!("Data is: {data:?}");
     //     });
     // }
-
-    // let program = noct_elfloader::load_elf_file("R:/test_h");
-
-    // if let Ok(mut program) = program {
-    //     qemu_ok!("Running program...");
-
-    //     program.run(&[]);
-    // }
-
-    // let symbols = [
-    //     "unknownfunction_0",
-    //     "dpm_LabelUpdate",
-    //     "virt2phys",
-    //     "eps_eps",
-    //     "aaaa",
-    //     "nvfs_write",
-    // ];
-
-    // for i in symbols {
-    //     qemu_note!("{} => {:x?}", i, noct_ksymparser::resolve(i));
-    // }
-
-    // load_module("E:/test_module.ko");
 }

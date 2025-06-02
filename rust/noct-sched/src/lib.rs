@@ -51,7 +51,6 @@ pub fn spawn(f: impl FnOnce() + Send + 'static) -> *mut thread_t {
             trampoline as usize as *mut c_void,
             128 << 10,
             true,
-            false,
             raw as u32,
         )
     }

@@ -81,7 +81,6 @@ int32_t spawn_prog(const char *name, int argc, char* eargv[]) {
     proc->threads_count = 0;
 
     proc->name = strdynamize(name);
-    proc->suspend = false;
 
     for (int32_t i = 0; i < elf_file->elf_header.e_phnum; i++) {
         Elf32_Phdr *phdr = elf_file->p_header + i;
@@ -113,7 +112,7 @@ int32_t spawn_prog(const char *name, int argc, char* eargv[]) {
     int(*entry_point)(int argc, char* eargv[]) = (int(*)(int, char**))elf_file->elf_header.e_entry;
     qemu_log("ELF entry point: %x", elf_file->elf_header.e_entry);
 
-    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, true, false);
+    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, true);
 
     list_add(&thread_list, (list_item_t*)&thread->list_item);
 
