@@ -148,7 +148,7 @@ void ahci_init() {
 
 	for(uint32_t i = 0; i < 32; i++) {
 		if (implemented_ports & (1 << i)) {
-            AHCI_HBA_PORT* port = AHCI_PORT(i);
+            volatile AHCI_HBA_PORT* port = AHCI_PORT(i);
 
             // Additional initialization here
 
