@@ -63,6 +63,23 @@ pub enum SMBIOSEntry {
         sku: String,
         family: String,
     },
+    Processor {
+        socket_designation: String,
+        processor_type: u8,
+        processor_family: u8,
+        processor_manufacturer: String,
+        processor_id: u16,
+        processor_version: String,
+        voltage: u8,
+        external_clock: u16,
+        max_speed: u16,
+        current_speed: u16,
+    },
+    MemoryDevice {
+        memory_manufacturer: String,
+        size: u16,
+        memory_speed: u16,
+    },
 }
 
 impl SMBIOS {
@@ -199,30 +216,59 @@ impl SMBIOS {
                     });
                 }
                 // Processor Information
-                // 4 => {
-                    // let socket_designation = data[0x4];
-                    // let processor_type = data[0x5];
-                    // let processor_family = data[0x6];
-                    // let processor_manufacturer = data[0x7];
-                    // let processor_id = u16::from_le_bytes(data[0x8..0x10]);
-                    // let processor_version = data[0x10];
-                    // let voltage = data[0x11];
-                    // let external_clock = u16::from_le_bytes(data[0x12..0x14]);
-                    // let max_speed = u16::from_le_bytes(data[0x14..0x16]);
-                    // let current_speed = u16::from_le_bytes(data[0x16..0x18]);
+                4 => {
+                    let socket_designation = data[0x4];
+                    let processor_type = data[0x5];
+                    let processor_family = data[0x6];
+                    let processor_manufacturer = data[0x7];
+                    let processor_id = u16::from_le_bytes(data[0x8..0xA].try_into().unwrap());
+                    let processor_version = data[0x10];
+                    let voltage = data[0x11];
+                    let external_clock = u16::from_le_bytes(data[0x12..0x14].try_into().unwrap());
+                    let max_speed = u16::from_le_bytes(data[0x14..0x16].try_into().unwrap());
+                    let current_speed = u16::from_le_bytes(data[0x16..0x18].try_into().unwrap());
                     // let status = data[0x18];
                     // let processor_upgrade = data[0x19];
 
-                    // let socket_designation = self
-                    //     .parse_string(table_end as _, socket_designation as _)
-                    //     .unwrap_or("Unknown".to_string());
-                    // let processor_manufacturer = self
-                    //     .parse_string(table_end as _, processor_manufacturer as _)
-                    //     .unwrap_or("Unknown".to_string());
-                    // let processor_version = self
-                    //     .parse_string(table_end as _, processor_version as _)
-                    //     .unwrap_or("Unknown".to_string());
-                // }
+                    let socket_designation = self
+                        .parse_string(table_end as _, socket_designation as _)
+                        .unwrap_or("Unknown".to_string());
+                    let processor_manufacturer = self
+                        .parse_string(table_end as _, processor_manufacturer as _)
+                        .unwrap_or("Unknown".to_string());
+                    let processor_version = self
+                        .parse_string(table_end as _, processor_version as _)
+                        .unwrap_or("Unknown".to_string());
+
+                    entries.push(SMBIOSEntry::Processor {
+                        socket_designation,
+                        processor_type,
+                        processor_family,
+                        processor_manufacturer,
+                        processor_id,
+                        processor_version,
+                        voltage,
+                        external_clock,
+                        max_speed,
+                        current_speed,
+                    });
+                }
+                // Memory Device
+                17 => {
+                    let size = u16::from_le_bytes(data[0xC..=0xD].try_into().unwrap());
+                    let memory_speed = u16::from_le_bytes(data[0x15..=0x16].try_into().unwrap());
+                    let memory_manufacturer = u16::from_le_bytes(data[0x20..=0x21].try_into().unwrap());
+
+                    let memory_manufacturer = self
+                        .parse_string(table_end as _, memory_manufacturer as _)
+                        .unwrap_or("Unknown".to_string());
+
+                    entries.push(SMBIOSEntry::MemoryDevice {
+                        size,
+                        memory_speed,
+                        memory_manufacturer,
+                    });
+                }
                 _ => (),
             }
 

@@ -38,7 +38,7 @@ volatile AHCI_HBA_MEM* abar;
 // #define qemu_warn(M, ...) tty_printf("[WARN] " M "\n", ##__VA_ARGS__)
 // #define qemu_ok(M, ...) tty_printf("[OK] " M "\n", ##__VA_ARGS__)
 
-#define AHCI_PORT(num) (abar->ports + (num))
+#define AHCI_PORT(num) ((volatile AHCI_HBA_PORT*)(abar->ports + (num)))
 
 //#define qemu_log(M, ...) _tty_printf(M "\n", ##__VA_ARGS__)
 
@@ -155,9 +155,10 @@ void ahci_init() {
             if((port->command_and_status & (1 << 2)) == 0) {
 				port->command_and_status |= (1 << 2);
 
-				sleep_ms(200);  // Replace them with checks
-				// while((port->command_and_status & (1 << 2)) != 0)
-				// 	;
+				 sleep_ms(20);  // Replace them with checks
+				/*while((port->command_and_status & (1 << 2)) == (1 << 2)) {
+    __asm__ volatile("nop");
+        }*/
 			}
 
 			if((port->command_and_status & (1 << 1)) == 0) {
@@ -167,9 +168,10 @@ void ahci_init() {
 
 				port->command_and_status |= (1 << 1); // Spin up.
 
-				// while((port->command_and_status & (1 << 1)) != 0)
-				// 	;
-				sleep_ms(200);  // Replace them with checks
+				sleep_ms(20);  // Replace them with checks
+				/*while((port->command_and_status & (1 << 1)) == (1 << 1)) {
+    __asm__ volatile("nop");
+        }*/
 			}
 
 			port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);

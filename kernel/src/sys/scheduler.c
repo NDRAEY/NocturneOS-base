@@ -77,7 +77,7 @@ void init_task_manager(void){
 	/* Enable multitasking flag */
 	multi_task = true;
 
-    thread_create(kernel_proc, idle_thread, DEFAULT_STACK_SIZE, false);
+    //thread_create(kernel_proc, idle_thread, DEFAULT_STACK_SIZE, false);
 
     qemu_ok("OK");
 }
@@ -427,5 +427,6 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
 void idle_thread(void) {
     while(1) {
         __asm__ volatile("hlt" ::: "memory");
+        yield();
     }
 }

@@ -61,9 +61,9 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
-    println!("Привет, {}!", "Rust");
+    //println!("Привет, {}!", "Rust");
 
-    load_module("E:/test_module.ko");
+    //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
     // qemu_log!("{:?}", p);
