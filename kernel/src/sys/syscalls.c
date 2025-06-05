@@ -13,7 +13,7 @@
 #include	"user/env.h"
 #include    "sys/file_descriptors.h"
 #include    <kernel.h>
-#include "io/keyboard.h"
+#include	"io/keyboard.h"
 
 syscall_fn_t* calls_table[NUM_CALLS] = {0};
 
