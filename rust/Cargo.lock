@@ -612,6 +612,7 @@ version = "0.1.0"
 name = "noct-tty"
 version = "0.1.0"
 dependencies = [
+ "cbindgen",
  "lazy_static",
  "noct-logger",
  "noct-psf",

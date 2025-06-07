@@ -227,7 +227,7 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
 #endif
 }
 
-__attribute__((force_align_arg_pointer)) void punch() {
+__attribute__((force_align_arg_pointer)) void screen_update() {
 // #ifdef __SSE2__
 #if 0
     if((size_t)back_framebuffer_addr % 16 == 0) {

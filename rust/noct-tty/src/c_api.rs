@@ -66,7 +66,7 @@ pub extern "C" fn tty_get_pos_x() -> u32 {
     let binding= CONSOLE.lock();
     let console = binding.get().unwrap();
 
-    console.console().position().0 as u32
+    console.console().position().1 as u32
 }
 
 #[unsafe(no_mangle)]
@@ -74,7 +74,7 @@ pub extern "C" fn tty_get_pos_y() -> u32 {
     let binding= CONSOLE.lock();
     let console = binding.get().unwrap();
 
-    console.console().position().1 as u32
+    console.console().position().0 as u32
 }
 
 #[unsafe(no_mangle)]
@@ -87,4 +87,22 @@ pub extern "C" fn tty_update() {
     }
 
     console.render(None);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_set_pos_x(x: u32) {
+    let mut binding= CONSOLE.lock();
+    let console = binding.get_mut().unwrap();
+
+    let y = console.console().position().1;
+    console.console_mut().set_position(x as usize, y as usize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_set_pos_y(y: u32) {
+    let mut binding= CONSOLE.lock();
+    let console = binding.get_mut().unwrap();
+
+    let x = console.console().position().0;
+    console.console_mut().set_position(x as usize, y as usize);
 }

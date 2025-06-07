@@ -16,9 +16,8 @@
 #include <drv/fpu.h>
 #include <lib/math.h>
 #include <io/rgb_image.h>
-#include "lib/sprintf.h"
-#include "lib/asprintf.h"
-#include "drv/psf.h"
+#include <lib/asprintf.h>
+#include <io/screen.h>
 
 // TODO: Eurica! Split tty.c into 2 files:
 //       tty.c - only text processing functions
@@ -87,25 +86,6 @@ void tty_set_bgcolor(uint32_t color) {
 }
 
 /**
- * @brief Изменяем позицию курсора по X
- *
- * @param x - позиция по X
- */
-void setPosX(uint32_t x){
-    tty_pos_x = x;
-}
-
-
-/**
- * @brief Изменяем позицию курсора по Y
- *
- * @param y - позиция по Y
- */
-void setPosY(uint32_t y){
-    tty_pos_y = y;
-}
-
-/**
  * @brief Устновливает пиксель RGB в буфере в котором все пиксели представляют собой RGBA (альфа канал игнорируется)
  * @param buffer - буфер RGBA
  * @param width - длина кадра который представляет буфер
@@ -140,7 +120,7 @@ void tty_backspace() {
     }
 
 	drawRect(tty_pos_x, tty_pos_y, tty_off_pos_x, tty_off_pos_h, 0x000000);
-    punch();
+    screen_update();
 }
 
 /**
@@ -182,14 +162,14 @@ void _tty_printf(const char *text, ...) {
 void animTextCursor(){
     qemu_log("animTextCursor Work...");
     volatile bool vis = false;
-    int ox = 0, oy = 0;
+    uint32_t ox = 0, oy = 0;
 
     while(1) {
         if(!showAnimTextCursor)
 			continue;
 
-		ox = tty_get_pos_x();
-        oy = tty_get_pos_y();
+		ox = tty_get_pos_x() * 8;
+        oy = tty_get_pos_y() * 16;
 
         if (!vis){
             drawRect(ox,oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
@@ -199,7 +179,7 @@ void animTextCursor(){
             vis = false;
         }
 
-		punch();
+		screen_update();
         sleep_ms(500);
     }
 
@@ -207,11 +187,6 @@ void animTextCursor(){
 //    qemu_log("animTextCursor complete...");
 //    thread_exit(threadTTY01);
 }
-
-void screen_update() {
-    punch();
-}
-
 
 void tty_set_autoupdate(bool value) {
     tty_autoupdate = value;
