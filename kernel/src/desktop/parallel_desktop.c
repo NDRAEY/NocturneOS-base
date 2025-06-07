@@ -241,5 +241,5 @@ void parallel_desktop_start() {
     
     qemu_log("Exit successfully!!!");
 
-    clean_tty_screen();
+    tty_clear();
 }

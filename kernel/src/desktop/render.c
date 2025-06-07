@@ -6,7 +6,7 @@
 #include "drv/psf.h"
 #include "io/ports.h"
 #include "drv/input/mouse.h"
-#include "io/tty.h"
+#include "io/screen.h"
 
 // getConfigFonts(2) - is height of current font
 
@@ -216,7 +216,7 @@ void gui_render() {
     if(windows == 0) {
         draw_filled_rectangle(0, 0, getScreenWidth(), getScreenHeight(), 0x666666);
         draw_vga_str("No windows in the system.", 25, (getScreenWidth() - 25 * 8) / 2, (getScreenHeight() - 8) / 2, 0);
-        punch();
+        screen_update();
         return;
     }
 
@@ -226,5 +226,5 @@ void gui_render() {
     gui_render_windows();
 
     gui_handle_mouse();
-    punch();
+    screen_update();
 }

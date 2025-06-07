@@ -87,7 +87,7 @@ void mala_flush() {
 
     drawRect(cursor_pos_x, cursor_pos_y, 16, 16, current_color);
 
-    punch();
+    screen_update();
 }
 
 void mala_exit() {
@@ -95,7 +95,7 @@ void mala_exit() {
 
     set_cursor_enabled(true);
 
-    clean_tty_screen();
+    tty_clear();
 }
 
 bool check_colors() {

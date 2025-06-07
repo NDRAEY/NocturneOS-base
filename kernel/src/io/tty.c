@@ -7,6 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
+#include "generated/tty_headers.h"
 #include <stdarg.h>
 #include <mem/vmm.h>
 #include <io/tty.h>
@@ -16,16 +17,14 @@
 #include <drv/fpu.h>
 #include <lib/math.h>
 #include <io/rgb_image.h>
-#include "lib/sprintf.h"
-#include "lib/asprintf.h"
-#include "drv/psf.h"
+#include <lib/asprintf.h>
+#include <io/screen.h>
 
 // TODO: Eurica! Split tty.c into 2 files:
 //       tty.c - only text processing functions
 //       default_console.c - TTY client
 
 // TODO: Keep here.
-static bool is_initialized = false;
 volatile uint8_t tty_feedback = 1;		/// ...
 uint32_t tty_pos_x = 0;						/// Позиция на экране по X
 uint32_t tty_pos_y = 0;						/// Позиция на экране по Y
@@ -57,35 +56,8 @@ void tty_taskInit() {
 			   true);
 }
 
-void tty_init() {
-    tty_off_pos_x = 8;
-    tty_off_pos_p = 0;
-    tty_off_pos_h = 16;
-
-    is_initialized = true;
-}
-
 void tty_changeState(bool state){
     stateTTY = state;
-}
-
-/**
- * @brief Получение позиции по x
- *
- * @return Позиция по x
- */
-uint32_t getPosX(){
-    return tty_pos_x;
-}
-
-
-/**
- * @brief Получение позиции по y
- *
- * @return int32_t - Позиция по y
- */
-uint32_t getPosY(){
-    return tty_pos_y;
 }
 
 void set_cursor_enabled(bool en) {
@@ -115,49 +87,6 @@ void tty_set_bgcolor(uint32_t color) {
 }
 
 /**
- * @brief Прокрутка экрана на num_rows строк
- *
- */
-void tty_scroll(uint32_t num_rows) {
-	uint32_t row_pos_offset = tty_off_pos_h * num_rows;
-
-	uint8_t *addr = (uint8_t*)getFrameBufferAddr();
-	uint32_t pitch = getDisplayPitch();
-
-    uint8_t *read_ptr = addr + (row_pos_offset * pitch);
-    uint8_t *write_ptr = addr;
-
-    tty_pos_y -= row_pos_offset;
-
-    uint32_t num_bytes = (pitch * VESA_HEIGHT) - (pitch * row_pos_offset);
-    
-    memcpy(write_ptr, read_ptr, num_bytes);
-
-    // Очистка строк
-    write_ptr = addr + num_bytes;
-    memset(write_ptr, 0, pitch * row_pos_offset);
-}
-
-/**
- * @brief Изменяем позицию курсора по X
- *
- * @param x - позиция по X
- */
-void setPosX(uint32_t x){
-    tty_pos_x = x;
-}
-
-
-/**
- * @brief Изменяем позицию курсора по Y
- *
- * @param y - позиция по Y
- */
-void setPosY(uint32_t y){
-    tty_pos_y = y;
-}
-
-/**
  * @brief Устновливает пиксель RGB в буфере в котором все пиксели представляют собой RGBA (альфа канал игнорируется)
  * @param buffer - буфер RGBA
  * @param width - длина кадра который представляет буфер
@@ -178,87 +107,12 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
 }
 
 /**
- * @brief Вывод одного символа
- *
- * @param c - символ
- */
-void _tty_putchar(uint16_t c) {
-    if(!is_initialized) {
-        return;
-    }
-
-    if ((tty_pos_x + tty_off_pos_x) >= VESA_WIDTH || c == '\n') {
-        tty_pos_x = 0;
-
-        tty_pos_y += tty_off_pos_h;
-        
-        if ((tty_pos_y + tty_off_pos_h) >= VESA_HEIGHT) {
-            tty_scroll(1);
-        }
-
-        if(tty_autoupdate) {
-            punch();
-        }
-    } else if (c == '\t') {
-        tty_pos_x += 4 * tty_off_pos_h;
-    } else if(c == '\b') {
-        tty_backspace();
-    } else if(c != '\n') {
-        if (tty_pos_y + tty_off_pos_h >= VESA_HEIGHT) {
-            tty_scroll(1);
-        }
-
-        draw_character(c, tty_pos_x, tty_pos_y, tty_text_color);
-        
-        tty_pos_x += tty_off_pos_x;
-    }
-}
-
-/**
  * @brief Удаление последнего символа
  *
  */
 void tty_backspace() {
-    if(!is_initialized) {
-        return;
-    }
-    
-    if (tty_pos_x < (uint32_t)tty_off_pos_x) {
-        if (tty_pos_y >= tty_off_pos_h) {
-            tty_pos_y -= tty_off_pos_h;
-        }
-        tty_pos_x -= 1;
-    } else {
-        tty_pos_x -= tty_off_pos_x;
-    }
-
-	drawRect(tty_pos_x, tty_pos_y, tty_off_pos_x, tty_off_pos_h, 0x000000);
-    punch();
-}
-
-
-/**
- * @brief Вывод строки
- *
- * @param str - строка
- */
-void _tty_puts(const char* str) {
-    if(!is_initialized) {
-        return;
-    }
-    
-    for (size_t i = 0, len = strlen(str); i < len; i++) {
-        uint16_t ch = (uint16_t)(uint8_t)str[i];
-
-        if(ch == 0xd0 || ch == 0xd1) {
-            i++;
-
-            ch <<= 8;
-            ch |= (uint16_t)(uint8_t)str[i];
-        }
-
-        _tty_putchar(ch);
-    }
+    tty_update();
+    screen_update();
 }
 
 /**
@@ -267,25 +121,17 @@ void _tty_puts(const char* str) {
  * @param format - строка форматов
  * @param args - аргументы
  */
-void _tty_print(const char* format, va_list args) {
-	if(!is_initialized) {
-        return;
-    }
-    
+void _tty_print(const char* format, va_list args) {    
     char* a = 0;
 
 	vasprintf(&a, format, args);
 
-	_tty_puts(a);
+	tty_puts(a);
 
 	kfree(a);
 }
 
 void _tty_printf(const char *text, ...) {
-	if(!is_initialized) {
-        return;
-    }
-    
     int sAT = (showAnimTextCursor?1:0);
     if (sAT == 1){
 		showAnimTextCursor = false;
@@ -308,24 +154,24 @@ void _tty_printf(const char *text, ...) {
 void animTextCursor(){
     qemu_log("animTextCursor Work...");
     volatile bool vis = false;
-    int ox = 0, oy = 0;
+    uint32_t ox = 0, oy = 0;
 
     while(1) {
         if(!showAnimTextCursor)
 			continue;
 
-		ox = getPosX();
-        oy = getPosY();
+		ox = tty_get_pos_x() * 8;
+        oy = tty_get_pos_y() * 16;
 
         if (!vis){
-            drawRect(ox,oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
+            drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
             vis = true;
         } else {
-            drawRect(ox,oy+tty_off_pos_h-3,tty_off_pos_x,3,0x000000);
+            drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x000000);
             vis = false;
         }
 
-		punch();
+		screen_update();
         sleep_ms(500);
     }
 
@@ -333,24 +179,6 @@ void animTextCursor(){
 //    qemu_log("animTextCursor complete...");
 //    thread_exit(threadTTY01);
 }
-
-void clean_tty_screen_no_update() {
-	clean_screen();
-
-	tty_pos_x = 0;
-	tty_pos_y = 0;
-}
-
-void clean_tty_screen() {
-    clean_tty_screen_no_update();
-
-	punch();
-} 
-
-void screen_update() {
-    punch();
-}
-
 
 void tty_set_autoupdate(bool value) {
     tty_autoupdate = value;

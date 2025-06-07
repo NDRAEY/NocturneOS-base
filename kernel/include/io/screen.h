@@ -130,4 +130,6 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
 
 
 void init_vbe(const multiboot_header_t *mboot);
-void punch();
+void screen_update();
+
+void clean_screen();

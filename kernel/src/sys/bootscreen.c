@@ -8,6 +8,7 @@
  */
 #include <version.h>
 #include <io/ports.h>
+#include "drv/psf.h"
 #include "io/tty.h"
 
 static bool bootscreen_initialized = false;
@@ -89,9 +90,8 @@ void bootScreenClose(uint32_t bg, uint32_t tx){
 
     tty_setcolor(tx);
     drawRect(0, 0, getScreenWidth(), getScreenHeight(), bg);
-    setPosX(0);
-    setPosY(0);
-    tty_changeState(true);
+    tty_set_pos_x(0);
+    tty_set_pos_y(0);
 }
 
 /**
@@ -107,27 +107,26 @@ void bootScreenChangeMode(int m){
  * @brief Выводит во время загрузки служебную информацию BootScreen
  */
 void bootScreenInfo(){
-    setPosX(0);
-    setPosY(0);
+    tty_set_pos_x(0);
+    tty_set_pos_y(0);
 
-    if (!lazy){
-        tty_printf("SayoriOS v%d.%d.%d\nBuilt: %s\n",
+    if (!lazy) {
+        tty_printf("NocturneOS v%d.%d.%d\nBuilt: %s\n",
         VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
         __TIMESTAMP__                                   // Время окончания компиляции ядра
         );
 
-        char* about = "(c) SayoriOS Team";
+        char* about = "(c) NocturneOS Team";
         uint32_t centerAbout = (maxStrLine/2)-(strlen(about)/2);
 
-        tty_setcolor(bootScreenTheme(2));
-        tty_set_bgcolor(bootScreenTheme(1));
-        setPosX(((1+centerAbout)*8));
-        setPosY(getScreenHeight() - 32);
-        tty_printf(about);
+        uint32_t x = ((1+centerAbout)*8);
+        uint32_t y = getScreenHeight() - 32;
+
+        draw_vga_str(about, strlen(about), x, y, bootScreenTheme(2));
     }
 
-    setPosX(0);
-    setPosY(16*5);
+    tty_set_pos_x(0);
+    tty_set_pos_y(5);
 }
 
 /**
@@ -161,12 +160,10 @@ void bootScreenPaint(char* title){
     }
     
     if (mode == 1){
-        tty_changeState(true);
         tty_set_bgcolor(bootScreenTheme(1));
         tty_setcolor(bootScreenTheme(0));
         tty_printf("%s\n",title);
-        tty_changeState(false);
-        punch();
+        screen_update();
         return;
     }
     
@@ -175,7 +172,6 @@ void bootScreenPaint(char* title){
     
     tty_set_bgcolor(bootScreenTheme(1));
     tty_setcolor(bootScreenTheme(0));
-    tty_changeState(true);
 
     uint32_t centerTitle = (maxStrLine/2) - (mb_strlen(title)/2);
     uint32_t padding_h = maxHeightLine/4;
@@ -187,14 +183,16 @@ void bootScreenPaint(char* title){
         drawRect(0, 0, getScreenWidth(), getScreenHeight(), bootScreenTheme(1));
     }
     // punch();
-    setPosX(((1+centerTitle)*8));
-    setPosY(16*((maxHeightLine-padding_h)));
-    tty_printf(title);
+    
+    uint32_t x = ((1+centerTitle)*8);
+    uint32_t y = 16*((maxHeightLine-padding_h));
+    
+    draw_vga_str(title, strlen(title), x, y, bootScreenTheme(0));
+
     bootScreenInfo();
     bootScreenProcentPaint();
-    tty_changeState(false);
     
-    punch();
+    screen_update();
 }
 
 /**
@@ -208,7 +206,6 @@ void bootScreenInit(uint32_t count){
     if (bs_logs) {
         qemu_log("Init...");
     }
-    tty_changeState(false);  // Disabling print functions
     maxStrLine = (getScreenWidth() / 8) - 2;
     maxHeightLine = getScreenHeight() / 16;
     bootscreen_initialized = true;

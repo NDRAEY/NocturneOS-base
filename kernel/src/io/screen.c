@@ -95,7 +95,7 @@ void init_vbe(const multiboot_header_t *mboot) {
              mboot->framebuffer_pitch,
              mboot->framebuffer_bpp,
              mboot->framebuffer_height * mboot->framebuffer_pitch,
-             mboot->framebuffer_addr
+             (void*)mboot->framebuffer_addr
     );
     
     physical_addr_t frame = (physical_addr_t)framebuffer_addr;
@@ -210,7 +210,7 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
  */
 __attribute__((force_align_arg_pointer)) void clean_screen() {
 // #ifdef __SSE2__
-#if 0
+#if 1
   if((size_t)back_framebuffer_addr % 16 == 0) {
     __m128i* buffer = (__m128i*)back_framebuffer_addr;
 
@@ -227,7 +227,7 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
 #endif
 }
 
-__attribute__((force_align_arg_pointer)) void punch() {
+__attribute__((force_align_arg_pointer)) void screen_update() {
 // #ifdef __SSE2__
 #if 0
     if((size_t)back_framebuffer_addr % 16 == 0) {

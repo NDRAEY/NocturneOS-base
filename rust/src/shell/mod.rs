@@ -29,7 +29,6 @@ pub mod gfxinfo;
 pub mod log;
 pub mod mala;
 pub mod meminfo;
-pub mod miniplay;
 pub mod parallel_desktop;
 pub mod pavi;
 #[cfg(target_arch = "x86")]
@@ -57,7 +56,6 @@ static COMMANDS: &[ShellCommandEntry] = &[
     pci::PCI_COMMAND_ENTRY,
     mala::MALA_COMMAND_ENTRY,
     pavi::PAVI_COMMAND_ENTRY,
-    miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,
     log::LOG_COMMAND_ENTRY,
@@ -96,16 +94,8 @@ fn help(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
 fn process_input(context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
-    // loop {
-    //     let ch = get_key();
-
-    //     qemu_note!("{ch:?}");
-    // }
-
     loop {
         let ch = get_key();
-
-        // qemu_note!("{ch:?}");
 
         match ch {
             CharKey::Key(key, pressed) => {
@@ -120,12 +110,14 @@ fn process_input(context: &mut ShellContext) -> String {
                     Key::Special(SpecialKey::BACKSPACE) => {
                         if input.pop().is_some() {
                             print!("\x08 \x08");
+                            noct_tty::c_api::tty_update();
                         }
                         continue;
                     }
                     Key::Special(SpecialKey::INSERT) => {
                         if let Some(command) = context.command_history.last() {
                             print!("{command}");
+                            noct_tty::c_api::tty_update();
                             input.push_str(command);
                             break;
                         }
@@ -188,7 +180,7 @@ fn process_input(context: &mut ShellContext) -> String {
                 input.push(ch);
 
                 print!("{}", ch);
-                unsafe { screen_update() };
+                noct_tty::c_api::tty_update();
             }
         };
     }
@@ -238,11 +230,9 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     println!("(c) SayoriOS & NocturneOS Team, 2025.");
     println!("Для дополнительной информации наберите \"help\".");
 
-    unsafe { screen_update() };
-
     loop {
         print!("{}> ", context.current_path.as_str());
-        unsafe { screen_update() };
+        noct_tty::c_api::tty_update();
 
         let raw_input = process_input(&mut context);
 

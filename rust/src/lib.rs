@@ -13,6 +13,7 @@ pub mod shell;
 pub mod std;
 pub mod system;
 
+use alloc::string::String;
 use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
@@ -20,6 +21,7 @@ pub use noct_noctfs;
 pub use noct_psf;
 use noct_psf::PSF;
 pub use noct_tarfs;
+pub use noct_tty;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
@@ -61,6 +63,9 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
+    // println!("\x1b[2J\x1b[10;10H");
+
+    // loop {}
     //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
@@ -77,8 +82,6 @@ pub extern "C" fn rust_main() {
     // })
 
     // {
-    //     unsafe { noct_sched::scheduler_mode(false) };
-
     //     noct_screen::fill(0);
 
     //     let screen_dimen = noct_screen::dimensions();
@@ -93,8 +96,6 @@ pub extern "C" fn rust_main() {
     //     tty.print_str("\u{1b}[35mColorful text! (Magenta)\u{1b}[0m\n");
     //     tty.print_str("\u{1b}[36mColorful text! (Cyan)\u{1b}[0m\n");
     //     tty.print_str("\u{1b}[37mColorful text! (White)\u{1b}[0m\n");
-
-    //     tty.print_str("\u{1b}[2JWhoops!\n");
 
         // tty.print_str("Hello World!\n");
         // tty.print_str("\u{1b}[41mBackground color! (Red)\u{1b}[0m\n");

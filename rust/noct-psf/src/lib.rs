@@ -3,7 +3,7 @@
 extern crate alloc;
 
 use alloc::vec::Vec;
-use noct_logger::qemu_err;
+use noct_logger::{qemu_err};
 use noct_screen::set_pixel;
 
 pub mod c_api;
@@ -135,7 +135,7 @@ impl PSF {
         let raw_glyph = self.get_glyph(glyph_idx);
 
         if raw_glyph.is_none() {
-            qemu_err!("Glyph is None");
+            qemu_err!("Glyph is None for `{c}`");
             return;
         }
 
@@ -154,6 +154,7 @@ impl PSF {
 
     #[inline]
     pub fn draw_character(&self, c: u16, pos_x: usize, pos_y: usize, color: u32) {
+        // qemu_note!("PSF draw_character: {c} at {pos_x}, {pos_y}");
         self.draw_character_custom(c, pos_x, pos_y, color, |x, y, color| set_pixel(x, y, color));
     }
 }

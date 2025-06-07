@@ -207,7 +207,7 @@ set(C_SRC
 	kernel/src/io/status_loggers.c 
 	# kernel/src/extra/plain_runner.c
 	kernel/src/sys/fxsave_region.c 
-	kernel/src/toys/miniplay.c 
+	# kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/fmt/tga.c 
