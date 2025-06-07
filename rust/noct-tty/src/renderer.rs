@@ -32,14 +32,28 @@ impl RenderedConsole {
         &mut self.console
     }
 
-    pub fn print_str(&mut self, input: &str) {
-        unsafe {
-            noct_screen::clean_screen();
-        }
+    pub fn print_char(&mut self, c: char) {        
+        self.console.print_char(c);
 
+        if c == '\n' {
+            unsafe {
+                noct_screen::clean_screen();
+            }
+
+            self.render(None);
+        }
+    }
+
+    pub fn print_str(&mut self, input: &str) {
         self.console.print_str(input);
 
-        self.render(None);
+        if input.contains('\n') {
+            unsafe {
+                noct_screen::clean_screen();
+            }
+
+            self.render(None);
+        }
     }
 
     pub fn render(&mut self, start_position: Option<(usize, usize)>) {

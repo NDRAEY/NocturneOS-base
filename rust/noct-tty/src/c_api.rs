@@ -76,3 +76,15 @@ pub extern "C" fn tty_get_pos_y() -> u32 {
 
     console.console().position().1 as u32
 }
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_update() {
+    let mut binding= CONSOLE.lock();
+    let console = binding.get_mut().unwrap();
+
+    unsafe {
+        noct_screen::clean_screen();
+    }
+
+    console.render(None);
+}

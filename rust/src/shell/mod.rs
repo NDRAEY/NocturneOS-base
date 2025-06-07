@@ -186,7 +186,7 @@ fn process_input(context: &mut ShellContext) -> String {
                 input.push(ch);
 
                 print!("{}", ch);
-                unsafe { screen_update() };
+                noct_tty::c_api::tty_update();
             }
         };
     }
@@ -236,11 +236,9 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     println!("(c) SayoriOS & NocturneOS Team, 2025.");
     println!("Для дополнительной информации наберите \"help\".");
 
-    unsafe { screen_update() };
-
     loop {
         print!("{}> ", context.current_path.as_str());
-        unsafe { screen_update() };
+        noct_tty::c_api::tty_update();
 
         let raw_input = process_input(&mut context);
 
