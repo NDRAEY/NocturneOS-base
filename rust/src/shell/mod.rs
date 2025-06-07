@@ -8,6 +8,7 @@ use noct_input::kbd::CharKey;
 use noct_input::kbd::Key;
 use noct_input::kbd::SpecialKey;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
+use noct_timer::timestamp;
 
 use crate::std::io::input::getchar;
 use crate::std::io::screen::screen_update;
@@ -247,10 +248,11 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
 
         print!("\n");
 
+        let timestart = timestamp();
+
         let memused = memmeter(|| process_command(&mut context, &raw_input));
 
-        qemu_note!("Memory delta: {} bytes", memused);
-
+        qemu_note!("Memory delta: {} bytes; Time: {}ms", memused, timestamp() - timestart);
         // process_command(&mut context, &raw_input);
 
         context.command_history.push(raw_input);
