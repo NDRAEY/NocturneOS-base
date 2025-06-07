@@ -153,6 +153,10 @@ pub fn get_key() -> CharKey {
 
         CharKey::Key(k, pressed)
     } else {
+        if ch == 0x0a {
+            return CharKey::Key(Key::Special(SpecialKey::ENTER), true);
+        }
+
         CharKey::Char(char::from_u32(ch).unwrap())
     }
 }

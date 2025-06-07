@@ -7,7 +7,7 @@
 volatile uint32_t keyboard_states = 0;
 static const uint8_t keyboard_layout[128] = {
     0,    0,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',   0,   0,
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',    0,   0,  'a', 's',
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',    '\n',   0,  'a', 's',
     'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,   '\\', 'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',', '.', '/', 0,   '*', 0, ' ', 0,   0,   0,   0,   0,   0,   0,
     0,   0, 0, 0, 0, 0,
@@ -106,7 +106,9 @@ uint32_t getchar() {
     // return character;
 
     while(true) {
-        uint32_t ch = parse_char(getkey());
+        uint32_t key = getkey();
+        qemu_printf("Key: %d (%x)\n", key, key);
+        uint32_t ch = parse_char(key);
 
         if(ch != 0) {
             return ch;

@@ -1,6 +1,7 @@
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
+use noct_logger::qemu_note;
 
 const ANSI_COLORS: [u32; 8] = [
     0x00_0000, // Black
@@ -92,6 +93,13 @@ impl Console {
         &self.data[begin..end]
     }
 
+    pub fn current_line_mut(&mut self) -> &mut [char] {
+        let begin = self.row * self.dimensions.columns;
+        let end = begin + self.dimensions.columns;
+
+        &mut self.data[begin..end]
+    }
+
     pub fn current_line_length(&self) -> usize {
         let line = self.current_line();
 
@@ -150,13 +158,7 @@ impl Console {
             return;
         }
 
-        if pos == 0 {
-            self.data[pos] = character;
-        } else {
-            //let prev_ch = self.previous_character();
-
-            self.data[pos] = character;
-        }
+        self.data[pos] = character;
 
         self.move_right();
     }
@@ -211,11 +213,23 @@ impl Console {
                     } else if last_char == 'H' {
                         self.row = *values.get(0).unwrap_or(&0) as usize;
                         self.column = *values.get(1).unwrap_or(&0) as usize;
+
+                        // qemu_note!("Set position: {:?}", self.position());
                     } else if last_char == 'J' {
                         let code = *values.last().unwrap_or(&0);
 
                         if code == 2 {
                             self.clear();
+                        }
+                    } else if last_char == 'K' {
+                        let code = *values.last().unwrap_or(&0);
+
+                        if code == 0 {
+                            let start_position = self.column;
+                            let end_position = self.dimensions.columns;
+                            let line = self.current_line_mut();
+
+                            line[start_position..end_position].fill(char::default());
                         }
                     }
                 }

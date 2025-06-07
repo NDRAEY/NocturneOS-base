@@ -63,6 +63,9 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
+    // println!("\x1b[2J\x1b[10;10H");
+
+    // loop {}
     //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();

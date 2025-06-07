@@ -94,16 +94,8 @@ fn help(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
 fn process_input(context: &mut ShellContext) -> String {
     let mut input = String::with_capacity(16);
 
-    // loop {
-    //     let ch = get_key();
-
-    //     qemu_note!("{ch:?}");
-    // }
-
     loop {
         let ch = get_key();
-
-        // qemu_note!("{ch:?}");
 
         match ch {
             CharKey::Key(key, pressed) => {

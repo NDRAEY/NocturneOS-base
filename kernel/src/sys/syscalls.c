@@ -170,6 +170,12 @@ size_t syscall_getch(uint32_t* out_char) {
   return 0;
 }
 
+size_t syscall_tty_flush() {
+    tty_update();
+
+    return 0;
+}
+
 /**
  * @brief Инициализация системных вызовов
  * 
@@ -202,6 +208,7 @@ void init_syscalls(void){
     calls_table[24] = (syscall_fn_t *)syscall_temperature;
     calls_table[25] = (syscall_fn_t *)syscall_mouse;
     calls_table[26] = (syscall_fn_t *)syscall_getch;
+    calls_table[27] = (syscall_fn_t *)syscall_tty_flush;
 
 	qemu_ok("System calls initialized!");
 }

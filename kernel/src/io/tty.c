@@ -164,10 +164,10 @@ void animTextCursor(){
         oy = tty_get_pos_y() * 16;
 
         if (!vis){
-            drawRect(ox,oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
+            drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
             vis = true;
         } else {
-            drawRect(ox,oy+tty_off_pos_h-3,tty_off_pos_x,3,0x000000);
+            drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x000000);
             vis = false;
         }
 
