@@ -1,7 +1,6 @@
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use noct_logger::qemu_note;
 
 const ANSI_COLORS: [u32; 8] = [
     0x00_0000, // Black

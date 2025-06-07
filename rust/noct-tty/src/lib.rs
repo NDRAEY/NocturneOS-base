@@ -11,8 +11,6 @@ use core::fmt::Write;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
-use alloc::string::String;
-
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::_print_tty(format_args!($($arg)*)));

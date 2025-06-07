@@ -95,7 +95,7 @@ void init_vbe(const multiboot_header_t *mboot) {
              mboot->framebuffer_pitch,
              mboot->framebuffer_bpp,
              mboot->framebuffer_height * mboot->framebuffer_pitch,
-             mboot->framebuffer_addr
+             (void*)mboot->framebuffer_addr
     );
     
     physical_addr_t frame = (physical_addr_t)framebuffer_addr;

@@ -1,6 +1,5 @@
 use core::cell::OnceCell;
 
-use noct_logger::qemu_note;
 use noct_psf::PSF;
 use noct_screen::punch;
 
