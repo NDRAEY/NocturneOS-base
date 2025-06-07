@@ -23,7 +23,7 @@ pub use noct_tarfs;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
-use noct_timer::sleep_ms;
+use noct_timer::{sleep_ms, timestamp};
 use noct_tty::println;
 
 pub use noct_audio::c_api;
@@ -61,8 +61,6 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
-    //println!("Привет, {}!", "Rust");
-
     //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
@@ -78,27 +76,49 @@ pub extern "C" fn rust_main() {
     //     }
     // })
 
-    // {
-    //     unsafe { noct_sched::scheduler_mode(false) };
+    {
+        unsafe { noct_sched::scheduler_mode(false) };
 
-    //     noct_screen::fill(0);
+        noct_screen::fill(0);
 
-    //     let screen_dimen = noct_screen::dimensions();
-    //     let mut tty = noct_tty::console::Console::new(screen_dimen.1 / 16, screen_dimen.0 / 8);
+        let screen_dimen = noct_screen::dimensions();
+        let mut tty = noct_tty::console::Console::new(screen_dimen.1 / 16, screen_dimen.0 / 8);
 
-    //     tty.print_str("Ninja-go!\n");
-    //     tty.print_str("Zane is the current Elemental Master and Ninja of Ice, P.I.X.A.L.'s boyfriend, as well as the first Nindroid. Zane was recruited by Master Wu, and learned Spinjitzu and discovered his other teammates, with whom he embarked on many adventures; battling the likes of the Serpentine and the Stone Army. During this time, Zane was reunited with his inventor/father figure, Dr. Julien, but sometime after the Final Battle, Dr. Julien passed away again. After Lloyd won the Final Battle, Pythor aided the Overlord in becoming the Golden Master and commanding an army of Nindroids that were made from Zane's blueprints. During this time, Zane grew closer to another droid, P.I.X.A.L., and battled a Nindroid named Cryptor. The ninja clashed with the Nindroids until Zane sacrificed himself to defeat the Golden Master. After building himself a new body and before he could go back to his friends, Zane was captured by Chen, and sent to a mysterious island. The ninja eventually found Zane in his new titanium body, (with Cole being the first) and rescued him. They then allied with the Elemental Masters to defeat the Anacondrai Cultists. With Zane back in the action, the ninja went on to battle Morro and an army of ghosts. After Nya destroyed the Cursed Realm, the ninja fought Nadakhan, who rebuilt his home realm in Ninjago, though this was undone by Jay's final wish. On the Day of the Departed, Cole accidentally revived Cryptor (and many other deceased villains), who Zane fought and destroyed once more. When the Time Twins and Vermillion warriors fought the ninja, Zane helped the ninja defeat their adversaries, but lost contact with P.I.X.A.L. in the chaos.");
+        tty.print_str("Ninja-go!\n");
+        tty.print_str("Hello World!\n");
+        tty.print_str("\u{1b}[31mColorful text! (Red)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[32mColorful text! (Green)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[33mColorful text! (Yellow)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[34mColorful text! (Blue)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[35mColorful text! (Magenta)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[36mColorful text! (Cyan)\u{1b}[0m\n");
+        tty.print_str("\u{1b}[37mColorful text! (White)\u{1b}[0m\n");
 
-    //     loop {
-    //         let start_time = timestamp();
+        tty.print_str("\u{1b}[2JWhoops!\n");
 
-    //         noct_screen::fill(0);
-    //         noct_tty::renderer::render(&tty);
-    //         noct_screen::flush();
+        // tty.print_str("Hello World!\n");
+        // tty.print_str("\u{1b}[41mBackground color! (Red)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[42mBackground color! (Green)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[43mBackground color! (Yellow)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[44mBackground color! (Blue)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[45mBackground color! (Magenta)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[46mBackground color! (Cyan)\u{1b}[0m\n");
+        // tty.print_str("\u{1b}[47mBackground color! (White)\u{1b}[0m\n");
 
-    //         qemu_log!("Took: {} ms", timestamp() - start_time);
-    //     }
-    // }
+        noct_screen::fill(0);
+        noct_tty::renderer::render(&mut tty);
+        noct_screen::flush();
+
+        // loop {
+        //     let start_time = timestamp();
+
+        //     noct_screen::fill(0);
+        //     noct_tty::renderer::render(&mut tty);
+        //     noct_screen::flush();
+
+        //     qemu_log!("Took: {} ms", timestamp() - start_time);
+        // }
+    }
 
     // {
     //     let chan = create_named_channel("postman_guy").unwrap();

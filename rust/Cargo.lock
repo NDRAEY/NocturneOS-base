@@ -613,6 +613,7 @@ name = "noct-tty"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
+ "noct-logger",
  "noct-psf",
  "noct-screen",
  "spin 0.10.0",

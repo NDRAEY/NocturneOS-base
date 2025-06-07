@@ -25,3 +25,4 @@ test_*
 *.wav
 /kernel/include/generated
 /analyzer.txt
+ramdisk/dao-editor

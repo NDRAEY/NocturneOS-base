@@ -8,3 +8,4 @@ lazy_static = "1.5.0"
 spin = "0.10.0"
 noct-screen = { path = "../noct-screen" }
 noct-psf = { path = "../noct-psf" }
+noct-logger = { path = "../noct-logger" }

@@ -315,6 +315,8 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
         }
         None => {
             let path = context.current_path.as_string().clone() + command;
+
+            qemu_note!("{path:?}");
             let file = noct_fs::File::open(&path);
 
             match file {
