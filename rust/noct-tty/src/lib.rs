@@ -4,6 +4,7 @@ extern crate alloc;
 
 pub mod console;
 pub mod renderer;
+pub mod c_api;
 
 use core::fmt;
 use core::fmt::Write;
@@ -11,10 +12,6 @@ use lazy_static::lazy_static;
 use spin::Mutex;
 
 use alloc::string::String;
-
-unsafe extern "C" {
-    fn tty_puts(c: *const u8);
-}
 
 #[macro_export]
 macro_rules! print {
@@ -32,15 +29,6 @@ pub fn _print_tty(args: fmt::Arguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
 
-pub fn tty_puts_n(s: &str) {
-    let mut buffer = String::from(s);
-    buffer.push('\0');
-
-    unsafe {
-        tty_puts(buffer.as_bytes().as_ptr());
-    }
-}
-
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer);
 }
@@ -48,7 +36,7 @@ lazy_static! {
 pub struct Writer;
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
-        tty_puts_n  (s);
+        c_api::tty_puts_str(s);
         Ok(())
     }
 }

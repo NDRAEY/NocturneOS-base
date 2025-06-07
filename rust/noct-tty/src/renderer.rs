@@ -11,45 +11,78 @@ unsafe extern "C" {
     pub static PSF_FONT: OnceCell<PSF>;
 }
 
-pub fn render(console: &mut Console) {
-    let dimensions = console.dimensions();
-    let mut current_color = 0x00_ffffff;
+pub struct RenderedConsole {
+    console: Console,
+    current_color: u32,
+}
 
-    for row in 0..dimensions.rows {
-        for column in 0..dimensions.columns {
-            let char = console.get_character(row, column).unwrap();
+impl RenderedConsole {
+    pub fn new(console: Console) -> Self {
+        Self {
+            console,
+            current_color: 0x00_ffffff,
+        }
+    }
 
-            if *char == char::default() {
-                continue;
-            }
+    pub fn console(&self) -> &Console {
+        &self.console
+    }
 
-            if let Some(attribute) = console.get_attribute(row, column) {
-                match attribute.attribute_value {
-                    AttributeValue::Color(color) => {
-                        current_color = color;
-                    }
-                    _ => (),
+    pub fn console_mut(&mut self) -> &mut Console {
+        &mut self.console
+    }
+
+    pub fn print_str(&mut self, input: &str) {
+        unsafe {
+            noct_screen::clean_screen();
+        }
+
+        self.console.print_str(input);
+
+        self.render(None);
+    }
+
+    pub fn render(&mut self, start_position: Option<(usize, usize)>) {
+        let dimensions = self.console.dimensions();
+
+        let start_row = start_position.map(|(row, _)| row).unwrap_or(0);
+        let start_column = start_position.map(|(_, column)| column).unwrap_or(0);
+
+        let font = unsafe { PSF_FONT.get().unwrap() };
+
+        for row in start_row..dimensions.rows {
+            for column in start_column..dimensions.columns {
+                let char = self.console.get_character(row, column).unwrap();
+
+                if *char == char::default() {
+                    continue;
                 }
-            }
 
-            let mut dst = [0u8; 4];
-            char.encode_utf8(&mut dst);
+                if let Some(attribute) = self.console.get_attribute(row, column) {
+                    match attribute.attribute_value {
+                        AttributeValue::Color(color) => {
+                            self.current_color = color;
+                        }
+                    }
+                }
 
-            unsafe {
-                PSF_FONT.get().unwrap().draw_character(
+                font.draw_character(
                     if char.is_ascii() {
                         *char as u16
                     } else {
+                        let mut dst = [0u8; 4];
+                        char.encode_utf8(&mut dst);
+
                         let value = u32::from_be_bytes(dst) >> 16;
                         value as u16
                     },
                     column * 8,
                     row * 16,
-                    current_color,
-                )
-            };
+                    self.current_color,
+                );
+            }
         }
-    }
 
-    unsafe { punch() };
+        unsafe { punch() };
+    }
 }

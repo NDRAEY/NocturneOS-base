@@ -1,7 +1,5 @@
-use alloc::string::String;
-
 use super::ShellContext;
-use crate::tty::tty_clear;
+use noct_tty::c_api::tty_clear;
 
 pub static CLS_COMMAND_ENTRY: crate::shell::ShellCommandEntry = ("cls", cls, Some("Clear screen"));
 

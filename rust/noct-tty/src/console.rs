@@ -127,16 +127,6 @@ impl Console {
         self.column = 0;
     }
 
-    // fn previous_character(&self) -> &char {
-    //     let mut pos = self.data_position() - 1;
-
-    //     while self.data[pos] == char::default() {
-    //         pos -= 1;
-    //     }
-
-    //     &self.data[pos]
-    // }
-
     pub fn print_char(&mut self, character: char) {
         if self.row >= self.dimensions.rows {
             self.scroll();
@@ -201,8 +191,6 @@ impl Console {
                             break;
                         }
                     }
-
-                    qemu_note!("Values: {:?}", values);
 
                     if last_char == 'm' {
                         let code = *values.last().unwrap_or(&0);

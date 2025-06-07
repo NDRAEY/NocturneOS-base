@@ -210,7 +210,7 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
  */
 __attribute__((force_align_arg_pointer)) void clean_screen() {
 // #ifdef __SSE2__
-#if 0
+#if 1
   if((size_t)back_framebuffer_addr % 16 == 0) {
     __m128i* buffer = (__m128i*)back_framebuffer_addr;
 

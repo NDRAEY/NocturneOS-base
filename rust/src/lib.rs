@@ -12,7 +12,6 @@ pub mod gfx;
 pub mod shell;
 pub mod std;
 pub mod system;
-pub mod tty;
 
 use alloc::string::String;
 use noct_elfloader::ko_modules::load_module;
@@ -22,6 +21,7 @@ pub use noct_noctfs;
 pub use noct_psf;
 use noct_psf::PSF;
 pub use noct_tarfs;
+pub use noct_tty;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
@@ -63,7 +63,6 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
-    println!("{}", String::from("A").repeat(105));
     //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
