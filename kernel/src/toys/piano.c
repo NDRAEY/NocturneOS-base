@@ -131,7 +131,7 @@ void piano() {
 
         draw_piano();
         draw_vga_str("NDRAEY >_ [Press Esc to exit]", 36, 8, getScreenHeight() - 16, 0xaaaaaa);
-        punch();
+        screen_update();
     }
 
     clean_screen();

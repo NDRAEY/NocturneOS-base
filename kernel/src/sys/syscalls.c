@@ -9,6 +9,7 @@
 
 #include	"sys/syscalls.h"
 #include	"io/ports.h"
+#include "io/screen.h"
 #include	"io/tty.h"
 #include	"user/env.h"
 #include    "sys/file_descriptors.h"
@@ -115,7 +116,7 @@ size_t syscall_exit(SAYORI_UNUSED uint32_t status) {
 }
 
 size_t syscall_screen_update() {
-    punch();
+    screen_update();
 
     return 0;
 }

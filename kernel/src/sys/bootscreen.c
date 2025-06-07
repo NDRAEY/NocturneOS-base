@@ -163,7 +163,7 @@ void bootScreenPaint(char* title){
         tty_set_bgcolor(bootScreenTheme(1));
         tty_setcolor(bootScreenTheme(0));
         tty_printf("%s\n",title);
-        punch();
+        screen_update();
         return;
     }
     
@@ -192,7 +192,7 @@ void bootScreenPaint(char* title){
     bootScreenInfo();
     bootScreenProcentPaint();
     
-    punch();
+    screen_update();
 }
 
 /**

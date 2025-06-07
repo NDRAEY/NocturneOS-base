@@ -1,7 +1,7 @@
 use core::cell::OnceCell;
 
 use noct_psf::PSF;
-use noct_screen::punch;
+use noct_screen::screen_update;
 
 use crate::console::{AttributeValue, Console};
 
@@ -96,6 +96,6 @@ impl RenderedConsole {
             }
         }
 
-        unsafe { punch() };
+        unsafe { screen_update() };
     }
 }

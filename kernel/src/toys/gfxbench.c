@@ -41,7 +41,7 @@ uint32_t gfxbench(uint32_t argc, char* args[]) {
 		if(string)
 			kfree(string);
 
-		punch();
+		screen_update();
 
 		frames++;
 	}

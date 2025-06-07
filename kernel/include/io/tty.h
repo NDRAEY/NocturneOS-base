@@ -10,7 +10,7 @@ void tty_putchar(char c);
 void _tty_print(const char *format, va_list args);
 void _tty_printf(const char *text, ...);
 
-#define tty_print(format, args) _tty_print(format, args); punch()
+#define tty_print(format, args) _tty_print(format, args); screen_update()
 
 static inline void tty_printf(char *text, ...) {
     va_list args;

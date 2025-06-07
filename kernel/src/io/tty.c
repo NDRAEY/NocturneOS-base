@@ -7,6 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
+#include "generated/tty_headers.h"
 #include <stdarg.h>
 #include <mem/vmm.h>
 #include <io/tty.h>
@@ -110,16 +111,7 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
  *
  */
 void tty_backspace() {
-    if (tty_pos_x < (uint32_t)tty_off_pos_x) {
-        if (tty_pos_y >= tty_off_pos_h) {
-            tty_pos_y -= tty_off_pos_h;
-        }
-        tty_pos_x -= 1;
-    } else {
-        tty_pos_x -= tty_off_pos_x;
-    }
-
-	drawRect(tty_pos_x, tty_pos_y, tty_off_pos_x, tty_off_pos_h, 0x000000);
+    tty_update();
     screen_update();
 }
 

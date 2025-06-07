@@ -51,7 +51,7 @@ void miniplay_display() {
 			miniplay_anim_pos = 0;
 		}
 
-		punch();
+		screen_update();
 
 		sleep_ms(250);
 	}

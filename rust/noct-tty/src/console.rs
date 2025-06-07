@@ -114,7 +114,7 @@ impl Console {
             self.column = self.current_line_length();
         }
 
-        self.column -= 1;
+        self.column = self.column.saturating_sub(1);
     }
 
     pub fn move_down(&mut self) {
@@ -140,6 +140,7 @@ impl Console {
         } else if character as u32 == 8 {
             // Backspace
             self.move_left();
+            // self.data[pos] = char::default();
             return;
         } else if character == '\r' {
             self.move_to_beginning();

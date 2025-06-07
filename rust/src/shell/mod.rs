@@ -118,12 +118,14 @@ fn process_input(context: &mut ShellContext) -> String {
                     Key::Special(SpecialKey::BACKSPACE) => {
                         if input.pop().is_some() {
                             print!("\x08 \x08");
+                            noct_tty::c_api::tty_update();
                         }
                         continue;
                     }
                     Key::Special(SpecialKey::INSERT) => {
                         if let Some(command) = context.command_history.last() {
                             print!("{command}");
+                            noct_tty::c_api::tty_update();
                             input.push_str(command);
                             break;
                         }
