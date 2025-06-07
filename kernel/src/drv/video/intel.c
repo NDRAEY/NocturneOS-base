@@ -199,7 +199,7 @@ void igfx_init() {
 
     graphics_update(igfx_width, igfx_height, scanline_w);
 
-    clean_tty_screen();
+    tty_clear();
 
 	tty_printf("Screen now tuned to: %dx%d; Size: %d; BackFB: %x\n", igfx_width, igfx_height, framebuffer_size, back_framebuffer_addr);
 

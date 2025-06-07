@@ -1,6 +1,8 @@
 use core::cell::OnceCell;
 
+use noct_logger::qemu_note;
 use noct_psf::PSF;
+use noct_screen::punch;
 
 use crate::console::{AttributeValue, Console};
 
@@ -30,9 +32,17 @@ pub fn render(console: &mut Console) {
                 }
             }
 
+            let mut dst = [0u8; 4];
+            char.encode_utf8(&mut dst);
+
             unsafe {
                 PSF_FONT.get().unwrap().draw_character(
-                    *char as u16,
+                    if char.is_ascii() {
+                        *char as u16
+                    } else {
+                        let value = u32::from_be_bytes(dst) >> 16;
+                        value as u16
+                    },
                     column * 8,
                     row * 16,
                     current_color,
@@ -40,4 +50,6 @@ pub fn render(console: &mut Console) {
             };
         }
     }
+
+    unsafe { punch() };
 }

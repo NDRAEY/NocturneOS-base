@@ -13,7 +13,7 @@ use spin::Mutex;
 use alloc::string::String;
 
 unsafe extern "C" {
-    fn _tty_puts(c: *const u8);
+    fn tty_puts(c: *const u8);
 }
 
 #[macro_export]
@@ -32,12 +32,12 @@ pub fn _print_tty(args: fmt::Arguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
 
-pub fn tty_puts(s: &str) {
+pub fn tty_puts_n(s: &str) {
     let mut buffer = String::from(s);
     buffer.push('\0');
 
     unsafe {
-        _tty_puts(buffer.as_bytes().as_ptr());
+        tty_puts(buffer.as_bytes().as_ptr());
     }
 }
 
@@ -48,7 +48,7 @@ lazy_static! {
 pub struct Writer;
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
-        tty_puts(s);
+        tty_puts_n  (s);
         Ok(())
     }
 }

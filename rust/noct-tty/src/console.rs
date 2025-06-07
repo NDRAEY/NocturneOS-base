@@ -1,5 +1,3 @@
-use core::default;
-
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -16,6 +14,7 @@ const ANSI_COLORS: [u32; 8] = [
     0xffffff, // White
 ];
 
+#[derive(Debug)]
 pub struct Dimensions {
     pub rows: usize,
     pub columns: usize,
@@ -50,6 +49,27 @@ impl Console {
         }
     }
 
+    pub fn resize(&mut self, rows: usize, columns: usize) {
+        let mut data = vec![char::default(); rows * columns];
+
+        let target_rows = rows.min(self.dimensions.rows);
+        let target_columns = columns.min(self.dimensions.columns);
+
+        for i in 0..target_rows {
+            for j in 0..target_columns {
+                data[i * columns + j] = self.data[i * self.dimensions.columns + j];
+            }
+        }
+
+        self.data = data;
+        self.dimensions = Dimensions { rows, columns };
+    }
+
+    pub fn clear(&mut self) {
+        self.data.fill(char::default());
+        self.attributes.clear();
+    }
+
     pub fn dimensions(&self) -> &Dimensions {
         &self.dimensions
     }
@@ -60,6 +80,10 @@ impl Console {
 
     pub fn get_character(&self, row: usize, column: usize) -> Option<&char> {
         self.data.get((row * self.dimensions.columns) + column)
+    }
+
+    pub fn position(&self) -> (usize, usize) {
+        (self.row, self.column)
     }
 
     pub fn current_line(&self) -> &[char] {
@@ -114,6 +138,11 @@ impl Console {
     // }
 
     pub fn print_char(&mut self, character: char) {
+        if self.row >= self.dimensions.rows {
+            self.scroll();
+            self.row = self.dimensions.rows - 1;
+        }
+        
         let pos = self.data_position();
 
         if character == '\n' {
@@ -125,6 +154,9 @@ impl Console {
             return;
         } else if character == '\r' {
             self.move_to_beginning();
+            return;
+        } else if character == '\t' {
+            self.column += 4;
             return;
         }
 
@@ -189,14 +221,13 @@ impl Console {
 
                         continue;
                     } else if last_char == 'H' {
-                        self.column = *values.get(0).unwrap_or(&0) as usize;
-                        self.row = *values.get(1).unwrap_or(&0) as usize;
+                        self.row = *values.get(0).unwrap_or(&0) as usize;
+                        self.column = *values.get(1).unwrap_or(&0) as usize;
                     } else if last_char == 'J' {
                         let code = *values.last().unwrap_or(&0);
 
                         if code == 2 {
-                            self.data.fill(char::default());
-                            self.attributes.clear();
+                            self.clear();
                         }
                     }
                 }
@@ -206,5 +237,17 @@ impl Console {
 
             self.print_char(i);
         }
+    }
+
+    pub fn scroll(&mut self) {
+        self.data.copy_within(self.dimensions.columns.., 0);
+
+        let last_line = self.data.len() - self.dimensions.columns;
+        self.data[last_line..].fill(char::default());
+    }
+
+    pub fn set_position(&mut self, x: usize, y: usize) {
+        self.row = y;
+        self.column = x;
     }
 }

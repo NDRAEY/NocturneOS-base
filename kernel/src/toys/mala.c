@@ -95,7 +95,7 @@ void mala_exit() {
 
     set_cursor_enabled(true);
 
-    clean_tty_screen();
+    tty_clear();
 }
 
 bool check_colors() {

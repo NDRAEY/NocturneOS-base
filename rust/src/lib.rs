@@ -12,7 +12,9 @@ pub mod gfx;
 pub mod shell;
 pub mod std;
 pub mod system;
+pub mod tty;
 
+use alloc::string::String;
 use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
@@ -61,6 +63,7 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 #[inline(never)]
 pub extern "C" fn rust_main() {
+    println!("{}", String::from("A").repeat(105));
     //load_module("E:/test_module.ko");
 
     // let mut p = Path::from_path("R:/").unwrap();
@@ -76,25 +79,21 @@ pub extern "C" fn rust_main() {
     //     }
     // })
 
-    {
-        unsafe { noct_sched::scheduler_mode(false) };
+    // {
+    //     noct_screen::fill(0);
 
-        noct_screen::fill(0);
+    //     let screen_dimen = noct_screen::dimensions();
+    //     let mut tty = noct_tty::console::Console::new(screen_dimen.1 / 16, screen_dimen.0 / 8);
 
-        let screen_dimen = noct_screen::dimensions();
-        let mut tty = noct_tty::console::Console::new(screen_dimen.1 / 16, screen_dimen.0 / 8);
-
-        tty.print_str("Ninja-go!\n");
-        tty.print_str("Hello World!\n");
-        tty.print_str("\u{1b}[31mColorful text! (Red)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[32mColorful text! (Green)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[33mColorful text! (Yellow)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[34mColorful text! (Blue)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[35mColorful text! (Magenta)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[36mColorful text! (Cyan)\u{1b}[0m\n");
-        tty.print_str("\u{1b}[37mColorful text! (White)\u{1b}[0m\n");
-
-        tty.print_str("\u{1b}[2JWhoops!\n");
+    //     tty.print_str("Ninja-go!\n");
+    //     tty.print_str("Hello World!\n");
+    //     tty.print_str("\u{1b}[31mColorful text! (Red)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[32mColorful text! (Green)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[33mColorful text! (Yellow)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[34mColorful text! (Blue)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[35mColorful text! (Magenta)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[36mColorful text! (Cyan)\u{1b}[0m\n");
+    //     tty.print_str("\u{1b}[37mColorful text! (White)\u{1b}[0m\n");
 
         // tty.print_str("Hello World!\n");
         // tty.print_str("\u{1b}[41mBackground color! (Red)\u{1b}[0m\n");
@@ -105,9 +104,9 @@ pub extern "C" fn rust_main() {
         // tty.print_str("\u{1b}[46mBackground color! (Cyan)\u{1b}[0m\n");
         // tty.print_str("\u{1b}[47mBackground color! (White)\u{1b}[0m\n");
 
-        noct_screen::fill(0);
-        noct_tty::renderer::render(&mut tty);
-        noct_screen::flush();
+        // noct_screen::fill(0);
+        // noct_tty::renderer::render(&mut tty);
+        // noct_screen::flush();
 
         // loop {
         //     let start_time = timestamp();
@@ -118,7 +117,7 @@ pub extern "C" fn rust_main() {
 
         //     qemu_log!("Took: {} ms", timestamp() - start_time);
         // }
-    }
+    // }
 
     // {
     //     let chan = create_named_channel("postman_guy").unwrap();

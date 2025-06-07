@@ -6,7 +6,7 @@
 #include "drv/psf.h"
 #include "io/ports.h"
 #include "drv/input/mouse.h"
-#include "io/tty.h"
+#include "io/screen.h"
 
 // getConfigFonts(2) - is height of current font
 

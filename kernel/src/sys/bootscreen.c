@@ -8,6 +8,7 @@
  */
 #include <version.h>
 #include <io/ports.h>
+#include "drv/psf.h"
 #include "io/tty.h"
 
 static bool bootscreen_initialized = false;
@@ -187,9 +188,12 @@ void bootScreenPaint(char* title){
         drawRect(0, 0, getScreenWidth(), getScreenHeight(), bootScreenTheme(1));
     }
     // punch();
-    setPosX(((1+centerTitle)*8));
-    setPosY(16*((maxHeightLine-padding_h)));
-    tty_printf(title);
+    
+    uint32_t x = ((1+centerTitle)*8);
+    uint32_t y = 16*((maxHeightLine-padding_h));
+    
+    draw_vga_str(title, strlen(title), x, y, bootScreenTheme(0));
+
     bootScreenInfo();
     bootScreenProcentPaint();
     tty_changeState(false);

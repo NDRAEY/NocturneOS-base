@@ -4,19 +4,16 @@
 #include "io/screen.h"
 #include <stdarg.h>
 
-#define NEW_TTY_PRINTF 1
-
 extern bool stateTTY;
 
 void tty_init();
 
-void _tty_putchar(uint16_t c);
-void _tty_puts(const char str[]);
+void tty_puts(const char* str);
+void tty_putchar(char c);
 void _tty_print(const char *format, va_list args);
 void _tty_printf(const char *text, ...);
 
 #define tty_print(format, args) _tty_print(format, args); punch()
-#define tty_puts(str) _tty_puts(str)//; punch()
 
 static inline void tty_printf(char *text, ...) {
     if (stateTTY){
@@ -42,10 +39,8 @@ void set_cursor_enabled(bool en);
 void _tty_putuint(const size_t i);
 void _tty_putint(const ssize_t i);
 
-void clean_screen();
-void clean_tty_screen();
+void tty_clear();
 void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, size_t y, size_t color);
-void clean_tty_screen_no_update();
 
 void tty_backspace();
 
@@ -53,3 +48,6 @@ void tty_set_autoupdate(bool value);
 bool tty_get_autoupdate();
 
 void tty_taskInit();
+
+uint32_t tty_get_pos_x();
+uint32_t tty_get_pos_y();

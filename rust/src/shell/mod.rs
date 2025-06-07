@@ -28,7 +28,6 @@ pub mod gfxinfo;
 pub mod log;
 pub mod mala;
 pub mod meminfo;
-pub mod miniplay;
 pub mod parallel_desktop;
 pub mod pavi;
 #[cfg(target_arch = "x86")]
@@ -56,7 +55,6 @@ static COMMANDS: &[ShellCommandEntry] = &[
     pci::PCI_COMMAND_ENTRY,
     mala::MALA_COMMAND_ENTRY,
     pavi::PAVI_COMMAND_ENTRY,
-    miniplay::MINIPLAY_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,
     log::LOG_COMMAND_ENTRY,

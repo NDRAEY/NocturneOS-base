@@ -13,6 +13,7 @@
 #include <sys/unwind.h>
 
 #include "io/ports.h"
+#include "io/tty.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
@@ -306,6 +307,17 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     clean_screen();
 
+    // tty_puts("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
+    // tty_puts("abcdefghijklmnopqrstuvwxyz\n");
+    // tty_puts("0123456789\n");
+    // tty_puts("!@#$%^&*()\n");
+    // tty_puts("`~\n");
+    // tty_puts("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ\n");
+    // tty_puts("абвгдеёжзийклмнопрстуфхцчшщъыьэюя\n");
+
+    // while(1)
+    //     ;
+
     bootScreenInit(15);
     bootScreenLazy(true);
 
@@ -369,7 +381,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     sayori_time_t time = get_time();
     tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);
 
-    _tty_printf("Listing ATA disks:\n");
+    tty_printf("Listing ATA disks:\n");
     ata_list();
 
     tty_taskInit();
@@ -395,7 +407,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     if (test_network)
     {
-        _tty_printf("Listing network cards:\n");
+        tty_printf("Listing network cards:\n");
 
         uint8_t mac_buffer[6] = {0};
 
@@ -403,10 +415,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
         {
             netcard_entry_t *entry = netcard_get(i);
 
-            _tty_printf("\tName: %s\n", entry->name);
+            tty_printf("\tName: %s\n", entry->name);
             entry->get_mac_addr(mac_buffer);
 
-            _tty_printf("\tMAC address: %x:%x:%x:%x:%x:%x\n",
+            tty_printf("\tMAC address: %x:%x:%x:%x:%x:%x\n",
                         mac_buffer[0],
                         mac_buffer[1],
                         mac_buffer[2],
@@ -415,7 +427,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
                         mac_buffer[5]);
         }
 
-        _tty_printf("OK!\n");
+        tty_printf("OK!\n");
     }
 
     ac97_init();
