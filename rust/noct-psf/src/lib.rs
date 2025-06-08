@@ -155,6 +155,6 @@ impl PSF {
     #[inline]
     pub fn draw_character(&self, c: u16, pos_x: usize, pos_y: usize, color: u32) {
         // qemu_note!("PSF draw_character: {c} at {pos_x}, {pos_y}");
-        self.draw_character_custom(c, pos_x, pos_y, color, |x, y, color| set_pixel(x, y, color));
+        self.draw_character_custom(c, pos_x, pos_y, color, set_pixel);
     }
 }

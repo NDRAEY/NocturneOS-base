@@ -194,6 +194,8 @@ impl Console {
                         }
                     }
 
+                    //qemu_note!("Values: {values:?}; Letter: {last_char:?}");
+
                     if last_char == 'm' {
                         let code = *values.last().unwrap_or(&0);
 
@@ -211,8 +213,8 @@ impl Console {
 
                         continue;
                     } else if last_char == 'H' {
-                        self.row = *values.get(0).unwrap_or(&0) as usize;
-                        self.column = *values.get(1).unwrap_or(&0) as usize;
+                        self.row = (*values.get(0).unwrap_or(&0)).saturating_sub(1) as usize;
+                        self.column = (*values.get(1).unwrap_or(&0)).saturating_sub(1) as usize;
 
                         // qemu_note!("Set position: {:?}", self.position());
                     } else if last_char == 'J' {
