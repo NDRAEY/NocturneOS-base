@@ -168,8 +168,8 @@ impl Console {
     }
 
     pub fn print_str(&mut self, input: &str) {
-        qemu_note!("Printing string: {input:?}");
-        
+        // qemu_note!("Printing string: {input:?}");
+
         let mut iterator = input.chars();
 
         while let Some(i) = iterator.next() {
