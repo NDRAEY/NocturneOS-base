@@ -1,7 +1,7 @@
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use noct_logger::qemu_note;
+use noct_logger::{qemu_err, qemu_note};
 
 const ANSI_COLORS: [u32; 8] = [
     0x00_0000, // Black
@@ -168,6 +168,8 @@ impl Console {
     }
 
     pub fn print_str(&mut self, input: &str) {
+        qemu_note!("Printing string: {input:?}");
+        
         let mut iterator = input.chars();
 
         while let Some(i) = iterator.next() {
@@ -185,11 +187,21 @@ impl Console {
                         if c.is_ascii_digit() {
                             digits.push(c);
                         } else if c == ';' {
-                            values.push(digits.parse::<u32>().unwrap_or(0));
+                            let value = digits.parse::<u32>();
+
+                            if let Ok(value) = value {
+                                values.push(value);
+                            }
+
                             digits.clear();
                         } else {
+                            let value = digits.parse::<u32>();
+
+                            if let Ok(value) = value {
+                                values.push(value);
+                            }
+
                             last_char = c;
-                            values.push(digits.parse::<u32>().unwrap_or(0));
                             break;
                         }
                     }
@@ -213,10 +225,18 @@ impl Console {
 
                         continue;
                     } else if last_char == 'H' {
-                        self.row = (*values.get(0).unwrap_or(&0)).saturating_sub(1) as usize;
-                        self.column = (*values.get(1).unwrap_or(&0)).saturating_sub(1) as usize;
+                        if values.is_empty() {
+                            self.row = 0;
+                            self.column = 0;
+                        } else {
+                            let row = *values.get(0).unwrap_or(&1);
+                            let column = *values.get(1).unwrap_or(&1);
 
-                        // qemu_note!("Set position: {:?}", self.position());
+                            // qemu_note!("Set position: {:?}", (row, column));
+
+                            self.row = row.saturating_sub(1) as usize;
+                            self.column = column.saturating_sub(1) as usize;
+                        }
                     } else if last_char == 'J' {
                         let code = *values.last().unwrap_or(&0);
 
@@ -228,11 +248,13 @@ impl Console {
 
                         if code == 0 {
                             let start_position = self.column;
-                            let end_position = self.dimensions.columns;
+                            let end_position = self.dimensions.columns - 1;
                             let line = self.current_line_mut();
 
                             line[start_position..end_position].fill(char::default());
                         }
+                    } else {
+                        qemu_err!("Unknown letter: {last_char:?}");
                     }
                 }
 

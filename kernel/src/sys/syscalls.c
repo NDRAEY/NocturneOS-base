@@ -75,7 +75,7 @@ size_t syscall_memory_free(void* memory) {
     return 0;
 }
 
-size_t syscall_tty_write(char* text) {
+size_t syscall_tty_write(const char* text) {
     tty_puts(text);
     return 0;
 }
@@ -176,6 +176,11 @@ size_t syscall_tty_flush() {
     return 0;
 }
 
+size_t syscall_tty_write_raw(const char* text, size_t length) {
+    tty_puts_raw(text, length);
+    return 0;
+}
+
 /**
  * @brief Инициализация системных вызовов
  * 
@@ -209,6 +214,7 @@ void init_syscalls(void){
     calls_table[25] = (syscall_fn_t *)syscall_mouse;
     calls_table[26] = (syscall_fn_t *)syscall_getch;
     calls_table[27] = (syscall_fn_t *)syscall_tty_flush;
-
+    calls_table[28] = (syscall_fn_t *)syscall_tty_write_raw;
+    
 	qemu_ok("System calls initialized!");
 }

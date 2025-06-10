@@ -6,6 +6,7 @@
 #include "generated/tty_headers.h"
 
 void tty_puts(const char* str);
+void tty_puts_raw(const char* str, size_t length);
 void tty_putchar(char c);
 void _tty_print(const char *format, va_list args);
 void _tty_printf(const char *text, ...);

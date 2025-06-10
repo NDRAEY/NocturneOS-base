@@ -155,6 +155,8 @@ pub fn get_key() -> CharKey {
     } else {
         if ch == 0x0a {
             return CharKey::Key(Key::Special(SpecialKey::ENTER), true);
+        } else if ch == 0x7f {
+            return CharKey::Key(Key::Special(SpecialKey::BACKSPACE), true);
         }
 
         CharKey::Char(char::from_u32(ch).unwrap())

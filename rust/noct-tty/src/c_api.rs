@@ -40,6 +40,14 @@ pub extern "C" fn tty_puts(s: *const c_char) {
 }
 
 #[unsafe(no_mangle)]
+pub extern "C" fn tty_puts_raw(s: *const c_char, length: usize) {
+    let slice = unsafe { core::slice::from_raw_parts(s as *const u8, length) };
+    let s = core::str::from_utf8(slice).unwrap();
+
+    tty_puts_str(s);
+}
+
+#[unsafe(no_mangle)]
 pub extern "C" fn tty_putchar(c: c_char) {
     let mut binding= CONSOLE.lock();
     let console = binding.get_mut().unwrap();
