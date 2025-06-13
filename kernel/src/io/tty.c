@@ -56,10 +56,6 @@ void tty_taskInit() {
 			   true);
 }
 
-void tty_changeState(bool state){
-    stateTTY = state;
-}
-
 void set_cursor_enabled(bool en) {
     showAnimTextCursor = en;
 }
@@ -104,15 +100,6 @@ void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, s
     buffer[pixpos + 0] = (uint8_t)color;
     buffer[pixpos + 1] = (uint8_t)(color >> 8);
     buffer[pixpos + 2] = (uint8_t)(color >> 16);
-}
-
-/**
- * @brief Удаление последнего символа
- *
- */
-void tty_backspace() {
-    tty_update();
-    screen_update();
 }
 
 /**
@@ -165,25 +152,13 @@ void animTextCursor(){
 
         if (!vis){
             drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x333333);
-            vis = true;
         } else {
             drawRect(ox, oy+tty_off_pos_h-3,tty_off_pos_x,3,0x000000);
-            vis = false;
         }
+
+        vis = !vis;
 
 		screen_update();
         sleep_ms(500);
     }
-
-	// So, it never quits
-//    qemu_log("animTextCursor complete...");
-//    thread_exit(threadTTY01);
-}
-
-void tty_set_autoupdate(bool value) {
-    tty_autoupdate = value;
-}
-
-bool tty_get_autoupdate() {
-    return tty_autoupdate;
 }

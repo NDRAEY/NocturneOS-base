@@ -32,8 +32,6 @@ void set_cursor_enabled(bool en);
 void tty_clear();
 void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, size_t y, size_t color);
 
-void tty_backspace();
-
 void tty_taskInit();
 
 uint32_t tty_get_pos_x();

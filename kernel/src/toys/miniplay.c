@@ -100,7 +100,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	// fread(file, miniplay_filesize, 1, data);
 
 	set_cursor_enabled(false);
-	tty_set_autoupdate(false);
+	//tty_set_autoupdate(false);
 
     // Thread.
 	thread_t* display_thread = thread_create(get_current_proc(), miniplay_display, 0x1000, true);
@@ -141,7 +141,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	clean_tty_screen();
 
 	set_cursor_enabled(true);
-	tty_set_autoupdate(true);
+	//tty_set_autoupdate(true);
 
 	return 0;
 }

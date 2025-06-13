@@ -129,7 +129,7 @@ void gets(char *buffer) {
 
         if(ch == '\b') {
             *buf-- = 0;
-            tty_backspace();
+            tty_printf("- Implement backspace! - ");
             continue;
         }
 
