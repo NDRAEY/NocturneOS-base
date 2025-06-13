@@ -185,36 +185,35 @@ size_t syscall_tty_write_raw(const char* text, size_t length) {
  * @brief Инициализация системных вызовов
  * 
  * @param regs - Регистр
- * @warning If every day goes like this; How do we survive?; We are working late on the night shift; To get peace of mind!
  */
 void init_syscalls(void){
 	register_interrupt_handler(SYSCALL, &syscall_handler);
 
 	calls_table[0] = (syscall_fn_t *)syscall_env;
-	calls_table[1] = (syscall_fn_t *)syscall_memory_alloc;
-	calls_table[2] = (syscall_fn_t *)syscall_memory_free;
-	calls_table[3] = (syscall_fn_t *)syscall_tty_write;
-    calls_table[4] = (syscall_fn_t *)file_descriptor_allocate;
-    calls_table[5] = (syscall_fn_t *)file_descriptor_read;
-    calls_table[6] = (syscall_fn_t *)file_descriptor_close;
-    calls_table[7] = (syscall_fn_t *)file_descriptor_seek;
-    calls_table[8] = (syscall_fn_t *)file_descriptor_tell;
-    calls_table[13] = (syscall_fn_t *)syscall_getkey;
-    calls_table[14] = (syscall_fn_t *)syscall_get_timer_ticks;
-    calls_table[15] = (syscall_fn_t *)syscall_sleep;
-    calls_table[16] = (syscall_fn_t *)syscall_datetime;
-    calls_table[17] = (syscall_fn_t *)syscall_exit;
-	calls_table[18] = (syscall_fn_t *)syscall_memory_realloc;
-	calls_table[19] = (syscall_fn_t *)file_descriptor_write;
-    calls_table[20] = (syscall_fn_t *)yield;
-    calls_table[21] = (syscall_fn_t *)syscall_screen_update;
-    calls_table[22] = (syscall_fn_t *)syscall_mmap;
-    calls_table[23] = (syscall_fn_t *)syscall_munmap;
-    calls_table[24] = (syscall_fn_t *)syscall_temperature;
-    calls_table[25] = (syscall_fn_t *)syscall_mouse;
-    calls_table[26] = (syscall_fn_t *)syscall_getch;
-    calls_table[27] = (syscall_fn_t *)syscall_tty_flush;
-    calls_table[28] = (syscall_fn_t *)syscall_tty_write_raw;
+    calls_table[1] = (syscall_fn_t *)syscall_mmap;
+    calls_table[2] = (syscall_fn_t *)syscall_munmap;
+	calls_table[3] = (syscall_fn_t *)syscall_memory_alloc;
+	calls_table[4] = (syscall_fn_t *)syscall_memory_realloc;
+	calls_table[5] = (syscall_fn_t *)syscall_memory_free;
+	calls_table[6] = (syscall_fn_t *)syscall_tty_write;
+    calls_table[7] = (syscall_fn_t *)syscall_tty_write_raw;
+    calls_table[8] = (syscall_fn_t *)syscall_tty_flush;
+    calls_table[9] = (syscall_fn_t *)syscall_getkey;
+    calls_table[10] = (syscall_fn_t *)syscall_getch;
+    calls_table[11] = (syscall_fn_t *)syscall_mouse;
+    calls_table[12] = (syscall_fn_t *)file_descriptor_allocate;
+    calls_table[13] = (syscall_fn_t *)file_descriptor_read;
+	calls_table[14] = (syscall_fn_t *)file_descriptor_write;
+    calls_table[15] = (syscall_fn_t *)file_descriptor_seek;
+    calls_table[16] = (syscall_fn_t *)file_descriptor_tell;
+    calls_table[17] = (syscall_fn_t *)file_descriptor_close;
+    calls_table[18] = (syscall_fn_t *)syscall_datetime;
+    calls_table[19] = (syscall_fn_t *)syscall_sleep;
+    calls_table[20] = (syscall_fn_t *)syscall_exit;
+    calls_table[21] = (syscall_fn_t *)yield;
+    calls_table[22] = (syscall_fn_t *)syscall_screen_update;
+    calls_table[23] = (syscall_fn_t *)syscall_temperature;
+    calls_table[24] = (syscall_fn_t *)syscall_get_timer_ticks;
     
 	qemu_ok("System calls initialized!");
 }
