@@ -276,4 +276,10 @@ impl Console {
         self.row = y;
         self.column = x;
     }
+
+    pub fn size_chars(&self) -> (usize, usize) {
+        let dims = self.dimensions();
+
+        (dims.rows, dims.columns)
+    }
 }

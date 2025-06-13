@@ -31,7 +31,7 @@ void syscall_handler(volatile registers_t regs) {
         return;
     }
 
-	syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
+    syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
 
     if(entry_point == NULL) {
         qemu_err("System call is not defined right now: %d", regs.eax);
@@ -40,7 +40,7 @@ void syscall_handler(volatile registers_t regs) {
         return;
     }
 
-	regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
+    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
 
     // TODO: Just place result into eax, I know how to do it!
 
@@ -105,20 +105,20 @@ size_t syscall_exit(SAYORI_UNUSED uint32_t status) {
 	
 	qemu_log("Exit requested (status %d) by PID %d\n", status, proc->pid);
 
-	if(proc->pid == 0) {
-		qemu_warn("Request cancelled because PID == 0");
+    if(proc->pid == 0) {
+        qemu_warn("Request cancelled because PID == 0");
 		return 0;
 	}
-
+    
 	thread_exit_entrypoint();
-
+    
     return 0;
 }
 
 size_t syscall_screen_update() {
-    screen_update();
+  screen_update();
 
-    return 0;
+  return 0;
 }
 
 size_t syscall_mmap(size_t physical, size_t virtual, size_t size, size_t flags) {
@@ -163,11 +163,11 @@ size_t syscall_mouse(uint32_t* out_x, uint32_t* out_y, uint32_t* flags) {
 }
 
 size_t syscall_getch(uint32_t* out_char) {
-  uint32_t ch = getchar();
+    uint32_t ch = getchar();
 
-  *out_char = ch;
+    *out_char = ch;
 
-  return 0;
+    return 0;
 }
 
 size_t syscall_tty_flush() {
@@ -179,6 +179,15 @@ size_t syscall_tty_flush() {
 size_t syscall_tty_write_raw(const char* text, size_t length) {
     tty_puts_raw(text, length);
     return 0;
+}
+
+size_t syscall_get_console_size(uint32_t* out_wh) {
+  uint32_t w = tty_get_width();
+  uint32_t h = tty_get_height();
+
+  *out_wh = (h << 16) | w;
+
+  return 0;
 }
 
 /**
@@ -214,6 +223,7 @@ void init_syscalls(void){
     calls_table[22] = (syscall_fn_t *)syscall_screen_update;
     calls_table[23] = (syscall_fn_t *)syscall_temperature;
     calls_table[24] = (syscall_fn_t *)syscall_get_timer_ticks;
+    calls_table[25] = (syscall_fn_t *)syscall_get_console_size;
     
 	qemu_ok("System calls initialized!");
 }

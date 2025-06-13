@@ -114,3 +114,20 @@ pub extern "C" fn tty_set_pos_y(y: u32) {
     let x = console.console().position().0;
     console.console_mut().set_position(x as usize, y as usize);
 }
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_get_width() -> u32 {
+    let binding= CONSOLE.lock();
+    let console = binding.get().unwrap();
+
+    console.console().size_chars().0 as u32
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_get_height() -> u32 {
+    let binding= CONSOLE.lock();
+    let console = binding.get().unwrap();
+
+    console.console().size_chars().1 as u32
+}
+
