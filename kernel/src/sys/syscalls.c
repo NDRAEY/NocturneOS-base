@@ -182,8 +182,9 @@ size_t syscall_tty_write_raw(const char* text, size_t length) {
 }
 
 size_t syscall_get_console_size(uint32_t* out_wh) {
-  uint32_t w = tty_get_width();
-  uint32_t h = tty_get_height();
+    uint32_t w = tty_get_width();
+    uint32_t h = tty_get_height();
+    qemu_printf("Console rq: %d %d\n", w, h);
 
   *out_wh = (h << 16) | w;
 

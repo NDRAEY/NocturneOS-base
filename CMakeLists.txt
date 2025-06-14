@@ -421,6 +421,14 @@ add_custom_target(
 )
 
 add_custom_target(
+	tree
+	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} tree
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
+	USES_TERMINAL
+	VERBATIM
+)
+
+add_custom_target(
     ramdisk
     COMMAND tar cvf ${ISO_DIR}/ramdisk -C ramdisk/ .
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
