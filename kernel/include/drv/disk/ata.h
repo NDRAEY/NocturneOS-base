@@ -101,26 +101,27 @@
 
 /// Эта структура определяет каждый ATA диск в системе
 typedef struct {
+    size_t capacity;        /// Ёмкость диска в секторах
+    
+	char* model_name;
+	char* fwversion;
+	char* serial_number;
+
+    uint16_t cylinders;     /// Цилиндры
+    uint16_t heads;         /// Головки
+    uint16_t sectors;       /// Сектора
+    
+    uint16_t block_size;    /// Размер сектора
+
 	uint8_t drive;
     bool online;            /// Устройство доступно?
-    size_t capacity;        /// Ёмкость диска в секторах
 
     bool is_packet;         /// Является ли пакетным устройством?
 	bool is_medium_inserted;
     bool is_chs_addressing; /// Адресация по CHS?
 
-    uint16_t block_size;    /// Размер сектора
-
-    uint16_t cylinders;     /// Цилиндры
-    uint16_t heads;         /// Головки
-    uint16_t sectors;       /// Сектора
-
     bool is_sata;           /// Является ли этот диск SATA устройством?
     bool is_dma;           /// Поддерживает ли этот диск DMA?
-
-	char* model_name;
-	char* fwversion;
-	char* serial_number;
 } ata_drive_t;
 
 
