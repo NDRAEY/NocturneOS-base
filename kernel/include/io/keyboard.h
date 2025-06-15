@@ -18,4 +18,3 @@ SAYORI_INLINE uint32_t getkey() {
 }
 
 uint32_t getchar();
-void gets(char *buffer);

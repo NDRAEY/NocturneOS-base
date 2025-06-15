@@ -27,7 +27,7 @@ uint32_t parse_char(uint32_t key) {
 
     bool pressed = (~key & 0x80);
 
-    // Can be simplified
+    // TODO: Can be simplified
     if(pressed) {
         keyboard_states |= (KEYBOARD_STATE_PRESSED);
     } else {
@@ -40,7 +40,7 @@ uint32_t parse_char(uint32_t key) {
         if(keycode == KEY_LSHIFT) {
             keyboard_states |= (KEYBOARD_STATE_SHIFT);
         } else if(keycode == KEY_LCTRL) {
-            keyboard_states ^= (KEYBOARD_STATE_CTRL);
+            keyboard_states |= (KEYBOARD_STATE_CTRL);
         } else {
             if(key >= 256) {
                 qemu_err("Unknown key code: %d", key);
@@ -55,56 +55,23 @@ uint32_t parse_char(uint32_t key) {
     } else {
         if(keycode == KEY_LSHIFT) {
             keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-        }
+        } else if(keycode == KEY_LCTRL) {
+            keyboard_states &= ~(KEYBOARD_STATE_CTRL);
+        } 
+    }
+
+    if((keyboard_states & KEYBOARD_STATE_CTRL) && character == 's') {
+        return 0x13;
+    }
+
+    if((keyboard_states & KEYBOARD_STATE_CTRL) && character == 'q') {
+        return 0x11;
     }
 
     return character;
 }
 
 uint32_t getchar() {
-    // uint32_t character = 0;
-
-    // while(1) {
-    //     uint32_t key = getkey();
-
-    //     bool pressed = (~key & 0x80);
-
-    //     // Can be simplified
-    //     if(pressed) {
-    //         keyboard_states |= (KEYBOARD_STATE_PRESSED);
-    //     } else {
-    //         keyboard_states &= ~(KEYBOARD_STATE_PRESSED);
-    //     }
-
-    //     uint32_t keycode = key & 0x7F;
-
-    //     if(pressed) {
-    //         if(keycode == KEY_LSHIFT) {
-    //             keyboard_states |= (KEYBOARD_STATE_SHIFT);
-    //         } else if(keycode == KEY_LCTRL) {
-    //             keyboard_states ^= (KEYBOARD_STATE_CTRL);
-    //         } else {
-    //             if(key >= 256) {
-    //                 qemu_err("Unknown key code: %d", key);
-    //                 return 0;
-    //             }
-
-    //             // TODO: Multiple layouts
-    //             character = (~keyboard_states & KEYBOARD_STATE_SHIFT) ?
-    //                                 keyboard_layout[keycode] :
-    //                                 shifted_keyboard_layout[keycode];
-
-    //             break;
-    //         }
-    //     } else {
-    //         if(keycode == KEY_LSHIFT) {
-    //             keyboard_states &= ~(KEYBOARD_STATE_SHIFT);
-    //         }
-    //     }
-    // }
-
-    // return character;
-
     while(true) {
         uint32_t key = getkey();
         qemu_printf("Key: %d (%x)\n", key, key);
@@ -113,33 +80,5 @@ uint32_t getchar() {
         if(ch != 0) {
             return ch;
         }
-    }
-}
-
-void gets(char *buffer) {
-    char* buf = buffer;
-
-    while(1) {
-        uint32_t ch = getchar();
-        char* codes = (char*)&ch;
-
-        if(ch == '\n') {
-            break;
-        }
-
-        if(ch == '\b') {
-            *buf-- = 0;
-            tty_printf("- Implement backspace! - ");
-            continue;
-        }
-
-        if(ch > 255) {
-            *buf++ = codes[0];
-            *buf++ = codes[1];
-        } else {
-            *buf++ = codes[0];
-        }
-
-        tty_printf("%c", ch);
     }
 }
