@@ -605,6 +605,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-time"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+]
+
+[[package]]
 name = "noct-timer"
 version = "0.1.0"
 
@@ -661,6 +668,7 @@ dependencies = [
  "noct-screen",
  "noct-smbios",
  "noct-tarfs",
+ "noct-time",
  "noct-timer",
  "noct-tty",
  "pavi",

@@ -154,7 +154,10 @@ impl Console {
             self.move_to_beginning();
             return;
         } else if character == '\t' {
-            self.column += 4;
+            //self.column += 4;
+            for _ in 0..4 {
+                self.print_char(' ');
+            }
             return;
         }
 
