@@ -38,3 +38,4 @@
 #define KEY_RIGHT       77
 #define KEY_START       91
 #define KEY_BACKSPACE   14
+#define KEY_DELETE      83

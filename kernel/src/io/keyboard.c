@@ -41,7 +41,17 @@ uint32_t parse_char(uint32_t key) {
             keyboard_states |= (KEYBOARD_STATE_SHIFT);
         } else if(keycode == KEY_LCTRL) {
             keyboard_states |= (KEYBOARD_STATE_CTRL);
-        } else {
+        } else if(keycode == KEY_LEFT) {
+            character = 0x00445b1b;
+        } else if(keycode == KEY_RIGHT) {
+            character = 0x00435b1b;
+        } else if(keycode == KEY_UP) {
+            character = 0x00415b1b;
+        } else if(keycode == KEY_DOWN) {
+            character = 0x00425b1b;
+        } else if(keycode == KEY_DELETE) {
+            character = 0x7e335b1b;
+        }   else {
             if(key >= 256) {
                 qemu_err("Unknown key code: %d", key);
                 return 0;
@@ -68,13 +78,16 @@ uint32_t parse_char(uint32_t key) {
         return 0x11;
     }
 
+    if((keyboard_states & KEYBOARD_STATE_CTRL) && character == 'o') {
+        return 0x0f;
+    }
+
     return character;
 }
 
 uint32_t getchar() {
     while(true) {
         uint32_t key = getkey();
-        qemu_printf("Key: %d (%x)\n", key, key);
         uint32_t ch = parse_char(key);
 
         if(ch != 0) {

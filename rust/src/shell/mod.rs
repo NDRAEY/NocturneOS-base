@@ -169,6 +169,8 @@ fn process_input(context: &mut ShellContext) -> String {
                             print!("{}> {input}", context.current_path.as_str());
                         }
 
+                        noct_tty::c_api::tty_update();
+
                         continue;
                     }
                     key => {

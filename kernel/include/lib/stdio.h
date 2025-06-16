@@ -34,9 +34,10 @@ typedef struct FILE {
 
 // Типы открытого файла, тип флагов rw и т.д.
 enum FileOpenMode {
-	O_READ = 1,
-	O_WRITE = 2,
-	O_RDWR = 3,
+	O_READ = (1 << 0),
+	O_WRITE = (1 << 1),
+	O_RDWR = (1 << 0) | (1 << 1),
+	O_CREATE = (1 << 2)
 };
 
 FILE* fopen(const char* filename, size_t mode);

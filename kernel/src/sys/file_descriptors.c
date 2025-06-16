@@ -21,7 +21,6 @@ void file_descriptors_init() {
 // WARNING: Part of system calls! So every func needs to return size_t
 size_t file_descriptor_allocate(const char *filename, size_t mode, int *out) {
     FILE* file = fopen(filename, mode);
-
     if(!file) {
         *out = -1;
         return 0;
@@ -36,7 +35,9 @@ size_t file_descriptor_allocate(const char *filename, size_t mode, int *out) {
 
     *out = inf->fd;
 
-    qemu_ok("Written to: %d", out);
+    qemu_printf("File alloc: %d\n", inf->fd);
+
+    qemu_ok("Written to: %p", out);
     qemu_log("allocated fd: %d", inf->fd);
 
 	return 0;
@@ -67,6 +68,7 @@ size_t file_descriptor_read(int descriptor_number, size_t count, void* buffer) {
 	}
 
 	struct fd_info* inf = file_descriptor_get(descriptor_number);
+    qemu_printf("File read: %d\n", inf->fd);
 
 	qemu_note("[%x] Read: %d bytes (buffer at: %x)", inf, count, buffer);
 
@@ -92,6 +94,7 @@ size_t file_descriptor_write(int descriptor_number, size_t count, const void* bu
     	}
 
     struct fd_info* inf = file_descriptor_get(descriptor_number);
+    qemu_printf("File write: %d\n", inf->fd);
 
 	qemu_note("[%x] Write: %d bytes (buffer at: %x)", inf, count, buffer);
 
@@ -115,6 +118,7 @@ size_t file_descriptor_close(int descriptor_number) {
             kfree(inf);
 
 		    qemu_ok("Destroyed: %d", descriptor_number);
+            qemu_printf("File close: %d\n", descriptor_number);
 
             return 0;
         }

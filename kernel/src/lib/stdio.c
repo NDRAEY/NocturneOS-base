@@ -67,30 +67,38 @@ FILE* fopen(const char* filename, size_t mode) {
 	qemu_log("|- Name: '%s'", filename);
 	qemu_log("|- Mode: '%x'", mode);
 
-       FILE* file = kcalloc(sizeof(FILE), 1);
-       // Получаем тип открытого файла
-       FSM_FILE finfo = nvfs_info(filename);
-       if (finfo.Ready == 0 || mode == 0) {
-        kfree(file);
-        qemu_err("Failed to open file: %s (Exists: %d; FMODE: %d)",
-					filename,
-					finfo.Ready,
-					mode);
-               return 0;
-       }
+	FILE* file = kcalloc(sizeof(FILE), 1);
+	// Получаем тип открытого файла
+	FSM_FILE finfo = nvfs_info(filename);
 
-       file->open = 1;         // Файл успешно открыт
-       file->fmode = mode;     // Режим работы с файлом
-       file->size = finfo.Size;                // Размер файла
-       file->path = kcalloc(strlen(filename) + 1, 1); // Полный путь к файлу
-       file->pos = 0; // Установка указателя в самое начало
-       file->err = 0; // Ошибок в работе нет
+	if(finfo.Ready == 0 && (mode & O_CREATE)) {
+		nvfs_create(filename, TYPE_FILE);
+
+		finfo = nvfs_info(filename);
+	}
+
+	if (finfo.Ready == 0 || mode == 0) {
+		kfree(file);
+
+		qemu_err("Failed to open file: %s (Exists: %d; FMODE: %d)",
+				filename,
+				finfo.Ready,
+				mode);
+		return 0;
+	}
+
+	file->open = 1;         // Файл успешно открыт
+	file->fmode = mode;     // Режим работы с файлом
+	file->size = finfo.Size;                // Размер файла
+	file->path = kcalloc(strlen(filename) + 1, 1); // Полный путь к файлу
+	file->pos = 0; // Установка указателя в самое начало
+	file->err = 0; // Ошибок в работе нет
 
 	memcpy(file->path, filename, strlen(filename));
 
-       qemu_ok("File opened!");
-	
-       return file;
+	qemu_ok("File opened!");
+
+	return file;
 }
 
 /**

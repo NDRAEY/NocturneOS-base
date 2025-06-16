@@ -2,6 +2,7 @@
 *.elf
 *.log
 *.iso
+*.img
 *.uibak
 *.BIN
 *.qcow2
