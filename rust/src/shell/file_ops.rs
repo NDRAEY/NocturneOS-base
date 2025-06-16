@@ -1,4 +1,5 @@
 use alloc::string::String;
+use noct_logger::qemu_note;
 
 use crate::println;
 
@@ -25,6 +26,8 @@ pub fn create_file(context: &mut ShellContext, args: &[&str]) -> Result<(), usiz
 
     let mut dir = context.current_path.clone();
     dir.apply(path);
+
+    qemu_note!("Path: {}", dir.as_str());
 
     match noct_fileio::create_new_file(dir.as_str()) {
         Some(()) => Ok(()),

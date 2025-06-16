@@ -179,7 +179,7 @@ uint32_t fileperms(const char* Path){
 bool touch(const char* Path){
     FSM_FILE file = nvfs_info(Path);
 
-    if (file.Ready != 1) {
+    if (file.Ready == 1) {
         return false;
     }
 

@@ -74,7 +74,6 @@ uint32_t parse_char(uint32_t key) {
 uint32_t getchar() {
     while(true) {
         uint32_t key = getkey();
-        qemu_printf("Key: %d (%x)\n", key, key);
         uint32_t ch = parse_char(key);
 
         if(ch != 0) {
