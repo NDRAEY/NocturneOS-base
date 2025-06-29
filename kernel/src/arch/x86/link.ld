@@ -6,7 +6,9 @@ SECTIONS
 
     KERNEL_BASE_pos = .;
 
+    
     .text ALIGN (0x1000) : {
+        KEEP(*(.mboot))
         *(.mboot)
 
         CODE_start = .;
@@ -58,6 +60,7 @@ SECTIONS
     /DISCARD/ : {
         *(.note.gnu.build-id)
     }
-
+    
     KERNEL_END_pos = .;
+
 }

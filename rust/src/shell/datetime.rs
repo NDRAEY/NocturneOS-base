@@ -11,8 +11,10 @@ pub static DATETIME_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
 pub fn date(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     let time = unsafe { noct_time::get_time() };
 
-    println!("{:02}/{:02}/{:02} {:02}:{:02}:{:02}",
-time.day, time.month, time.year, time.hours, time.minutes, time.seconds);
+    println!(
+        "{:02}/{:02}/{:02} {:02}:{:02}:{:02}",
+        time.day, time.month, time.year, time.hours, time.minutes, time.seconds
+    );
 
     Ok(())
 }
