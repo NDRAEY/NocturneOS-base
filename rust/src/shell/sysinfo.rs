@@ -1,4 +1,5 @@
 use alloc::string::String;
+#[cfg(target_arch = "x86")]
 use raw_cpuid::CpuId;
 
 use crate::{

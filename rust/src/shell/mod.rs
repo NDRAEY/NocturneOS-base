@@ -29,7 +29,6 @@ pub mod gfxinfo;
 pub mod log;
 pub mod mala;
 pub mod meminfo;
-pub mod parallel_desktop;
 pub mod pavi;
 #[cfg(target_arch = "x86")]
 pub mod pci;
@@ -51,7 +50,6 @@ static COMMANDS: &[ShellCommandEntry] = &[
     file_ops::REMOVE_FILE_COMMAND_ENTRY,
     file_ops::COPY_FILE_COMMAND_ENTRY,
     cat::CAT_COMMAND_ENTRY,
-    parallel_desktop::PD_COMMAND_ENTRY,
     meminfo::MEMINFO_COMMAND_ENTRY,
     #[cfg(target_arch = "x86")]
     pci::PCI_COMMAND_ENTRY,

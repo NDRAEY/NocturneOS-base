@@ -126,7 +126,10 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 
 	set(C_SRC
 		kernel/src/arch/x86/init.c
+        kernel/src/sys/gdt.c 
+        kernel/src/sys/cpu_isr.c 
 		kernel/src/drv/cmos.c
+        kernel/src/sys/isr.c 
 		kernel/src/drv/video/intel.c)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
@@ -134,9 +137,6 @@ endif()
 
 set(C_SRC
 	${C_SRC}
-	kernel/src/sys/cpu_isr.c 
-	kernel/src/sys/gdt.c 
-	kernel/src/sys/isr.c 
 	kernel/src/io/ports.c 
 	kernel/src/io/serial_port.c 
 	kernel/src/lib/string.c 
@@ -219,15 +219,6 @@ set(C_SRC
 	kernel/src/sys/elf.c 
 	kernel/src/sys/acpi.c 
 	kernel/src/sys/pixfmt.c 
-	kernel/src/desktop/render.c 
-	kernel/src/desktop/window.c 
-	kernel/src/desktop/widget.c 
-	kernel/src/desktop/widget_button.c 
-	kernel/src/desktop/widget_progress.c 
-	kernel/src/desktop/widget_image.c 
-	kernel/src/desktop/widget_label.c 
-	kernel/src/desktop/eki.c 
-	kernel/src/desktop/parallel_desktop.c 
 	kernel/src/sys/mtrr.c 
   #kernel/src/net/net_info_cli.c 
 	kernel/src/toys/mala.c 
@@ -457,7 +448,7 @@ add_custom_target(
 
 add_custom_target(
 	run_with_disk_ahci
-	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} 	-device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/cdrom,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
+	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} 	-device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/cdrom,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1 -trace enable=ahci_*
 	USES_TERMINAL
 	DEPENDS iso
 )
