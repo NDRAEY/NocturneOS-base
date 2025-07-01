@@ -210,7 +210,6 @@ set(C_SRC
 	# kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
-	kernel/src/fmt/tga.c 
 	kernel/src/lib/asprintf.c
 	kernel/src/lib/sprintf.c
   # kernel/src/drv/disk/floppy.c 
