@@ -205,19 +205,17 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	# kernel/src/extra/plain_runner.c
 	kernel/src/sys/fxsave_region.c 
 	# kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/lib/asprintf.c
 	kernel/src/lib/sprintf.c
-  # kernel/src/drv/disk/floppy.c 
-	kernel/src/drv/disk/ata_dma.c 
-	kernel/src/drv/audio/ac97.c 
-	kernel/src/sys/elf.c 
-	kernel/src/sys/acpi.c 
-	kernel/src/sys/pixfmt.c 
+  # kernel/src/drv/disk/floppy.c
+	kernel/src/drv/disk/ata_dma.c
+	kernel/src/drv/audio/ac97.c
+	kernel/src/sys/elf.c
+	kernel/src/sys/acpi.c
 	kernel/src/sys/mtrr.c 
   #kernel/src/net/net_info_cli.c 
 	kernel/src/toys/mala.c 
@@ -247,7 +245,7 @@ add_executable(${KERNEL} ${SRC})
 
 # Rust
 
-set(RUST_COMPILER_TOOLCHAIN "nightly-2025-04-01")
+set(RUST_COMPILER_TOOLCHAIN "nightly-2025-07-01")
 set(RUST_TARGET "${RUST_TARGET_TRIPLE}.json")
 set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
 set(RUST_TOOLCHAIN_FULLNAME "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")
