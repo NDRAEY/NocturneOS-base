@@ -130,7 +130,8 @@ if(NOCTURNE_ARCH STREQUAL "x86")
         kernel/src/sys/cpu_isr.c 
 		kernel/src/drv/cmos.c
         kernel/src/sys/isr.c 
-		kernel/src/drv/video/intel.c)
+		kernel/src/drv/video/intel.c
+	)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
 endif()

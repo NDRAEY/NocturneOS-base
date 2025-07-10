@@ -5,8 +5,6 @@ extern "C" {
     fn drawRectBorder(x: u32, y: u32, w: u32, h: u32, color: u32);
     fn drawHorizontalLine(x1: u32, x2: u32, y: u32, color: u32);
     fn drawVerticalLine(y1: u32, y2: u32, x: u32, color: u32);
-    fn drawCirclePoints(cx: u32, cy: u32, x: u32, y: u32, color: u32);
-    fn drawCircle(cx: u32, cy: u32, radius: u32, color: u32);
     fn drawFilledCircle(x0: u32, y0: u32, radius: u32, color: u32);
     fn drawFilledRectBorder(x0: u32, y0: u32, radius: u32, w: u32, mode: u32, color: u32);
     fn drawRoundedSquare(
@@ -64,16 +62,6 @@ pub fn draw_horizontal_line(x1: u32, x2: u32, y: u32, color: Color) {
 pub fn draw_vertical_line(y1: u32, y2: u32, x: u32, color: Color) {
     unsafe {
         drawVerticalLine(y1, y2, x, color.as_hex());
-    }
-}
-
-pub fn draw_circle_points(cx: u32, cy: u32, x: u32, y: u32, color: Color) {
-    unsafe { drawCirclePoints(cx, cy, x, y, color.as_hex()) }
-}
-
-pub fn draw_circle(cx: u32, cy: u32, radius: u32, color: Color) {
-    unsafe {
-        drawCircle(cx, cy, radius, color.as_hex());
     }
 }
 

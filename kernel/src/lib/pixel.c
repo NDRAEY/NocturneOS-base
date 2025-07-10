@@ -79,55 +79,6 @@ void drawVerticalLine(int y1, int y2, int x, uint32_t color) {
 }
 
 /**
- * @brief Рисует окружные пиксели круга линию
- *
- * @warning Спомогательная функция!
- *
- * @param cx - Позиция по X
- * @param cy - Позиция по Y
- * @param x - Смещение по X
- * @param y - Смещение по Y
- * @param color - Цвет
-*/
-void drawCirclePoints(int cx, int cy, int x, int y, uint32_t color) {
-    set_pixel(cx + x, cy + y, color);
-    set_pixel(cx - x, cy + y, color);
-    set_pixel(cx + x, cy - y, color);
-    set_pixel(cx - x, cy - y, color);
-    set_pixel(cx + y, cy + x, color);
-    set_pixel(cx - y, cy + x, color);
-    set_pixel(cx + y, cy - x, color);
-    set_pixel(cx - y, cy - x, color);
-}
-
-/**
- * @brief Рисует круг
- *
- * @param cx - Позиция по X
- * @param cy - Позиция по Y
- * @param radius - Радиус круга
- * @param color - Цвет
-*/
-void drawCircle(int cx, int cy, int radius, uint32_t color) {
-    int x = 0;
-    int y = radius;
-    int p = 3 - 2 * radius;
-    drawCirclePoints(cx, cy, x, y, color);
-
-    while (x <= y) {
-        if (p < 0) {
-            p = p + 4 * x + 6;
-        } else {
-            p = p + 4 * (x - y) + 10;
-            y--;
-        }
-        x++;
-        drawCirclePoints(cx, cy, x, y, color);
-    }
-}
-
-
-/**
  * @brief Закрашивает круг
  *
  * @param x0 - Позиция по X
