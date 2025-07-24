@@ -157,8 +157,25 @@ pub fn get_key() -> CharKey {
             return CharKey::Key(Key::Special(SpecialKey::ENTER), true);
         } else if ch == 0x7f {
             return CharKey::Key(Key::Special(SpecialKey::BACKSPACE), true);
+        } else if ch == 0x00445b1b {
+            return CharKey::Key(Key::Special(SpecialKey::LEFT), true);
+        } else if ch == 0x00435b1b {
+            return CharKey::Key(Key::Special(SpecialKey::RIGHT), true);
+        } else if ch == 0x00415b1b {
+            return CharKey::Key(Key::Special(SpecialKey::UP), true);
+        } else if ch == 0x00425b1b {
+            return CharKey::Key(Key::Special(SpecialKey::DOWN), true);
+        } else if ch == 0x7e335b1b {
+            return CharKey::Key(Key::Special(SpecialKey::DELETE), true);
         }
 
-        CharKey::Char(char::from_u32(ch).unwrap())
+        let ret = match char::from_u32(ch) {
+            Some(ch) => ch,
+            None => {
+                panic!("Handle character: {ch:x}");
+            }
+        };
+
+        CharKey::Char(ret)
     }
 }

@@ -155,10 +155,12 @@ void ahci_init() {
             if((port->command_and_status & (1 << 2)) == 0) {
 				port->command_and_status |= (1 << 2);
 
-				 sleep_ms(20);  // Replace them with checks
-				/*while((port->command_and_status & (1 << 2)) == (1 << 2)) {
-    __asm__ volatile("nop");
-        }*/
+				sleep_ms(20);  // Replace them with checks
+				/*
+				while((port->command_and_status & (1 << 2)) == (1 << 2)) {
+					__asm__ volatile("nop");
+				}
+				*/
 			}
 
 			if((port->command_and_status & (1 << 1)) == 0) {
@@ -209,7 +211,7 @@ void ahci_init() {
 			if(port->signature == AHCI_SIGNATURE_SATAPI) { // SATAPI
 				qemu_log("\tSATAPI drive");
                 ahci_identify(i, true);
-                ahci_eject_cdrom(i);
+                // ahci_eject_cdrom(i);
 			} else if(port->signature == AHCI_SIGNATURE_SATA) { // SATA
 				qemu_log("\tSATA drive");
                 ahci_identify(i, false);
@@ -621,9 +623,6 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	cmdfis->c = 1;	// Command
 	cmdfis->command = ATA_CMD_PACKET;
 
-	// cmdfis->control = 0x08;
-	// cmdfis->device = 0xE0;
-
     ahci_send_cmd(port, 0);
 }
 
@@ -719,14 +718,12 @@ bool ahci_atapi_check_media_presence(size_t port_num) {
 	qemu_log("Sending READY command");
 	ahci_send_atapi_nomem(port_num, command);
 
-	// qemu_log("Fetching sense");
-	// atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
+	qemu_log("Fetching sense");
+	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
 	// hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
 	
-	// return !(error_code.valid && error_code.sense_key == 0x02 && error_code.sense_code == 0x3A);
-
-	return true;
+	return error_code.valid && !(error_code.sense_key == SCSI_SENSEKEY_NOT_READY && error_code.sense_code == 0x3A);
 }
 
 void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length) {
@@ -776,6 +773,24 @@ size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, si
     return 0;
 }
 
+size_t ahci_dpm_ctl(size_t Disk, size_t command, const void* data, size_t length) {
+	DPM_Disk dpm = dpm_info(Disk + 65);
+	size_t port_nr = (size_t)dpm.Point;
+
+	if(command == DPM_COMMAND_EJECT) {
+		ahci_eject_cdrom(port_nr);
+
+		return 0;
+	} else if(command == DPM_COMMAND_GET_STATUS) {
+		bool status = ahci_atapi_check_media_presence(port_nr);
+
+		qemu_printf("Status is: %d\n", status);
+
+		return DPM_STATUS_CHECK_DEBUG_CONSOLE;
+	}
+
+	return DPM_ERROR_NOT_IMPLEMENTED;
+}
 
 void ahci_identify(size_t port_num, bool is_atapi) {
     qemu_log("Identifying %d", port_num);
@@ -841,7 +856,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 	
 	kfree(model);
 
-	if(!is_atapi) {
+	// if(!is_atapi) {
 		int disk_inx = dpm_reg(
 	           (char)dpm_searchFreeIndex(0),
 	           "SATA Disk",
@@ -862,8 +877,9 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 		    // dpm_fnc_write(disk_inx + 65, &ahci_dpm_read, &ahci_dpm_write);
 			dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
 			dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
+			dpm_set_command_func(disk_inx + 65, &ahci_dpm_ctl);
 		}
-	}
+	// }
 
     ports[port_num].is_atapi = is_atapi;
 

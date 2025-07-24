@@ -218,6 +218,33 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
 	return DPM_ERROR_CANT_READ;
 }
 
+/**
+ * @brief [DPM] Запись данных на диск
+ *
+ * @param Letter - Буква
+ * @param size_t Offset - Отступ
+ * @param size_t Size - Кол-во байт данных для записи
+ * @param Buffer - Буфер откуда будет идти запись
+ *
+ * @return size_t - Кол-во записанных байт
+ */
+size_t dpm_ctl(char Letter, size_t command, const void* data, size_t length) {
+	int Index = Letter - 65;
+
+	Index = (Index > 32 ? Index - 32 : Index);
+	Index = (Index < 0 || Index > 25 ? 0 : Index);
+
+	if (DPM_Disks[Index].Ready == 0 || DPM_Disks[Index].Status == 0) {
+		return DPM_ERROR_NOT_READY;
+	}
+
+	if(DPM_Disks[Index].Command == NULL) {
+		return DPM_ERROR_NOT_IMPLEMENTED;
+	}
+
+	return DPM_Disks[Index].Command(Index, command, data, length);
+}
+
 int dpm_unmount(char Letter, bool FreeReserved)
 {
 	int Index = Letter - 65;

@@ -23,6 +23,7 @@ pub mod cd;
 pub mod cls;
 pub mod dir;
 pub mod disks;
+pub mod disk_ctl;
 pub mod file;
 pub mod file_ops;
 pub mod gfxinfo;
@@ -42,6 +43,7 @@ pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
 static COMMANDS: &[ShellCommandEntry] = &[
     dir::DIR_COMMAND_ENTRY,
     disks::DISKS_COMMAND_ENTRY,
+    disk_ctl::DISKCTL_COMMAND_ENTRY,
     cls::CLS_COMMAND_ENTRY,
     cd::CD_COMMAND_ENTRY,
     file_ops::CREATE_DIR_COMMAND_ENTRY,
