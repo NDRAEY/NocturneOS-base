@@ -445,9 +445,16 @@ add_custom_target(
 	DEPENDS iso
 )
 
+#add_custom_target(
+#	run_with_disk_ahci
+#	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=${CMAKE_SOURCE_DIR}/test_iso.iso,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
+#	USES_TERMINAL
+#	DEPENDS iso
+#)
+
 add_custom_target(
 	run_with_disk_ahci
-	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=${CMAKE_SOURCE_DIR}/test_iso.iso,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
-	USES_TERMINAL
+	COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_iso.iso,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 
+    USES_TERMINAL
 	DEPENDS iso
 )

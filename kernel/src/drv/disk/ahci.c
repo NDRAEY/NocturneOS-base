@@ -370,11 +370,11 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
         return false;
     }
 
-    qemu_warn("DRIVE IS READY");
+    // qemu_warn("DRIVE IS READY");
 
     port->command_issue |= 1u << slot;
 
-    qemu_warn("COMMAND IS ISSUED");
+    // qemu_warn("COMMAND IS ISSUED");
 
     while(true) {
         if (~port->command_issue & (1u << slot))  // Command is not running? Break
@@ -387,24 +387,28 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
         }
     }
 
-    qemu_warn("OK");
-    return true;
+	qemu_warn("OK");
+
+	return true;
 }
 
-void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, size_t buffer_phys, size_t bytes) {
+void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, char* buffer_mem, size_t bytes) {
 	int index = 0;
 	size_t i;
 	for(i = 0; i < bytes; i += (4 * MB) - 1) {
-		table->prdt_entry[index].dba = buffer_phys + i;
+		size_t buffer_phys = virt2phys(get_kernel_page_directory(), (size_t)buffer_mem + i);
+
+		table->prdt_entry[index].dba = buffer_phys;
 		table->prdt_entry[index].dbau = 0;
 		table->prdt_entry[index].rsv0 = 0;
 		table->prdt_entry[index].dbc = MIN((4U * MB), (bytes - i) % (4U * MB)) - 1;  // Size in bytes 4M max
 		table->prdt_entry[index].rsv1 = 0;
 		table->prdt_entry[index].i = 0;
 
-		qemu_log("PRDT[%d]: Address: %x; Size: %d bytes; Last: %d",
+		qemu_log("PRDT[%d]: Address: %x (V%x); Size: %d bytes; Last: %d",
 			i,
 			table->prdt_entry[index].dba,
+			(size_t)buffer_mem + i,
 			table->prdt_entry[index].dbc + 1,
 			table->prdt_entry[index].i);
 
@@ -459,14 +463,12 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
     size_t bytes = sector_count * block_size;
 
 	// Allocate memory for buffer.
-	char* buffer_mem = kmalloc_common(sector_count * block_size, PAGE_SIZE);
-	memset(buffer_mem, 0, sector_count * block_size);
-
-	// Get its physical address
-	size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
+	// char* buffer_mem = kmalloc_common(ALIGN(bytes, PAGE_SIZE), PAGE_SIZE);
+	char* buffer_mem = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE);
+	memset(buffer_mem, 0, bytes);
 
 	// Use this data to fill out PRDT table.
-	ahci_fill_prdt(hdr, table, buffer_phys, bytes);
+	ahci_fill_prdt(hdr, table, buffer_mem, bytes);
 
 	// Get FIS.
 	AHCI_FIS_REG_HOST_TO_DEVICE *cmdfis = (AHCI_FIS_REG_HOST_TO_DEVICE*)&(table->cfis);
@@ -521,7 +523,9 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 
 	ahci_send_cmd(port, 0);
 
+	qemu_log("COPYING");
 	memcpy(buffer, buffer_mem, bytes);
+	qemu_log("COPIED");
 
 	kfree(buffer_mem);
 }
@@ -549,7 +553,7 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 	memset(buffer_mem, 0, sector_count * block_size);
     memcpy(buffer_mem, buffer, sector_count * block_size);
 
-	size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
+	// size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
@@ -570,7 +574,7 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 
     size_t bytes = sector_count * block_size;
 
-	ahci_fill_prdt(hdr, table, buffer_phys, bytes);
+	ahci_fill_prdt(hdr, table, buffer_mem, bytes);
 
 	AHCI_FIS_REG_HOST_TO_DEVICE *cmdfis = (AHCI_FIS_REG_HOST_TO_DEVICE*)&(table->cfis);
 
@@ -652,10 +656,10 @@ void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size
 	memset(buffer_mem, 0, buffer_size);
 
 	// Get its physical address
-	size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
+	// size_t buffer_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) buffer_mem);
 
 	// Use this data to fill out PRDT table.
-	ahci_fill_prdt(hdr, table, buffer_phys, buffer_size);
+	ahci_fill_prdt(hdr, table, buffer_mem, buffer_size);
 
 	volatile AHCI_FIS_REG_HOST_TO_DEVICE *cmdfis = (volatile AHCI_FIS_REG_HOST_TO_DEVICE*)&(table->cfis);
     memset((void*)cmdfis, 0, sizeof(AHCI_FIS_REG_HOST_TO_DEVICE));
