@@ -344,7 +344,7 @@ void ahci_stop_cmd(size_t port_num) {
 
 void ahci_irq_handler() {
     qemu_warn("AHCI interrupt!");
-    uint32_t status = abar->interrupt_status;
+    volatile uint32_t status = abar->interrupt_status;
 
     abar->interrupt_status = status;
 
@@ -352,7 +352,7 @@ void ahci_irq_handler() {
         if(status & (1 << i)) {
             volatile AHCI_HBA_PORT* port = AHCI_PORT(i);
 
-            uint32_t port_interrupt_status = port->interrupt_status;
+            volatile uint32_t port_interrupt_status = port->interrupt_status;
 
             port->interrupt_status = port_interrupt_status;
         }
@@ -385,6 +385,8 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
             return false;
         }
+
+		__asm__ volatile("nop");
     }
 
 	qemu_warn("OK");
@@ -750,7 +752,12 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 
 	uint8_t* real_buf = kmalloc(real_length);
 
-    ahci_read_sectors(port_num, start_sector, sector_count, real_buf);
+	// BUG: Reading big amount of sectors in one call can cause memory corruptions.
+	for(int i = 0; i < sector_count; i += 64) {
+		ahci_read_sectors(port_num, start_sector + i, MIN(sector_count - i, 64), real_buf + (i * block_size));
+	}
+
+	// ahci_read_sectors(port_num, start_sector, sector_count, real_buf);
 	
 	memcpy(buf, real_buf + (location % block_size), length);
 
