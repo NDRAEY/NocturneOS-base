@@ -200,7 +200,7 @@ bool atapi_read_sectors(uint16_t drive, uint8_t *buf, uint32_t lba, size_t secto
 		0  // ?
     };
 
-	size_t block_size = atapi_read_block_size(bus, slave);	
+	size_t block_size = atapi_read_block_size(bus, slave);
 	bool error = ata_scsi_send(bus, slave, block_size, command);
     
 	if(error) {

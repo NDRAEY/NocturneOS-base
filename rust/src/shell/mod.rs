@@ -211,7 +211,10 @@ fn suggest_completions(stem: &str) -> Vec<String> {
 
         qemu_note!("List all occurencies of `{}` in `{}`", stem, path.as_str());
 
-        let rdir = Directory::from_path(&path).unwrap();
+        let rdir = match Directory::from_path(&path) {
+            Some(r) => r,
+            None => return vec![]
+        };
         let variants = rdir.into_iter().names();
 
         return variants

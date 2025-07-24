@@ -1,7 +1,7 @@
 use alloc::string::String;
 use noct_dpm_sys::{
-    DPM_COMMAND_EJECT, DPM_COMMAND_GET_STATUS, DPM_ERROR_CANT_MOUNT, DPM_ERROR_CANT_READ,
-    DPM_ERROR_NOT_IMPLEMENTED, DPM_ERROR_NOT_READY, DPM_STATUS_CHECK_DEBUG_CONSOLE,
+    DPM_COMMAND_EJECT, DPM_COMMAND_GET_MEDIUM_STATUS, DPM_ERROR_CANT_MOUNT, DPM_ERROR_CANT_READ,
+    DPM_ERROR_NOT_IMPLEMENTED, DPM_ERROR_NOT_READY
 };
 
 use crate::{println, system::mem};
@@ -11,27 +11,32 @@ use super::ShellContext;
 pub static DISKCTL_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
     ("diskctl", disk_ctl, Some("Control disk devices"));
 
+pub enum DPMControlResult {
+    Error(&'static str),
+    Boolean(bool)
+}
+
 fn command_to_bin(command: &str) -> Option<u32> {
     match command {
         "eject" => Some(DPM_COMMAND_EJECT),
-        "status" => Some(DPM_COMMAND_GET_STATUS),
+        "status" => Some(DPM_COMMAND_GET_MEDIUM_STATUS),
         _ => None,
     }
 }
 
-fn parse_reply(code: u32) -> Option<&'static str> {
+fn parse_reply(code: u32) -> Option<DPMControlResult> {
     if code == 0 {
-        Some("ok")
+        Some(DPMControlResult::Error("ok"))
     } else if code == DPM_ERROR_CANT_MOUNT as u32 {
-        Some("Can't mount disk.")
+        Some(DPMControlResult::Error("Can't mount disk."))
     } else if code == DPM_ERROR_NOT_IMPLEMENTED as u32 {
-        Some("Feature not implemented.")
+        Some(DPMControlResult::Error("Feature not implemented."))
     } else if code == DPM_ERROR_CANT_READ as u32 {
-        Some("Can't read.")
+        Some(DPMControlResult::Error("Can't read."))
     } else if code == DPM_ERROR_NOT_READY as u32 {
-        Some("Drive is not ready yet.")
-    } else if code == DPM_STATUS_CHECK_DEBUG_CONSOLE as u32 {
-        Some("Check debug console!")
+        Some(DPMControlResult::Error("Drive is not ready yet."))
+    } else if (code & 0xC000_0000) == 0xC000_0000 {
+        Some(DPMControlResult::Boolean((code & !0xC000_0000) != 0))
     } else {
         None
     }
@@ -83,7 +88,14 @@ pub fn disk_ctl(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize>
 
     match parse_reply(reply) {
         Some(r) => {
-            println!("Reply: {}", r);
+            match r {
+                DPMControlResult::Error(e) => {
+                    println!("Drive error: {}", e);
+                },
+                DPMControlResult::Boolean(b) => {
+                    println!("Drive responsed with boolean: {}", b);
+                },
+            }
         }
         None => {
             println!("Unknown reply: {reply:x}");

@@ -500,9 +500,9 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 
         size_t bytecount = sector_count * 2048;
 
-        cmdfis->lba0 = bytecount & 0xff;
-        cmdfis->lba1 = (bytecount >> 8) & 0xff;
-        cmdfis->lba2 = (bytecount >> 16) & 0xff;
+        // cmdfis->lba0 = bytecount & 0xff;
+        cmdfis->lba1 = bytecount & 0xff;
+        cmdfis->lba2 = (bytecount >> 8) & 0xff;
     } else {
         qemu_log("JUST A DISK DEVICE");
 
@@ -781,12 +781,10 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, const void* data, size_t length
 		ahci_eject_cdrom(port_nr);
 
 		return 0;
-	} else if(command == DPM_COMMAND_GET_STATUS) {
+	} else if(command == DPM_COMMAND_GET_MEDIUM_STATUS) {
 		bool status = ahci_atapi_check_media_presence(port_nr);
 
-		qemu_printf("Status is: %d\n", status);
-
-		return DPM_STATUS_CHECK_DEBUG_CONSOLE;
+		return DPM_STATUS_BOOLEAN_MASK | status;
 	}
 
 	return DPM_ERROR_NOT_IMPLEMENTED;

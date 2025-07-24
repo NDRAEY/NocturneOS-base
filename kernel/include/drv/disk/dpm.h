@@ -6,14 +6,15 @@
 #define DPM_ERROR_NOT_READY (-2) /// Устройство не готово к работе
 #define DPM_ERROR_CANT_READ (-3)   /// Не удалось прочитать файл
 #define DPM_ERROR_NOT_IMPLEMENTED (-4)   /// Не реализовано
-#define DPM_STATUS_CHECK_DEBUG_CONSOLE (-5)   /// Не реализовано
+
+#define DPM_STATUS_BOOLEAN_MASK 0xC0000000   /// Маска статуса в виде true/false
 
 // disk, offset_h, offset_l, size, buffer
 typedef size_t (*dpm_disk_read_cmd)(size_t, uint64_t, uint64_t, size_t, void *);
 typedef size_t (*dpm_disk_write_cmd)(size_t, uint64_t, uint64_t, size_t, const void *);
 
 #define DPM_COMMAND_EJECT      (0x00)
-#define DPM_COMMAND_GET_STATUS (0x01)
+#define DPM_COMMAND_GET_MEDIUM_STATUS (0x01)
 
 // disk, command, data, data_length
 typedef size_t (*dpm_disk_command_cmd)(size_t, size_t, const void *, size_t);
