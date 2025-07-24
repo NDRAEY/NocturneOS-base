@@ -332,18 +332,18 @@ void *kmalloc_common(size_t size, size_t align)
 }
 
 void *kmalloc_common_contiguous(physical_addr_t* page_directory, size_t page_count) {
+	size_t phys_pages = phys_alloc_multi_pages(page_count);
+
+	if(phys_pages == 0) {
+		return 0;
+	}
+
 	size_t sz = page_count * PAGE_SIZE;
 	void *allocated = alloc_no_map(sz, PAGE_SIZE);
 
 	if (!allocated) {
-		return 0;
-	}
-
-	size_t phys_pages = phys_alloc_multi_pages(page_count);
-
-	if(phys_pages == 0) {
-		free_no_map(allocated);
-
+		phys_free_multi_pages(phys_pages, page_count);
+		
 		return 0;
 	}
 

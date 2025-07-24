@@ -463,8 +463,8 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
     size_t bytes = sector_count * block_size;
 
 	// Allocate memory for buffer.
-	// char* buffer_mem = kmalloc_common(ALIGN(bytes, PAGE_SIZE), PAGE_SIZE);
-	char* buffer_mem = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE);
+	char* buffer_mem = kmalloc_common(ALIGN(bytes, PAGE_SIZE), PAGE_SIZE);
+	// char* buffer_mem = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE);
 	memset(buffer_mem, 0, bytes);
 
 	// Use this data to fill out PRDT table.
@@ -483,22 +483,22 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
         qemu_log("ATAPI DEVICE");
 
 		// If ATAPI, fill out SCSI command.
-        char command[12] = {
+        char command[16] = {
                 ATAPI_CMD_READ,  // Command
                 0, // ?
-                (location >> 0x18) & 0xFF,  // LBA
-                (location >> 0x10) & 0xFF,
-                (location >> 0x08) & 0xFF,
-                (location >> 0x00) & 0xFF,
-                (sector_count >> 0x18) & 0xFF,  // Sector count
-                (sector_count >> 0x10) & 0xFF,
-                (sector_count >> 0x08) & 0xFF,
-                (sector_count >> 0x00) & 0xFF,
+                (location >> 24) & 0xFF,  // LBA
+                (location >> 16) & 0xFF,
+                (location >> 8) & 0xFF,
+                (location >> 0) & 0xFF,
+                (sector_count >> 24) & 0xFF,  // Sector count
+                (sector_count >> 16) & 0xFF,
+                (sector_count >> 8) & 0xFF,
+                (sector_count >> 0) & 0xFF,
                 0, // ?
                 0  // ?
         };
 
-        memcpy(table->acmd, command, 12);
+        memcpy(table->acmd, command, 16);
 
         size_t bytecount = sector_count * 2048;
 

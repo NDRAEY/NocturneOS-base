@@ -282,7 +282,7 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
                 continue;
             }
 
-            if arced_cache.lock().len() > 5 {
+            if arced_cache.lock().len() > 10 {
                 task_yield();
                 continue;
             }
@@ -349,6 +349,23 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
             };
 
             continue;
+        } else if key == Key::Special(SpecialKey::RIGHT) && is_pressed {
+            for _ in 0..10 {
+                let block = {
+                    let mut x = cache_line.lock();
+                    let block = x.front().cloned();
+
+                    if block.is_some() {
+                        x.pop_front();
+                    }
+
+                    block
+                };
+
+                if let Some(block) = block {
+                    bytes_played += block.len();
+                }
+            }
         }
 
         let curstat = *status.lock();
