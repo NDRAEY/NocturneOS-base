@@ -63,13 +63,10 @@ unsafe extern "C" fn fun_read(
 
     let rpath = raw_ptr_to_string(path);
 
-    let entry = get_directory_entry_by_path(&mut fl, &rpath);
-
-    if entry.is_none() {
-        return 0;
-    }
-
-    let entries = entry.unwrap();
+    let entries = match get_directory_entry_by_path(&mut fl, &rpath) {
+        Some(entry) => entry,
+        None => return 0
+    };
 
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 

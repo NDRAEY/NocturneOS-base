@@ -11,7 +11,7 @@ fn main() {
         .size_t_is_usize(false)
         .layout_tests(false)
         .generate_comments(false)
-        .rust_target(RustTarget::default())
+        .rust_target(RustTarget::nightly())
         .generate()
         .expect("Binding generation error");
 

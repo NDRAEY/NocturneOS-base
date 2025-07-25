@@ -27,11 +27,11 @@ pub unsafe extern "C" fn audio_system_add_output(
             .push(Box::new(GenericAudioDevice {
                 name: name.to_string(),
                 private_data: priv_data,
-                on_open: core::mem::transmute(open),
-                on_set_volume: core::mem::transmute(set_volume),
-                on_set_rate: core::mem::transmute(set_rate),
-                on_write: core::mem::transmute(write),
-                on_close: core::mem::transmute(close),
+                on_open: open,
+                on_set_volume: set_volume,
+                on_set_rate: set_rate,
+                on_write: write,
+                on_close: close,
             }))
     };
 

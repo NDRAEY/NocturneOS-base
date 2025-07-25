@@ -139,7 +139,7 @@ pub extern "C" fn pci_scan_everything() {
             if vendor != 0xFFFF {
                 let clid: u8 = ((pci_read16(bus, slot, 0, 0xA) >> 8) & 0xff) as u8;
                 let sclid: u8 = ((pci_read16(bus, slot, 0, 0xA)) & 0xff) as u8;
-                let device: u16 = (pci_read16(bus, slot, 0, 0x2) & 0xffff) as u16;
+                let device: u16 = pci_read16(bus, slot, 0, 0x2);
 
                 hdrtype = (pci_read16(bus, slot, 0, 0xE) & 0xff) as u8;
 
@@ -168,7 +168,7 @@ pub extern "C" fn pci_scan_everything() {
                     if vendor != 0xFFFF {
                         let clid = ((pci_read16(bus, slot, func, 0xA) >> 8) & 0xff) as u8;
                         let sclid = (pci_read16(bus, slot, func, 0xA) & 0xff) as u8;
-                        let device = (pci_read16(bus, slot, func, 0x2) & 0xffff) as u16;
+                        let device = (pci_read16(bus, slot, func, 0x2) & 0xffff);
 
                         unsafe {
                             let dev = PCIDevice {

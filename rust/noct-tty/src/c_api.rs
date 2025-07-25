@@ -32,7 +32,7 @@ pub fn tty_puts_str(s: &str) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn tty_puts(s: *const c_char) {
+pub unsafe extern "C" fn tty_puts(s: *const c_char) {
     let s = unsafe { CStr::from_ptr(s) };
     let s = s.to_str().unwrap();
 
@@ -40,7 +40,7 @@ pub extern "C" fn tty_puts(s: *const c_char) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn tty_puts_raw(s: *const c_char, length: usize) {
+pub unsafe extern "C" fn tty_puts_raw(s: *const c_char, length: usize) {
     let slice = unsafe { core::slice::from_raw_parts(s as *const u8, length) };
     let s = core::str::from_utf8(slice).unwrap();
 
@@ -103,7 +103,7 @@ pub extern "C" fn tty_set_pos_x(x: u32) {
     let console = binding.get_mut().unwrap();
 
     let y = console.console().position().1;
-    console.console_mut().set_position(x as usize, y as usize);
+    console.console_mut().set_position(x as usize, y);
 }
 
 #[unsafe(no_mangle)]
@@ -112,7 +112,7 @@ pub extern "C" fn tty_set_pos_y(y: u32) {
     let console = binding.get_mut().unwrap();
 
     let x = console.console().position().0;
-    console.console_mut().set_position(x as usize, y as usize);
+    console.console_mut().set_position(x, y as usize);
 }
 
 #[unsafe(no_mangle)]
