@@ -502,11 +502,11 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
 
         memcpy(table->acmd, command, 16);
 
-        size_t bytecount = sector_count * 2048;
+        // size_t bytecount = sector_count * 2048;
 
         // cmdfis->lba0 = bytecount & 0xff;
-        cmdfis->lba1 = bytecount & 0xff;
-        cmdfis->lba2 = (bytecount >> 8) & 0xff;
+        cmdfis->lba1 = 2048 & 0xff;
+        cmdfis->lba2 = (2048 >> 8) & 0xff;
     } else {
         qemu_log("JUST A DISK DEVICE");
 
@@ -763,7 +763,7 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 		);
 	}
 
-	// ahci_read_sectors(port_num, start_sector, sector_count, real_buf);
+	//ahci_read_sectors(port_num, start_sector, sector_count, real_buf);
 	
 	memcpy(buf, real_buf + (location % block_size), length);
 
