@@ -753,7 +753,7 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 	uint8_t* real_buf = kmalloc(real_length);
 
 	// BUG: Reading big amount of sectors in one call can cause memory corruptions.
-    int sectors_per_transfer = 16;
+    int sectors_per_transfer = 64 + 32;
 	for(int i = 0; i < sector_count; i += sectors_per_transfer) {
 		ahci_read_sectors(
 			port_num,

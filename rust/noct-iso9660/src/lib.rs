@@ -144,7 +144,7 @@ unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_
 
     let root = fl.read_directory(root.record.lba.lsb as _);
 
-    // qemu_note!("{:?}", &root);
+    // qemu_note!("{:#?}", &root);
 
     let files: Vec<FSM_FILE> = root
         .iter()
