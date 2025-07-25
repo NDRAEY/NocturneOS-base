@@ -783,7 +783,8 @@ size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 
 size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t size, const void* buffer) {
 	(void)Disk; (void)high_offset; (void)low_offset; (void)size; (void)buffer;
-    qemu_err("TODO: SATA DPM WRITE");
+    
+	qemu_err("TODO: SATA DPM WRITE");
 
 //    DPM_Disk dpm = dpm_info(Disk + 65);
 
