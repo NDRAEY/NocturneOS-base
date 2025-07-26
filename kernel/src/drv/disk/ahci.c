@@ -5,8 +5,6 @@
 #include "lib/asprintf.h"
 #include "generated/pci.h"
 #include "io/ports.h"
-#include "io/tty.h"
-#include "debug/hexview.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/isr.h"
@@ -14,6 +12,7 @@
 #include "drv/atapi.h"
 #include "net/endianess.h"
 #include "drv/disk/dpm.h"
+#include "io/tty.h"
 
 #define AHCI_CLASS 1
 #define AHCI_SUBCLASS 6
@@ -29,18 +28,7 @@ bool ahci_initialized = false;
 
 volatile AHCI_HBA_MEM* abar;
 
-// #undef qemu_log
-// #undef qemu_err
-// #undef qemu_warn
-// #undef qemu_ok
-// #define qemu_log(M, ...) tty_printf(M "\n", ##__VA_ARGS__)
-// #define qemu_err(M, ...) tty_printf("[ERR] " M "\n", ##__VA_ARGS__)
-// #define qemu_warn(M, ...) tty_printf("[WARN] " M "\n", ##__VA_ARGS__)
-// #define qemu_ok(M, ...) tty_printf("[OK] " M "\n", ##__VA_ARGS__)
-
 #define AHCI_PORT(num) ((volatile AHCI_HBA_PORT*)(abar->ports + (num)))
-
-//#define qemu_log(M, ...) _tty_printf(M "\n", ##__VA_ARGS__)
 
 void ahci_irq_handler();
 
@@ -105,8 +93,6 @@ void ahci_init() {
 	while((abar->global_host_control & 1) == 1)
 		;
 	
-	tty_printf("Reset okay");
-
 	// Interrupts
 	ahci_irq = pci_read32(ahci_busnum, ahci_slot, ahci_func, 0x3C) & 0xFF; // All 0xF PCI register
 	qemu_log("AHCI IRQ: %x (%d)", ahci_irq, ahci_irq);
@@ -190,8 +176,6 @@ void ahci_init() {
 
 			while(port->command_and_status & (1 << 15))
                 ;
-
-            tty_printf("[%d] AFTER CMD = %x\n", i, port->command_and_status);
 
             ahci_rebase_memory_for(i);
         }
@@ -370,14 +354,12 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
         return false;
     }
 
-    // qemu_warn("DRIVE IS READY");
-
     port->command_issue |= 1u << slot;
 
     // qemu_warn("COMMAND IS ISSUED");
 
     while(true) {
-        if (~port->command_issue & (1u << slot))  // Command is not running? Break
+        if ((port->command_issue & (1u << slot)) == 0)  // Command is not running? Break
             break;
 
         if (port->interrupt_status & AHCI_HBA_TFES)	{  // Task file error? Tell about error and exit
@@ -386,7 +368,7 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
             return false;
         }
 
-		__asm__ volatile("nop");
+		__asm__ volatile("hlt");
     }
 
 	qemu_warn("OK");
@@ -429,14 +411,27 @@ void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, char* buffer_m
  * @param sector_count - колчество секторов
  * @param buffer - буфер куда сохранять данные
  */
-void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, void* buffer) {
+size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, void* buffer) {
 	if(!ahci_initialized) {
 		qemu_err("AHCI not present!");
-		return;
+		return 0;
 	}
 
 	// Get the descriptor of our AHCI port.
     struct ahci_port_descriptor desc = ports[port_num];
+
+	if(desc.is_atapi) {
+		//tty_printf("ATAPI check media\n");
+
+		bool status = ahci_atapi_check_media_presence(port_num);
+
+		//tty_printf("ATAPI media is in: %d\n", status);
+
+		// Don't allow reading empty drive
+		if(!status) {
+			return 0;
+		}
+	}
 
 	// Hard disks have always 512 bytes/sector; Optical discs have 2048 bytes/sector.
     size_t block_size = desc.is_atapi ? 2048 : 512;
@@ -523,13 +518,21 @@ void ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, 
         cmdfis->device = 1U << 6;	// LBA mode
     }
 
-	ahci_send_cmd(port, 0);
+	bool status = ahci_send_cmd(port, 0);
+
+	if(!status) {
+		kfree(buffer_mem);
+
+		return 0;
+	}
 
 	qemu_log("COPYING");
 	memcpy(buffer, buffer_mem, bytes);
 	qemu_log("COPIED");
 
 	kfree(buffer_mem);
+
+	return bytes;
 }
 
 /**
@@ -633,7 +636,7 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 }
 
 void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size_t size) {
-	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
+	// tty_printf("ATAPI command on port %d (CMD: %x)\n", port_num, command[0]);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
@@ -676,6 +679,7 @@ void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size
 	// cmdfis->lba4 = ((size >> 24) & 0xff);
 	// cmdfis->lba5 = ((size >> 32) & 0xff);
 
+	// tty_printf("Sending command...\n");
     ahci_send_cmd(port, 0);
 
 	memcpy(output, buffer_mem, size);
@@ -699,14 +703,14 @@ void ahci_eject_cdrom(size_t port_num) {
 atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 	uint8_t command[16] = {
         ATAPI_CMD_RQ_SENSE, 0, 0, 0,
-		18, // Allocation Length: We need only 18 bytes (mininal respose length)
+		18, // Allocation Length: We need only 18 bytes (mininal response length)
 		0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0
     };
 
 	ahci_send_atapi(port_num, command, output, 18);
 
-	hexview_advanced(output, 18, 16, false, new_qemu_printf);
+	// hexview_advanced(output, 18, 16, false, new_qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
 }
@@ -721,10 +725,10 @@ bool ahci_atapi_check_media_presence(size_t port_num) {
 
 	uint8_t errorcode[18] = {0};
     
-	qemu_log("Sending READY command");
+	// tty_printf("Sending READY command\n");
 	ahci_send_atapi_nomem(port_num, command);
 
-	qemu_log("Fetching sense");
+	// tty_printf("Fetching sense\n");
 	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
 	// hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
@@ -778,6 +782,7 @@ size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 
     ahci_read((size_t) dpm.Point, Buffer, low_offset, Size);
 
+
     return Size;
 }
 
@@ -802,7 +807,7 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, const void* data, size_t length
 	} else if(command == DPM_COMMAND_GET_MEDIUM_STATUS) {
 		bool status = ahci_atapi_check_media_presence(port_nr);
 
-		return DPM_STATUS_BOOLEAN_MASK | status;
+		return DPM_MEDIA_STATUS_MASK | (status ? DPM_MEDIA_STATUS_ONLINE : DPM_MEDIA_STATUS_OFFLINE);
 	}
 
 	return DPM_ERROR_NOT_IMPLEMENTED;
@@ -867,12 +872,11 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     *(((uint8_t*)model) + 39) = 0;
 
-    tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
     qemu_log("[SATA] MODEL: '%s'; CAPACITY: %d sectors", model, capacity);
 	
 	kfree(model);
 
-	// if(!is_atapi) {
+	//if(!is_atapi) {
 		int disk_inx = dpm_reg(
 	           (char)dpm_searchFreeIndex(0),
 	           "SATA Disk",
@@ -890,12 +894,12 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 		    qemu_err("[SATA/DPM] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
 		} else {
 		    qemu_ok("[SATA/DPM] [Successful] Registering OK");
-		    // dpm_fnc_write(disk_inx + 65, &ahci_dpm_read, &ahci_dpm_write);
+
 			dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
 			dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
 			dpm_set_command_func(disk_inx + 65, &ahci_dpm_ctl);
 		}
-	// }
+	//}
 
     ports[port_num].is_atapi = is_atapi;
 

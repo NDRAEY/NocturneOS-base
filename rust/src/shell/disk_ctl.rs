@@ -4,6 +4,8 @@ use noct_dpm_sys::{
     DPM_ERROR_NOT_IMPLEMENTED, DPM_ERROR_NOT_READY
 };
 
+use noct_dpm_sys::DPM_MEDIA_STATUS_MASK;
+
 use crate::{println, system::mem};
 
 use super::ShellContext;
@@ -13,7 +15,14 @@ pub static DISKCTL_COMMAND_ENTRY: crate::shell::ShellCommandEntry =
 
 pub enum DPMControlResult {
     Error(&'static str),
-    Boolean(bool)
+    MediaStatus(MediaStatus)
+}
+
+#[derive(Debug)]
+pub enum MediaStatus {
+    Offline,
+    Loading,
+    Online
 }
 
 fn command_to_bin(command: &str) -> Option<u32> {
@@ -35,8 +44,20 @@ fn parse_reply(code: u32) -> Option<DPMControlResult> {
         Some(DPMControlResult::Error("Can't read."))
     } else if code == DPM_ERROR_NOT_READY as u32 {
         Some(DPMControlResult::Error("Drive is not ready yet."))
-    } else if (code & 0xC000_0000) == 0xC000_0000 {
-        Some(DPMControlResult::Boolean((code & !0xC000_0000) != 0))
+    } else if (code & DPM_MEDIA_STATUS_MASK) == DPM_MEDIA_STATUS_MASK {
+        Some(DPMControlResult::MediaStatus({
+            let code = code & !DPM_MEDIA_STATUS_MASK;
+
+            if code == 0 {
+                MediaStatus::Offline
+            } else if code == 1 {
+                MediaStatus::Loading
+            } else if code == 2 {
+                MediaStatus::Online
+            } else {
+                unreachable!("You may have to implement other media statuses.")
+            }
+        }))
     } else {
         None
     }
@@ -92,8 +113,8 @@ pub fn disk_ctl(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize>
                 DPMControlResult::Error(e) => {
                     println!("Drive error: {}", e);
                 },
-                DPMControlResult::Boolean(b) => {
-                    println!("Drive responsed with boolean: {}", b);
+                DPMControlResult::MediaStatus(b) => {
+                    println!("Drive responsed with media status: {:?}", b);
                 },
             }
         }

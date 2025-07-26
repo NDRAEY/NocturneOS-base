@@ -7,7 +7,11 @@
 #define DPM_ERROR_CANT_READ (-3)   /// Не удалось прочитать файл
 #define DPM_ERROR_NOT_IMPLEMENTED (-4)   /// Не реализовано
 
-#define DPM_STATUS_BOOLEAN_MASK 0xC0000000   /// Маска статуса в виде true/false
+#define DPM_MEDIA_STATUS_MASK 0x10000000U   /// Маска статуса
+
+#define DPM_MEDIA_STATUS_OFFLINE 0U
+#define DPM_MEDIA_STATUS_LOADING 1U
+#define DPM_MEDIA_STATUS_ONLINE 2U
 
 // disk, offset_h, offset_l, size, buffer
 typedef size_t (*dpm_disk_read_cmd)(size_t, uint64_t, uint64_t, size_t, void *);

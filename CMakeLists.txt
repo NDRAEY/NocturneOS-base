@@ -224,7 +224,6 @@ set(C_SRC
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
 	# kernel/src/toys/minesweeper.c 
-	kernel/src/toys/diskctl.c 
 	kernel/src/lib/utf_conversion.c 
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
@@ -447,7 +446,7 @@ add_custom_target(
 
 add_custom_target(
 	run_with_disk_ahci
-    COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=${CMAKE_SOURCE_DIR}/test_iso.iso,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
+    COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ahci,id=ahci -drive id=thatdisk,file=${CMAKE_SOURCE_DIR}/test_disk.img,if=none -device ide-hd,drive=thatdisk,bus=ahci.0 -drive id=thatcdrom,file=/dev/sr0,if=none -device ide-cd,drive=thatcdrom,bus=ahci.1
     USES_TERMINAL
     DEPENDS iso
 )

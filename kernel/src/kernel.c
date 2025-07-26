@@ -29,6 +29,8 @@
 #include "net/dhcp.h"
 #include "gfx/intel.h"
 
+#include <drv/disk/media_notifier.h>
+
 #include <lib/pixel.h>
 #include <net/socket.h>
 
@@ -426,8 +428,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
                         mac_buffer[4],
                         mac_buffer[5]);
         }
-
-        tty_printf("OK!\n");
     }
 
     ac97_init();
@@ -456,8 +456,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // char* args[] = {};
     // spawn("R:/hellors", 0, args);
 
-//    void sysidle();
-//    thread_create(get_current_proc(), sysidle, 0x100, true, false);
+    // void sysidle();
+    // thread_create(get_current_proc(), sysidle, 0x100, true);
+
+    // launch_media_notifier();
 
     // net_test();
 
@@ -496,14 +498,12 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 //     socket_close(srv_sock);
 // }
 
-/*
 void sysidle() {
     while(1) {
         __asm__ volatile("hlt");
       yield();
     }
 }
-*/
 
 // void k() {
 //     for(int i = 0; i < 10; i++) {
