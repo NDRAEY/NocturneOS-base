@@ -47,9 +47,6 @@ void igfx_init() {
     pci_find_device(0x8086, 0x2a42, &igfx_bus, &igfx_slot, &igfx_func);
 
     if(igfx_bus == 0xFF) {
-        qemu_err("NO INTEL GFX!");
-        tty_printf("NO INTEL GFX!\n");
-
         return;
     } else {
         qemu_ok("INTEL GFX!");

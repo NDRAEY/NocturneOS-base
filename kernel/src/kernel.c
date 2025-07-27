@@ -344,9 +344,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     ata_init();
     ata_dma_init();
     
-    bootScreenPaint("Инициализация AHCI...");
-    ahci_init();
-
     bootScreenPaint("Калибровка датчика температуры процессора...");
     cputemp_calibrate();
 
@@ -379,6 +376,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     );
 
     tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
+
+    ahci_init();
 
     sayori_time_t time = get_time();
     tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);

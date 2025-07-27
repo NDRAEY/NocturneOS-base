@@ -13,22 +13,39 @@
 #define AHCI_HBA_TFES (1 << 30)
 
 typedef volatile struct {
+    // 0
 	uint32_t command_list_base_address_low;  // 1K-byte aligned
+    // 4 
 	uint32_t command_list_base_address_high;
+    // 8
 	uint32_t fis_base_address_low;  // 256-byte aligned
-	uint32_t fis_base_address_high;
+	// 12
+    uint32_t fis_base_address_high;
+    // 16 (0x10)
 	uint32_t interrupt_status;
+    // 20
 	uint32_t interrupt_enable;
+    // 24
 	uint32_t command_and_status;
+    // 28
 	uint32_t reserved;
+    // 32 (0x20)
 	uint32_t task_file_data;
+    // 36
 	uint32_t signature;
+    // 40
 	uint32_t sata_status;
+    // 44
 	uint32_t sata_control;
+    // 48 (0x30)
 	uint32_t sata_error;
+    // 52
 	uint32_t sata_active;
+    // 56 (0x38)
 	uint32_t command_issue;
+    // 60
 	uint32_t sata_notification;
+    // 64 (0x40)
 	uint32_t fis_based_switch_control;
 
 	uint32_t reserved1[11];

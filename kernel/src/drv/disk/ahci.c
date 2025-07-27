@@ -151,8 +151,10 @@ void ahci_init() {
 
 			if((port->command_and_status & (1 << 1)) == 0) {
 				port->sata_error = 0xFFFFFFFF;
+                sleep_ms(10);
 
 				port->sata_control = 0;
+                sleep_ms(10);
 
 				port->command_and_status |= (1 << 1); // Spin up.
 
@@ -162,14 +164,14 @@ void ahci_init() {
         }*/
 			}
 
-			port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
+			port->sata_error = 0xFFFFFFFF;
+			
+            port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
 			port->command_and_status |= 1 << 4;
 
 			if (!ahci_is_drive_attached(i)) {
 				continue;
 			}
-
-			port->sata_error = 0xFFFFFFFF;
 
 			// Idk why we are clearing START bit.
 			port->command_and_status = port->command_and_status & 0xfffffffe;
@@ -185,7 +187,7 @@ void ahci_init() {
 		if(abar->port_implemented & (1 << i)) {
 			volatile AHCI_HBA_PORT* port = abar->ports + i;
 
-			qemu_log("[%p: Port %d]", port, i);
+			tty_printf("[%p: Port %d]\n", port, i);
 
 			if(!ahci_is_drive_attached(i)) {
 				qemu_log("\tNo drive attached to port!");
@@ -193,11 +195,11 @@ void ahci_init() {
             }
 
 			if(port->signature == AHCI_SIGNATURE_SATAPI) { // SATAPI
-				qemu_log("\tSATAPI drive");
+				tty_printf("\tSATAPI drive\n");
                 ahci_identify(i, true);
                 // ahci_eject_cdrom(i);
 			} else if(port->signature == AHCI_SIGNATURE_SATA) { // SATA
-				qemu_log("\tSATA drive");
+				tty_printf("\tSATA drive\n");
                 ahci_identify(i, false);
 			} else {
 				qemu_log("Other device: %x", port->signature);
@@ -354,11 +356,19 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
         return false;
     }
 
+    port->interrupt_status = 0xFFFFFFFF;
+
     port->command_issue |= 1u << slot;
 
     // qemu_warn("COMMAND IS ISSUED");
+    //
+    spin = 0;
 
     while(true) {
+        if(spin > 10000) {
+            return false;
+        }
+
         if ((port->command_issue & (1u << slot)) == 0)  // Command is not running? Break
             break;
 
@@ -367,6 +377,8 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
             return false;
         }
+
+        spin++;
 
 		__asm__ volatile("hlt");
     }
