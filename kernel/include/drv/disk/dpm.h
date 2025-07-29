@@ -6,6 +6,8 @@
 #define DPM_ERROR_NOT_READY (-2) /// Устройство не готово к работе
 #define DPM_ERROR_CANT_READ (-3)   /// Не удалось прочитать файл
 #define DPM_ERROR_NOT_IMPLEMENTED (-4)   /// Не реализовано
+#define DPM_ERROR_NOT_ENOUGH (-5)   /// Недостаточно данных
+#define DPM_ERROR_BUFFER (-6)   /// Неверный буфер
 
 #define DPM_MEDIA_STATUS_MASK 0x10000000U   /// Маска статуса
 
@@ -13,15 +15,18 @@
 #define DPM_MEDIA_STATUS_LOADING 1U
 #define DPM_MEDIA_STATUS_ONLINE 2U
 
+#define DPM_STATUS_HAS_DATA 0x00000001U
+
 // disk, offset_h, offset_l, size, buffer
 typedef size_t (*dpm_disk_read_cmd)(size_t, uint64_t, uint64_t, size_t, void *);
 typedef size_t (*dpm_disk_write_cmd)(size_t, uint64_t, uint64_t, size_t, const void *);
 
 #define DPM_COMMAND_EJECT      (0x00)
 #define DPM_COMMAND_GET_MEDIUM_STATUS (0x01)
+#define DPM_COMMAND_READ_SENSE (0x02)
 
 // disk, command, data, data_length
-typedef size_t (*dpm_disk_command_cmd)(size_t, size_t, const void *, size_t);
+typedef size_t (*dpm_disk_command_cmd)(size_t, size_t, void *, size_t);
 
 typedef struct
 {
@@ -48,7 +53,7 @@ void dpm_metadata_write(char Letter, uint32_t Addr);
 
 size_t dpm_read(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, void *Buffer);
 size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t Size, const void *Buffer);
-size_t dpm_ctl(char Letter, size_t command, const void* data, size_t length);
+size_t dpm_ctl(char Letter, size_t command, void* data, size_t length);
 
 int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t Sectors, size_t SectorSize, int AddrMode, char *Serial, void *Point);
 DPM_Disk dpm_info(char Letter);

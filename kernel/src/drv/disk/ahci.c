@@ -852,7 +852,7 @@ size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, si
     return 0;
 }
 
-size_t ahci_dpm_ctl(size_t Disk, size_t command, const void* data, size_t length) {
+size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
 	DPM_Disk dpm = dpm_info(Disk + 65);
 	size_t port_nr = (size_t)dpm.Point;
 
@@ -864,7 +864,19 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, const void* data, size_t length
 		bool status = ahci_atapi_check_media_presence(port_nr);
 
 		return DPM_MEDIA_STATUS_MASK | (status ? DPM_MEDIA_STATUS_ONLINE : DPM_MEDIA_STATUS_OFFLINE);
-	}
+	} else if(command == DPM_COMMAND_READ_SENSE) {
+        if(data == NULL) {
+            return DPM_ERROR_BUFFER;
+        }
+
+        if(length < 256) {
+            return DPM_ERROR_NOT_ENOUGH;
+        }
+
+        ahci_atapi_request_sense(port_nr, data);
+
+        return DPM_STATUS_HAS_DATA;
+    }
 
 	return DPM_ERROR_NOT_IMPLEMENTED;
 }

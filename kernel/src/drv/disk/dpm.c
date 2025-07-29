@@ -228,7 +228,7 @@ size_t dpm_write(char Letter, uint64_t high_offset, uint64_t low_offset, size_t 
  *
  * @return size_t - Кол-во записанных байт
  */
-size_t dpm_ctl(char Letter, size_t command, const void* data, size_t length) {
+size_t dpm_ctl(char Letter, size_t command, void* data, size_t length) {
 	int Index = Letter - 65;
 
 	Index = (Index > 32 ? Index - 32 : Index);

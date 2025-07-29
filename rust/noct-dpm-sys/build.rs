@@ -3,6 +3,8 @@ use std::{env, path::PathBuf};
 use bindgen::RustTarget;
 
 fn main() {
+    println!("cargo:rerun-if-changed=../../kernel/include/drv/disk/dpm.h");
+
     let bindings = bindgen::Builder::default()
         .header("../../kernel/include/drv/disk/dpm.h")
         .clang_arg("-I../../kernel/include/")
