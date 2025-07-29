@@ -63,25 +63,17 @@ void ahci_init() {
             get_kernel_page_directory(),
             (physical_addr_t) abar,
             (virtual_addr_t) abar,
-            PAGE_SIZE * 2,
+            PAGE_SIZE,
             PAGE_WRITEABLE | PAGE_CACHE_DISABLE
     );
 
-	qemu_log("Version: %x", abar->version);
+	tty_printf("AHCI driver version %08x\n", abar->version);
 
-	if(abar->host_capabilities_extended & 1U) {
-		for(int i = 0; i < 5; i++) {
-			qemu_warn("PERFORMING BIOS HANDOFF!!!");
-		}
+	if(abar->version >= 0x00010200 && ((abar->host_capabilities_extended & 1U) != 0)) {
+        abar->handoff_control_and_status = abar->handoff_control_and_status | (1 << 1);
 
-		abar->handoff_control_and_status = abar->handoff_control_and_status | (1 << 1);
-
-		while(1) {
-			size_t status = abar->handoff_control_and_status;
-
-			if (~status & (1 << 0)) {
-				break;
-			}
+		while((abar->handoff_control_and_status & 0x3) == 0x2) {
+            __asm__ volatile("nop");
 		}
 	} else {
 		qemu_ok("No BIOS Handoff");
@@ -90,16 +82,19 @@ void ahci_init() {
 	// Reset
 	abar->global_host_control |= (1 << 31) | (1 << 0);
 
-	while((abar->global_host_control & 1) == 1)
-		;
+	while((abar->global_host_control & 1) == 1) {
+        __asm__ volatile("nop");
+    }
 	
-	// Interrupts
+	abar->global_host_control |= (1U << 31);  // AHCI Enable 
+	
+    // Interrupts
 	ahci_irq = pci_read32(ahci_busnum, ahci_slot, ahci_func, 0x3C) & 0xFF; // All 0xF PCI register
 	qemu_log("AHCI IRQ: %x (%d)", ahci_irq, ahci_irq);
 
 	register_interrupt_handler(32 + ahci_irq, ahci_irq_handler);
 
-	abar->global_host_control |= (1U << 31) | (1U << 1);  // AHCI Enable and AHCI Interrupts
+    //abar->global_host_control |= (1u << 1);  // AHCI Interrupts
 
 	qemu_ok("Enabled AHCI and INTERRUPTS");
 
@@ -139,6 +134,7 @@ void ahci_init() {
             // Additional initialization here
 
             if((port->command_and_status & (1 << 2)) == 0) {
+                // Power up port
 				port->command_and_status |= (1 << 2);
 
 				//sleep_ms(20);  // Replace them with checks
@@ -154,18 +150,30 @@ void ahci_init() {
 				port->sata_control = 0;
                 sleep_ms(10);
 
+                // Spin up.
 				port->command_and_status |= (1 << 1); // Spin up.
+				sleep_ms(20);  // Replace them with checks
+                
+                // This check is looping infinitely on real hardware
+				/*while((port->command_and_status & (1 << 1)) == (1 << 1)) {
+                    __asm__ volatile("nop");
+                }*/
 
-				//sleep_ms(20);  // Replace them with checks
-				while((port->command_and_status & (1 << 1)) == (1 << 1)) {
+                while((port->sata_status & 0xf) == 0x3) {
                     __asm__ volatile("nop");
                 }
 			}
 
 			port->sata_error = 0xFFFFFFFF;
+            sleep_ms(10);
 			
-            port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
+            // Enable FIS processing
 			port->command_and_status |= 1 << 4;
+            sleep_ms(10);
+
+            ahci_stop_cmd(i);
+
+            //port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
 
 			if (!ahci_is_drive_attached(i)) {
 				continue;
@@ -365,7 +373,7 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
     port->interrupt_status = 0xFFFFFFFF;
 
-    port->command_issue |= 1u << slot;
+    port->command_issue = 1u << slot;
 
     //tty_printf("Command issued!\n");
 
@@ -386,6 +394,16 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
         if (port->interrupt_status & AHCI_HBA_TFES)	{  // Task file error? Tell about error and exit
             qemu_err("Read disk error (Task file error); IS: %x", port->interrupt_status);
             //tty_printf("TF error!\n");
+            
+            port->command_and_status &= ~0x01;
+            while((port->command_and_status & 0x01) != 0) {
+                __asm__ volatile("nop");
+            }
+
+            port->command_and_status |= 0x01;
+            while((port->command_and_status & 0x01) != 0x01) {
+                __asm__ volatile("nop");
+            }
 
             return false;
         }

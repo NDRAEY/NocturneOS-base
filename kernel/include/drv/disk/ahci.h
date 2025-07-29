@@ -23,9 +23,9 @@ typedef volatile struct {
     uint32_t fis_base_address_high;
     // 16 (0x10)
 	uint32_t interrupt_status;
-    // 20
+    // 20 (0x14)
 	uint32_t interrupt_enable;
-    // 24
+    // 24 (0x18)
 	uint32_t command_and_status;
     // 28
 	uint32_t reserved;
