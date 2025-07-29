@@ -195,7 +195,7 @@ void ahci_init() {
 			if(port->signature == AHCI_SIGNATURE_SATAPI) { // SATAPI
 				tty_printf("\tSATAPI drive\n");
                 ahci_identify(i, true);
-                // ahci_eject_cdrom(i);
+                //ahci_eject_cdrom(i);
 			} else if(port->signature == AHCI_SIGNATURE_SATA) { // SATA
 				tty_printf("\tSATA drive\n");
                 ahci_identify(i, false);
@@ -344,7 +344,7 @@ void ahci_irq_handler() {
     }
 }
 
-bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
+bool ahci_wait_spin(volatile AHCI_HBA_PORT* port) {
     int spin = 0;
     while ((port->task_file_data & (ATA_SR_BSY | ATA_SR_DRQ)) && spin < 1000000) {
         spin++;
@@ -352,6 +352,14 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
     if (spin == 1000000) {
         qemu_err("Port is hung");
+        return false;
+    }
+
+    return true;
+}
+
+bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
+    if(!ahci_wait_spin(port)) {
         return false;
     }
 
@@ -363,7 +371,7 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
     // qemu_warn("COMMAND IS ISSUED");
     //
-    spin = 0;
+    int spin = 0;
 
     while(true) {
         if(spin > 10000) {
@@ -434,6 +442,11 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 		return 0;
 	}
 
+	// Get our port.
+	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
+
+    ahci_wait_spin(port);
+	    
     //tty_printf("Read sectors\n");
 
 	// Get the descriptor of our AHCI port.
@@ -460,16 +473,13 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 
 	qemu_warn("\033[7mAHCI READ STARTED\033[0m");
 
-	// Get our port.
-	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
-	
-	// Clear out interrupt status.
+    // Clear out interrupt status.
 	port->interrupt_status = (uint32_t)-1;
 	
 	// Get command list (we will use only first entry in it).
 	AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
 	
-	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
+	hdr->cfl = sizeof(AHCI_FIS_REG_HOST_TO_DEVICE) / sizeof(uint32_t);
 	hdr->a = desc.is_atapi ? 1 : 0;  // ATAPI / Not ATAPI
 	hdr->w = 0;  // Read
 	hdr->p = 0;  // No prefetch
@@ -636,10 +646,10 @@ bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 
 	AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
 
-	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
+	hdr->cfl = sizeof(AHCI_FIS_REG_HOST_TO_DEVICE) / sizeof(uint32_t);
 	hdr->a = 1;  // ATAPI
 	hdr->w = 0;  // Read
-	hdr->p = 0;  // No prefetch
+	hdr->p = 1;  // Prefetch
 	hdr->prdtl = 0;  // No entries
 
 	HBA_CMD_TBL* table = (HBA_CMD_TBL*)AHCI_COMMAND_TABLE(ports[port_num].command_list_addr_virt, 0);
@@ -848,17 +858,15 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     port->interrupt_status = (uint32_t)-1;
 
-    int slot = 0;
-
 	uint32_t block_size = 512;
 
     AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
-    hdr += slot;
 
-    hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
+    hdr->cfl = sizeof(AHCI_FIS_REG_HOST_TO_DEVICE) / sizeof(uint32_t);
     hdr->a = 0;  // IDENTIFY COMMANDS DOES NOT NEED TO SET ATAPI FLAG
     hdr->w = 0;  // Read
-    hdr->p = 0;  // No prefetch
+    hdr->p = 1;  // Prefetch
+    hdr->prdbc = 512;
     hdr->prdtl = 1;  // One entry only
 
     void* memory = kmalloc_common(512, PAGE_SIZE);
@@ -886,7 +894,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     cmdfis->lba1 = 0;
 
-    ahci_send_cmd(port, slot);
+    ahci_send_cmd(port, 0);
 
     uint16_t* memory16 = (uint16_t*)memory;
 
@@ -900,7 +908,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     *(((uint8_t*)model) + 39) = 0;
 
-    qemu_log("[SATA] MODEL: '%s'; CAPACITY: %d sectors", model, capacity);
+    //tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
 	
 	kfree(model);
 

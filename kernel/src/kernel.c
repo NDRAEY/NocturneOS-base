@@ -284,13 +284,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     qemu_log("Registration of file system drivers...");
     fs_tarfs_register();    
-    //fs_fatfs_init();  
+    fs_fatfs_init();  
     fs_iso9660_init();
-    // fsm_reg("FAT32", &fs_fat32_read, &fs_fat32_write, &fs_fat32_info, &fs_fat32_create, &fs_fat32_delete,
-    //     &fs_fat32_dir, &fs_fat32_label, &fs_fat32_detect);
-    //fs_noctfs_init();
-    // fsm_reg("TEMPFS", &fs_tempfs_read, &fs_tempfs_write, &fs_tempfs_info, &fs_tempfs_create, &fs_tempfs_delete,
-    //         &fs_tempfs_dir, &fs_tempfs_label, &fs_tempfs_detect);
+    fs_noctfs_init();
     
     grub_modules_init(mboot);
 
@@ -404,7 +400,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
         }
     }
 
-    tty_printf("Processors: %d\n", system_processors_found);
+    //tty_printf("Processors: %d\n", system_processors_found);
 
     if (test_network)
     {
