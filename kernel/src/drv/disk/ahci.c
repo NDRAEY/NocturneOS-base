@@ -159,9 +159,9 @@ void ahci_init() {
                     __asm__ volatile("nop");
                 }*/
 
-                while((port->sata_status & 0xf) == 0x3) {
+                /*while((port->sata_status & 0xf) == 0x3) {
                     __asm__ volatile("nop");
-                }
+                }*/
 			}
 
 			port->sata_error = 0xFFFFFFFF;
@@ -171,9 +171,9 @@ void ahci_init() {
 			port->command_and_status |= 1 << 4;
             sleep_ms(10);
 
-            ahci_stop_cmd(i);
+            //ahci_stop_cmd(i);
 
-            //port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
+            port->command_and_status = (port->command_and_status & ~(0xf << 28)) | (1 << 28);
 
 			if (!ahci_is_drive_attached(i)) {
 				continue;
