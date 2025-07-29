@@ -141,12 +141,10 @@ void ahci_init() {
             if((port->command_and_status & (1 << 2)) == 0) {
 				port->command_and_status |= (1 << 2);
 
-				sleep_ms(20);  // Replace them with checks
-				/*
+				//sleep_ms(20);  // Replace them with checks
 				while((port->command_and_status & (1 << 2)) == (1 << 2)) {
 					__asm__ volatile("nop");
 				}
-				*/
 			}
 
 			if((port->command_and_status & (1 << 1)) == 0) {
@@ -158,10 +156,10 @@ void ahci_init() {
 
 				port->command_and_status |= (1 << 1); // Spin up.
 
-				sleep_ms(20);  // Replace them with checks
-				/*while((port->command_and_status & (1 << 1)) == (1 << 1)) {
-    __asm__ volatile("nop");
-        }*/
+				//sleep_ms(20);  // Replace them with checks
+				while((port->command_and_status & (1 << 1)) == (1 << 1)) {
+                    __asm__ volatile("nop");
+                }
 			}
 
 			port->sata_error = 0xFFFFFFFF;
@@ -304,7 +302,8 @@ void ahci_start_cmd(size_t port_num) {
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
-	while (port->command_and_status & AHCI_HBA_CR);
+	while (port->command_and_status & AHCI_HBA_CR)
+        ;
 
 	port->command_and_status |= AHCI_HBA_FRE;
 	port->command_and_status |= AHCI_HBA_ST;
@@ -360,20 +359,25 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
     port->command_issue |= 1u << slot;
 
+    //tty_printf("Command issued!\n");
+
     // qemu_warn("COMMAND IS ISSUED");
     //
     spin = 0;
 
     while(true) {
         if(spin > 10000) {
+            //tty_printf("Spin timeout!\n");
             return false;
         }
 
-        if ((port->command_issue & (1u << slot)) == 0)  // Command is not running? Break
+        if ((port->command_issue & (1u << slot)) == 0) { // Command is not running? Break 
             break;
+        }
 
         if (port->interrupt_status & AHCI_HBA_TFES)	{  // Task file error? Tell about error and exit
             qemu_err("Read disk error (Task file error); IS: %x", port->interrupt_status);
+            //tty_printf("TF error!\n");
 
             return false;
         }
@@ -384,6 +388,7 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
     }
 
 	qemu_warn("OK");
+    //tty_printf("Ok!\n");
 
 	return true;
 }
@@ -429,6 +434,8 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 		return 0;
 	}
 
+    //tty_printf("Read sectors\n");
+
 	// Get the descriptor of our AHCI port.
     struct ahci_port_descriptor desc = ports[port_num];
 
@@ -441,9 +448,12 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 
 		// Don't allow reading empty drive
 		if(!status) {
+            //tty_printf("Refused.\n");
 			return 0;
 		}
 	}
+
+    //tty_printf("After check\n");
 
 	// Hard disks have always 512 bytes/sector; Optical discs have 2048 bytes/sector.
     size_t block_size = desc.is_atapi ? 2048 : 512;
@@ -617,7 +627,7 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 	qemu_warn("\033[7mOK?\033[0m");
 }
 
-void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
+bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
@@ -628,7 +638,7 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 
 	hdr->cfl = sizeof(AHCI_FIS_REG_DEVICE_TO_HOST) / sizeof(uint32_t);  // Should be 5
 	hdr->a = 1;  // ATAPI
-	hdr->w = 1;  // Write
+	hdr->w = 0;  // Read
 	hdr->p = 0;  // No prefetch
 	hdr->prdtl = 0;  // No entries
 
@@ -644,7 +654,7 @@ void ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	cmdfis->c = 1;	// Command
 	cmdfis->command = ATA_CMD_PACKET;
 
-    ahci_send_cmd(port, 0);
+    return ahci_send_cmd(port, 0);
 }
 
 void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size_t size) {
@@ -738,7 +748,11 @@ bool ahci_atapi_check_media_presence(size_t port_num) {
 	uint8_t errorcode[18] = {0};
     
 	// tty_printf("Sending READY command\n");
-	ahci_send_atapi_nomem(port_num, command);
+	bool is_okay = ahci_send_atapi_nomem(port_num, command);
+
+    if(!is_okay) {
+        return false;
+    }
 
 	// tty_printf("Fetching sense\n");
 	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
@@ -753,6 +767,8 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 		qemu_log("Buffer is nullptr!");
 		return;
 	});
+
+    //tty_printf("Read port %d, location: %x; len: %d\n", port_num, (uint32_t)location, length);
 
 	// TODO: Get sector size somewhere (Now we hardcode it into 512).
 
