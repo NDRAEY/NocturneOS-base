@@ -1,4 +1,4 @@
-use crate::{find_device, find_device_by_class_and_subclass, pci_read32, pci_write};
+use crate::{find_device, find_device_by_class_and_subclass, get_device, pci_read32, pci_write};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn pci_find_device(
@@ -67,4 +67,37 @@ pub extern "C" fn pci_enable_bus_mastering(bus: u8, slot: u8, func: u8) {
     command_register |= 0x05;
 
     pci_write(bus, slot, func, 4, command_register);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn pci_get_bar(
+    bus: u8,
+    slot: u8,
+    func: u8,
+    bar: u8,
+    type_out: *mut u8,
+    address_out: *mut usize,
+    length_out: *mut usize,
+) {
+    let dev = match get_device(bus, slot, func) {
+        Some(dev) => dev,
+        None => {
+            return;
+        }
+    };
+
+    match dev.read_bar(bar) {
+        Some(bar) => {
+            if !type_out.is_null() {
+                unsafe { *type_out = bar.bar_type.into() };
+            }
+            if !address_out.is_null() {
+                unsafe { *address_out = bar.address.into() };
+            }
+            if !length_out.is_null() {
+                unsafe { *length_out = bar.length.into() };
+            }
+        },
+        None => {return;}
+    };
 }

@@ -1,3 +1,4 @@
+use noct_pci::BARType;
 use alloc::string::String;
 use noct_pci::PCIDevice;
 use noct_tty::{print, println};
@@ -121,17 +122,24 @@ pub fn pci(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
             print!(" [Multifunc]");
         }
 
-        let bar0 = dev.read_bar(0);
-        let bar1 = dev.read_bar(1);
-        let bar2 = dev.read_bar(2);
-        let bar3 = dev.read_bar(3);
-        let bar4 = dev.read_bar(4);
-        let bar5 = dev.read_bar(5);
+        print!("\nAddresses:");
+        for i in 0..6 {
+            let bar = dev.read_bar(i).unwrap();
+            if bar.address == 0 {
+                continue;
+            }
 
-        print!(
-            "\n  Addresses: [{:08x}, {:08x}, {:08x}, {:08x}, {:08x}, {:08x}]",
-            bar0, bar1, bar2, bar3, bar4, bar5
-        );
+            print!(
+                "\n    BAR{i}: {} at {:08x} (size {})",
+                if bar.bar_type == BARType::IO {
+                    "IO"
+                } else {
+                    "Memory"
+                },
+                bar.address,
+                bar.length
+            );
+        }
 
         println!();
     }

@@ -8,6 +8,7 @@ extern crate alloc;
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
+use noct_logger::qemu_note;
 use spin::{RwLock, RwLockReadGuard};
 use x86::io::{inl, outl};
 
@@ -76,6 +77,41 @@ pub extern "C" fn pci_write(bus: u8, slot: u8, func: u8, offset: u8, value: u32)
     }
 }
 
+#[unsafe(no_mangle)]
+pub extern "C" fn pci_write16(bus: u8, slot: u8, func: u8, offset: u8, value: u16) {
+    let addr: u32 = ((bus as u32) << 16)
+        | ((slot as u32) << 11)
+        | ((func as u32) << 8)
+        | ((offset as u32) & 0xfc)
+        | 0x80000000;
+    unsafe {
+        outl(PCI_ADDRESS_PORT, addr);
+        outl(PCI_DATA_PORT, (value >> ((offset & 2) * 8)) as u32);
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum BARType {
+    Memory = 0,
+    IO = 1,
+}
+
+impl Into<u8> for BARType {
+    fn into(self) -> u8 {
+        match self {
+            Self::Memory => 0,
+            Self::IO => 1,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct PCIBar {
+    pub bar_type: BARType,
+    pub address: usize,
+    pub length: usize
+}
+
 impl PCIDevice {
     pub fn read16(&self, offset: u8) -> u16 {
         pci_read16(self.bus, self.slot, self.function, offset)
@@ -85,8 +121,41 @@ impl PCIDevice {
         pci_read32(self.bus, self.slot, self.function, offset)
     }
 
-    pub fn read_bar(&self, bar: u8) -> u32 {
-        self.read32(0x10 + (bar * 4))
+    fn write_command(&self, value: u16) {
+        pci_write16(self.bus, self.slot, self.function, 0x4, value);
+    }
+
+    fn read_command(&self) -> u16 {
+        pci_read16(self.bus, self.slot, self.function, 0x4)
+    }
+
+    pub fn read_bar(&self, bar: u8) -> Option<PCIBar> {
+        if bar > 5 {
+            return None;
+        }
+
+        let raw = self.read32(0x10 + (bar * 4));
+        let bar_type = if raw & 1 == 1 { BARType::IO } else { BARType::Memory };
+
+        let address = match bar_type {
+            BARType::IO => raw & 0xffff_fffc,
+            BARType::Memory => raw & 0xffff_fff0
+        };
+
+        let orig_cmd = self.read_command();
+        self.write_command(orig_cmd & 0xfffc);
+
+        self.write(0x10 + (bar * 4), 0xffff_ffff);
+        let meta = self.read32(0x10 + (bar * 4));
+        let size = match bar_type {
+            BARType::IO => !(meta & 0xffff_fffc),
+            BARType::Memory => !(meta & 0xffff_fff0)
+        } + 1;
+
+        self.write(0x10 + (bar * 4), raw);
+        self.write_command(orig_cmd);
+
+        Some(PCIBar { bar_type, address: address as _, length: size as _ })
     }
 
     pub fn write(&self, offset: u8, value: u32) {
@@ -168,7 +237,7 @@ pub extern "C" fn pci_scan_everything() {
                     if vendor != 0xFFFF {
                         let clid = ((pci_read16(bus, slot, func, 0xA) >> 8) & 0xff) as u8;
                         let sclid = (pci_read16(bus, slot, func, 0xA) & 0xff) as u8;
-                        let device = (pci_read16(bus, slot, func, 0x2) & 0xffff);
+                        let device = pci_read16(bus, slot, func, 0x2) & 0xffff;
 
                         unsafe {
                             let dev = PCIDevice {
@@ -206,4 +275,15 @@ pub extern "C" fn pci_scan_everything() {
 
 pub fn devices<'a>() -> RwLockReadGuard<'a, Vec<PCIDevice>> {
     unsafe { PCI_DEVICES.get().unwrap().read() }
+}
+
+pub fn get_device(bus: u8, slot: u8, func: u8) -> Option<PCIDevice> {
+    let devices = devices();
+    for dev in devices.iter() {
+        if dev.bus == bus && dev.slot == slot && dev.function == func {
+            return Some(dev.clone());
+        }
+    }
+
+    None
 }
