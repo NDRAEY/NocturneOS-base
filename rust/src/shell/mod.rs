@@ -1,4 +1,5 @@
 use alloc::string::String;
+use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
@@ -143,7 +144,7 @@ fn process_input(context: &mut ShellContext) -> String {
 
                         qemu_note!("Finding completions for: `{}`", stem);
 
-                        let completions = suggest_completions(stem);
+                        let (completions, completion_offset) = suggest_completions(stem);
 
                         qemu_note!("Completions: {:?}", completions);
 
@@ -152,11 +153,11 @@ fn process_input(context: &mut ShellContext) -> String {
                         } else if completions.len() == 1 {
                             // Apply it
                             let completion = &completions[0];
-                            let remnant = &completion[stem.len()..];
+                            let remnant = &completion[completion_offset.unwrap()..];
 
                             input.push_str(remnant);
-
                             print!("{}", remnant);
+
                         } else {
                             // Show variants
 
@@ -192,39 +193,49 @@ fn process_input(context: &mut ShellContext) -> String {
     input
 }
 
-fn suggest_completions(stem: &str) -> Vec<String> {
+fn suggest_completions(stem: &str) -> (Vec<String>, Option<usize>) {
     if stem.is_empty() {
-        return vec![];
+        return (vec![], None);
     }
 
-    if stem.chars().next().is_some_and(|a| a.is_alphabetic())
+    let is_absolute_path = stem.chars().next().is_some_and(|a| a.is_alphabetic())
         && stem.chars().nth(1).is_some_and(|a| a == ':')
-        && stem.chars().nth(2).is_some_and(|a| a == '/')
-    {
-        // It's path
+        && stem.chars().nth(2).is_some_and(|a| a == '/');
+    
+    let fullpath = if !is_absolute_path {
+        let mut path = Path::from_path(&noct_sched::me().cwd()).unwrap();
 
-        let mut path = Path::from_path(stem).unwrap();
+        path.apply(stem);
 
-        if !stem.ends_with('/') {
-            path.parent();
-        }
+        path.into_string()
+    } else {
+        stem.to_string()
+    };
 
-        qemu_note!("List all occurencies of `{}` in `{}`", stem, path.as_str());
+    let mut path = Path::from_path(&fullpath).unwrap();
 
-        let rdir = match Directory::from_path(&path) {
-            Some(r) => r,
-            None => return vec![]
-        };
-        let variants = rdir.into_iter().names();
-
-        return variants
-            .into_iter()
-            .map(|name| path.as_string().clone() + &name)
-            .filter(|full| full.starts_with(stem))
-            .collect();
+    if !fullpath.ends_with('/') {
+        path.parent();
     }
 
-    vec![]
+    qemu_note!("List all occurencies of `{}` in `{}`", fullpath, path.as_str());
+
+    let rdir = match Directory::from_path(&path) {
+        Some(r) => r,
+        None => {
+            qemu_err!("Failed to build directory.");
+            return (vec![], None);
+        }
+    };
+
+    let variants = rdir.into_iter().names();
+
+    let variants = variants
+        .map(|name| path.as_string().clone() + &name)
+        .filter(|full| full.starts_with(&fullpath))
+        .collect();
+
+    (variants, Some(fullpath.len()))
 }
 
 #[no_mangle]

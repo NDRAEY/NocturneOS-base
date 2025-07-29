@@ -65,6 +65,10 @@ impl Path {
             }
         }
 
+        if !self.buffer.ends_with('/') {
+            self.buffer.push('/');
+        }
+
         for i in &stems {
             if i == &".." {
                 let sep = self.sep();
@@ -118,6 +122,10 @@ impl Path {
 
     pub fn as_str(&self) -> &str {
         &self.buffer
+    }
+
+    pub fn into_string(self) -> String {
+        self.buffer
     }
 }
 

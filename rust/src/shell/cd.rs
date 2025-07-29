@@ -3,7 +3,7 @@ use core::str::FromStr;
 use alloc::string::String;
 use noct_fs_sys::dir::Directory;
 
-use crate::println;
+use crate::{println, system::chdir_nonrelative};
 
 use super::ShellContext;
 
@@ -27,6 +27,8 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     }
 
     context.current_path = dir;
+
+    chdir_nonrelative(&context.current_path.as_str());
 
     Ok(())
 }

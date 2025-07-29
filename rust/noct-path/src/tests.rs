@@ -170,3 +170,18 @@ fn file_access() {
 
     assert_eq!(&finalized, "R:/secrets.txt");
 }
+
+#[test]
+fn untrailed_slash() {
+    let path = Path::from_path("R:/heaven");
+
+    assert!(path.is_some());
+
+    let mut path = path.unwrap();
+
+    path.apply("file.txt");
+
+    let finalized = path.to_string();
+
+    assert_eq!(&finalized, "R:/heaven/file.txt");
+}

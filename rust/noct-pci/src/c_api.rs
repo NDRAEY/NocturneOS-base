@@ -97,7 +97,9 @@ pub extern "C" fn pci_get_bar(
             if !length_out.is_null() {
                 unsafe { *length_out = bar.length.into() };
             }
-        },
-        None => {return;}
+        }
+        None => {
+            return;
+        }
     };
 }

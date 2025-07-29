@@ -301,3 +301,16 @@ void getcwd(char* str) {
 	
 	memcpy(str, cwd, len);
 }
+
+// TODO: Relative paths
+void chdir(const char* str) {
+	process_t* proc = get_current_proc();
+	
+	char* cwd = proc->cwd;
+
+	kfree(cwd);
+
+	proc->cwd = strdynamize(str);
+
+	qemu_printf("Now path is `%s`\n", proc->cwd);
+}
