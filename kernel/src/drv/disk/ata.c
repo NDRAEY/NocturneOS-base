@@ -86,15 +86,15 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 }
 
 void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t len, char** out) {
-	uint16_t* prepared = kcalloc(len, 1);
+	uint16_t* prepared = kcalloc(len + 1, 1);
 
 	memcpy(prepared, ide_buf + offset, len);
 
-	for(register size_t i = 0; i < (len / 2); i++) {
+	for(size_t i = 0; i < (len / 2); i++) {
 		prepared[i] = bit_flip_short(prepared[i]);
 	}
 
-	char* prep_end = ((char*)prepared) + len - 1;
+    char* prep_end = ((char*)prepared) + len - 1;
 	while(*prep_end == ' ') {
 		*prep_end-- = 0;
 	}
@@ -137,7 +137,7 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
     uint16_t *ide_buf = kcalloc(512, 1);
 
     if(status) {
-		// In ATAPI, IDENTIFY command has ERROR bit set.
+        // In ATAPI, IDENTIFY command has ERROR bit set.
 		
 		uint8_t seccount = inb(io + ATA_REG_SECCOUNT0);
 		uint8_t lba_l = inb(io + ATA_REG_LBA0);
@@ -157,17 +157,20 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			drives[drive_num].is_packet = true;
 		
 			outb(io + ATA_REG_COMMAND, ATA_CMD_IDENTIFY_PACKET);
-			 
-            for(register int i = 0; i < 256; i++) {
-                *(uint16_t *)(ide_buf + i) = inw(io + ATA_REG_DATA);
+
+            // FIXME: Replace with real checks?
+            sleep_ms(15);
+
+            for(int i = 0; i < 256; i++) {
+                ide_buf[i] = inw(io + ATA_REG_DATA);
             }
 
 			// Do my best for processing packet device.
 
-			drives[drive_num].capacity = atapi_read_size(bus, drive);
-			drives[drive_num].block_size = atapi_read_block_size(bus, drive);
-
 			ide_name_convert(ide_buf, &drives[drive_num].fwversion, &drives[drive_num].serial_number, &drives[drive_num].model_name);
+
+            drives[drive_num].capacity = atapi_read_size(bus, drive);
+			drives[drive_num].block_size = atapi_read_block_size(bus, drive);
 
             qemu_log("Size is: %d", drives[drive_num].capacity);
 
@@ -241,7 +244,8 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			timeout--;
 
 			status = inb(io + ATA_REG_STATUS);
-		}
+        }
+
 		
 		drives[drive_num].online = true;
 
