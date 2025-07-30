@@ -326,7 +326,7 @@ void ahci_rebase_memory_for(size_t port_num);
 void ahci_eject_cdrom(size_t port_num);
 size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count, void* buffer);
 void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, void* buffer);
-bool ahci_atapi_check_media_presence(size_t port_num);
+size_t ahci_atapi_check_media_presence(size_t port_num);
 void ahci_identify(size_t port_num, bool is_atapi);
 
 bool ahci_wait_spin(volatile AHCI_HBA_PORT* port);

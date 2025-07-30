@@ -473,12 +473,12 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 	if(desc.is_atapi) {
 		//tty_printf("ATAPI check media\n");
 
-		bool status = ahci_atapi_check_media_presence(port_num);
+		size_t status = ahci_atapi_check_media_presence(port_num);
 
 		//tty_printf("ATAPI media is in: %d\n", status);
 
 		// Don't allow reading empty drive
-		if(!status) {
+		if(status != DPM_MEDIA_STATUS_ONLINE) {
             //tty_printf("Refused.\n");
 			return 0;
 		}
@@ -753,19 +753,20 @@ void ahci_eject_cdrom(size_t port_num) {
 atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 	uint8_t command[16] = {
         ATAPI_CMD_RQ_SENSE, 0, 0, 0,
-		18, // Allocation Length: We need only 18 bytes (mininal response length)
-		0, 0, 0, 0, 0, 0, 0,
+		252, // Allocation Length
+        0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0
     };
 
-	ahci_send_atapi(port_num, command, output, 18);
+	ahci_send_atapi(port_num, command, output, 252);
 
 	// hexview_advanced(output, 18, 16, false, new_qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
 }
 
-bool ahci_atapi_check_media_presence(size_t port_num) {
+// Returns DPM_STATUS
+size_t ahci_atapi_check_media_presence(size_t port_num) {
 	uint8_t command[16] = {
         ATAPI_CMD_READY, 0, 0, 0,
 		0, 0, 0, 0,
@@ -773,21 +774,28 @@ bool ahci_atapi_check_media_presence(size_t port_num) {
 		0, 0, 0, 0
     };
 
-	uint8_t errorcode[18] = {0};
+	uint8_t errorcode[252] = {0};
     
 	// tty_printf("Sending READY command\n");
-	bool is_okay = ahci_send_atapi_nomem(port_num, command);
-
-    if(!is_okay) {
-        return false;
-    }
-
-	// tty_printf("Fetching sense\n");
+	ahci_send_atapi_nomem(port_num, command);
+	
+    // tty_printf("Fetching sense\n");
 	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
 	// hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
-	
-	return error_code.valid && !(error_code.sense_key == SCSI_SENSEKEY_NOT_READY && error_code.sense_code == 0x3A);
+
+	bool is_ready = error_code.sense_key != SCSI_SENSEKEY_NOT_READY;
+	bool is_loading = error_code.sense_code == SCSI_ASC_NOT_READY && error_code.sense_code_qualifier == SCSI_ASCQ_NR_BECOMING_READY;
+
+    //tty_printf("%02x %02x %02x\n", error_code.sense_key, error_code.sense_code, error_code.sense_code_qualifier);
+
+    if(!is_ready && !is_loading) {
+        return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_OFFLINE;
+    } else if(!is_ready && is_loading) {
+		return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_LOADING;
+	} else {
+		return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_ONLINE;
+	}
 }
 
 void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length) {
@@ -861,9 +869,9 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
 
 		return 0;
 	} else if(command == DPM_COMMAND_GET_MEDIUM_STATUS) {
-		bool status = ahci_atapi_check_media_presence(port_nr);
+		size_t status = ahci_atapi_check_media_presence(port_nr);
 
-		return DPM_MEDIA_STATUS_MASK | (status ? DPM_MEDIA_STATUS_ONLINE : DPM_MEDIA_STATUS_OFFLINE);
+		return status;
 	} else if(command == DPM_COMMAND_READ_SENSE) {
         if(data == NULL) {
             return DPM_ERROR_BUFFER;
@@ -872,6 +880,15 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
         if(length < 256) {
             return DPM_ERROR_NOT_ENOUGH;
         }
+
+        uint8_t command[16] = {
+            ATAPI_CMD_READY, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0
+        };
+
+        ahci_send_atapi_nomem(port_nr, command);
 
         ahci_atapi_request_sense(port_nr, data);
 
