@@ -51,7 +51,7 @@ impl Pavi<'_> {
             Err(e) => return Err(e.to_string()),
         };
 
-        let Some(image) = nimage::tga::from_tga_data(data.as_slice()) else {
+        let Some(image) = nimage::tga::from_tga_data(&data) else {
             return Err("Invalid file format.".to_string());
         };
 
