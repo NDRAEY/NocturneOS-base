@@ -10,6 +10,7 @@ extern crate alloc;
 
 use alloc::ffi::CString;
 use alloc::string::String;
+use core::alloc::Layout;
 use core::ffi::{CStr, c_void};
 
 use alloc::vec::Vec;
@@ -55,16 +56,15 @@ pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {
     }
 
     let size = unsafe { fsize(file) };
-    let mut buffer: Vec<u8> = vec![0; size as usize + 1];
-    let ptr = buffer.as_mut_ptr() as *mut c_void;
+    let ptr = unsafe { alloc::alloc::alloc(Layout::array::<u8>(size as _).unwrap()) };
 
     unsafe {
-        fread(file, size as _, 1, ptr);
+        fread(file, size as _, 1, ptr as *mut _);
 
         fclose(file);
     }
 
-    Ok(buffer)
+    Ok(unsafe { Vec::from_raw_parts(ptr, size as _, size as _) })
 }
 
 pub fn write(file_path: &str, data: &[u8]) -> Result<usize, &'static str> {

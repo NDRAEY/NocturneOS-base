@@ -470,19 +470,21 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 	// Get the descriptor of our AHCI port.
     struct ahci_port_descriptor desc = ports[port_num];
 
+	#if 1
 	if(desc.is_atapi) {
 		//tty_printf("ATAPI check media\n");
 
 		size_t status = ahci_atapi_check_media_presence(port_num);
 
-		//tty_printf("ATAPI media is in: %d\n", status);
+		// tty_printf("ATAPI media is in: %d\n", status);
 
 		// Don't allow reading empty drive
 		if(status != DPM_MEDIA_STATUS_ONLINE) {
-            //tty_printf("Refused.\n");
+            // tty_printf("Refused.\n");
 			return 0;
 		}
 	}
+	#endif
 
     //tty_printf("After check\n");
 
@@ -790,11 +792,11 @@ size_t ahci_atapi_check_media_presence(size_t port_num) {
     //tty_printf("%02x %02x %02x\n", error_code.sense_key, error_code.sense_code, error_code.sense_code_qualifier);
 
     if(!is_ready && !is_loading) {
-        return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_OFFLINE;
+        return DPM_MEDIA_STATUS_OFFLINE;
     } else if(!is_ready && is_loading) {
-		return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_LOADING;
+		return DPM_MEDIA_STATUS_LOADING;
 	} else {
-		return DPM_MEDIA_STATUS_MASK | DPM_MEDIA_STATUS_ONLINE;
+		return DPM_MEDIA_STATUS_ONLINE;
 	}
 }
 
@@ -816,24 +818,31 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 
 	uint64_t real_length = sector_count * block_size;
 
-	qemu_log("Reading %d sectors...", (uint32_t)sector_count);
+	//qemu_printf("Reading %d sectors... (block size: %d, buffer size is: %d)\n", (uint32_t)sector_count, block_size, (uint32_t)real_length);
 
-	uint8_t* real_buf = kmalloc(real_length);
+	uint8_t* real_buf = kmalloc_common(real_length + (64 * KB), PAGE_SIZE);
 
 	// BUG: Reading big amount of sectors in one call can cause memory corruptions.
-    int sectors_per_transfer = 64 + 32;
-	for(int i = 0; i < sector_count; i += sectors_per_transfer) {
+    uint64_t sectors_per_transfer = ports[port_num].is_atapi ? 16 : 64;
+
+	for(uint64_t i = 0; i < sector_count; i += sectors_per_transfer) {
+		size_t count = MIN(sector_count - i, sectors_per_transfer);
+		
+		//qemu_printf("%d/%d (read %d)\n", (uint32_t)i, (uint32_t)sector_count, (uint32_t)count);
+
 		ahci_read_sectors(
 			port_num,
 			start_sector + i,
-			MIN(sector_count - i, sectors_per_transfer), 
+			count,
 			real_buf + (i * block_size)
 		);
 	}
 
-	//ahci_read_sectors(port_num, start_sector, sector_count, real_buf);
-	
+	//qemu_printf("OK? (%x - %x)\n", real_buf + (location % block_size), real_buf + length);
+
 	memcpy(buf, real_buf + (location % block_size), length);
+
+	// qemu_printf("COPIED!\n");
 
 	kfree(real_buf);
 }
@@ -871,7 +880,7 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
 	} else if(command == DPM_COMMAND_GET_MEDIUM_STATUS) {
 		size_t status = ahci_atapi_check_media_presence(port_nr);
 
-		return status;
+		return DPM_MEDIA_STATUS_MASK | status;
 	} else if(command == DPM_COMMAND_READ_SENSE) {
         if(data == NULL) {
             return DPM_ERROR_BUFFER;
