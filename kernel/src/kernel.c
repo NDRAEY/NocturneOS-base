@@ -454,15 +454,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // void sysidle();
     // thread_create(get_current_proc(), sysidle, 0x100, true);
 
-    // launch_media_notifier();
+    //launch_media_notifier();
 
     // net_test();
-
-    /*while(true) {
-       bool x = ahci_atapi_check_media_presence(1);
-       tty_printf("Check: %d\n", x);
-        sleep_ms(1000);
-    }*/
 
     new_nsh();
 
