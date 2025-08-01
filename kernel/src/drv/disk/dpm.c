@@ -242,6 +242,11 @@ size_t dpm_ctl(char Letter, size_t command, void* data, size_t length) {
 		return DPM_ERROR_NOT_IMPLEMENTED;
 	}
 
+	if(command == DPM_COMMAND_EJECT) {
+		// Detach filesystem on eject.
+		dpm_FileSystemUpdate(Letter, NULL);
+	}
+
 	return DPM_Disks[Index].Command(Index, command, data, length);
 }
 
@@ -341,7 +346,7 @@ void dpm_FileSystemUpdate(char Letter, char *FileSystem)
 	if(FileSystem != NULL) {
 		DPM_Disks[index].FileSystem = strdynamize(FileSystem);
 	} else {
-		DPM_Disks[index].FileSystem = 0;
+		DPM_Disks[index].FileSystem = NULL;
 	}
 
 	// qemu_warn("[%d] Updated filesystem to: `%s` (%x)", Letter, DPM_Disks[index].FileSystem ?: "(null)", DPM_Disks[index].FileSystem);

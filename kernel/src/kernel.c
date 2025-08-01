@@ -454,7 +454,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // void sysidle();
     // thread_create(get_current_proc(), sysidle, 0x100, true);
 
-    //launch_media_notifier();
+    launch_media_notifier();
 
     // net_test();
 

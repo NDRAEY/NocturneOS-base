@@ -39,12 +39,16 @@ void notifier_loop(uint8_t* statuses) {
 
         if(statuses[index] != st) {
             char* logstring;
-            asprintf(&logstring, "Disk %c changed its status to %s", disk, status);
+            asprintf(&logstring, "Disk %c changed its status to `%s`", disk, status_string);
             il_log(logstring);
             kfree(logstring);
 
             if(real_status == DPM_MEDIA_STATUS_ONLINE) {
+                // Run filesystem detection on this disk
                 fsm_dpm_update(disk);
+            } else if(real_status == DPM_MEDIA_STATUS_OFFLINE) {
+                // Detach filesystem on eject
+                dpm_FileSystemUpdate(disk, NULL);
             }
         
             statuses[index] = st;
