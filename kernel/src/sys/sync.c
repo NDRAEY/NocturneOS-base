@@ -31,7 +31,7 @@ bool mutex_get(mutex_t* mutex, bool wait){
  * 
  * @param mutex - Мьютекс
  *
- * @return physmemory_pages_block_t* - Блок
+ * @return mutex_t* - Блок
  */
 void mutex_release(mutex_t* mutex){
 	*mutex = false;

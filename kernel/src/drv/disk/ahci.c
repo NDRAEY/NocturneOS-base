@@ -13,9 +13,12 @@
 #include "net/endianess.h"
 #include "drv/disk/dpm.h"
 #include "io/tty.h"
+#include "sys/sync.h"
 
 #define AHCI_CLASS 1
 #define AHCI_SUBCLASS 6
+
+mutex_t ahci_mutex;
 
 void il_log(const char* message);
 
@@ -423,6 +426,12 @@ void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, char* buffer_m
 	int index = 0;
 	size_t i;
 	for(i = 0; i < bytes; i += (4 * MB) - 1) {
+		if(index >= 8) {
+			qemu_printf("AHCI: Outrun the prdt entry table! Index is >= 8! Subdivide reads!");
+
+			__asm__ volatile("int $6");  // Cause opcode fault exception
+		}
+
 		size_t buffer_phys = virt2phys(get_kernel_page_directory(), (size_t)buffer_mem + i);
 
 		table->prdt_entry[index].dba = buffer_phys;
@@ -432,12 +441,14 @@ void ahci_fill_prdt(AHCI_HBA_CMD_HEADER* hdr, HBA_CMD_TBL* table, char* buffer_m
 		table->prdt_entry[index].rsv1 = 0;
 		table->prdt_entry[index].i = 0;
 
-		qemu_log("PRDT[%d]: Address: %x (V%x); Size: %d bytes; Last: %d",
+		/*
+		qemu_printf("PRDT[%d]: Address: %x (V%x); Size: %d bytes; Last: %d\n",
 			i,
 			table->prdt_entry[index].dba,
 			(size_t)buffer_mem + i,
 			table->prdt_entry[index].dbc + 1,
 			table->prdt_entry[index].i);
+		*/
 
 		index++;
 	}
@@ -460,6 +471,8 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 		return 0;
 	}
 
+	mutex_get(&ahci_mutex, true);
+
 	// Get our port.
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
@@ -470,21 +483,22 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 	// Get the descriptor of our AHCI port.
     struct ahci_port_descriptor desc = ports[port_num];
 
-	#if 1
 	if(desc.is_atapi) {
 		//tty_printf("ATAPI check media\n");
-
+		
+		mutex_release(&ahci_mutex);
 		size_t status = ahci_atapi_check_media_presence(port_num);
+		mutex_get(&ahci_mutex, true);
 
 		// tty_printf("ATAPI media is in: %d\n", status);
 
 		// Don't allow reading empty drive
 		if(status != DPM_MEDIA_STATUS_ONLINE) {
+			mutex_release(&ahci_mutex);
             // tty_printf("Refused.\n");
 			return 0;
 		}
 	}
-	#endif
 
     //tty_printf("After check\n");
 
@@ -509,12 +523,20 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 	memset(table, 0, sizeof(HBA_CMD_TBL));
 	
 	// Calculate total size
-    size_t bytes = sector_count * block_size;
+    size_t bytes = (sector_count + 1) * block_size;
+	size_t page_count = ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE;
 
 	// Allocate memory for buffer.
-	char* buffer_mem = kmalloc_common(ALIGN(bytes, PAGE_SIZE), PAGE_SIZE);
-	// char* buffer_mem = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(bytes, PAGE_SIZE) / PAGE_SIZE);
+	char* buffer_mem = kmalloc_common(bytes, PAGE_SIZE);
+	// char* buffer_mem = kmalloc_common_contiguous(get_kernel_page_directory(), page_count);
 	memset(buffer_mem, 0, bytes);
+
+	for(size_t i = 0; i < page_count; i++) {
+		char* addr = buffer_mem + (i * PAGE_SIZE);
+		size_t physaddr = virt2phys(get_kernel_page_directory(), (size_t)addr);
+
+		// qemu_printf("[%d] V=%x; P=%x\n", i, addr, physaddr);
+	}
 
 	// Use this data to fill out PRDT table.
 	ahci_fill_prdt(hdr, table, buffer_mem, bytes);
@@ -574,6 +596,7 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 
 	if(!status) {
 		kfree(buffer_mem);
+		mutex_release(&ahci_mutex);
 
 		return 0;
 	}
@@ -583,6 +606,8 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 	qemu_log("COPIED");
 
 	kfree(buffer_mem);
+
+	mutex_release(&ahci_mutex);
 
 	return bytes;
 }
@@ -599,6 +624,8 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 		qemu_err("AHCI not present!");
 		return;
 	}
+
+	mutex_get(&ahci_mutex, true);
 
 	qemu_warn("\033[7mAHCI WRITE STARTED\033[0m");
 
@@ -654,11 +681,15 @@ void ahci_write_sectors(size_t port_num, size_t location, size_t sector_count, v
 
 	kfree(buffer_mem);
 
+	mutex_release(&ahci_mutex);
+
 	qemu_warn("\033[7mOK?\033[0m");
 }
 
 bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	qemu_log("ATAPI command on port %d (CMD: %x)", port_num, command[0]);
+
+	mutex_get(&ahci_mutex, true);
 
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
@@ -669,7 +700,7 @@ bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	hdr->cfl = sizeof(AHCI_FIS_REG_HOST_TO_DEVICE) / sizeof(uint32_t);
 	hdr->a = 1;  // ATAPI
 	hdr->w = 0;  // Read
-	hdr->p = 1;  // Prefetch
+	hdr->p = 0;  // Prefetch
 	hdr->prdtl = 0;  // No entries
 
 	HBA_CMD_TBL* table = (HBA_CMD_TBL*)AHCI_COMMAND_TABLE(ports[port_num].command_list_addr_virt, 0);
@@ -684,12 +715,18 @@ bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	cmdfis->c = 1;	// Command
 	cmdfis->command = ATA_CMD_PACKET;
 
-    return ahci_send_cmd(port, 0);
+    bool result = ahci_send_cmd(port, 0);
+	
+	mutex_release(&ahci_mutex);
+
+	return result;
 }
 
 void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size_t size) {
 	// tty_printf("ATAPI command on port %d (CMD: %x)\n", port_num, command[0]);
 
+	mutex_get(&ahci_mutex, true);
+	
 	volatile AHCI_HBA_PORT* port = AHCI_PORT(port_num);
 
 	port->interrupt_status = (uint32_t)-1;
@@ -737,6 +774,8 @@ void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size
 	memcpy(output, buffer_mem, size);
 
 	kfree(buffer_mem);
+
+	mutex_release(&ahci_mutex);
 }
 
 // Call SCSI START_STOP command to eject a disc
@@ -823,7 +862,7 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 	uint8_t* real_buf = kmalloc_common(real_length + (64 * KB), PAGE_SIZE);
 
 	// BUG: Reading big amount of sectors in one call can cause memory corruptions.
-    uint64_t sectors_per_transfer = ports[port_num].is_atapi ? 16 : 64;
+    uint64_t sectors_per_transfer = 64; //ports[port_num].is_atapi ? 16 : 64;
 
 	for(uint64_t i = 0; i < sector_count; i += sectors_per_transfer) {
 		size_t count = MIN(sector_count - i, sectors_per_transfer);

@@ -275,6 +275,11 @@ fn parse_commandline(raw_input: &str) -> Vec<String> {
     let mut collecting_raw = false;
 
     for i in raw_input.chars() {
+        if i == '\"' {
+            collecting_raw = !collecting_raw;
+            continue;
+        }
+
         if !collecting_raw && i == ' ' {
             if !current_command.is_empty() {
                 result.push(current_command.clone());
@@ -282,10 +287,6 @@ fn parse_commandline(raw_input: &str) -> Vec<String> {
             }
 
             continue;
-        }
-
-        if i == '\"' {
-            collecting_raw = !collecting_raw;
         }
 
         current_command.push(i);

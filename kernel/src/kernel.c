@@ -432,7 +432,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     // vio_ntw_init();
 
-    igfx_init();
+    //igfx_init();
 
     //    hda_init();
     // void k();
