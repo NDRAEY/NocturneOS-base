@@ -19,12 +19,12 @@ use embedded_graphics::{
     prelude::{Dimensions, Point, RgbColor, Size},
     text::{Baseline, Text},
 };
-use nimage::Image;
+use nimage::{Image, PixelFormat};
 use noct_input::{
     kbd::{Key, SpecialKey, parse_scancode},
     keyboard_buffer_get,
 };
-use noct_logger::{qemu_err, qemu_note};
+use noct_logger::{qemu_err, qemu_log, qemu_note};
 use noct_tty::println;
 
 #[derive(Debug)]
@@ -58,7 +58,7 @@ impl Pavi<'_> {
         Ok(Self {
             filepath: fpath.to_string(),
             image,
-            render_mode: RefCell::new(ShowMode::BoundsX),
+            render_mode: RefCell::new(ShowMode::Centered),
             text_ch_style: MonoTextStyle::new(&FONT_8X13_BOLD, Rgb888::new(0, 0xcc, 0)),
             show_status: true,
         })
@@ -105,7 +105,11 @@ impl Pavi<'_> {
         qemu_note!("Screen: ({scr_w}, {scr_h}); Image: ({im_w}, {im_h})");
         qemu_note!("{start_x} {start_y} {width} {height}");
 
-        let new_image = self.image.scale_to_new(width, height);
+        let new_image = if width == im_w && height == im_h {
+            &self.image
+        } else {
+            &self.image.scale_to_new(width, height)
+        };
 
         noct_screen::fill(0);
 
@@ -113,14 +117,11 @@ impl Pavi<'_> {
             for y in 0..height {
                 let pixel = new_image.get_pixel(x, y);
 
-                let mut pixel = pixel.unwrap_or(0);
-
-                if pixel == 0 {
+                let Some(mut pixel) = pixel else {
                     continue;
-                }
+                };
 
-                pixel =
-                    ((pixel & 0xff0000) >> 16) | (pixel & 0x00ff00) | ((pixel & 0x0000ff) << 16);
+                pixel = ((pixel & 0xff0000) >> 16) | (pixel & 0x00ff00) | ((pixel & 0x0000ff) << 16);
 
                 let rx = start_x + x as isize;
                 let ry = start_y + y as isize;

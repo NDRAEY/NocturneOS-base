@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-nimage = { version = "0.1.6", features = ["tga"], default-features = false }
+nimage = { git = "https://github.com/NDRAEY/nimage", features = ["tga"], default-features = false } # { version = "0.1.6", features = ["tga"], default-features = false }
 
 noct-tty = { path = "../noct-tty" }
 noct-fs = { path = "../noct-fs" }
