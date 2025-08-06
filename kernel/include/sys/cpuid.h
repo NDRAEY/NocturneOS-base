@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <common.h>
+
 #define cpuid(in, a, b, c, d)    \
 	__asm__ __volatile__("cpuid" \
 	               : "=a" (a),   \
@@ -27,41 +29,6 @@
 #define AMD_MAGIC   0x68747541
 
 
-/*static const char* cpu_flag_edx_description[] = {
-		"fpu",
-		"vme",
-		"debugging",
-		"pse",
-		"rdtsc",
-		"msr",
-		"pae",
-		"mce",
-		"cx8",
-		"apic",
-		"'reserved 10'",
-		"'sysenter/sysexit'",
-		"mtrr",
-		"pge",
-		"mca",
-		"cmov",
-		"pat",
-		"pse-36",
-		"psn",
-		"clfsh",
-		"nx",
-		"ds",
-		"acpi",
-		"mmx",
-		"fxsr",
-		"sse",
-		"sse2",
-		"ss",
-		"htt",
-		"tm",
-		"ia64",
-		"pbe"
-};
-*/
 struct cpu_info {
 	size_t manufacturer_id;
 	size_t model_id;
