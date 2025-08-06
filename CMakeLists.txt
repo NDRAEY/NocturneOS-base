@@ -228,7 +228,7 @@ set(C_SRC
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
 	kernel/src/net/stack.c 
-	# kernel/src/drv/audio/hda.c 
+	kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
 	kernel/src/drv/disk/mbr.c 
     kernel/src/lib/libvector/src/vector.c
@@ -457,3 +457,10 @@ add_custom_target(
 #     USES_TERMINAL
 # 	DEPENDS iso
 # )
+
+add_custom_target(
+	run_with_hda
+    COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ich9-intel-hda -device hda-output,audiodev=audiopa,debug=1
+    USES_TERMINAL
+    DEPENDS iso
+)
