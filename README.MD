@@ -90,10 +90,10 @@ sudo apt-get install python3 gcc cmake ninja-build xorriso mtools
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-На данный момент используется версия Rust 1.87, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
+На данный момент используется версия Rust 1.88, для этого устанваливаем эту версию через rustup (+ исходники для компиляции std):
 ```bash
-rustup toolchain install nightly-2025-04-01
-rustup component add rust-src --toolchain nightly-2025-04-01-x86_64-unknown-linux-gnu
+rustup toolchain install nightly-2025-07-01
+rustup component add rust-src --toolchain nightly-2025-07-01-x86_64-unknown-linux-gnu
 ```
 
 Если вы планируете запускать эту систему в виртуальной машине, то ещё нужно установить QEMU:
