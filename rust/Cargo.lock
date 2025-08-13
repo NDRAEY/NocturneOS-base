@@ -397,6 +397,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-diskman"
+version = "0.1.0"
+dependencies = [
+ "cbindgen",
+ "lazy_static",
+ "noct-logger",
+ "num-derive",
+ "num-traits",
+ "spin 0.10.0",
+]
+
+[[package]]
 name = "noct-dpm"
 version = "0.1.0"
 dependencies = [
@@ -644,6 +656,7 @@ dependencies = [
  "lazy_static",
  "noct-alloc",
  "noct-audio",
+ "noct-diskman",
  "noct-dpm",
  "noct-dpm-sys",
  "noct-elfloader",
@@ -684,6 +697,17 @@ checksum = "d273983c5a657a70a3e8f2a01329822f3b8c8172b73826411a55751e404a0a4a"
 dependencies = [
  "memchr",
  "minimal-lexical",
+]
+
+[[package]]
+name = "num-derive"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed3955f1a9c7c0c15e092f9c887db08b1fc683305fdf6eb6684f22555355e202"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

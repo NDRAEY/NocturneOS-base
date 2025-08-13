@@ -10,6 +10,7 @@
 #include "drv/disk/ata_pio.h"
 #include "drv/disk/mbr.h"
 #include "debug/hexview.h"
+#include "generated/diskman.h"
 
 // TODO: Move ATA PIO functions into ata_pio.c for code clarity
 
@@ -83,6 +84,29 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
     ata_write(disk_nr, Buffer, low_offset, Size);
     
 	return Size;
+}
+
+static int64_t diskman_read(uint8_t* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
+	qemu_log("diskman_read: Not implemented yet");
+
+	return 0;
+}
+
+static int64_t diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
+	qemu_log("diskman_write: Not implemented yet");
+
+	return 0;
+}
+
+static int64_t diskman_control(uint8_t *priv_data,
+                            uint32_t command,
+                            const uint8_t *parameters,
+                            uintptr_t param_len,
+                            uint8_t *buffer,
+                            uintptr_t buffer_len) {
+	qemu_log("diskman_control: Not implemented yet");
+
+	return 0;
 }
 
 void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t len, char** out) {
@@ -280,6 +304,20 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 				3, // Ставим 3ку, так как будем юзать функции для чтения и записи
 				"DISK1234567890",
                 (void*)drive_num // Оставим тут индекс диска
+		);
+
+		char* new_id = diskman_generate_new_id("ide");
+
+		uint8_t* private_data = kmalloc(sizeof(uint8_t));
+		*private_data = (uint8_t)drive_num;
+
+		diskman_register_drive(
+			"ATA IDE",
+			new_id,
+			private_data,
+			diskman_read,
+			diskman_write,
+			diskman_control
 		);
 
         if (disk_inx < 0){

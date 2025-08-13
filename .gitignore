@@ -24,6 +24,6 @@ compile_commands.json
 .cache/
 test_*
 *.wav
-/kernel/include/generated
+/kernel/include/generated/*
 /analyzer.txt
 ramdisk/dao-editor

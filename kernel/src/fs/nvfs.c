@@ -157,23 +157,23 @@ size_t nvfs_write(const char* Name, size_t Offset, size_t Count, const void *Buf
 FSM_FILE nvfs_info(const char* Name){
 	NVFS_DECINFO* vinfo = nvfs_decode(Name);  // no memleak
     // if (nvfs_debug) {
-	    qemu_log("NVFS INFO:\n"
-		     "Ready: %d\n"
-		     "Disk: [%d] %c\n"
-		     "Path: [%d]  %s\n"
-		     "Disk Online: %d\n"
-		     "Disk file system: [%d] %s\n"
-		     "Loaded in file system driver: %d",
-		     vinfo->Ready,
-		     vinfo->Disk,
-		     vinfo->Disk,
-		     strlen(vinfo->Path),
-		     vinfo->Path,
-		     vinfo->Online,
-		     strlen(vinfo->FileSystem),
-		     vinfo->FileSystem,
-		     vinfo->DriverFS
-		);
+	    // qemu_log("NVFS INFO:\n"
+		//      "Ready: %d\n"
+		//      "Disk: [%d] %c\n"
+		//      "Path: [%d]  %s\n"
+		//      "Disk Online: %d\n"
+		//      "Disk file system: [%d] %s\n"
+		//      "Loaded in file system driver: %d",
+		//      vinfo->Ready,
+		//      vinfo->Disk,
+		//      vinfo->Disk,
+		//      strlen(vinfo->Path),
+		//      vinfo->Path,
+		//      vinfo->Online,
+		//      strlen(vinfo->FileSystem),
+		//      vinfo->FileSystem,
+		//      vinfo->DriverFS
+		// );
     // }
 
 	FSM_FILE file = { .Ready = 0 };

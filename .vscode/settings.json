@@ -17,6 +17,7 @@
     "rust-analyzer.inlayHints.genericParameterHints.lifetime.enable": true,
     "rust-analyzer.inlayHints.lifetimeElisionHints.enable": "skip_trivial",
     "files.associations": {
-        "sync.h": "c"
+        "sync.h": "c",
+        "hexview.h": "c"
     },
 }
