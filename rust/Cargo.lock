@@ -403,6 +403,7 @@ dependencies = [
  "cbindgen",
  "lazy_static",
  "noct-logger",
+ "noct-mbr",
  "num-derive",
  "num-traits",
  "spin 0.10.0",
@@ -526,6 +527,10 @@ dependencies = [
  "lazy_static",
  "spin 0.10.0",
 ]
+
+[[package]]
+name = "noct-mbr"
+version = "0.1.0"
 
 [[package]]
 name = "noct-noctfs"

@@ -7,6 +7,7 @@
 #include "drv/disk/ata.h"
 #include "debug/hexview.h"
 #include "lib/math.h"
+#include "sys/sync.h"
 
 #define ATA_PCI_VEN 0x8086
 #define ATA_PCI_DEV 0x7010
@@ -26,6 +27,7 @@ size_t prdt_entry_count = 16;
 
 extern ata_drive_t drives[4];
 
+mutex_t ata_dma_mutex = false;
 
 void ata_dma_init() {
     uint8_t result = pci_find_device(ATA_PCI_VEN, ATA_PCI_DEV, &ata_busnum, &ata_slot, &ata_func);
@@ -37,15 +39,9 @@ void ata_dma_init() {
         qemu_log("Detected ATA DMA");
     }
 
-    qemu_log("Enabling Busmastering");
-
-    // uint16_t command_register = pci_read_confspc_word(ata_busnum, ata_slot, ata_func, 4);
-    // command_register |= 0x05;
-    // pci_write(ata_busnum, ata_slot, ata_func, 4, command_register);
-
 	pci_enable_bus_mastering(ata_busnum, ata_slot, ata_func);
 
-    qemu_log("Enabled Busmastering!!!");
+    qemu_log("Enabled Busmastering");
 
     ata_dma_bar4 = pci_read32(ata_busnum, ata_slot, ata_func, 0x20);
 
@@ -76,7 +72,6 @@ void ata_dma_set_prdt_entry(prdt_t* prdt, uint16_t index, uint32_t address, uint
     prdt[index].mark_end = is_last ? ATA_DMA_MARK_END : 0;
 }
 
-/*
 void dump_prdt(prdt_t* prdt) {
 	int i = 0;
 	size_t bytes = 0;
@@ -86,11 +81,11 @@ void dump_prdt(prdt_t* prdt) {
 
 		if(prdt[i].transfer_size == 0) {
 			size = 65536;
-    } else {
+		} else {
 			size = prdt[i].transfer_size;
-    }
+		}
 
-		qemu_log("[%d:%d] [Address: %x] -> %d", i, prdt[i].mark_end, prdt[i].buffer_phys, size);
+		qemu_log("[%d] Address: %x; Length: %d [Last: %x]", i, prdt[i].buffer_phys, size, prdt[i].mark_end != 0);
 
 		bytes += size;
 		i++;
@@ -98,7 +93,6 @@ void dump_prdt(prdt_t* prdt) {
 
 	qemu_ok("Entries: %d; Bytes to process: %d", i, bytes);
 }
-*/
 
 status_t ata_dma_read_sector(uint8_t drive, uint8_t *buf, uint32_t lba) {
 	ON_NULLPTR(buf, {
@@ -191,13 +185,15 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 		return E_DEVICE_NOT_ONLINE;
 	}
 
+	mutex_get(&ata_dma_mutex, true);
 
 	// Clear our prdt
 	ata_dma_clear_prdt();
 
 	// Make a physical address from a virtual to tell DMA where is our temp buffer
 	size_t phys_buf = virt2phys(get_kernel_page_directory(), (virtual_addr_t)buf);
-//	qemu_log("Read: buffer at %x (P%x); LBA: %d; %d sectors", buf, phys_buf, lba, numsects);
+	// qemu_log("%x is physically: %x", buf, phys_buf);
+	qemu_log("Read: buffer at %x (P%x); LBA: %d; %d sectors", buf, phys_buf, lba, numsects);
 
 	// Fill the PRDT
 	int i = 0;
@@ -208,7 +204,7 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 	else
 		byte_count = numsects * 512;
 
-//	qemu_warn("Filling with: %d bytes", byte_count);
+	// qemu_warn("Byte count: %d bytes", byte_count);
 
 	while(byte_count >= 65536) {
 		byte_count -= 65536;
@@ -217,17 +213,14 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 
 		i++;
 	}
-//	qemu_warn("Remaining bytes: %d", byte_count);
 
 	if(byte_count != 0) {
-//		qemu_ok("Zero!");
 		ata_dma_set_prdt_entry(ata_dma_prdt, i, phys_buf + (i * 65536), byte_count, true);
 	} else {
-//		qemu_ok("Not zero!");
 		ata_dma_prdt[i - 1].mark_end = ATA_DMA_MARK_END;
 	}
 
-//	dump_prdt(ata_dma_prdt);
+	dump_prdt(ata_dma_prdt);
 
 	// Only 28-bit LBA supported!
 	lba &= 0x00FFFFFF;
@@ -262,6 +255,9 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 	outb(io + ATA_REG_COMMAND, ATA_CMD_READ_DMA);
 
 	// TODO: WAIT DRQ HERE
+	while((inb(io + ATA_REG_STATUS) & ATA_SR_DRQ) == 0) {
+		__asm__ volatile("hlt");
+	}
 
 	// Start DMA transfer!
 	outb(ata_dma_bar4 + cmd_offset, 9);
@@ -273,10 +269,12 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 //		qemu_log("Status: %x; Dstatus: %x; ERR: %d", status, dstatus, status & (1 << 1));
 
 		if (!(status & 0x04)) continue;
-		if (!(dstatus & 0x80)) break;
+		if (!(dstatus & ATA_SR_BSY)) break;
 	}
 
 	outb(ata_dma_bar4 + cmd_offset, 0);
+
+	mutex_release(&ata_dma_mutex);
 
 //	int status = inb(ata_dma_bar4 + status_offset);
 //	int dstatus = inb(io + ATA_REG_STATUS);
@@ -400,7 +398,7 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 		return E_DEVICE_NOT_ONLINE;
 	}
 
-    // qemu_log("DRIVE: %d; Buffer: %p, Location: %x, len: %d", drive, buf, location, length);
+    qemu_log("DRIVE: %d; Buffer: %p, Location: %x, len: %d", drive, buf, location, length);
 
 	size_t start_sector = location / drives[drive].block_size;
 	size_t end_sector = (location + length - 1) / drives[drive].block_size;
@@ -409,22 +407,29 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 	size_t real_length = sector_count * drives[drive].block_size;
 
 	// TODO: Optimize to read without kmalloc
-	uint8_t* real_buf = kmalloc_common(real_length + PAGE_SIZE, PAGE_SIZE);
+	uint8_t* real_buf = kmalloc_common(ALIGN(real_length, PAGE_SIZE), PAGE_SIZE);
+	// phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)real_buf, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
+
+	// uint8_t* real_buf = kmalloc_common_contiguous(get_kernel_page_directory(), ALIGN(real_length, PAGE_SIZE) / PAGE_SIZE);
 
     memset(real_buf, 0, real_length);
 
 	if(!drives[drive].is_packet) {
-		// Okay, ATA can only read 256 sectors (128 KB of memory) at one request, so subdivide our data to clusters to manage.
+		// Okay, ATA can only read 256 sectors (128 KB of memory) per request, so subdivide our data to clusters to manage.
 		size_t i = 0;
 		size_t cluster_count = sector_count / 256;
 		size_t remaining_count = sector_count % 256;
+
+		qemu_log("Clusters: %d; Sectors remaining: %d", cluster_count, remaining_count);
 
 		for(; i < cluster_count; i++) {
 			ata_dma_read_sectors(drive, real_buf + (i * (65536 * 2)), start_sector + (i * 256), 0);
 		}
 
-		if(remaining_count != 0)
+		if(remaining_count != 0) {
+			qemu_log("Read to: %p", real_buf + (i * (65536 * 2)));
 			ata_dma_read_sectors(drive, real_buf + (i * (65536 * 2)), start_sector + (i * 256), remaining_count);
+		}
 	}
 
 //    hexview_advanced(real_buf, 512, 32, true, new_qemu_printf);

@@ -1,4 +1,5 @@
 use alloc::string::String;
+use noct_logger::qemu_err;
 
 use crate::structures::Drive;
 

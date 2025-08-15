@@ -379,6 +379,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     tty_printf("\nВремя: %02d:%02d:%02d\n", time.hours, time.minutes, time.seconds);
 
     tty_printf("Listing ATA disks:\n");
+
     ata_list();
 
     tty_taskInit();

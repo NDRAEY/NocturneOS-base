@@ -86,25 +86,31 @@ size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 	return Size;
 }
 
-static int64_t diskman_read(uint8_t* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
-	qemu_log("diskman_read: Not implemented yet");
+static int64_t ata_diskman_read(uint8_t* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
+	// qemu_note("ata_diskman_read: p: %x; loc: %x; size: %x; buf: %p", priv_data, (uint32_t)location, (uint32_t)size, buf);
+
+	uint8_t drive_nr = *priv_data;
+
+	// qemu_note("ata_diskman_read: drive_nr = %x", drive_nr);
+	
+	ata_read(drive_nr, buf, (uint32_t)location, (uint32_t)size);
+
+	return (int64_t)size;
+}
+
+static int64_t ata_diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
+	qemu_err("ata_diskman_write: Not implemented yet");
 
 	return 0;
 }
 
-static int64_t diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
-	qemu_log("diskman_write: Not implemented yet");
-
-	return 0;
-}
-
-static int64_t diskman_control(uint8_t *priv_data,
+static int64_t ata_diskman_control(uint8_t *priv_data,
                             uint32_t command,
                             const uint8_t *parameters,
                             uintptr_t param_len,
                             uint8_t *buffer,
                             uintptr_t buffer_len) {
-	qemu_log("diskman_control: Not implemented yet");
+	qemu_err("ata_diskman_control: Not implemented yet");
 
 	return 0;
 }
@@ -154,7 +160,7 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 	
 	uint8_t status = inb(io + ATA_REG_STATUS);
 
-	qemu_log("Status: %d; Err: %d", status, status & ATA_SR_ERR);
+	qemu_log("Status: %x; Err: %x", status, status & ATA_SR_ERR);
 
 	size_t timeout = DEFAULT_TIMEOUT;
 
@@ -315,9 +321,9 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			"ATA IDE",
 			new_id,
 			private_data,
-			diskman_read,
-			diskman_write,
-			diskman_control
+			ata_diskman_read,
+			ata_diskman_write,
+			ata_diskman_control
 		);
 
         if (disk_inx < 0){
@@ -365,6 +371,8 @@ void ide_poll(uint16_t io) {
 	}
 }
 
+extern uint16_t ata_dma_bar4;
+
 // UNTESTED
 void ata_read(uint8_t drive, uint8_t* buf, uint32_t location, uint32_t length) {
 	ON_NULLPTR(buf, {
@@ -377,7 +385,7 @@ void ata_read(uint8_t drive, uint8_t* buf, uint32_t location, uint32_t length) {
 		return;
 	}
 
-    if((!drives[drive].is_packet) && drives[drive].is_dma) {
+    if((!drives[drive].is_packet) && drives[drive].is_dma && (ata_dma_bar4 != 0)) {
         ata_dma_read(drive, (char*)buf, location, length);
         return;
     }
