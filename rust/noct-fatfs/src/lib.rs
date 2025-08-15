@@ -124,7 +124,7 @@ unsafe extern "C" fn fun_read(
 
     qemu_note!("Path: {path:?}");
 
-    let mut file = match fat.root_dir().open_file(&path) {
+    let mut file = match fat.root_dir().open_file(path) {
         Err(e) => {
             qemu_err!("Failed to read file: {:?}", e);
             return 0;
@@ -187,7 +187,7 @@ unsafe extern "C" fn fun_read(
 
     // let stt = timestamp();
 
-    file.read_exact(&mut out_slice).unwrap();
+    file.read_exact(out_slice).unwrap();
 
     // qemu_note!("Read in: {} ms", timestamp() - stt);
 

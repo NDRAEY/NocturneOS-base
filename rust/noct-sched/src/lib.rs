@@ -34,7 +34,7 @@ pub fn task_yield() {
 type BoxedFnOnce = Box<dyn FnOnce() + Send>;
 
 extern "C" fn trampoline(f: *mut ()) {
-    // Safety: we must guarantee f is a Box<dyn FnOnce()>
+    // # Safety: we must guarantee f is a Box<dyn FnOnce()>
     let closure: Box<BoxedFnOnce> = unsafe { Box::from_raw(f as *mut _) };
     closure();
 }

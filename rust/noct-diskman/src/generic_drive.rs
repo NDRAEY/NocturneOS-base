@@ -1,6 +1,6 @@
-use alloc::{boxed::Box, string::String};
+use alloc::string::String;
 
-use crate::structures::{Command, Drive, DriveType};
+use crate::structures::Drive;
 
 pub type ReadFn = extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *mut u8) -> i64;
 pub type WriteFn = extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *const u8) -> i64;

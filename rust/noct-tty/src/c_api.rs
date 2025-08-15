@@ -1,7 +1,6 @@
 use core::{cell::OnceCell, ffi::{c_char, CStr}};
 
 use lazy_static::lazy_static;
-use noct_logger::qemu_note;
 use spin::Mutex;
 
 use crate::{console::Console, renderer::{RenderedConsole}};
@@ -39,8 +38,11 @@ pub unsafe extern "C" fn tty_puts(s: *const c_char) {
     tty_puts_str(s);
 }
 
+/// # Safety: `s` pointer must me non-null
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn tty_puts_raw(s: *const c_char, length: usize) {
+    debug_assert!(!s.is_null());
+
     let slice = unsafe { core::slice::from_raw_parts(s as *const u8, length) };
     let s = core::str::from_utf8(slice).unwrap();
 

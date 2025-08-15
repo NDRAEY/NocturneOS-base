@@ -96,11 +96,11 @@ pub enum BARType {
     IO = 1,
 }
 
-impl Into<u8> for BARType {
-    fn into(self) -> u8 {
-        match self {
-            Self::Memory => 0,
-            Self::IO => 1,
+impl From<BARType> for u8 {
+    fn from(val: BARType) -> Self {
+        match val {
+            BARType::Memory => 0,
+            BARType::IO => 1,
         }
     }
 }
@@ -165,22 +165,20 @@ impl PCIDevice {
 
 pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
     let devs = devices();
-    let dev = devs
+    
+    devs
         .iter()
         .find(|x| x.vendor == vendor && x.device == device)
-        .cloned();
-
-    dev
+        .cloned()
 }
 
-pub fn find_device_by_class_and_subclass<'a>(class: u8, subclass: u8) -> Option<PCIDevice> {
+pub fn find_device_by_class_and_subclass(class: u8, subclass: u8) -> Option<PCIDevice> {
     let devs = devices();
-    let dev = devs
+
+    devs
         .iter()
         .find(|a| a.class == class && a.subclass == subclass)
-        .cloned();
-
-    dev
+        .cloned()
 }
 
 #[inline(always)]
@@ -237,7 +235,7 @@ pub extern "C" fn pci_scan_everything() {
                     if vendor != 0xFFFF {
                         let clid = ((pci_read16(bus, slot, func, 0xA) >> 8) & 0xff) as u8;
                         let sclid = (pci_read16(bus, slot, func, 0xA) & 0xff) as u8;
-                        let device = pci_read16(bus, slot, func, 0x2) & 0xffff;
+                        let device = pci_read16(bus, slot, func, 0x2);
 
                         unsafe {
                             let dev = PCIDevice {
@@ -281,7 +279,7 @@ pub fn get_device(bus: u8, slot: u8, func: u8) -> Option<PCIDevice> {
     let devices = devices();
     for dev in devices.iter() {
         if dev.bus == bus && dev.slot == slot && dev.function == func {
-            return Some(dev.clone());
+            return Some(*dev);
         }
     }
 

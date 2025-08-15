@@ -75,10 +75,10 @@ pub fn generate_id() -> usize {
 
 #[inline]
 #[allow(static_mut_refs)]
-pub fn get_device(index: usize) -> Option<&'static Box<dyn AudioDevice>> {
+pub fn get_device(index: usize) -> Option<&'static dyn AudioDevice> {
     let devs = unsafe { AUDIO_DEVICES.as_mut().expect("Not initialized!") };
 
-    devs.get(index)
+    devs.get(index).map(|v| &**v)
 }
 
 pub fn init() {

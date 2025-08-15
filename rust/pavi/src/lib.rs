@@ -19,12 +19,12 @@ use embedded_graphics::{
     prelude::{Dimensions, Point, RgbColor, Size},
     text::{Baseline, Text},
 };
-use nimage::{Image, PixelFormat};
+use nimage::Image;
 use noct_input::{
     kbd::{Key, SpecialKey, parse_scancode},
     keyboard_buffer_get,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_logger::{qemu_err, qemu_note};
 use noct_tty::println;
 
 #[derive(Debug)]

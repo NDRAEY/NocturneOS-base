@@ -70,7 +70,7 @@ pub extern "C" fn pci_enable_bus_mastering(bus: u8, slot: u8, func: u8) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn pci_get_bar(
+pub unsafe extern "C" fn pci_get_bar(
     bus: u8,
     slot: u8,
     func: u8,
@@ -86,20 +86,15 @@ pub extern "C" fn pci_get_bar(
         }
     };
 
-    match dev.read_bar(bar) {
-        Some(bar) => {
-            if !type_out.is_null() {
-                unsafe { *type_out = bar.bar_type.into() };
-            }
-            if !address_out.is_null() {
-                unsafe { *address_out = bar.address.into() };
-            }
-            if !length_out.is_null() {
-                unsafe { *length_out = bar.length.into() };
-            }
+    if let Some(bar) = dev.read_bar(bar) {
+        if !type_out.is_null() {
+            unsafe { *type_out = bar.bar_type.into() };
         }
-        None => {
-            return;
+        if !address_out.is_null() {
+            unsafe { *address_out = bar.address };
         }
-    };
+        if !length_out.is_null() {
+            unsafe { *length_out = bar.length };
+        }
+    }
 }

@@ -2,14 +2,14 @@
 
 extern crate alloc;
 
+pub mod c_api;
 pub mod generic_drive;
 pub mod structures;
-pub mod c_api;
 
-use core::cell::{OnceCell, RefCell};
+use core::cell::RefCell;
 
 use alloc::{boxed::Box, format, string::String, vec::Vec};
-use spin::{Mutex, rwlock::RwLock};
+use spin::Mutex;
 
 use crate::structures::Drive;
 
@@ -20,16 +20,22 @@ lazy_static! {
         Mutex::new(RefCell::new(Vec::new()));
 }
 
-pub fn generate_new_id(drive_name: &str) -> String {
+pub fn diskman_register_drive(drive: impl Drive + Send + 'static) {
+    let a = DRIVES.lock();
+
+    a.borrow_mut().push(Box::new(drive));
+}
+
+pub fn generate_new_id(driver_id: &str) -> String {
     let last_number = DRIVES
         .lock()
         .borrow()
         .iter()
-        .filter(|x| x.get_name().starts_with(drive_name))
-        .map(|x| &x.get_name()[drive_name.bytes().len()..])
+        .filter(|x| x.get_name().starts_with(driver_id))
+        .map(|x| &x.get_name()[driver_id.bytes().len()..])
         .map(|x| x.parse::<usize>().unwrap_or(0))
         .last()
         .unwrap_or(0);
 
-    format!("{drive_name}{last_number}")
+    format!("{driver_id}{last_number}")
 }

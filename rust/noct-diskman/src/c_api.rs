@@ -1,9 +1,13 @@
-use core::{borrow::BorrowMut, ffi::{c_char, CStr}};
+use core::{
+    ffi::{CStr, c_char},
+};
 
-use alloc::{borrow::ToOwned, boxed::Box, ffi::CString, vec::Vec};
+use alloc::{borrow::ToOwned, ffi::CString};
 use noct_logger::qemu_note;
 
-use crate::{generate_new_id, generic_drive::{ControlFn, GenericDrive, ReadFn, WriteFn}, structures::Drive, DRIVES};
+use crate::{
+    generate_new_id, generic_drive::{ControlFn, GenericDrive, ReadFn, WriteFn}
+};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn diskman_register_drive(
@@ -33,13 +37,12 @@ pub unsafe extern "C" fn diskman_register_drive(
         control,
     };
 
-    let mut a = DRIVES.lock();
-
-    a.borrow_mut().get_mut().push(Box::new(drive));
+    crate::diskman_register_drive(drive);
 }
 
+/// # Safety: `driver_name` must not be null.
 #[unsafe(no_mangle)]
-pub extern "C" fn diskman_generate_new_id(driver_name: *const c_char) -> *mut c_char {
+pub unsafe extern "C" fn diskman_generate_new_id(driver_name: *const c_char) -> *mut c_char {
     assert!(!driver_name.is_null());
 
     let cstr = unsafe { CStr::from_ptr(driver_name) };

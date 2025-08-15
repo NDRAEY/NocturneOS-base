@@ -14,11 +14,33 @@ pub enum DriveType {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy)]
+#[derive(FromPrimitive, Debug, Clone, Copy)]
+pub enum MediumStatus {
+    Offline = 0x00,
+    Loading = 0x01,
+    Online = 0x02
+}
+
+#[repr(u32)]
+#[derive(FromPrimitive, Debug, Clone, Copy)]
 pub enum Command {
+    /// Eject the medium.
+    /// No command parameters supplied.
+    /// No return data expected.
     Eject = 0x00,
+    /// Get medium status.
+    /// No command parameters supplied.
+    /// Returns 4 bytes representing an `u32` as MediumStatus.
     GetMediumStatus = 0x01,
+    /// Get drive type.
+    /// No command parameters supplied.
+    /// Returns 4 bytes representing an `u32` as DriveType.
     GetDriveType = 0x02,
+    /// Get medium capacity.
+    /// No command parameters supplied.
+    /// Returns 12 bytes:
+    /// - bytes 0..8 representing an `u64` as actual capacity in sectors.
+    /// - bytes 8..12 representing an `u32` as block size.
     GetMediumCapacity = 0x03,
 }
 

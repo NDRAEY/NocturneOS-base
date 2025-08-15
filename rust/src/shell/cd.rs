@@ -28,7 +28,7 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
 
     context.current_path = dir;
 
-    chdir_nonrelative(&context.current_path.as_str());
+    chdir_nonrelative(context.current_path.as_str());
 
     Ok(())
 }

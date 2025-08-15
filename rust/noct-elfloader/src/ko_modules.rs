@@ -102,7 +102,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         let total_offset: usize;
 
         if i.st_symtype() == STT_FUNC || i.st_symtype() == STT_SECTION {
-            let base = match {
+            let segment = {
                 let name_off = elf
                     .section_headers()
                     .unwrap()
@@ -112,7 +112,9 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
                 let name = secnamtable.get(name_off as _).unwrap();
 
                 loaded_segments.iter().find(|x| x.0 == name)
-            } {
+            };
+
+            let base = match segment {
                 Some(x) => x,
                 None => {
                     qemu_err!("Failed to look up section nr. {ndx}", ndx = i.st_shndx);
