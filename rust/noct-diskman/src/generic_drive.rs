@@ -2,8 +2,10 @@ use alloc::string::String;
 
 use crate::structures::Drive;
 
-pub type ReadFn = extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *mut u8) -> i64;
-pub type WriteFn = extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *const u8) -> i64;
+pub type ReadFn =
+    extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *mut u8) -> i64;
+pub type WriteFn =
+    extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *const u8) -> i64;
 pub type ControlFn = extern "C" fn(
     priv_data: *mut u8,
     command: u32,
@@ -21,6 +23,8 @@ pub struct GenericDrive {
 
     pub(crate) read: ReadFn,
     pub(crate) write: WriteFn,
+
+    /// May be null.
     pub(crate) control: ControlFn,
 }
 

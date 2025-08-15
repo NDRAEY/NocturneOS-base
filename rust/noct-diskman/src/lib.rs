@@ -14,9 +14,11 @@ use spin::RwLock;
 
 use lazy_static::lazy_static;
 
-use crate::structures::Drive;
+use crate::structures::{Command, Drive};
 
 lazy_static! {
+    /// Drive storage
+    ///
     /// RwLock ensures nobody can edit LinkedList during disk operations
     /// (For example prevents disk removal [from software side] during operation)
     /// The second RwLock ensures that one operation at time per disk can be performed to avoid driver fooling and thus undefined behaviour.
@@ -51,4 +53,61 @@ pub fn generate_new_id(driver_id: &str) -> String {
         .unwrap_or(0);
 
     format!("{driver_id}{last_number}")
+}
+
+/// Read data from disk.
+/// 
+/// Returns -1 if disk can't be found.
+/// 
+/// # Arguments:
+/// 
+/// * `disk_id` - ID of the target disk.
+/// * `location` - Exact location in bytes.
+/// * `buffer` - Output buffer where data is being written.
+pub fn read(disk_id: &str, location: u64, buffer: &mut [u8]) -> i64 {
+    let drives_handle = DRIVES.read();
+    let disk_handle = drives_handle.iter().find(|x| x.read().get_id() == disk_id);
+
+    match disk_handle {
+        Some(x) => x.write().read(location, buffer),
+        None => -1,
+    }
+}
+
+/// Write data to disk.
+/// 
+/// Returns -1 if disk can't be found.
+/// 
+/// # Arguments:
+/// 
+/// * `disk_id` - ID of the target disk.
+/// * `location` - Exact location in bytes.
+/// * `buffer` - Output buffer where data is being copied from.
+pub fn write(disk_id: &str, location: u64, buffer: &[u8]) -> i64 {
+    let drives_handle = DRIVES.read();
+    let disk_handle = drives_handle.iter().find(|x| x.read().get_id() == disk_id);
+
+    match disk_handle {
+        Some(x) => x.write().write(location, buffer),
+        None => -1,
+    }
+}
+
+/// Controls disk/drive.
+/// 
+/// Returns -1 if disk can't be found.
+/// 
+/// # Arguments:
+/// 
+/// * `command` - A command. Look [crate::structures::Command] for more.
+/// * `command_parameters` - Some parameters for the command (may be empty).
+/// * `data` - Output data buffer (may be empty).
+pub fn control(disk_id: &str, command: Command, command_parameters: &[u8], data: &mut [u8]) -> i64 {
+    let drives_handle = DRIVES.read();
+    let disk_handle = drives_handle.iter().find(|x| x.read().get_id() == disk_id);
+
+    match disk_handle {
+        Some(x) => x.write().control(command, command_parameters, data),
+        None => -1,
+    }
 }

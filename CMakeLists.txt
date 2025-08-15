@@ -403,7 +403,7 @@ add_custom_target(
 
 add_custom_target(
 	doc
-	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} doc
+	COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} doc --target ${RUST_TARGET} ${RUST_FLAGS} --open
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 	USES_TERMINAL
 	VERBATIM
