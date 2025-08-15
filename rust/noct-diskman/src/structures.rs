@@ -1,3 +1,4 @@
+use alloc::string::String;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
@@ -9,8 +10,6 @@ pub enum DriveType {
     HardDrive = 0x00,
     OpticalDrive = 0x01,
     RemovableMedia = 0x02,
-    
-    Partition = 0x80,
 }
 
 #[repr(u32)]
@@ -47,6 +46,10 @@ pub enum Command {
 pub trait Drive {
     fn get_name(&self) -> &str;
     fn get_id(&self) -> &str;
+
+    fn get_parent_disk_id(&self) -> Option<&str> {
+        None
+    }
 
     fn get_type(&mut self) -> DriveType {
         let mut data = [0u8; 4];

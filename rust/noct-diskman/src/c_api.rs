@@ -37,7 +37,7 @@ pub unsafe extern "C" fn diskman_register_drive(
         control,
     };
 
-    crate::diskman_register_drive(drive);
+    crate::register_drive(drive);
 }
 
 /// # Safety: `driver_name` must not be null.
