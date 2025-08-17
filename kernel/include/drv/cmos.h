@@ -12,5 +12,4 @@ typedef struct sayori_time {
     uint8_t century;
 } sayori_time_t;
 
-int isleap(int year);
 struct sayori_time get_time();

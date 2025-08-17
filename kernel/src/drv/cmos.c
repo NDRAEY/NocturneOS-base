@@ -11,7 +11,7 @@
 #include "drv/cmos.h"
 
 // FIXME: We need this?
-#define CURRENT_YEAR        2025    // Change this each year!
+#define CURRENT_CENTURY 20
  
 int32_t century_register = 0x00;     // Set by ACPI table parsing code if possible
  
@@ -42,7 +42,7 @@ enum {
  *
  * @return Если значение не равно нулю, значит CMOS обновляется
  */
-int32_t get_update_in_progress_flag() {
+SAYORI_INLINE uint8_t get_update_in_progress_flag() {
     outb(cmos_address, 0x0A);
     return (inb(cmos_data) & 0x80);
 }
@@ -50,19 +50,24 @@ int32_t get_update_in_progress_flag() {
 /**
  * @brief Получает регистр CMOS
  */
-SAYORI_INLINE unsigned char get_RTC_register(int32_t reg) {
+SAYORI_INLINE uint8_t get_RTC_register(int32_t reg) {
     outb(cmos_address, reg);
     return inb(cmos_data);
+}
+
+static inline void rtc_wait_update() {
+    while(get_update_in_progress_flag()) {
+        __asm__ volatile("hlt");
+    }
 }
 
 /**
  * @brief Считывает время с CMOS
  */
 void read_rtc() {
-    while (get_update_in_progress_flag())
-        ;          // Make sure an update isn't in progress
+    rtc_wait_update();
 
-	cmos_second = get_RTC_register(0x00);
+    cmos_second = get_RTC_register(0x00);
     cmos_minute = get_RTC_register(0x02);
     cmos_hour = get_RTC_register(0x04);
     cmos_day = get_RTC_register(0x07);
@@ -82,8 +87,7 @@ void read_rtc() {
         last_year = cmos_year;
         last_century = cmos_century;
  
-        while(get_update_in_progress_flag())
-            ;       // Make sure an update isn't in progress
+        rtc_wait_update();
 
 		cmos_second = get_RTC_register(0x00);
         cmos_minute = get_RTC_register(0x02);
@@ -103,14 +107,15 @@ void read_rtc() {
     // Convert BCD to binary values if necessary
  
     if (!(registerB & 0x04)) {
-        cmos_second = (cmos_second & 0x0F) + ((cmos_second / 16) * 10);
-        cmos_minute = (cmos_minute & 0x0F) + ((cmos_minute / 16) * 10);
-        cmos_hour = ( (cmos_hour & 0x0F) + (((cmos_hour & 0x70) / 16) * 10) ) | (cmos_hour & 0x80);
-        cmos_day = (cmos_day & 0x0F) + ((cmos_day / 16) * 10);
-        cmos_month = (cmos_month & 0x0F) + ((cmos_month / 16) * 10);
-        cmos_year = (cmos_year & 0x0F) + ((cmos_year / 16) * 10);
+        cmos_second = (cmos_second & 0x0F) + ((cmos_second >> 4) * 10);
+        cmos_minute = (cmos_minute & 0x0F) + ((cmos_minute >> 4) * 10);
+        cmos_hour = ( (cmos_hour & 0x0F) + (((cmos_hour & 0x70) >> 4) * 10) ) | (cmos_hour & 0x80);
+        cmos_day = (cmos_day & 0x0F) + ((cmos_day >> 4) * 10);
+        cmos_month = (cmos_month & 0x0F) + ((cmos_month >> 4) * 10);
+        cmos_year = (cmos_year & 0x0F) + ((cmos_year >> 4) * 10);
+
         if(century_register != 0) {
-            cmos_century = (cmos_century & 0x0F) + ((cmos_century / 16) * 10);
+            cmos_century = (cmos_century & 0x0F) + ((cmos_century >> 4) * 10);
         }
     }
  
@@ -125,20 +130,8 @@ void read_rtc() {
     if(century_register != 0) {
         cmos_year += cmos_century * 100;
     } else {
-        cmos_year += (CURRENT_YEAR / 100) * 100;
-        if(cmos_year < CURRENT_YEAR) { 
-            cmos_year += 100;
-        }
+        cmos_year += CURRENT_CENTURY * 100;
     }
-}
-
-/**
- * @brief Это високосный год?
- *
- * @param year Год в формате YYYY
- */
-int isleap(int year) {
-    return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 }
 
 /**
@@ -146,8 +139,10 @@ int isleap(int year) {
  */
 sayori_time_t get_time() {
     read_rtc();
-	struct sayori_time time = {
+
+    struct sayori_time time = {
 		cmos_second, cmos_minute, cmos_hour, cmos_day, cmos_month, cmos_year, cmos_century
 	};
-	return time;
+	
+    return time;
 }
