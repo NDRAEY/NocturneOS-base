@@ -1,4 +1,4 @@
-use core::ffi::{CStr, c_char, c_longlong, c_uint, c_ulonglong};
+use core::ffi::{c_char, c_longlong, c_uint, c_ulonglong, c_void, CStr};
 
 use alloc::{borrow::ToOwned, boxed::Box, ffi::CString};
 use noct_logger::qemu_note;
@@ -16,7 +16,7 @@ pub unsafe extern "C" fn diskman_register_drive(
     driver_name: *const c_char,
     id: *mut c_char,
 
-    private_data: *mut u8,
+    private_data: *mut c_void,
 
     read: ReadFn,
     write: WriteFn,

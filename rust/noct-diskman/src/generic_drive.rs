@@ -1,13 +1,15 @@
+use core::ffi::c_void;
+
 use alloc::string::String;
 
 use crate::structures::Drive;
 
 pub type ReadFn =
-    extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *mut u8) -> i64;
+    extern "C" fn(priv_data: *mut c_void, location: u64, size: u64, buffer: *mut u8) -> i64;
 pub type WriteFn =
-    extern "C" fn(priv_data: *mut u8, location: u64, size: u64, buffer: *const u8) -> i64;
+    extern "C" fn(priv_data: *mut c_void, location: u64, size: u64, buffer: *const u8) -> i64;
 pub type ControlFn = extern "C" fn(
-    priv_data: *mut u8,
+    priv_data: *mut c_void,
     command: u32,
     parameters: *const u8,
     param_len: usize,
@@ -19,7 +21,7 @@ pub struct GenericDrive {
     pub(crate) driver_name: String,
     pub(crate) id: String,
 
-    pub(crate) private_data: *mut u8,
+    pub(crate) private_data: *mut c_void,
 
     pub(crate) read: ReadFn,
     pub(crate) write: WriteFn,

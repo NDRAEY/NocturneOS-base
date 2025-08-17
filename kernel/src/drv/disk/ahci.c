@@ -967,10 +967,10 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
 	return DPM_ERROR_NOT_IMPLEMENTED;
 }
 
-static int64_t ahci_diskman_read(uint8_t* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
+static int64_t ahci_diskman_read(void* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
 	qemu_note("ahci_diskman_read: p: %x; loc: %x; size: %x; buf: %p", priv_data, (uint32_t)location, (uint32_t)size, buf);
 
-	uint8_t port_nr = *priv_data;
+	uint8_t port_nr = *(uint8_t*)priv_data;
 
 	qemu_note("ahci_diskman_read: port_nr = %x", port_nr);
 	
@@ -979,21 +979,21 @@ static int64_t ahci_diskman_read(uint8_t* priv_data, uint64_t location, uint64_t
 	return (int64_t)size;
 }
 
-static int64_t ahci_diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
+static int64_t ahci_diskman_write(void* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
 	qemu_err("ahci_diskman_write: Not implemented yet");
 
-	uint8_t drive_nr = *priv_data;
+	uint8_t drive_nr = *(uint8_t*)priv_data;
 
 	return -1;
 }
 
-static int64_t ahci_diskman_control(uint8_t *priv_data,
+static int64_t ahci_diskman_control(void *priv_data,
                             uint32_t command,
                             const uint8_t *parameters,
                             uintptr_t param_len,
                             uint8_t *buffer,
                             uintptr_t buffer_len) {
-	uint8_t port_nr = *priv_data;
+	uint8_t port_nr = *(uint8_t*)priv_data;
 
 	qemu_err("ata_diskman_control: Not implemented yet");
 
