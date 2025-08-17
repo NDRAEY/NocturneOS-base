@@ -1,4 +1,4 @@
-use core::ffi::{c_char, c_longlong, c_uint, c_ulonglong, c_void, CStr};
+use core::ffi::{CStr, c_char, c_longlong, c_uint, c_ulonglong, c_void};
 
 use alloc::{borrow::ToOwned, boxed::Box, ffi::CString};
 use noct_logger::qemu_note;
@@ -43,7 +43,7 @@ pub unsafe extern "C" fn diskman_register_drive(
 }
 
 /// Generates a new id for disk, according to driver identificator
-/// 
+///
 /// # Safety: `driver_name` must not be null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn diskman_generate_new_id(driver_name: *const c_char) -> *mut c_char {
@@ -57,11 +57,11 @@ pub unsafe extern "C" fn diskman_generate_new_id(driver_name: *const c_char) -> 
 }
 
 /// Read data from disk.
-/// 
+///
 /// Returns -1 when `disk_id == NULL` or `buffer == NULL`
-/// 
+///
 /// # Arguments:
-/// 
+///
 /// * `location` - Exact location in bytes.
 /// * `size` - Exact size in bytes.
 /// * `buffer` - Pointer to output buffer where data is being stored.
@@ -83,11 +83,11 @@ pub unsafe extern "C" fn diskman_read(
 }
 
 /// Write data to disk.
-/// 
+///
 /// Returns -1 when `disk_id == NULL` or `buffer == NULL`
-/// 
+///
 /// # Arguments:
-/// 
+///
 /// * `location` - Exact location in bytes.
 /// * `size` - Exact size in bytes.
 /// * `buffer` - Pointer to input buffer where data is being copied to disk.
@@ -109,14 +109,14 @@ pub unsafe extern "C" fn diskman_write(
 }
 
 /// Controls disk/drive.
-/// 
+///
 /// If `command_parameters` is `NULL`, function assumes that there's no input parameters.
 /// If `output_data` is `NULL`, function assumes that no data will be written.
-/// 
+///
 /// Returns -1 when `disk_id == NULL`
-/// 
+///
 /// # Arguments:
-/// 
+///
 /// * `command` - A command. Look [crate::structures::Command] for more.
 /// * `command_parameters` - Some parameters for the command (may be NULL).
 /// * `command_parameters_length` - Length of command parameters buffer.
@@ -155,4 +155,21 @@ pub unsafe extern "C" fn diskman_control(
         command_parameters,
         data,
     )
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn diskman_get_registered_disk_count() -> c_uint {
+    crate::DRIVES.read().len() as _
+}
+
+/// Important: The returned string is heap-allocated. Don't forget to use `kfree()` when done!
+#[unsafe(no_mangle)]
+pub extern "C" fn diskman_get_disk_id_by_index(index: c_uint) -> *mut c_char {
+    crate::DRIVES
+        .read()
+        .iter()
+        .nth(index as _)
+        .map(|x| x.read().get_id().to_owned())
+        .map(|x| CString::new(x).unwrap().into_raw())
+        .unwrap_or_default()
 }

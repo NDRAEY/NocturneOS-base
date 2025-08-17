@@ -6,7 +6,8 @@ build = "build.rs"
 
 [dependencies]
 noctfs = { git = "https://github.com/NDRAEY/noctfs", default-features = false }
-noct-dpm-sys = { path = "../noct-dpm-sys" }
+# noct-dpm-sys = { path = "../noct-dpm-sys" }
+noct-diskman = { path = "../noct-diskman" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }
 no_std_io = { version = "0.6.0", features = ["alloc"] }

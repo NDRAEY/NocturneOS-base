@@ -1,30 +1,35 @@
+use core::ffi::c_char;
+
+use alloc::string::String;
 use no_std_io::io::{Read, Seek, Write};
-use noct_dpm_sys::Disk;
+
+use crate::raw_ptr_to_string;
+// use noct_dpm_sys::Disk;
 
 pub struct DiskDevice {
-    disk: Disk,
+    disk: String,
     position: u64,
 }
 
 impl DiskDevice {
-    pub const fn new(disk: Disk) -> Self {
-        DiskDevice { disk, position: 0 }
+    pub fn new(disk: *const c_char) -> Self {
+        DiskDevice { disk: raw_ptr_to_string(disk), position: 0 }
     }
 }
 
 impl Read for DiskDevice {
-    fn read(&mut self, buf: &mut [u8]) -> no_std_io::io::Result<usize> {
-        let read_size = self.disk.read(0, self.position, buf.len(), buf);
+    fn read(&mut self, buffer: &mut [u8]) -> no_std_io::io::Result<usize> {
+        let read_size = noct_diskman::read(&self.disk, self.position as _, buffer);
 
-        Ok(read_size)
+        Ok(read_size as _)
     }
 }
 
 impl Write for DiskDevice {
-    fn write(&mut self, buf: &[u8]) -> no_std_io::io::Result<usize> {
-        let size = self.disk.write(0, self.position, buf.len(), buf);
+    fn write(&mut self, buffer: &[u8]) -> no_std_io::io::Result<usize> {
+        let size = noct_diskman::write(&self.disk, self.position as _, buffer);
 
-        Ok(size)
+        Ok(size as _)
     }
 
     fn flush(&mut self) -> no_std_io::io::Result<()> {

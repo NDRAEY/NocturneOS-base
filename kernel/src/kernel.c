@@ -268,7 +268,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_log("Initializing Task Manager...");
     init_task_manager();
 
-     ipc_init();
+    ipc_init();
 
     // drv_vbe_init(mboot);
 
@@ -290,8 +290,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     grub_modules_init(mboot);
 
-    // TarFS registered by grub_modules_init will always have the letter R.
-    fsm_dpm_update('R');
+    // TarFS registered by grub_modules_init will always have the name `rd0`.
+    fsm_dpm_update("rd0");
 
     kernel_start_time = getTicks();
 
@@ -300,7 +300,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);
 
-    psf_init("R:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
+    psf_init("rd0:/Sayori/Fonts/UniCyrX-ibm-8x16.psf");
 
     qemu_log("Initalizing fonts...");
     tty_init();
@@ -432,7 +432,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // hda_init();
 
     /// Обновим данные обо всех дисках
-    fsm_dpm_update(-1);
+    fsm_dpm_update(NULL);
 
     // vio_ntw_init();
 

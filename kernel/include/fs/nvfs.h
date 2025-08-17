@@ -5,14 +5,14 @@
 
 typedef struct {
 	bool Ready;				/// Готов к работе?
-	char Disk;				/// Индекс диска (который надо подставить)
+	char disk_id[32];		/// Название диска (который надо подставить)
 	char Path[1024];		/// Путь
 	bool Online;			/// В сети ли диск?
 	char FileSystem[64];	/// Название драйвера на диске
 	int DriverFS;			/// Загружен ли драйвер фс?
 } __attribute__((packed)) NVFS_DECINFO;
 
-NVFS_DECINFO* nvfs_decode(const char* Name);
+// NVFS_DECINFO* nvfs_decode(const char* Name);
 size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer);
 int nvfs_create(const char* Name, int Mode);
 int nvfs_delete(const char* Name, int Mode);

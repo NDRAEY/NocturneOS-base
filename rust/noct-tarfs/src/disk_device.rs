@@ -1,22 +1,49 @@
-use no_std_io::io::{Read, Seek};
-use noct_dpm_sys::Disk;
+use core::ffi::c_char;
+
+use alloc::string::String;
+use no_std_io::io::{Read, Seek, Write};
+
+use crate::raw_ptr_to_string;
+// use noct_dpm_sys::Disk;
 
 pub struct DiskDevice {
-    disk: Disk,
+    disk: String,
     position: u64,
 }
 
 impl DiskDevice {
-    pub const fn new(disk: Disk) -> Self {
-        DiskDevice { disk, position: 0 }
+    pub fn new(disk: *const c_char) -> Self {
+        DiskDevice { disk: raw_ptr_to_string(disk), position: 0 }
     }
 }
 
 impl Read for DiskDevice {
-    fn read(&mut self, buf: &mut [u8]) -> no_std_io::io::Result<usize> {
-        let read_size = self.disk.read(0, self.position, buf.len(), buf);
+    fn read(&mut self, buffer: &mut [u8]) -> no_std_io::io::Result<usize> {
+        let read_size = noct_diskman::read(&self.disk, self.position as _, buffer);
 
-        Ok(read_size)
+        if read_size != -1 {
+            self.position += read_size as u64;
+        }
+
+        Ok(read_size as _)
+    }
+}
+
+impl Write for DiskDevice {
+    fn write(&mut self, buffer: &[u8]) -> no_std_io::io::Result<usize> {
+        let size = noct_diskman::write(&self.disk, self.position as _, buffer);
+
+        if size != -1 {
+            self.position += size as u64;
+        }
+
+        Ok(size as _)
+    }
+
+    fn flush(&mut self) -> no_std_io::io::Result<()> {
+        // ...
+
+        Ok(())
     }
 }
 
@@ -27,9 +54,9 @@ impl Seek for DiskDevice {
                 self.position = pos;
             }
             no_std_io::io::SeekFrom::End(_pos) => {
-                // let disk_size = self.disk.size();
-                // self.position = disk_size + pos;
-                todo!("Implement getting info about disk and use disk's max position to determine offset against disk's end");
+                todo!(
+                    "Implement getting info about disk and use disk's max position to determine offset against disk's end"
+                );
             }
             no_std_io::io::SeekFrom::Current(pos) => {
                 self.position = (self.position as i64 + pos).try_into().unwrap();
@@ -39,3 +66,5 @@ impl Seek for DiskDevice {
         Ok(self.position)
     }
 }
+
+impl tarfs::Device for DiskDevice {}

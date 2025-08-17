@@ -915,7 +915,6 @@ size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, siz
 
     ahci_read((size_t) dpm.Point, Buffer, low_offset, Size);
 
-
     return Size;
 }
 

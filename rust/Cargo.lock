@@ -440,7 +440,7 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "fatfs",
- "noct-dpm-sys",
+ "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
  "noct-path",
@@ -508,7 +508,7 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "iso9660_simple",
- "noct-dpm-sys",
+ "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
 ]
@@ -538,10 +538,21 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "no_std_io",
- "noct-dpm-sys",
+ "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
  "noctfs",
+]
+
+[[package]]
+name = "noct-nvfs"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cbindgen",
+ "noct-fs",
+ "noct-fs-sys",
+ "noct-logger",
 ]
 
 [[package]]
@@ -614,7 +625,7 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "no_std_io",
- "noct-dpm-sys",
+ "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
  "tarfs",
@@ -677,6 +688,7 @@ dependencies = [
  "noct-ksymparser",
  "noct-logger",
  "noct-noctfs",
+ "noct-nvfs",
  "noct-path",
  "noct-pci",
  "noct-ps2",

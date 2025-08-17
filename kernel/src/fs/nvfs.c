@@ -16,6 +16,8 @@
 #include "mem/vmm.h"
 #include "fs/fsm.h"
 
+#include "generated/nvfs_helper.h"
+
 bool nvfs_debug = false;
 
 SAYORI_INLINE void char_replace(char what, char which, char* string) {
@@ -28,6 +30,7 @@ SAYORI_INLINE void char_replace(char what, char which, char* string) {
 	}
 }
 
+#if 0
 NVFS_DECINFO* nvfs_decode(const char* Name) {
 	NVFS_DECINFO* info = kcalloc(sizeof(NVFS_DECINFO), 1);
 	
@@ -84,6 +87,7 @@ NVFS_DECINFO* nvfs_decode(const char* Name) {
 
 	return info;
 }
+#endif
 
 size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer){
 	if(nvfs_debug) {
@@ -97,7 +101,7 @@ size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer){
 		goto end;
 	}
 	
-	res = fsm_read(vinfo->DriverFS, vinfo->Disk, vinfo->Path, Offset, Count, Buffer);
+	res = fsm_read(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Offset, Count, Buffer);
 
 end:
 	kfree(vinfo);
@@ -113,7 +117,7 @@ int nvfs_create(const char* Name, int Mode){
 		goto end;
 	}
 
-	res = fsm_create(vinfo->DriverFS, vinfo->Disk, vinfo->Path, Mode);
+	res = fsm_create(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Mode);
 
 end:
 	kfree(vinfo);
@@ -128,7 +132,7 @@ int nvfs_delete(const char* Name, int Mode){
 		goto end;
 	}
 	
-	res = fsm_delete(vinfo->DriverFS, vinfo->Disk, vinfo->Path, Mode);
+	res = fsm_delete(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Mode);
 
 	end:
 
@@ -145,7 +149,7 @@ size_t nvfs_write(const char* Name, size_t Offset, size_t Count, const void *Buf
 		goto end;
 	}
 
-	res = fsm_write(vinfo->DriverFS, vinfo->Disk, vinfo->Path, Offset, Count, Buffer);
+	res = fsm_write(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Offset, Count, Buffer);
 
 	end:
 
@@ -165,8 +169,8 @@ FSM_FILE nvfs_info(const char* Name){
 		//      "Disk file system: [%d] %s\n"
 		//      "Loaded in file system driver: %d",
 		//      vinfo->Ready,
-		//      vinfo->Disk,
-		//      vinfo->Disk,
+		//      vinfo->disk_id,
+		//      vinfo->disk_id,
 		//      strlen(vinfo->Path),
 		//      vinfo->Path,
 		//      vinfo->Online,
@@ -182,7 +186,7 @@ FSM_FILE nvfs_info(const char* Name){
 		goto end;
 	}
 
-	file = fsm_info(vinfo->DriverFS, vinfo->Disk, vinfo->Path);
+	file = fsm_info(vinfo->DriverFS, vinfo->disk_id, vinfo->Path);
 
 end:
 
@@ -200,7 +204,7 @@ FSM_DIR* nvfs_dir(const char* Name){
 		goto end;
 	}
 
-	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
+	fsm_dir(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, dir);
 
 	//new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
 	
@@ -217,7 +221,7 @@ void nvfs_dir_v2(const char* Name, FSM_DIR* dir) {
 		goto end;
 	}
 
-	fsm_dir(vinfo->DriverFS, vinfo->Disk, vinfo->Path, dir);
+	fsm_dir(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, dir);
 
 	// new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
 	

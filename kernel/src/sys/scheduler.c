@@ -51,7 +51,7 @@ void init_task_manager(void){
 	kernel_proc->threads_count = 1;
 
 	kernel_proc->name = strdynamize("kernel");
-	kernel_proc->cwd = strdynamize("R:/");
+	kernel_proc->cwd = strdynamize("rd0:/");
 	
 	list_add(&process_list, (void*)&kernel_proc->list_item);
 

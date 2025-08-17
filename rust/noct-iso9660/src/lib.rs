@@ -6,7 +6,7 @@ use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{string::String, vec::Vec};
 use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
-use noct_dpm_sys::Disk;
+// use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ, FSM_TIME,
 };
@@ -15,11 +15,13 @@ use noct_logger::{qemu_err, qemu_log, qemu_note};
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"ISO9660\0";
 
-struct ThatDisk(Disk);
+struct ThatDisk {
+    disk_name: String
+}
 
 impl iso9660_simple::Read for ThatDisk {
     fn read(&mut self, position: usize, size: usize, buffer: &mut [u8]) -> Option<()> {
-        self.0.read(0, position as u64, size, buffer);
+        noct_diskman::read(&self.disk_name, position as _, buffer);
 
         Some(())
     }
@@ -52,14 +54,16 @@ fn iso_datetime_to_fsm(entry: &ISODirectoryEntry) -> FSM_TIME {
 }
 
 unsafe extern "C" fn fun_read(
-    letter: c_char,
+    disk_name: *const c_char,
     path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
+        disk_name: raw_ptr_to_string(disk_name),
+    });
 
     let rpath = raw_ptr_to_string(path);
 
@@ -70,25 +74,26 @@ unsafe extern "C" fn fun_read(
 
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let rd = dev.read(
-        0,
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let rd = noct_diskman::read(
+        &raw_ptr_to_string(disk_name),
         ((entries.record.lba.lsb * 2048) + offset) as u64,
-        count as usize,
         outbuf,
     );
 
     rd as _
 }
 
-unsafe extern "C" fn fun_write(_a: c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(_disk_name: *const c_char, _path: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
+unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
+        disk_name: raw_ptr_to_string(disk_name),
+    });
 
     let rpath = raw_ptr_to_string(path);
 
@@ -111,20 +116,21 @@ unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_create(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Deleting is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_DIR) {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
+    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
+        disk_name: raw_ptr_to_string(disk_name),
+    });
 
-    let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk(dev));
     let path = {
         let c_str = unsafe { CStr::from_ptr(path) };
         c_str.to_string_lossy().into_owned()
@@ -165,27 +171,26 @@ unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_
     *out = FSM_DIR::with_files(files);
 }
 
-unsafe extern "C" fn fun_label(_a: c_char, b: *mut c_char) {
-    b.copy_from(FSNAME.as_ptr() as *const _, 6);
-    qemu_log!("Label!!");
+unsafe extern "C" fn fun_label(_disk_name: *const c_char, output: *mut c_char) {
+    output.copy_from(FSNAME.as_ptr() as *const _, FSNAME.len());
 }
 
-unsafe extern "C" fn fun_detect(disk_letter: c_char) -> i32 {
+unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
     let mut buffer = [0u8; 5];
 
-    noct_dpm_sys::dpm_read(disk_letter, 0, 0x8001, 5, buffer.as_mut_ptr() as *mut _);
+    let disk_name = raw_ptr_to_string(disk_name);
+    noct_diskman::read(&disk_name, 0x8001, &mut buffer);
 
     if ISO9660_OEM != buffer {
         qemu_err!(
-            "Not valid ISO! (Disk: {})",
-            char::from_u32(disk_letter as u32).unwrap()
+            "Not valid ISO! (Disk: {disk_name:?})"            
         );
+
         return 0;
     }
 
     qemu_log!(
-        "Detected ISO! {}",
-        char::from_u32(disk_letter as u32).unwrap()
+        "Detected ISO! {disk_name:?}"
     );
 
     1

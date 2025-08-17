@@ -6,7 +6,7 @@ use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{string::String, vec::Vec};
 use fatfs::{FsOptions, Read, Seek, SeekFrom};
-use noct_dpm_sys::Disk;
+// use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE,
     FSM_MOD_READ, FSM_TIME,
@@ -16,7 +16,7 @@ use noct_logger::{qemu_err, qemu_note, qemu_ok};
 static FSNAME: &[u8] = b"FATFS\0";
 
 struct DiskFile {
-    disk: Disk,
+    disk_name: String,
     position: u64,
 }
 
@@ -26,21 +26,25 @@ impl fatfs::IoBase for DiskFile {
 
 impl fatfs::Read for DiskFile {
     fn read(&mut self, buffer: &mut [u8]) -> Result<usize, ()> {
-        let size = self.disk.read(0, self.position, buffer.len(), buffer);
+        let size = noct_diskman::read(&self.disk_name, self.position, buffer);
 
-        self.position += size as u64;
+        if size != -1 {
+            self.position += size as u64;
+        }
 
-        Ok(size)
+        Ok(size as _)
     }
 }
 
 impl fatfs::Write for DiskFile {
-    fn write(&mut self, buf: &[u8]) -> Result<usize, Self::Error> {
-        let size = self.disk.write(0, self.position, buf.len(), buf);
+    fn write(&mut self, buffer: &[u8]) -> Result<usize, Self::Error> {
+        let size = noct_diskman::write(&self.disk_name, self.position, buffer);
 
-        self.position += size as u64;
+        if size != -1 {
+            self.position += size as u64;
+        }
 
-        Ok(size)
+        Ok(size as _)
     }
 
     fn flush(&mut self) -> Result<(), Self::Error> {
@@ -72,47 +76,18 @@ fn raw_ptr_to_string(ptr: *const c_char) -> String {
     c_str.to_string_lossy().into_owned()
 }
 
-// fn optimize_extents<A, B, C>(file: &mut File<'_, A, B, C>) -> Vec<(u64, u32)>
-// where
-//     A: fatfs::Read,
-//     A: fatfs::Seek,
-//     A: fatfs::Write,
-// {
-//     let mut result = Vec::<(u64, u32)>::new();
-//     let mut iterator = file.extents();
-
-//     let first = iterator.next().unwrap().unwrap();
-//     let mut addr = first.offset;
-//     let mut size = first.size;
-
-//     for i in iterator {
-//         if addr + size as u64 == i.as_ref().unwrap().offset {
-//             size += i.as_ref().unwrap().size;
-//         } else {
-//             result.push((addr, size));
-
-//             addr = i.as_ref().unwrap().offset;
-//             size = i.as_ref().unwrap().size;
-//         }
-//     }
-
-//     result.push((addr, size));
-
-//     result
-// }
-
 unsafe extern "C" fn fun_read(
-    letter: c_char,
+    disk_name: *const c_char,
     path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk: dev,
+            disk_name: raw_ptr_to_string(disk_name),
             position: 0,
         },
         FsOptions::new(),
@@ -138,54 +113,7 @@ unsafe extern "C" fn fun_read(
     qemu_note!("File size is: {}", filesize);
     qemu_note!("Read at offset: {}; Read {} bytes", offset, count);
 
-    // let mut optd = optimize_extents(&mut file);
-
-    // let mut so = offset;
-    // for i in &mut optd {
-    //     if so == 0 {
-    //         break;
-    //     }
-
-    //     if so >= i.1 {
-    //         so -= i.1;
-    //         i.1 = 0;
-    //         continue;
-    //     }
-
-    //     i.1 -= so;
-    //     i.0 += so as u64;
-    //     so = 0;
-    // }
-
-    // let mut co = count;
-    // for i in &mut optd {
-    //     if co == 0 {
-    //         break;
-    //     }
-
-    //     if co >= i.1 {
-    //         co -= i.1;
-    //         continue;
-    //     }
-
-    //     i.1 -= co;
-    //     co = 0;
-    // }
-
-    // qemu_note!("{:?}", optd);
-
-    let mut out_slice = unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
-
-    // let mut soff = 0u32;
-    // for (off, sz) in optd {
-    //     let dev2 = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
-    //     dev2.read(0, off, sz as _, &mut out_slice[soff as usize..(soff+sz) as usize]);
-
-    //     soff += sz;
-    // }
-
-    // let stt = timestamp();
+    let out_slice = unsafe { core::slice::from_raw_parts_mut(buffer as *mut u8, count as _) };
 
     file.read_exact(out_slice).unwrap();
 
@@ -194,17 +122,17 @@ unsafe extern "C" fn fun_read(
     count
 }
 
-unsafe extern "C" fn fun_write(_a: c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(_disk_name: *const c_char, _path: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk: dev,
+            disk_name: raw_ptr_to_string(disk_name),
             position: 0,
         },
         FsOptions::new(),
@@ -262,22 +190,22 @@ unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
     }
 }
 
-unsafe extern "C" fn fun_create(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_create(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_err!("Deleting is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_DIR) {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk: dev,
+            disk_name: raw_ptr_to_string(disk_name),
             position: 0,
         },
         FsOptions::new(),
@@ -349,19 +277,19 @@ fn fat_time_to_fsm(modified: fatfs::DateTime) -> FSM_TIME {
     }
 }
 
-unsafe extern "C" fn fun_label(_a: c_char, b: *mut c_char) {
-    unsafe { b.copy_from(FSNAME.as_ptr() as *const _, 6) };
+unsafe extern "C" fn fun_label(_disk_name: *const c_char, b: *mut c_char) {
+    unsafe { b.copy_from(FSNAME.as_ptr() as *const _, FSNAME.len()) };
     // qemu_log!("Label!!");
 }
 
-unsafe extern "C" fn fun_detect(letter: c_char) -> i32 {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     qemu_note!("Fatfs try to detect!");
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk: dev,
+            disk_name: raw_ptr_to_string(disk_name),
             position: 0,
         },
         FsOptions::new(),

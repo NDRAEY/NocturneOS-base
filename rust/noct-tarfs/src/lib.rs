@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::{c_char, c_void};
+use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{
     string::{String, ToString},
@@ -11,34 +11,15 @@ use alloc::{
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
 };
-use noct_logger::{qemu_err, qemu_log};
+use noct_logger::{qemu_err, qemu_log, qemu_note};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
 pub mod disk_device;
 
-impl tarfs::Device for disk_device::DiskDevice {}
-
 fn raw_ptr_to_string(ptr: *const c_char) -> String {
-    let rpath = unsafe {
-        core::slice::from_raw_parts(ptr as *const u8, {
-            let mut ln = 0;
-
-            loop {
-                let byte = ptr.add(ln).read_volatile();
-
-                if byte == 0 {
-                    break;
-                }
-
-                ln += 1;
-            }
-
-            ln
-        })
-    };
-
-    String::from_utf8(rpath.to_vec()).unwrap()
+    let c_str = unsafe { CStr::from_ptr(ptr) };
+    c_str.to_string_lossy().into_owned()
 }
 
 fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
@@ -49,14 +30,14 @@ fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
 }
 
 unsafe extern "C" fn fun_read(
-    letter: c_char,
+    disk_name: *const c_char,
     path: *const c_char,
     offset: u32,
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = disk_device::DiskDevice::new(dev);
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
@@ -67,20 +48,22 @@ unsafe extern "C" fn fun_read(
     result.unwrap_or(0) as _
 }
 
-unsafe extern "C" fn fun_write(_a: c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(_disk_name: *const c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
+unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
     // qemu_note!("INFO!!!!!");
 
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = disk_device::DiskDevice::new(dev);
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
+
+    qemu_note!("Path: {path:?}");
 
     let entry = fl.find_file(&path);
 
@@ -102,19 +85,19 @@ unsafe extern "C" fn fun_info(letter: c_char, path: *const c_char) -> FSM_FILE {
     )
 }
 
-unsafe extern "C" fn fun_create(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_create(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_log!("Creating is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_delete(_a: c_char, _b: *const c_char, _c: u32) -> i32 {
+unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c: u32) -> i32 {
     qemu_log!("Deleting is not supported!");
     0
 }
 
-unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_DIR) {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-    let device = disk_device::DiskDevice::new(dev);
+unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
@@ -148,13 +131,13 @@ unsafe extern "C" fn fun_dir(letter: c_char, path: *const c_char, out: *mut FSM_
     *out = FSM_DIR::with_files(files);
 }
 
-unsafe extern "C" fn fun_label(_a: c_char, b: *mut c_char) {
-    b.copy_from(FSNAME.as_ptr() as *const _, FSNAME.len());
+unsafe extern "C" fn fun_label(_disk_name: *const c_char, output_buffer: *mut c_char) {
+    output_buffer.copy_from(FSNAME.as_ptr() as *const _, FSNAME.len());
 }
 
-unsafe extern "C" fn fun_detect(disk_letter: c_char) -> i32 {
-    let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
-    let device = disk_device::DiskDevice::new(dev);
+unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
+    // let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
+    let device = disk_device::DiskDevice::new(disk_name);
 
     let fl = tarfs::TarFS::from_device(device);
 

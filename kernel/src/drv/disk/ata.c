@@ -104,6 +104,8 @@ static int64_t ata_diskman_write(void* priv_data, uint64_t location, uint64_t si
 
 	uint8_t drive_nr = *(uint8_t*)priv_data;
 
+	ata_write(drive_nr, buf, (uint32_t)location, (uint32_t)size);
+
 	return 0;
 }
 

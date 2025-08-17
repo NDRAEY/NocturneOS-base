@@ -9,72 +9,72 @@
 void il_log(const char* message);
 
 void notifier_loop(uint8_t* statuses) {
-    for(char disk = 'A'; disk < 'Z'; disk++) {
-        DPM_Disk d = dpm_info(disk);
+    // for(char disk = 'A'; disk < 'Z'; disk++) {
+    //     DPM_Disk d = dpm_info(disk);
 
-        if(!d.Ready) continue;
+    //     if(!d.Ready) continue;
 
-        size_t status = dpm_ctl(disk, DPM_COMMAND_GET_MEDIUM_STATUS, NULL, NULL);
+    //     size_t status = dpm_ctl(disk, DPM_COMMAND_GET_MEDIUM_STATUS, NULL, NULL);
 
-        if(status > 0xFFFF0000) {
-            continue;
-        }
+    //     if(status > 0xFFFF0000) {
+    //         continue;
+    //     }
 
-        size_t real_status = status & ~DPM_MEDIA_STATUS_MASK;
-        uint8_t st = real_status & 0xff;
+    //     size_t real_status = status & ~DPM_MEDIA_STATUS_MASK;
+    //     uint8_t st = real_status & 0xff;
 
-        size_t index = disk - 'A';
+    //     size_t index = disk - 'A';
 
-        char* status_string;
+    //     char* status_string;
 
-        if(real_status == DPM_MEDIA_STATUS_OFFLINE) {
-            status_string = "Offline";
-        } else if(real_status == DPM_MEDIA_STATUS_LOADING) {
-            status_string = "Loading";
-        } else if(real_status == DPM_MEDIA_STATUS_ONLINE) {
-            status_string = "Online";
-        } else {
-            status_string = "Unknown";
-        }
+    //     if(real_status == DPM_MEDIA_STATUS_OFFLINE) {
+    //         status_string = "Offline";
+    //     } else if(real_status == DPM_MEDIA_STATUS_LOADING) {
+    //         status_string = "Loading";
+    //     } else if(real_status == DPM_MEDIA_STATUS_ONLINE) {
+    //         status_string = "Online";
+    //     } else {
+    //         status_string = "Unknown";
+    //     }
 
-        if(statuses[index] != st) {
-            char* logstring;
-            asprintf(&logstring, "Disk %c changed its status to `%s`", disk, status_string);
-            il_log(logstring);
-            kfree(logstring);
+    //     if(statuses[index] != st) {
+    //         char* logstring;
+    //         asprintf(&logstring, "Disk %c changed its status to `%s`", disk, status_string);
+    //         il_log(logstring);
+    //         kfree(logstring);
 
-            if(real_status == DPM_MEDIA_STATUS_ONLINE) {
-                // Run filesystem detection on this disk
-                fsm_dpm_update(disk);
-            } else if(real_status == DPM_MEDIA_STATUS_OFFLINE) {
-                // Detach filesystem on eject
-                dpm_FileSystemUpdate(disk, NULL);
-            }
+    //         if(real_status == DPM_MEDIA_STATUS_ONLINE) {
+    //             // Run filesystem detection on this disk
+    //             fsm_dpm_update(disk);
+    //         } else if(real_status == DPM_MEDIA_STATUS_OFFLINE) {
+    //             // Detach filesystem on eject
+    //             dpm_FileSystemUpdate(disk, NULL);
+    //         }
         
-            statuses[index] = st;
-        }
-    }
+    //         statuses[index] = st;
+    //     }
+    // }
 }
 
 void load_statuses(uint8_t* statuses) {
-    for(char disk = 'A'; disk < 'Z'; disk++) {
-        DPM_Disk d = dpm_info(disk);
+    // for(char disk = 'A'; disk < 'Z'; disk++) {
+    //     DPM_Disk d = dpm_info(disk);
 
-        if(!d.Ready) continue;
+    //     if(!d.Ready) continue;
 
-        size_t status = dpm_ctl(disk, DPM_COMMAND_GET_MEDIUM_STATUS, NULL, NULL);
+    //     size_t status = dpm_ctl(disk, DPM_COMMAND_GET_MEDIUM_STATUS, NULL, NULL);
 
-        if(status > 0xFFFF0000) {
-            continue;
-        }
+    //     if(status > 0xFFFF0000) {
+    //         continue;
+    //     }
 
-        size_t real_status = status & ~DPM_MEDIA_STATUS_MASK;
-        uint8_t st = real_status & 0xff;
+    //     size_t real_status = status & ~DPM_MEDIA_STATUS_MASK;
+    //     uint8_t st = real_status & 0xff;
 
-        size_t index = disk - 'A';
+    //     size_t index = disk - 'A';
 
-        statuses[index] = st;
-    }
+    //     statuses[index] = st;
+    // }
 }
 
 void notifier_thread() {

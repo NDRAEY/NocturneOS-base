@@ -7,4 +7,4 @@ typedef struct {
     size_t size;
 } memdisk_t;
 
-bool memdisk_create(char letter, void* memory, size_t size);
+bool memdisk_create(const char* preferred_id, void* memory, size_t size);

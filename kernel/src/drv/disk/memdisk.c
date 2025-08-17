@@ -121,38 +121,28 @@ static int64_t memdisk_diskman_control(void *priv_data,
     return -1;
 }
 
-bool memdisk_create(char letter, void* memory, size_t size) {
+bool memdisk_create(const char* preffered_id, void* memory, size_t size) {
     if(size == 0) {
         return false;
     }
 
-    if(letter == 0) {
-        letter = (char)dpm_searchFreeIndex(0);
+    if(memory == NULL) {
+        memory = kcalloc(size, sizeof(size_t));
+
+        if(memory == NULL) {
+            return false;
+        }
     }
 
-    if(memory == 0) {
-        memory = kcalloc(size, sizeof(size_t));
+    if(preffered_id == NULL) {
+        preffered_id = diskman_generate_new_id("mem");
     }
 
     memdisk_t* disk = allocate_one(memdisk_t);
     disk->memory = memory;
     disk->size = size;
-
-    int disk_inx = dpm_reg(
-            letter,
-            "Memory disk",
-            "None",
-            1,
-            size,
-            size,
-            1,
-            3,
-            "DISK1234567890",
-            disk
-    );
-
     
-    char* new_id = diskman_generate_new_id("mem");
+    char* new_id = diskman_generate_new_id(preffered_id);
 
     diskman_register_drive(
         "Memory disk",
@@ -163,18 +153,7 @@ bool memdisk_create(char letter, void* memory, size_t size) {
         memdisk_diskman_control
     );
 
-    qemu_note("Memory: %p; Size: %x; Letter: %c; Index: %d", memory, size, letter, disk_inx);
+    qemu_note("Memory: %p; Size: %x; Disk: `%s`", memory, size, preffered_id);
 
-    if (disk_inx < 0) {
-        qemu_err("[MEMDISK] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
-        
-        return false;
-    } else {
-        // dpm_fnc_write(letter, &memdisk_dpm_read, &memdisk_dpm_write);
-        dpm_set_read_func(letter, &memdisk_dpm_read);
-        dpm_set_write_func(letter, &memdisk_dpm_write);
-        qemu_ok("[MEMDISK] [Successful] Registering OK");
-
-        return true;
-    }
+    return true;
 }

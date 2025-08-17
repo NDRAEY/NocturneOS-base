@@ -10,26 +10,29 @@
 #include <io/ports.h>
 #include <fs/fsm.h>
 #include <lib/php/pathinfo.h>
-#include "lib/php/str_contains.h"
-#include "lib/sprintf.h"
 #include "mem/vmm.h"
 
 #include "drv/disk/dpm.h"
 #include <vector.h>
 
-vector_t* fsm_entries = 0;
+#include "generated/diskman.h"
+#include "generated/diskman_commands.h"
 
-int C_FSM = 0;
-bool fsm_debug = false;
+static vector_t* registered_filesystems = NULL;
+static vector_t* registered_disks = NULL;
+
+static int C_FSM = 0;
+static bool fsm_debug = false;
 
 void fsm_init() {
-    fsm_entries = vector_new();
+    registered_filesystems = vector_new();
+    registered_disks = vector_new();
 }
 
-int fsm_getIDbyName(const char* Name){
-	for (size_t i = 0; i < fsm_entries->size; i++) {
-        vector_result_t res = vector_get(fsm_entries, i);
-        FSM* fsm = (FSM*)res.element;
+int fsm_getIDbyName(const char* Name) {
+	for (size_t i = 0; i < registered_filesystems->size; i++) {
+        vector_result_t res = vector_get(registered_filesystems, i);
+        FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 
         // qemu_note("`%s` =? `%s`", fsm->Name, Name);
 
@@ -55,12 +58,12 @@ void fsm_dump(FSM_FILE file) {
 }
 #endif
 
-size_t fsm_read(int FIndex, char DIndex, const char* Name, size_t Offset, size_t Count, void* Buffer){
+size_t fsm_read(int FIndex, const char* disk_name, const char* Name, size_t Offset, size_t Count, void* Buffer){
     if (fsm_debug) {
-        qemu_log("[FSM] [READ] F:%d | D:%d | N:`%s` | O:%d | C:%d",FIndex,DIndex,Name,Offset,Count);
+        qemu_log("[FSM] [READ] F:%d | D:`%s` | N:`%s` | O:%d | C:%d",FIndex,disk_name,Name,Offset,Count);
     }
     
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
         return 0;
@@ -70,54 +73,54 @@ size_t fsm_read(int FIndex, char DIndex, const char* Name, size_t Offset, size_t
         qemu_log("[FSM] [READ] GO TO DRIVER");
     }
     
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 	
-    return fsm->Read(DIndex, Name, Offset, Count, Buffer);
+    return fsm->Read(disk_name, Name, Offset, Count, Buffer);
 }
 
 
-int fsm_create(int FIndex, char DIndex, const char* Name, int Mode) {
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+int fsm_create(int FIndex, const char* disk_name, const char* Name, int Mode) {
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
         return 0;
     }
 
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 
-	return fsm->Create(DIndex,Name,Mode);
+	return fsm->Create(disk_name,Name,Mode);
 }
 
-int fsm_delete(int FIndex, const char DIndex, const char* Name, int Mode) {
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+int fsm_delete(int FIndex, const char* disk_name, const char* Name, int Mode) {
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
 		return 0;
     }
 
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 
-	return fsm->Delete(DIndex, Name, Mode);
+	return fsm->Delete(disk_name, Name, Mode);
 }
 
-size_t fsm_write(int FIndex, const char DIndex, const char* Name, size_t Offset, size_t Count, const void* Buffer){
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+size_t fsm_write(int FIndex, const char* disk_name, const char* Name, size_t Offset, size_t Count, const void* Buffer){
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 	
     if (res.error) {
 		return 0;
     }
 
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 
-	return fsm->Write(DIndex,Name,Offset, Count, Buffer);
+	return fsm->Write(disk_name,Name,Offset, Count, Buffer);
 }
 
-FSM_FILE fsm_info(int FIndex,const char DIndex, const char* Name){
+FSM_FILE fsm_info(int FIndex,const char* disk_name, const char* Name){
     if (fsm_debug) {
-        qemu_log("[FSM] [INFO] F:%d | D:%d | N:%s",FIndex,DIndex,Name);
+        qemu_log("[FSM] [INFO] F:%d | D:`%s` | N:%s",FIndex,disk_name,Name);
     }
 
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
         if (fsm_debug) {
@@ -130,17 +133,17 @@ FSM_FILE fsm_info(int FIndex,const char DIndex, const char* Name){
         qemu_log("[FSM] [INFO] GO TO GFSM");
     }
     
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 	
-    return fsm->Info(DIndex,Name);
+    return fsm->Info(disk_name,Name);
 }
 
-void fsm_dir(int FIndex, const char DIndex, const char* Name, FSM_DIR* out) {
+void fsm_dir(int FIndex, const char* disk_name, const char* Name, FSM_DIR* out) {
     if (fsm_debug) {
-        qemu_log("[FSM] [DIR] F:%d | D:%d | N:%s",FIndex,DIndex,Name);
+        qemu_log("[FSM] [DIR] F:%d | D:`%s` | N:%s",FIndex,disk_name,Name);
     }
 
-    vector_result_t res = vector_get(fsm_entries, FIndex);
+    vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
         if (fsm_debug) {
@@ -150,13 +153,13 @@ void fsm_dir(int FIndex, const char DIndex, const char* Name, FSM_DIR* out) {
 		memset(out, 0, sizeof(FSM_DIR));
 	}
 
-    FSM* fsm = (FSM*)res.element;
+    FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 
-    fsm->Dir(DIndex, Name, out);
+    fsm->Dir(disk_name, Name, out);
 }
 
 void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cmd_info_t Info, fsm_cmd_create_t Create, fsm_cmd_delete_t Delete, fsm_cmd_dir_t Dir, fsm_cmd_label_t Label, fsm_cmd_detect_t Detect) {
-    FSM* fsm = kcalloc(1, sizeof(FSM));
+    FilesystemHandler* fsm = kcalloc(sizeof(FilesystemHandler), 1);
     fsm->Ready = 1;
 	fsm->Read = Read;
 	fsm->Write = Write;
@@ -169,72 +172,82 @@ void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cm
 
 	fsm->Name = strdynamize(Name);
 
-    vector_push_back(fsm_entries, (size_t)fsm);
+    vector_push_back(registered_filesystems, (size_t)fsm);
 
     qemu_ok("Registered filesystem: `%s`", Name);
 }
 
-void fsm_dpm_update(char Letter) {
-    if (Letter == -1) {
-        // Global update
-        for(int i = 0; i < 26; i++){
-            int DISKID = i + 65;
-            
-            DPM_Disk dpm = dpm_info(DISKID);
+const char* fsm_get_disk_filesystem(const char* disk_id) {
+    for(size_t dx = 0; dx < registered_disks->size; dx++) {
+        FSM_Mount* mount = (FSM_Mount*)vector_get(registered_disks, dx).element;
 
-            if (dpm.Ready != 1) {
-                dpm_FileSystemUpdate(DISKID, NULL);
-        
-            	continue;
-            }
-
-            for(size_t f = 0; f < fsm_entries->size; f++) {
-                FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;
-
-                qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm->Name);
-
-                int detect = fsm->Detect(DISKID);
-
-                if (detect != 1) {
-                	continue;
-                }
-
-                dpm_FileSystemUpdate(DISKID, fsm->Name);
-
-                // qemu_note("                       | Label: %s", lab_test);
-
-                // dpm_dump(DISKID);
-
-                break;
-            }
+        if(strcmp(mount->diskman_disk_id, disk_id) == 0) {
+            return mount->filesystem_name;
         }
-    } else {
-        // Personal update
-        int DISKID  = Letter;
+    }
 
-        // dpm_LabelUpdate(DISKID, NULL);
-        dpm_FileSystemUpdate(DISKID, NULL);
+    return 0;
+}
 
-        for(size_t f = 0; f < fsm_entries->size; f++) {
-            FSM* fsm = (FSM*)vector_get(fsm_entries, f).element;
+void fsm_scan_for_filesystem(const char* disk_id) {
+    // Remove all previous mountpoints
+    for(size_t dx = 0; dx < registered_disks->size; dx++) {
+        FSM_Mount* mount = (FSM_Mount*)vector_get(registered_disks, dx).element;
 
-            qemu_note("[FSM] [DPM] >>> Disk %c | Test %s", DISKID, fsm->Name);
-            int detect = fsm->Detect(DISKID);
+        if(strcmp(mount->diskman_disk_id, disk_id) == 0) {
+            kfree(mount);
+            vector_erase_nth(registered_disks, dx);
 
-            if (detect != 1) {
-                continue;
-            }
+            dx--;
+            continue;
+        }
+    }
 
-            // char* lab_test = kcalloc(1,129);
+    for(size_t f = 0; f < registered_filesystems->size; f++) {
+        FilesystemHandler* fsm = (FilesystemHandler*)vector_get(registered_filesystems, f).element;
 
-            // fsm->Label(DISKID, lab_test);
-            // dpm_LabelUpdate(DISKID, lab_test);
-            dpm_FileSystemUpdate(DISKID, fsm->Name);
-            // qemu_note("[FSM] [DPM] ^^^ Disk %c | Label: %s", DISKID, lab_test);
+        qemu_note("[FSM] [DPM] Disk `%s`: Testing filesystem `%s`", disk_id, fsm->Name);
 
-            // kfree(lab_test);
+        int detect = fsm->Detect(disk_id);
+
+        if (detect == 1) {
+            FSM_Mount* mount = allocate_one(FSM_Mount);
+            mount->diskman_disk_id = strdynamize(disk_id);
+            mount->filesystem_name = strdynamize(fsm->Name);
+
+            vector_push_back(registered_disks, (size_t)mount);
+
+            qemu_note("Success: `%s` is on `%s`", fsm->Name, disk_id);
 
             break;
         }
+    }
+}
+
+void fsm_scan_all_disks() {
+    for(size_t i = 0; i < registered_disks->size; i++) {
+        kfree((FSM_Mount*)vector_get(registered_disks, i).element);
+    }
+
+    vector_erase_all(registered_disks);
+
+    size_t disk_count = diskman_get_registered_disk_count();
+
+    for(size_t i = 0; i < disk_count; i++) {
+        char* disk_id = diskman_get_disk_id_by_index(i);
+
+        qemu_printf("%s\n", disk_id);
+
+        fsm_scan_for_filesystem(disk_id);
+
+        kfree(disk_id);
+    }
+}
+
+void fsm_dpm_update(const char* disk_id) {
+    if(disk_id == NULL) {
+        fsm_scan_all_disks();
+    } else {
+        fsm_scan_for_filesystem(disk_id);
     }
 }
