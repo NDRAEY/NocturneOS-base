@@ -271,8 +271,8 @@ mutex_t heap_mutex = false;
 
 void *kmalloc_common(size_t size, size_t align)
 {
-	// scheduler_mode(false);
-	mutex_get(&heap_mutex, true);
+	scheduler_mode(false);
+	// mutex_get(&heap_mutex, true);
 
 	void *allocated = alloc_no_map(size, align);
 
@@ -329,7 +329,8 @@ void *kmalloc_common(size_t size, size_t align)
 
 	end:
 
-	mutex_release(&heap_mutex);
+	scheduler_mode(true);
+	// mutex_release(&heap_mutex);
 
 	return allocated;
 }

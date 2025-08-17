@@ -21,7 +21,7 @@ pub enum MediumStatus {
 
 /// Command that can be sent by using `diskman_command` function.
 #[repr(u32)]
-#[derive(FromPrimitive, Debug, Clone, Copy)]
+#[derive(FromPrimitive, Debug, Clone, Copy, PartialEq)]
 pub enum Command {
     /// Eject the medium.
     /// 
@@ -57,6 +57,10 @@ pub trait Drive {
 
     fn get_parent_disk_id(&self) -> Option<&str> {
         None
+    }
+
+    fn is_partition(&self) -> bool {
+        self.get_parent_disk_id().is_some()
     }
 
     fn get_type(&mut self) -> DriveType {

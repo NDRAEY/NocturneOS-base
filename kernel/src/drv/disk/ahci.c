@@ -14,6 +14,8 @@
 #include "drv/disk/dpm.h"
 #include "io/tty.h"
 #include "sys/sync.h"
+#include "generated/diskman.h"
+#include "generated/diskman_commands.h"
 
 #define AHCI_CLASS 1
 #define AHCI_SUBCLASS 6
@@ -192,6 +194,9 @@ void ahci_init() {
         }
 	}
 
+	// Assume the AHCI controller is initialized.
+	ahci_initialized = true;
+
 	for(register int i = 0; i < 32; i++) {
 		if(abar->port_implemented & (1 << i)) {
 			volatile AHCI_HBA_PORT* port = abar->ports + i;
@@ -215,8 +220,6 @@ void ahci_init() {
 			}
 		}
 	}
-
-	ahci_initialized = true;
 }
 
 void ahci_rebase_memory_for(size_t port_num) {
@@ -722,7 +725,7 @@ bool ahci_send_atapi_nomem(size_t port_num, uint8_t command[16]) {
 	return result;
 }
 
-void ahci_send_atapi(size_t port_num, uint8_t command[16], uint8_t* output, size_t size) {
+void ahci_send_atapi(size_t port_num, uint8_t command[16], void* output, size_t size) {
 	// tty_printf("ATAPI command on port %d (CMD: %x)\n", port_num, command[0]);
 
 	mutex_get(&ahci_mutex, true);
@@ -804,6 +807,24 @@ atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 	// hexview_advanced(output, 18, 16, false, new_qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
+}
+
+uint64_t ahci_atapi_read_capacity(size_t port_num) {
+	uint8_t command[16] = {
+        ATAPI_READ_CAPACITY, 0, 0, 0,
+		0, // Allocation Length
+        0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0
+    };
+
+	uint32_t* data = kcalloc(sizeof(uint32_t), 16);
+
+	ahci_send_atapi(port_num, command, data, 16 * 4);
+
+    uint32_t sector_count = ntohl(*data);
+    uint32_t blocksize = ntohl(*(data + 1));
+
+	return ((uint64_t)sector_count) | (uint64_t)blocksize;
 }
 
 // Returns DPM_STATUS
@@ -946,6 +967,105 @@ size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
 	return DPM_ERROR_NOT_IMPLEMENTED;
 }
 
+static int64_t ahci_diskman_read(uint8_t* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
+	qemu_note("ahci_diskman_read: p: %x; loc: %x; size: %x; buf: %p", priv_data, (uint32_t)location, (uint32_t)size, buf);
+
+	uint8_t port_nr = *priv_data;
+
+	qemu_note("ahci_diskman_read: port_nr = %x", port_nr);
+	
+	ahci_read(port_nr, buf, location, (uint32_t)size);
+
+	return (int64_t)size;
+}
+
+static int64_t ahci_diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
+	qemu_err("ahci_diskman_write: Not implemented yet");
+
+	uint8_t drive_nr = *priv_data;
+
+	return -1;
+}
+
+static int64_t ahci_diskman_control(uint8_t *priv_data,
+                            uint32_t command,
+                            const uint8_t *parameters,
+                            uintptr_t param_len,
+                            uint8_t *buffer,
+                            uintptr_t buffer_len) {
+	uint8_t port_nr = *priv_data;
+
+	qemu_err("ata_diskman_control: Not implemented yet");
+
+	if(command == DISKMAN_COMMAND_GET_MEDIUM_CAPACITY) {
+		if(buffer == NULL || buffer_len < 12) {
+			return -1;
+		}
+
+		if(ports[port_nr].is_atapi) {
+			size_t status = ahci_atapi_check_media_presence(port_nr);
+
+			if(status == DPM_MEDIA_STATUS_ONLINE) {
+				uint64_t cap = ahci_atapi_read_capacity(port_nr) & 0xffffffff;
+
+				memcpy(buffer, &cap, 4);
+			} else {
+				memset(buffer, 0, 12);
+			}
+		} else {
+			uint64_t cap = ports[port_nr].disk_capacity;
+			memcpy(buffer, &cap, 8);
+		}
+
+		uint32_t bs = ports[port_nr].is_atapi ? 2048 : 512;
+		memcpy(buffer + 8, &bs, 4);
+
+		return 0;
+	} else if(command == DISKMAN_COMMAND_GET_DRIVE_TYPE) {
+		if(buffer == NULL || buffer_len < 4) {
+			return -1;
+		}
+
+		bool is_optical = ports[port_nr].is_atapi;
+
+		uint32_t drive_type = is_optical ? 1 : 0;
+
+		memcpy(buffer, &drive_type, 4);
+		
+		return 0;
+	} else if(command == DISKMAN_COMMAND_GET_MEDIUM_STATUS) {
+		if(buffer == NULL || buffer_len < 4) {
+			return -1;
+		}
+
+		bool is_optical = ports[port_nr].is_atapi;
+
+		if(!is_optical) {
+			uint32_t online = 0x02;
+
+			memcpy(buffer, &online, 4);
+		} else {
+			size_t status = ahci_atapi_check_media_presence(port_nr);
+
+			memcpy(buffer, &status, 4);
+		}
+
+		return 0;
+	} else if(command == DISKMAN_COMMAND_EJECT) {
+		bool is_optical = ports[port_nr].is_atapi;
+
+		if(!is_optical) {
+			return -1;
+		}
+
+		ahci_eject_cdrom(port_nr);
+
+		return 0;
+	}
+
+	return -1;
+}
+
 void ahci_identify(size_t port_num, bool is_atapi) {
     qemu_log("Identifying %d", port_num);
 
@@ -993,7 +1113,7 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     uint16_t* memory16 = (uint16_t*)memory;
 
-	size_t capacity = (memory16[101] << 16) | memory16[100];
+	size_t capacity = (((uint32_t)memory16[101]) << 16) | (uint32_t)memory16[100];
 
     uint16_t* model = kcalloc(20, 2);
 
@@ -1003,9 +1123,12 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     *(((uint8_t*)model) + 39) = 0;
 
-    //tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
+    // tty_printf("[SATA] MODEL: '%s'; CAPACITY: %d sectors\n", model, capacity);
 	
 	kfree(model);
+
+    ports[port_num].is_atapi = is_atapi;
+    ports[port_num].disk_capacity = capacity;
 
 	//if(!is_atapi) {
 		int disk_inx = dpm_reg(
@@ -1020,6 +1143,27 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 	           "DISK1234567890",
 	           (void*)port_num // Оставим тут индекс диска
 	   	);
+
+		char* new_id = diskman_generate_new_id("ahci");
+
+		uint8_t* private_data = kmalloc(sizeof(uint8_t));
+		*private_data = (uint8_t)port_num;
+
+		char* disk_name;
+		if(is_atapi) {
+			disk_name = "SATA OPTICAL DRIVE";
+		} else {
+			disk_name = "SATA DISK";
+		}
+
+		diskman_register_drive(
+			disk_name,
+			new_id,
+			private_data,
+			ahci_diskman_read,
+			ahci_diskman_write,
+			ahci_diskman_control
+		);
 	
 		if (disk_inx < 0){
 		    qemu_err("[SATA/DPM] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
@@ -1031,8 +1175,6 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 			dpm_set_command_func(disk_inx + 65, &ahci_dpm_ctl);
 		}
 	//}
-
-    ports[port_num].is_atapi = is_atapi;
 
     kfree(memory);
 }

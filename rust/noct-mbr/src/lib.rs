@@ -1,24 +1,23 @@
 #![no_std]
 
-use core::mem::transmute_copy;
-
 use alloc::vec::Vec;
 
 extern crate alloc;
 
 #[derive(Debug, Clone, Copy)]
 pub struct CHS {
-    cylinders: usize,
-    heads: usize,
-    sectors: usize
+    pub cylinders: usize,
+    pub heads: usize,
+    pub sectors: usize
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PartitionType {
     Free = 0x00,
     NTFS = 0x07,
     Extended = 0x05,
+    ExtendedLBA = 0x0F,
     Linux = 0x83,
     LinuxSwap = 0x82,
 }

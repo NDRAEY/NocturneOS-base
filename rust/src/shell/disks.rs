@@ -1,4 +1,4 @@
-use alloc::string::String;
+use alloc::{format, string::String};
 use noct_dpm;
 use noct_tty::println;
 
@@ -12,7 +12,39 @@ pub fn disks(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
         println!(
             "{}: {:?} - {:?} ({} sectors, {} bytes each)",
             i.letter, i.name, i.filesystem, i.sector_count, i.sector_size
-        )
+        );
+    }
+
+    println!("\nDisks from Diskman:");
+
+    for (n, i) in noct_diskman::disk_list().iter().enumerate() {
+        println!(
+            "{:-2}. {:-7} -> {:?} ({} sectors, {} bytes each; {})",
+            n + 1,
+            i.id,
+            i.name,
+            {
+                if let Some(cap) = i.capacity {
+                    &format!("{cap}")
+                } else {
+                    &format!("------")
+                }
+            },
+            {
+                if let Some(blk) = i.block_size {
+                    &format!("{blk}")
+                } else {
+                    &format!("-----")
+                }
+            },
+            {
+                if i.is_partition {
+                    &format!("{:?} [Partition]", i.drive_type)
+                } else {
+                    &format!("{:?}", i.drive_type)
+                }
+            }
+        );
     }
 
     Ok(())

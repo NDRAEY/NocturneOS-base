@@ -1,6 +1,6 @@
 use core::ffi::{CStr, c_char, c_longlong, c_uint, c_ulonglong};
 
-use alloc::{borrow::ToOwned, ffi::CString};
+use alloc::{borrow::ToOwned, boxed::Box, ffi::CString};
 use noct_logger::qemu_note;
 use num_traits::FromPrimitive;
 
@@ -39,7 +39,7 @@ pub unsafe extern "C" fn diskman_register_drive(
         control,
     };
 
-    crate::register_drive(drive);
+    crate::register_drive(Box::new(drive));
 }
 
 /// Generates a new id for disk, according to driver identificator

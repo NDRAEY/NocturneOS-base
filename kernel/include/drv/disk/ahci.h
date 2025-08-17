@@ -314,6 +314,8 @@ struct ahci_port_descriptor {
     size_t fis_virt;
     size_t fis_phys;
 
+	size_t disk_capacity;
+
     bool is_atapi;
 };
 

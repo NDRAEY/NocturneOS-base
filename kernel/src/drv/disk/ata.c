@@ -11,6 +11,7 @@
 #include "drv/disk/mbr.h"
 #include "debug/hexview.h"
 #include "generated/diskman.h"
+#include "generated/diskman_commands.h"
 
 // TODO: Move ATA PIO functions into ata_pio.c for code clarity
 
@@ -101,6 +102,8 @@ static int64_t ata_diskman_read(uint8_t* priv_data, uint64_t location, uint64_t 
 static int64_t ata_diskman_write(uint8_t* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
 	qemu_err("ata_diskman_write: Not implemented yet");
 
+	uint8_t drive_nr = *priv_data;
+
 	return 0;
 }
 
@@ -110,9 +113,35 @@ static int64_t ata_diskman_control(uint8_t *priv_data,
                             uintptr_t param_len,
                             uint8_t *buffer,
                             uintptr_t buffer_len) {
+	uint8_t drive_nr = *priv_data;
+
 	qemu_err("ata_diskman_control: Not implemented yet");
 
-	return 0;
+	if(command == DISKMAN_COMMAND_GET_MEDIUM_CAPACITY) {
+		if(buffer == NULL || buffer_len < 12) {
+			return -1;
+		}
+
+		uint64_t cap = drives[drive_nr].capacity;
+		uint32_t bs = drives[drive_nr].block_size;
+
+		memcpy(buffer, &cap, 8);
+		memcpy(buffer + 8, &bs, 4);
+
+		return 0;
+	} else if(command == DISKMAN_COMMAND_GET_DRIVE_TYPE) {
+		if(buffer == NULL || buffer_len < 4) {
+			return -1;
+		}
+
+		bool is_optical = drives[drive_nr].is_packet;
+
+		uint32_t drive_type = is_optical ? 1 : 0;
+
+		memcpy(buffer, &drive_type, 4);
+	}
+
+	return -1;
 }
 
 void ide_name_convert_individual(const uint16_t* ide_buf, size_t offset, size_t len, char** out) {
@@ -217,6 +246,20 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
                     "DISK1234567890",
                     (void*)drive_num // Оставим тут индекс диска
             );
+
+			char* new_id = diskman_generate_new_id("ide");
+
+			uint8_t* private_data = kmalloc(sizeof(uint8_t));
+			*private_data = (uint8_t)drive_num;
+
+			diskman_register_drive(
+				"ATA IDE CD/DVD",
+				new_id,
+				private_data,
+				ata_diskman_read,
+				ata_diskman_write,
+				ata_diskman_control
+			);
 
             if (disk_inx < 0){
                 qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);

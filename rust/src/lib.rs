@@ -14,6 +14,7 @@ pub mod std;
 pub mod system;
 
 use alloc::string::String;
+pub use noct_diskman;
 use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
@@ -22,7 +23,6 @@ pub use noct_psf;
 use noct_psf::PSF;
 pub use noct_tarfs;
 pub use noct_tty;
-pub use noct_diskman;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;
@@ -95,28 +95,28 @@ pub extern "C" fn rust_main() {
     //     tty.print_str("\u{1b}[36mColorful text! (Cyan)\u{1b}[0m\n");
     //     tty.print_str("\u{1b}[37mColorful text! (White)\u{1b}[0m\n");
 
-        // tty.print_str("Hello World!\n");
-        // tty.print_str("\u{1b}[41mBackground color! (Red)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[42mBackground color! (Green)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[43mBackground color! (Yellow)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[44mBackground color! (Blue)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[45mBackground color! (Magenta)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[46mBackground color! (Cyan)\u{1b}[0m\n");
-        // tty.print_str("\u{1b}[47mBackground color! (White)\u{1b}[0m\n");
+    // tty.print_str("Hello World!\n");
+    // tty.print_str("\u{1b}[41mBackground color! (Red)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[42mBackground color! (Green)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[43mBackground color! (Yellow)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[44mBackground color! (Blue)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[45mBackground color! (Magenta)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[46mBackground color! (Cyan)\u{1b}[0m\n");
+    // tty.print_str("\u{1b}[47mBackground color! (White)\u{1b}[0m\n");
 
-        // noct_screen::fill(0);
-        // noct_tty::renderer::render(&mut tty);
-        // noct_screen::flush();
+    // noct_screen::fill(0);
+    // noct_tty::renderer::render(&mut tty);
+    // noct_screen::flush();
 
-        // loop {
-        //     let start_time = timestamp();
+    // loop {
+    //     let start_time = timestamp();
 
-        //     noct_screen::fill(0);
-        //     noct_tty::renderer::render(&mut tty);
-        //     noct_screen::flush();
+    //     noct_screen::fill(0);
+    //     noct_tty::renderer::render(&mut tty);
+    //     noct_screen::flush();
 
-        //     qemu_log!("Took: {} ms", timestamp() - start_time);
-        // }
+    //     qemu_log!("Took: {} ms", timestamp() - start_time);
+    // }
     // }
 
     // {
