@@ -13,7 +13,7 @@
 // FIXME: We need this?
 #define CURRENT_CENTURY 20
  
-int32_t century_register = 0x00;     // Set by ACPI table parsing code if possible
+uint16_t century_register = 0x00;     // Set by ACPI table parsing code if possible
  
 unsigned char cmos_second;
 unsigned char cmos_minute;

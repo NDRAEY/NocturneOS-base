@@ -10,6 +10,8 @@
 
 uint32_t system_processors_found = 0;
 
+extern uint16_t century_register;
+
 RSDPDescriptor* rsdp_find() {
     size_t saddr = 0x000E0000;
     char rsdp_ptr[8] = {'R','S','D',' ','P','T','R',' '};
@@ -173,12 +175,16 @@ void find_facp(size_t rsdt_addr) {
     qemu_log("SMI port: %x", fadt->SMI_CommandPort);
     qemu_log("Enable Command: %x", fadt->AcpiEnable);
     qemu_log("FirmwareControl: %x", fadt->FirmwareCtrl);
-    qemu_log("Century: %d", fadt->Century);
+    qemu_log("Century: %x", fadt->Century);
     qemu_log("ResetReg: %x", fadt->ResetReg.AddressLow);
     qemu_log("ResetReg: %x", fadt->ResetReg.AddressHigh);
     qemu_log("ResetReg AS: %d", fadt->ResetReg.AddressSpace);
     qemu_log("ResetValue: %x", fadt->ResetValue);
     qemu_log("TODO: Write 'Enable Command' to 'SMI Port' using `outb()` func");
+
+    if(fadt->Century) {
+        century_register = fadt->Century;
+    }
 
     //uint32_t reset_reg = fadt->ResetReg.AddressHigh;
     //map_single_page(get_kernel_page_directory(), reset_reg, reset_reg, PAGE_WRITEABLE);

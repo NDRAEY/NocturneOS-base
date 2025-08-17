@@ -324,7 +324,6 @@ int dpm_reg(char Letter, char *Name, char *FS, int Status, size_t Size, size_t S
 	qemu_log("  |-- Serial: %s", DPM_Disks[Index].Serial);
 	qemu_log("  |-- FileSystem: %s", DPM_Disks[Index].FileSystem ?: "(null)");
 	qemu_log("  |-- Status: %d", DPM_Disks[Index].Status);
-	// qemu_log("  |-- Size: %d", DPM_Disks[Index].Size);  // Most disks have capacity is greater than 4GB (32-bit space), so every disk with capacity greater than 4GB will give a bug. (We need to impelement BigInt?)
 	qemu_log("  |-- Sectors: %d", DPM_Disks[Index].Sectors);
 	qemu_log("  |-- SectorSize: %d", DPM_Disks[Index].SectorSize);
 	qemu_log("  |-- AddrMode: %d", DPM_Disks[Index].AddrMode);
