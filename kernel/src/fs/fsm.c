@@ -174,7 +174,7 @@ void fsm_reg(const char* Name,fsm_cmd_read_t Read, fsm_cmd_write_t Write, fsm_cm
     qemu_ok("Registered filesystem: `%s`", Name);
 }
 
-void fsm_dpm_update(char Letter){
+void fsm_dpm_update(char Letter) {
     if (Letter == -1) {
         // Global update
         for(int i = 0; i < 26; i++){

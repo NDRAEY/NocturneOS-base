@@ -290,7 +290,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     grub_modules_init(mboot);
 
-    fsm_dpm_update(-1);
+    // TarFS registered by grub_modules_init will always have the letter R.
+    fsm_dpm_update('R');
+
     kernel_start_time = getTicks();
 
     mtrr_init();
