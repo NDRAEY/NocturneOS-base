@@ -5,21 +5,24 @@ extern crate alloc;
 use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{
-    string::{String, ToString},
-    vec::Vec,
+    borrow::{Cow, ToOwned}, string::{String, ToString}, vec::Vec
 };
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
 };
-use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_logger::{qemu_err, qemu_log};
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
 pub mod disk_device;
 
-fn raw_ptr_to_string(ptr: *const c_char) -> String {
+fn raw_ptr_to_str(ptr: *const c_char) -> &'static str {
     let c_str = unsafe { CStr::from_ptr(ptr) };
-    c_str.to_string_lossy().into_owned()
+    c_str.to_str().unwrap()
+}
+
+fn raw_ptr_to_string(ptr: *const c_char) -> String {
+    raw_ptr_to_str(ptr).to_owned()
 }
 
 fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
@@ -43,6 +46,7 @@ unsafe extern "C" fn fun_read(
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
+
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
 
     result.unwrap_or(0) as _
@@ -63,20 +67,17 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    let entry = fl.find_file(&path);
+    let entity = match fl.find_file(&path) {
+        Err(_) => return FSM_FILE::missing(),
+        Ok(e) => e
+    };
 
-    if entry.is_err() {
-        return FSM_FILE::missing();
-    }
-
-    let entry = entry.unwrap();
-
-    let ftype = tarfs_type_to_fsm_type(entry._type);
+    let ftype = tarfs_type_to_fsm_type(entity._type);
 
     FSM_FILE::with_data(
-        entry.name,
+        entity.name,
         0,
-        entry.size as _,
+        entity.size as _,
         None,
         ftype as _,
         FSM_MOD_READ,
@@ -94,12 +95,11 @@ unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c
 }
 
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
-    let path = ".".to_string() + &raw_ptr_to_string(path);
+    let path = ".".to_string() + &raw_ptr_to_str(path);
 
     let data = fl.list_by_path_shallow(&path);
 
@@ -111,14 +111,14 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
     let data = data.unwrap();
 
     let files: Vec<FSM_FILE> = data
-        .iter()
+        .into_iter()
         .map(|elem| {
             FSM_FILE::with_data(
-                elem.name.clone(),
+                elem.name,
                 0,
                 elem.size as _,
                 None,
-                tarfs_type_to_fsm_type(elem._type.clone()) as _,
+                tarfs_type_to_fsm_type(elem._type) as _,
                 FSM_MOD_READ,
             )
         })
