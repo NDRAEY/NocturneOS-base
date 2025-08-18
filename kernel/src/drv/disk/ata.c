@@ -3,12 +3,10 @@
 #include <drv/atapi.h>
 #include <mem/vmm.h>
 #include <io/tty.h>
-#include "drv/disk/dpm.h"
 #include "sys/isr.h"
 #include "net/endianess.h"
 #include "drv/disk/ata_dma.h"
 #include "drv/disk/ata_pio.h"
-#include "drv/disk/mbr.h"
 #include "debug/hexview.h"
 #include "generated/diskman.h"
 #include "generated/diskman_commands.h"

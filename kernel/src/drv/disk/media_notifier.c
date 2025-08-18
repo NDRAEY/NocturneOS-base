@@ -7,8 +7,6 @@
 #include <fs/fsm.h>
 #include <mem/vmm.h>
 
-#include <drv/disk/dpm.h>
-
 #include <generated/diskman.h>
 #include <generated/diskman_commands.h>
 
@@ -42,11 +40,11 @@ void notifier_loop(uint8_t *statuses)
 
         char* status_string;
 
-        if(status == DPM_MEDIA_STATUS_OFFLINE) {
+        if(status == DISKMAN_MEDIUM_OFFLINE) {
             status_string = "Offline";
-        } else if(status == DPM_MEDIA_STATUS_LOADING) {
+        } else if(status == DISKMAN_MEDIUM_LOADING) {
             status_string = "Loading";
-        } else if(status == DPM_MEDIA_STATUS_ONLINE) {
+        } else if(status == DISKMAN_MEDIUM_ONLINE) {
             status_string = "Online";
         } else {
             status_string = "Unknown";
@@ -58,11 +56,11 @@ void notifier_loop(uint8_t *statuses)
             il_log(logstring);
             kfree(logstring);
 
-            if(status == DPM_MEDIA_STATUS_ONLINE) {
+            if(status == DISKMAN_MEDIUM_ONLINE) {
                 // Run filesystem detection on this disk
                 diskman_reload_partitions_for(name);
                 fsm_dpm_update(name);
-            } else if(status == DPM_MEDIA_STATUS_OFFLINE) {
+            } else if(status == DISKMAN_MEDIUM_OFFLINE) {
                 // Detach filesystem on eject
                 fsm_detach_fs(name);
                 diskman_reload_partitions_for(name);

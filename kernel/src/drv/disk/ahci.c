@@ -11,7 +11,6 @@
 #include "drv/disk/ata.h"
 #include "drv/atapi.h"
 #include "net/endianess.h"
-#include "drv/disk/dpm.h"
 #include "io/tty.h"
 #include "sys/sync.h"
 #include "generated/diskman.h"
@@ -496,7 +495,7 @@ size_t ahci_read_sectors(size_t port_num, uint64_t location, size_t sector_count
 		// tty_printf("ATAPI media is in: %d\n", status);
 
 		// Don't allow reading empty drive
-		if(status != DPM_MEDIA_STATUS_ONLINE) {
+		if(status != DISKMAN_MEDIUM_ONLINE) {
 			mutex_release(&ahci_mutex);
             // tty_printf("Refused.\n");
 			return 0;
@@ -852,11 +851,11 @@ size_t ahci_atapi_check_media_presence(size_t port_num) {
     //tty_printf("%02x %02x %02x\n", error_code.sense_key, error_code.sense_code, error_code.sense_code_qualifier);
 
     if(!is_ready && !is_loading) {
-        return DPM_MEDIA_STATUS_OFFLINE;
+        return DISKMAN_MEDIUM_OFFLINE;
     } else if(!is_ready && is_loading) {
-		return DPM_MEDIA_STATUS_LOADING;
+		return DISKMAN_MEDIUM_LOADING;
 	} else {
-		return DPM_MEDIA_STATUS_ONLINE;
+		return DISKMAN_MEDIUM_ONLINE;
 	}
 }
 
@@ -1004,7 +1003,7 @@ static int64_t ahci_diskman_control(void *priv_data,
 		if(ports[port_nr].is_atapi) {
 			size_t status = ahci_atapi_check_media_presence(port_nr);
 
-			if(status == DPM_MEDIA_STATUS_ONLINE) {
+			if(status == DISKMAN_MEDIUM_ONLINE) {
 				uint64_t cap = ahci_atapi_read_capacity(port_nr) & 0xffffffff;
 
 				memcpy(buffer, &cap, 4);

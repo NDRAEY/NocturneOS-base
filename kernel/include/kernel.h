@@ -40,7 +40,6 @@
 #include <drv/input/mouse.h>
 
 #include <drv/disk/ahci.h>
-#include <drv/disk/dpm.h>
 #include <drv/disk/ata_dma.h>
 
 #include <drv/cmos.h>

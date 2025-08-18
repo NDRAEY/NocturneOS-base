@@ -11,8 +11,6 @@
 #include "drv/atapi.h"
 #include "net/endianess.h"
 
-#include "drv/disk/dpm.h"
-
 #include "generated/diskman.h"
 #include "generated/diskman_commands.h"
 

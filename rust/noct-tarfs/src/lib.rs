@@ -63,8 +63,6 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     let path = ".".to_string() + &raw_ptr_to_string(path);
 
-    qemu_note!("Path: {path:?}");
-
     let entry = fl.find_file(&path);
 
     if entry.is_err() {

@@ -230,7 +230,6 @@ set(C_SRC
 	kernel/src/net/stack.c 
 	kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
-	kernel/src/drv/disk/mbr.c 
     kernel/src/lib/libvector/src/vector.c
     kernel/src/lib/libstring/src/string.c
     # kernel/src/lib/intrin.c

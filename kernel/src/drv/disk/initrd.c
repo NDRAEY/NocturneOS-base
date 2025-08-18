@@ -9,7 +9,6 @@
 
 #include <io/ports.h> 
 #include <fs/fsm.h>
-#include "drv/disk/dpm.h"
 #include "drv/disk/memdisk.h"
 #include "mem/vmm.h"
 

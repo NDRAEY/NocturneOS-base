@@ -23,7 +23,6 @@
 #include "net/stack.h"
 #include "drv/audio/hda.h"
 #include "sys/grub_modules.h"
-#include "drv/disk/mbr.h"
 #include "sys/file_descriptors.h"
 #include "drv/ps2.h"
 #include "net/dhcp.h"

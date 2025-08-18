@@ -12,7 +12,6 @@
 #include <lib/php/pathinfo.h>
 #include "mem/vmm.h"
 
-#include "drv/disk/dpm.h"
 #include <vector.h>
 
 #include "generated/diskman.h"
@@ -21,7 +20,6 @@
 static vector_t* registered_filesystems = NULL;
 static vector_t* registered_disks = NULL;
 
-static int C_FSM = 0;
 static bool fsm_debug = false;
 
 void fsm_init() {

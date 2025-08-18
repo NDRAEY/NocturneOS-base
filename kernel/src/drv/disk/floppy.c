@@ -12,7 +12,6 @@
 #include <io/ports.h>
 #include "sys/timer.h"
 #include "mem/vmm.h"
-#include "drv/disk/dpm.h"
 #include "io/tty.h"
 #include "sys/isr.h"
 #include "sys/registers.h"
