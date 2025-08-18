@@ -66,7 +66,6 @@ void notifier_loop(uint8_t *statuses)
                 // Detach filesystem on eject
                 fsm_detach_fs(name);
                 diskman_reload_partitions_for(name);
-
             }
 
             statuses[i] = status;

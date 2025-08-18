@@ -2,8 +2,6 @@ use core::ffi::{c_char, CStr};
 
 use alloc::ffi::CString;
 
-//pub mod cpuid;
-pub mod keyboard_buffer;
 pub mod mem;
 pub mod regs;
 pub mod scheduler;
