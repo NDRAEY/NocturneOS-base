@@ -1,4 +1,5 @@
 use alloc::string::String;
+use noct_diskman::structures::Command;
 use noct_dpm_sys::{
     DPM_COMMAND_EJECT, DPM_COMMAND_GET_MEDIUM_STATUS, DPM_COMMAND_READ_SENSE, DPM_ERROR_BUFFER, DPM_ERROR_CANT_MOUNT, DPM_ERROR_CANT_READ, DPM_ERROR_NOT_ENOUGH, DPM_ERROR_NOT_IMPLEMENTED, DPM_ERROR_NOT_READY
 };
@@ -27,11 +28,10 @@ pub enum MediaStatus {
     Online
 }
 
-fn command_to_bin(command: &str) -> Option<u32> {
+fn command_to_bin(command: &str) -> Option<Command> {
     match command {
-        "eject" => Some(DPM_COMMAND_EJECT),
-        "status" => Some(DPM_COMMAND_GET_MEDIUM_STATUS),
-        "sense" => Some(DPM_COMMAND_READ_SENSE),
+        "eject" => Some(Command::Eject),
+        "status" => Some(Command::GetMediumStatus),
         _ => None,
     }
 }
@@ -74,20 +74,12 @@ fn parse_reply(code: u32) -> Option<DPMControlResult> {
 
 pub fn show_help() {
     println!("Usage: diskctl disk_letter command");
-    println!("Commands: eject, status, sense");
+    println!("Commands: eject, status");
 }
 
 pub fn disk_ctl(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let disk = match args.get(0) {
-        Some(d) => match d.chars().nth(0) {
-            Some(d) => d.to_ascii_uppercase(),
-            None => {
-                println!("Invalid disk: {d:?}");
-                show_help();
-
-                return Err(1);
-            }
-        },
+        Some(d) => *d,
         None => {
             println!("No disk specified!");
             show_help();
@@ -116,40 +108,55 @@ pub fn disk_ctl(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize>
 
     let mut output_buffer = [0u8; 256];
 
-    let reply = unsafe { noct_dpm_sys::dpm_ctl(disk as u32 as _, command, output_buffer.as_mut_ptr() as *mut _, output_buffer.len() as _) };
+    let reply = noct_diskman::control(disk, command, &[], &mut output_buffer);
 
-    match parse_reply(reply) {
-        Some(r) => {
-            match r {
-                DPMControlResult::Ok => {
-                    println!("Ok!");
-                }
-                DPMControlResult::Error(e) => {
-                    println!("Drive error: {}", e);
-                },
-                DPMControlResult::MediaStatus(b) => {
-                    println!("Drive responsed with media status: {:?}", b);
-                },
-                DPMControlResult::HasData => {
-                    println!("Disk driver reported data presence.\n");
+    println!("Reply: {reply}");
 
-                    for chunk in (&output_buffer).chunks(16) {
-                        for subchunk in chunk.chunks(4) {
-                            for value in subchunk {
-                                print!("{:02x} ", value);
-                            }
-
-                            print!(" ");
-                        }
-                        println!();
-                    }
-                }
+    for chunk in (&output_buffer).chunks(16) {
+        for subchunk in chunk.chunks(4) {
+            for value in subchunk {
+                print!("{:02x} ", value);
             }
+
+            print!(" ");
         }
-        None => {
-            println!("Unknown reply: {reply:x}");
-        }
+        println!();
     }
+
+    // let reply = unsafe { noct_dpm_sys::dpm_ctl(disk as u32 as _, command, output_buffer.as_mut_ptr() as *mut _, output_buffer.len() as _) };
+
+    // match parse_reply(reply) {
+    //     Some(r) => {
+    //         match r {
+    //             DPMControlResult::Ok => {
+    //                 println!("Ok!");
+    //             }
+    //             DPMControlResult::Error(e) => {
+    //                 println!("Drive error: {}", e);
+    //             },
+    //             DPMControlResult::MediaStatus(b) => {
+    //                 println!("Drive responsed with media status: {:?}", b);
+    //             },
+    //             DPMControlResult::HasData => {
+    //                 println!("Disk driver reported data presence.\n");
+
+    //                 for chunk in (&output_buffer).chunks(16) {
+    //                     for subchunk in chunk.chunks(4) {
+    //                         for value in subchunk {
+    //                             print!("{:02x} ", value);
+    //                         }
+
+    //                         print!(" ");
+    //                     }
+    //                     println!();
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     None => {
+    //         println!("Unknown reply: {reply:x}");
+    //     }
+    // }
 
     Ok(())
 }
