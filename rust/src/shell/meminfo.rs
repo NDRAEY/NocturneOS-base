@@ -15,6 +15,7 @@ pub fn meminfo(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize>
     let v_used = data.used_virtual;
     let v_count = data.heap_allocated_count;
     let h_pk_u = data.peak_heap_usage;
+    let tmr = data.total_memory_run;
 
     println!("Физическая:");
     println!(
@@ -43,6 +44,12 @@ pub fn meminfo(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize>
         h_pk_u,
         h_pk_u >> 10,
         h_pk_u >> 20
+    );
+    println!(
+        "    Выделено за всё время работы системы: {} байт ({} KB | {} MB)",
+        tmr,
+        tmr >> 10,
+        tmr >> 20
     );
 
     Ok(())

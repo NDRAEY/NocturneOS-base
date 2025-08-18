@@ -260,7 +260,7 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
 
         let memused = memmeter(|| process_command(&mut context, &raw_input));
 
-        qemu_note!("Memory delta: {} bytes; Time: {}ms", memused, timestamp() - timestart);
+        qemu_note!("Memory delta: {} bytes (used {} bytes); Time: {}ms", memused.virtual_delta, memused.total_memory_run, timestamp() - timestart);
         // process_command(&mut context, &raw_input);
 
         context.command_history.push(raw_input);
