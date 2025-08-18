@@ -182,9 +182,9 @@ unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
     noct_diskman::read(&disk_name, 0x8001, &mut buffer);
 
     if ISO9660_OEM != buffer {
-        qemu_err!(
-            "Not valid ISO! (Disk: {disk_name:?})"            
-        );
+        // qemu_err!(
+        //     "Not valid ISO! (Disk: {disk_name:?})"            
+        // );
 
         return 0;
     }

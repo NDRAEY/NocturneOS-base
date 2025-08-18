@@ -251,8 +251,6 @@ void fsm_scan_all_disks() {
     for(size_t i = 0; i < disk_count; i++) {
         char* disk_id = diskman_get_disk_id_by_index(i);
 
-        qemu_printf("%s\n", disk_id);
-
         fsm_scan_for_filesystem(disk_id);
 
         kfree(disk_id);

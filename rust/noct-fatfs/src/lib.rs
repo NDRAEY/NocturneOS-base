@@ -285,7 +285,7 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, b: *mut c_char) {
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
     // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
-    qemu_note!("Fatfs try to detect!");
+    // qemu_note!("Fatfs try to detect!");
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
@@ -300,9 +300,9 @@ unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
         return 1;
     }
 
-    if let Err(e) = fat {
-        qemu_err!("Can't detect FATFS! {:?}", e);
-    }
+    // if let Err(e) = fat {
+    //     qemu_err!("Can't detect FATFS! {:?}", e);
+    // }
 
     0
 }
