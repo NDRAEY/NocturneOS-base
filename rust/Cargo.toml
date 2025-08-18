@@ -8,14 +8,13 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [ "eni-player", "noct-alloc", "noct-audio", "noct-diskman", "noct-dpm", "noct-dpm-sys", "noct-elfloader", "noct-fatfs", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-il", "noct-input", "noct-interrupts", "noct-ipc", "noct-iso9660", "noct-ksymparser", "noct-logger", "noct-mbr", "noct-noctfs", "noct-nvfs", "noct-path", "noct-pci", "noct-physmem", "noct-ps2", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-time", "noct-timer", "noct-tty", "pavi"]
+members = [ "eni-player", "noct-alloc", "noct-audio", "noct-diskman", "noct-elfloader", "noct-fatfs", "noct-fileio", "noct-fs", "noct-fs-sys", "noct-il", "noct-input", "noct-interrupts", "noct-ipc", "noct-iso9660", "noct-ksymparser", "noct-logger", "noct-mbr", "noct-noctfs", "noct-nvfs", "noct-path", "noct-pci", "noct-physmem", "noct-ps2", "noct-psf", "noct-sched", "noct-screen" , "noct-smbios", "noct-tarfs", "noct-time", "noct-timer", "noct-tty", "pavi"]
 
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.10.0"
 noct-alloc = { path = "./noct-alloc" }
 noct-fs-sys = { path = "./noct-fs-sys" }
-noct-dpm-sys = { path = "./noct-dpm-sys" }
 noct-logger = { path = "./noct-logger" }
 noct-path = { path = "./noct-path" }
 noct-iso9660 = { path = "./noct-iso9660" }
@@ -36,7 +35,6 @@ noct-elfloader = { path = "./noct-elfloader" }
 noct-ksymparser = { path = "./noct-ksymparser" }
 noct-audio = { path = "./noct-audio" }
 eni-player = { path = "./eni-player" }
-noct-dpm = { path = "./noct-dpm" }
 noct-il = { path = "./noct-il" }
 noct-fatfs = { path = "./noct-fatfs" }
 noct-interrupts = { path = "./noct-interrupts" }

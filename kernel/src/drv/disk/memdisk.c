@@ -16,44 +16,6 @@
 #include "generated/diskman.h"
 #include "generated/diskman_commands.h"
 
-size_t memdisk_dpm_read(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, void* Buffer){
-    (void)high_offset;
-    // qemu_printf("RD => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
-
-    memdisk_t* memdisk = dpm_info(disk + 65).Point;
-
-    size_t end_offset = low_offset + size;
-
-    if(end_offset > memdisk->size) {
-        size = memdisk->size - low_offset;
-    }
-
-    memcpy(Buffer, (char*)memdisk->memory + low_offset, size);
-    
-    return size;
-}
-
-size_t memdisk_dpm_write(size_t disk, uint64_t high_offset, uint64_t low_offset, size_t size, const void* Buffer){
-    (void)high_offset;
-
-    qemu_printf("WRITE? => D: %d; LO: (%x, %x); SZ: %d; B: %x\n", disk, low_offset, size, Buffer);
-
-    while(1)
-    ;
-
-	memdisk_t* memdisk = dpm_info(disk + 65).Point;
-
-    size_t end_offset = low_offset + size;
-
-    if(end_offset > memdisk->size) {
-        size = memdisk->size - low_offset;
-    }
-
-    memcpy(memdisk->memory + low_offset, Buffer, size);
-
-    return size;
-}
-
 static int64_t memdisk_diskman_read(void* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
     memdisk_t* memdisk = (memdisk_t*)priv_data;
     size_t end_offset = (size_t)location + size;

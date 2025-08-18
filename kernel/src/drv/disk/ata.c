@@ -57,35 +57,35 @@ void ide_soft_reset(size_t io) {
 }
 
 /// Функция для чтения
-size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer) {
-	// TODO: Add support for using high offset.
-	(void)high_offset;
+// size_t dpm_ata_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer) {
+// 	// TODO: Add support for using high offset.
+// 	(void)high_offset;
 
-    DPM_Disk dpm = dpm_info(Disk + 65);
-	// qemu_note("[ATA] [DPM] [DISK %d] [READ] Off: %d | Size: %d", dpm.Point, Offset, Size);
-    // TODO: @ndraey не забудь для своей функции сделать кол-во полученных байт
+//     DPM_Disk dpm = dpm_info(Disk + 65);
+// 	// qemu_note("[ATA] [DPM] [DISK %d] [READ] Off: %d | Size: %d", dpm.Point, Offset, Size);
+//     // TODO: @ndraey не забудь для своей функции сделать кол-во полученных байт
     
-	size_t disk_nr = (size_t)dpm.Point;
-    ata_read(disk_nr, Buffer, low_offset, Size);
+// 	size_t disk_nr = (size_t)dpm.Point;
+//     ata_read(disk_nr, Buffer, low_offset, Size);
     
-	return Size;
-}
+// 	return Size;
+// }
 
 
-/// Функция для записи
-size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
-	// TODO: Add support for using high offset.
-	(void)high_offset;
+// /// Функция для записи
+// size_t dpm_ata_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, const void* Buffer){
+// 	// TODO: Add support for using high offset.
+// 	(void)high_offset;
 
-    DPM_Disk dpm = dpm_info(Disk + 65);
-	// qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
-    // TODO: @ndraey не забудь для своей функции сделать кол-во записанных байт
+//     DPM_Disk dpm = dpm_info(Disk + 65);
+// 	// qemu_note("[ATA] [DPM] [DISK %d] [WRITE] Off: %d | Size: %d", dpm.Point, Offset, Size);
+//     // TODO: @ndraey не забудь для своей функции сделать кол-во записанных байт
 	
-	size_t disk_nr = (size_t)dpm.Point;
-    ata_write(disk_nr, Buffer, low_offset, Size);
+// 	size_t disk_nr = (size_t)dpm.Point;
+//     ata_write(disk_nr, Buffer, low_offset, Size);
     
-	return Size;
-}
+// 	return Size;
+// }
 
 static int64_t ata_diskman_read(void* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
 	// qemu_note("ata_diskman_read: p: %x; loc: %x; size: %x; buf: %p", priv_data, (uint32_t)location, (uint32_t)size, buf);

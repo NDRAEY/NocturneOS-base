@@ -410,20 +410,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "noct-dpm"
-version = "0.1.0"
-dependencies = [
- "noct-dpm-sys",
-]
-
-[[package]]
-name = "noct-dpm-sys"
-version = "0.1.0"
-dependencies = [
- "bindgen",
-]
-
-[[package]]
 name = "noct-elfloader"
 version = "0.1.0"
 dependencies = [
@@ -673,8 +659,6 @@ dependencies = [
  "noct-alloc",
  "noct-audio",
  "noct-diskman",
- "noct-dpm",
- "noct-dpm-sys",
  "noct-elfloader",
  "noct-fatfs",
  "noct-fileio",

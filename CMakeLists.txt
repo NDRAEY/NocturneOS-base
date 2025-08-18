@@ -159,7 +159,7 @@ set(C_SRC
 	kernel/src/drv/psf.c 
 	kernel/src/sys/unwind.c 
 	kernel/src/drv/disk/initrd.c 
-	kernel/src/drv/disk/dpm.c 
+	# kernel/src/drv/disk/dpm.c 
 	kernel/src/lib/list.c 
 	kernel/src/lib/fileio.c 
 	kernel/src/sys/sync.c 
