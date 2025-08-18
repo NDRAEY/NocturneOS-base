@@ -60,10 +60,13 @@ void notifier_loop(uint8_t *statuses)
 
             if(status == DPM_MEDIA_STATUS_ONLINE) {
                 // Run filesystem detection on this disk
+                diskman_reload_partitions_for(name);
                 fsm_dpm_update(name);
             } else if(status == DPM_MEDIA_STATUS_OFFLINE) {
                 // Detach filesystem on eject
                 fsm_detach_fs(name);
+                diskman_reload_partitions_for(name);
+
             }
 
             statuses[i] = status;
