@@ -15,4 +15,4 @@ noct-logger = { path = "../noct-logger" }
 noct-mbr = { path = "../noct-mbr" }
 
 [build-dependencies]
-cbindgen = { version = "0.28.0", default-features = false }
+cbindgen = { version = "0.29.0", default-features = false }

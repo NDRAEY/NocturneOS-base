@@ -14,4 +14,4 @@ noct-path = { path = "../noct-path" }
 noct-timer = { path = "../noct-timer" }
 
 [build-dependencies]
-cbindgen = { version = "0.28.0", default-features = false }
+cbindgen = { version = "0.29.0", default-features = false }
