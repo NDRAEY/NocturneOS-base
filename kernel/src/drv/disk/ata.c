@@ -236,18 +236,18 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
             qemu_log("Size is: %d", drives[drive_num].capacity);
 
             // (drive_num) is an index (0, 1, 2, 3) of disk
-            int disk_inx = dpm_reg(
-                    possible_dpm_letters_for_ata[drive_num],
-                    "CD/DVD drive",
-                    "Unknown",
-                    1,
-                    drives[drive_num].capacity * drives[drive_num].block_size,
-                    drives[drive_num].capacity,
-                    drives[drive_num].block_size,
-                    3, // Ставим 3ку, так как будем юзать функции для чтения и записи
-                    "DISK1234567890",
-                    (void*)drive_num // Оставим тут индекс диска
-            );
+            // int disk_inx = dpm_reg(
+            //         possible_dpm_letters_for_ata[drive_num],
+            //         "CD/DVD drive",
+            //         "Unknown",
+            //         1,
+            //         drives[drive_num].capacity * drives[drive_num].block_size,
+            //         drives[drive_num].capacity,
+            //         drives[drive_num].block_size,
+            //         3, // Ставим 3ку, так как будем юзать функции для чтения и записи
+            //         "DISK1234567890",
+            //         (void*)drive_num // Оставим тут индекс диска
+            // );
 
 			char* new_id = diskman_generate_new_id("ide");
 
@@ -263,13 +263,13 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 				ata_diskman_control
 			);
 
-            if (disk_inx < 0){
-                qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
-            } else {
-                qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
-				dpm_set_read_func(disk_inx + 65, &dpm_ata_read);
-				dpm_set_write_func(disk_inx + 65, &dpm_ata_write);
-            }
+            // if (disk_inx < 0){
+            //     qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
+            // } else {
+            //     qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
+			// 	dpm_set_read_func(disk_inx + 65, &dpm_ata_read);
+			// 	dpm_set_write_func(disk_inx + 65, &dpm_ata_write);
+            // }
 
             kfree(ide_buf);
 
@@ -344,18 +344,18 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
         drives[drive_num].is_dma = (ide_buf[49] & 0x200) ? true : false;
 
 		// (drive_num) is an index (0, 1, 2, 3) of disk
-		int disk_inx = dpm_reg(
-				possible_dpm_letters_for_ata[drive_num],
-				"ATA IDE Disk",
-				"Unknown",
-				1,
-				capacity * 512,
-				capacity,
-				drives[drive_num].block_size,
-				3, // Ставим 3ку, так как будем юзать функции для чтения и записи
-				"DISK1234567890",
-                (void*)drive_num // Оставим тут индекс диска
-		);
+		// int disk_inx = dpm_reg(
+		// 		possible_dpm_letters_for_ata[drive_num],
+		// 		"ATA IDE Disk",
+		// 		"Unknown",
+		// 		1,
+		// 		capacity * 512,
+		// 		capacity,
+		// 		drives[drive_num].block_size,
+		// 		3, // Ставим 3ку, так как будем юзать функции для чтения и записи
+		// 		"DISK1234567890",
+        //         (void*)drive_num // Оставим тут индекс диска
+		// );
 
 		char* new_id = diskman_generate_new_id("ide");
 
@@ -371,14 +371,14 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			ata_diskman_control
 		);
 
-        if (disk_inx < 0){
-            qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
-        } else {
-            qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
-            // dpm_fnc_write(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read, &dpm_ata_write);
-			dpm_set_read_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read);
-			dpm_set_write_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_write);
-        }
+        // if (disk_inx < 0){
+        //     qemu_err("[ATA] [DPM] [ERROR] An error occurred during disk registration, error code: %d",disk_inx);
+        // } else {
+        //     qemu_ok("[ATA] [DPM] [Successful] [is_packet: %d] Your disk index: %d",drives[drive_num].is_packet, disk_inx);
+        //     // dpm_fnc_write(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read, &dpm_ata_write);
+		// 	dpm_set_read_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_read);
+		// 	dpm_set_write_func(possible_dpm_letters_for_ata[drive_num], &dpm_ata_write);
+        // }
 
 		qemu_log("Identify finished");
 	}else{

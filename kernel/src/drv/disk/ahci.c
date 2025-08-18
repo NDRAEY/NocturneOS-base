@@ -1130,18 +1130,18 @@ void ahci_identify(size_t port_num, bool is_atapi) {
     ports[port_num].disk_capacity = capacity;
 
 	//if(!is_atapi) {
-		int disk_inx = dpm_reg(
-	           (char)dpm_searchFreeIndex(0),
-	           "SATA Disk",
-	           "Unknown",
-	           1,
-	           capacity * block_size,
-	           capacity,
-	           block_size,
-	           3, // Ставим 3ку, так как будем юзать функции для чтения и записи
-	           "DISK1234567890",
-	           (void*)port_num // Оставим тут индекс диска
-	   	);
+		// int disk_inx = dpm_reg(
+	    //        (char)dpm_searchFreeIndex(0),
+	    //        "SATA Disk",
+	    //        "Unknown",
+	    //        1,
+	    //        capacity * block_size,
+	    //        capacity,
+	    //        block_size,
+	    //        3, // Ставим 3ку, так как будем юзать функции для чтения и записи
+	    //        "DISK1234567890",
+	    //        (void*)port_num // Оставим тут индекс диска
+	   	// );
 
 		char* new_id = diskman_generate_new_id("ahci");
 
@@ -1164,15 +1164,15 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 			ahci_diskman_control
 		);
 	
-		if (disk_inx < 0){
-		    qemu_err("[SATA/DPM] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
-		} else {
-		    qemu_ok("[SATA/DPM] [Successful] Registering OK");
+		// if (disk_inx < 0){
+		//     qemu_err("[SATA/DPM] [ERROR] An error occurred during disk registration, error code: %d", disk_inx);
+		// } else {
+		//     qemu_ok("[SATA/DPM] [Successful] Registering OK");
 
-			dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
-			dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
-			dpm_set_command_func(disk_inx + 65, &ahci_dpm_ctl);
-		}
+		// 	dpm_set_read_func(disk_inx + 65, &ahci_dpm_read);
+		// 	dpm_set_write_func(disk_inx + 65, &ahci_dpm_write);
+		// 	dpm_set_command_func(disk_inx + 65, &ahci_dpm_ctl);
+		// }
 	//}
 
     kfree(memory);
