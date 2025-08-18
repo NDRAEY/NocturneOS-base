@@ -103,3 +103,4 @@ void fsm_dir(int FIndex, const char* disk_name, const char *Name, FSM_DIR *out);
 void fsm_dpm_update(const char* disk_id);
 
 const char* fsm_get_disk_filesystem(const char* disk_id);
+void fsm_detach_fs(const char* disk_id);

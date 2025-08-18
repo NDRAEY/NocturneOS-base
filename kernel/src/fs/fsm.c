@@ -189,6 +189,21 @@ const char* fsm_get_disk_filesystem(const char* disk_id) {
     return 0;
 }
 
+void fsm_detach_fs(const char* disk_id) {
+    // Remove all mountpoints for `disk_id`
+    for(size_t dx = 0; dx < registered_disks->size; dx++) {
+        FSM_Mount* mount = (FSM_Mount*)vector_get(registered_disks, dx).element;
+
+        if(strcmp(mount->diskman_disk_id, disk_id) == 0) {
+            kfree(mount);
+            vector_erase_nth(registered_disks, dx);
+
+            dx--;
+            continue;
+        }
+    }
+}
+
 void fsm_scan_for_filesystem(const char* disk_id) {
     // Remove all previous mountpoints
     for(size_t dx = 0; dx < registered_disks->size; dx++) {
