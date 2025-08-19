@@ -61,7 +61,7 @@ void unload_elf(elf_t* elf) {
 	kfree(elf);
 }
 
-int32_t spawn_prog(const char *name, int argc, char* eargv[]) {
+int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     __asm__ volatile("cli");
 
     elf_t* elf_file = load_elf(name);
@@ -153,5 +153,5 @@ int32_t spawn_prog(const char *name, int argc, char* eargv[]) {
 
     __asm__ volatile("sti");
 
-    return 0;
+    return proc->pid;
 }

@@ -7,6 +7,7 @@
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/mtrr.h"
+#include "sys/sync.h"
 
 uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана
 volatile uint32_t framebuffer_pitch;				/// Частота обновления экрана
@@ -227,8 +228,11 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
 #endif
 }
 
+mutex_t graphics_flush_mutex = false;
+
 __attribute__((force_align_arg_pointer)) void screen_update() {
 // #ifdef __SSE2__
+    mutex_get(&graphics_flush_mutex, true);
 #if 0
     if((size_t)back_framebuffer_addr % 16 == 0) {
         __m128i* src_buffer = (__m128i*)back_framebuffer_addr;
@@ -243,4 +247,5 @@ __attribute__((force_align_arg_pointer)) void screen_update() {
 #else
     memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
 #endif
+    mutex_release(&graphics_flush_mutex);
 }

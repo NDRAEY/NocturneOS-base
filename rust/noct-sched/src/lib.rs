@@ -4,9 +4,9 @@
 #![allow(non_snake_case)]
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use core::ffi::{CStr, c_void};
+use core::ffi::{c_char, c_void, CStr};
 
-use alloc::{boxed::Box, string::String};
+use alloc::{boxed::Box, ffi::CString, string::String};
 
 extern crate alloc;
 
@@ -29,6 +29,17 @@ pub fn task_yield() {
     unsafe {
         task_switch_v2_wrapper(core::mem::zeroed::<registers>());
     };
+}
+
+pub fn spawn_prog_rust(path: &str, args: &[*const c_char]) -> i32 {
+    let path = CString::new(path).unwrap();
+
+    let argc = args.len();
+    let argv = args.as_ptr();
+
+    let name = path.as_ptr();
+
+    unsafe { spawn_prog(name, argc as _, argv) }
 }
 
 type BoxedFnOnce = Box<dyn FnOnce() + Send>;

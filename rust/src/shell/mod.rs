@@ -1,3 +1,6 @@
+use core::ffi::c_char;
+
+use alloc::ffi::CString;
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
@@ -9,6 +12,9 @@ use noct_input::kbd::CharKey;
 use noct_input::kbd::Key;
 use noct_input::kbd::SpecialKey;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
+use noct_sched::process_wait;
+use noct_sched::spawn_prog;
+use noct_sched::spawn_prog_rust;
 use noct_timer::timestamp;
 
 use crate::std::io::input::getchar;
@@ -340,18 +346,31 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
                             // todo!("Run ELF file");
                             // run(path.as_str(), &com);
 
-                            let program = noct_elfloader::load_elf_file(path.as_str());
+                            // let program = noct_elfloader::load_elf_file(path.as_str());
 
-                            match program {
-                                Ok(mut prog) => {
-                                    let args: Vec<&str> =
-                                        arguments.iter().map(|a| a.as_str()).collect();
-                                    prog.run(&args);
-                                }
-                                Err(e) => {
-                                    println!("Error: {e:?}");
-                                }
-                            }
+                            // match program {
+                            //     Ok(mut prog) => {
+                            //         let args: Vec<&str> =
+                            //             arguments.iter().map(|a| a.as_str()).collect();
+
+                            //         prog.run(&args);
+                            //     }
+                            //     Err(e) => {
+                            //         println!("Error: {e:?}");
+                            //     }
+                            // }
+
+                            let args: Vec<&str> =
+                                arguments.iter().map(|a| a.as_str()).collect();
+
+                            let cstrings = args.iter().map(|&x| CString::new(x).unwrap()).collect::<Vec<_>>();
+                            let args = cstrings.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
+
+                            let pid = spawn_prog_rust(&path, &args);
+
+                            qemu_note!("Started PID {pid}");
+
+                            unsafe { process_wait(pid as _) };
                         }
                         Err(_) => {
                             println!("{}: not an ELF file", path);
