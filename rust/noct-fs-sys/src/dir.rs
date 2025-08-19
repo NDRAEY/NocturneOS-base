@@ -1,6 +1,6 @@
-use alloc::string::{String, ToString};
+use alloc::{ffi::CString, string::{String, ToString}};
 
-use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, FSM_DIR, FSM_FILE};
+use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, nvfs_info, FSM_DIR, FSM_FILE};
 
 #[derive(Debug)]
 pub struct Directory<'a> {
@@ -11,13 +11,11 @@ pub struct Directory<'a> {
 
 impl Directory<'_> {
     pub fn from_path<PathPattern: ToString>(path: &PathPattern) -> Option<Self> {
-        let mut st = path.to_string();
-        st.push('\0');
+        let st = CString::new(path.to_string()).unwrap();
 
         let mut data = unsafe { core::mem::zeroed::<FSM_DIR>() };
 
-        // let pr = unsafe { nvfs_dir(st.as_ptr() as *const _) };
-        unsafe { nvfs_dir_v2(st.as_ptr() as *const _, &mut data as *mut _) };
+        unsafe { nvfs_dir_v2(st.as_ptr(), &mut data as *mut _) };
 
         if !data.Ready {
             return None;
@@ -52,9 +50,11 @@ impl Directory<'_> {
     }
 
     pub fn is_accessible<PathPattern: ToString>(path: &PathPattern) -> bool {
-        let dir = Directory::from_path(path);
+        let st = CString::new(path.to_string()).unwrap();
 
-        dir.is_some()
+        let entry = unsafe { nvfs_info(st.as_ptr()) };
+
+        entry.Ready
     }
 }
 

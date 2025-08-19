@@ -1,8 +1,12 @@
 use core::alloc::Layout;
 
-use alloc::{string::String, vec::Vec};
+use alloc::{borrow::ToOwned, string::String, vec::Vec};
 use elf::{
-    abi::{ET_REL, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE, STT_SECTION}, endian::AnyEndian, ElfBytes
+    ElfBytes,
+    abi::{
+        ET_REL, R_X86_64_PC32, SHT_PROGBITS, SHT_REL, STB_GLOBAL, STT_FUNC, STT_NOTYPE, STT_SECTION,
+    },
+    endian::AnyEndian,
 };
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
@@ -13,7 +17,6 @@ pub struct ModuleHandle {
     path: String,
 
     entry_point: usize,
-    loaded_segments: Vec<LoadInfo>,
 }
 
 pub struct MemoryPool {
@@ -22,7 +25,9 @@ pub struct MemoryPool {
 
 impl MemoryPool {
     pub fn new() -> Self {
-        Self { pointers: Vec::new() }
+        Self {
+            pointers: Vec::new(),
+        }
     }
 
     pub fn allocate_array(&mut self, layout: Layout) -> *mut u8 {
@@ -41,6 +46,7 @@ impl Drop for MemoryPool {
 }
 
 pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
+    // Read entire module file to the memrory.
     let data = match noct_fs::read(path) {
         Ok(data) => data,
         Err(e) => {
@@ -49,6 +55,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         }
     };
 
+    // Begin parsing basic ELF info.
     let elf = match ElfBytes::<AnyEndian>::minimal_parse(&data) {
         Ok(elf) => elf,
         Err(err) => {
@@ -62,8 +69,13 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         return Err(LoadError::InvalidELFType);
     }
 
-    let (symtab, strtab) = elf.symbol_table().unwrap().unwrap();
+    // Get the symbol table.
+    let (symtab, strtab) = elf
+        .symbol_table()
+        .map_err(|e| LoadError::ElfParser(e))?
+        .unwrap();
 
+    // Get all sections with progbits and a StringTable.
     let (all_progbits, secnamtable) = elf
         .section_headers_with_strtab()
         .map(|x| {
@@ -74,20 +86,24 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         })
         .unwrap();
 
+
+    // The list of loaded segments. Contains the segment name and its address.
     let mut loaded_segments: Vec<(&str, usize)> = Vec::new();
 
+    // Create a memory pool that manages allocated frames and frees them on `drop()` (useful on early Result::Err return)
     let mut mempool = MemoryPool::new();
 
     for i in all_progbits {
         let memsize = i.sh_size as usize;
-        let ptr = mempool.allocate_array(Layout::array::<u8>(memsize).unwrap());
+        
+        // Allocate an array in memory pool
+        let ptr: *mut u8 = mempool.allocate_array(Layout::array::<u8>(memsize).unwrap());
 
+        // Copy section data into pool entry.
         let (data, _) = elf.section_data(&i).unwrap();
-
         unsafe { ptr.copy_from(data.as_ptr(), data.len()) };
 
         let name = secnamtable.get(i.sh_name as _).unwrap();
-
         loaded_segments.push((name, ptr.addr()));
 
         qemu_note!("{i:x?} {name} {ptr:x?}");
@@ -95,6 +111,9 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     qemu_note!("{loaded_segments:x?}");
 
+    // This variable might be renamed.
+    // It contains a Vec of relocated symbols.
+    // (index, name, total offset)
     let mut exploreable_symbols: Vec<(usize, &str, usize)> = Vec::new();
 
     for (idx, i) in symtab.iter().enumerate() {
@@ -131,7 +150,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
             qemu_note!("IMPLEMENT: {name}");
 
             if name == "_GLOBAL_OFFSET_TABLE_" {
-                qemu_warn!("What the fuck is the `_GLOBAL_OFFSET_TABLE_`?");
+                qemu_warn!("What the hell is the `_GLOBAL_OFFSET_TABLE_`?");
                 continue;
             }
 
@@ -148,6 +167,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     qemu_note!("{exploreable_symbols:x?}");
 
+    // Get relocations
     let rels = elf
         .section_headers_with_strtab()
         .map(|x| x.0.unwrap())
@@ -191,11 +211,9 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
             let value: usize;
 
-            // qemu_note!("S: {substitute:x?} ( {substitute:x} - {segment_offset:x} ) A: {inner_value:x?} P: {:x?}", i.r_offset);
-
             if i.r_type == R_X86_64_PC32 {
                 let s = substitute.overflowing_sub(segment_offset).0;
-                let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+                let a = inner_value; // YAAAAAH THE ADDEND IS A VALUE FFFFFFFC written in disasm!
                 let p = i.r_offset as usize;
 
                 value = (s.overflowing_add(a).0).overflowing_sub(p).0;
@@ -204,7 +222,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
             /* R_386_32 */
             {
                 let s = substitute;
-                let a = inner_value; // YAAAAAH THE FUCKING ADDEND IS A VALUE FFFFFFFC written in disasm!
+                let a = inner_value; // YAAAAAH THE ADDEND IS A VALUE FFFFFFFC written in disasm!
 
                 value = s + a;
                 unsafe { writing_address.write_unaligned(value as u32) };
@@ -219,6 +237,8 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         }
     }
 
+    // Every module should have its own `module_init` entry point
+    // So, let's find it and get it's entry point address.
     let entry_point = exploreable_symbols
         .iter()
         .find(|&&x| x.1 == "module_init")
@@ -232,11 +252,13 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     qemu_note!("Entry point at: {entry_point:x}");
 
-    let ep: fn() -> () = unsafe { core::mem::transmute(entry_point) };
+    // Make a function out of address.
+    let ep: extern "C" fn() -> () = unsafe { core::mem::transmute(entry_point) };
 
     ep();
 
+    // We don't need to unload our module now, so forget it.
     core::mem::forget(mempool);
 
-    return Err(LoadError::System("not implemented yet"));
+    Ok(ModuleHandle { path: path.to_owned(), entry_point: entry_point })
 }

@@ -26,7 +26,7 @@ pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
 
     println!("Listing directory: `{}`\n", path);
 
-    for file in &dir {
+    for file in dir.into_iter() {
         let fdatetime = file.file.LastTime;
         let ftype = file.file.Type;
         let fsize = file.file.Size;

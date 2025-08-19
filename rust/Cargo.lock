@@ -926,9 +926,9 @@ dependencies = [
 
 [[package]]
 name = "tarfs"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef3256affb82ed8e0a959a1f082959d72d6d2c18b86bd16230031dd4ca3d02c"
+checksum = "8221d2129b9e5d3f752407dddda7ab8ed68914987252f56db8c4a8bac7ab21ce"
 dependencies = [
  "no_std_io",
 ]

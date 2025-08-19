@@ -193,24 +193,6 @@ end:
 	return file;
 }
 
-FSM_DIR* nvfs_dir(const char* Name){
-	NVFS_DECINFO* vinfo = nvfs_decode(Name);
-	
-	FSM_DIR* dir = kcalloc(sizeof(FSM_DIR), 1);
-
-	if (!vinfo->Ready) {
-		goto end;
-	}
-
-	fsm_dir(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, dir);
-
-	//new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
-	
-	end:
-	kfree(vinfo);
-	return dir;
-}
-
 void nvfs_dir_v2(const char* Name, FSM_DIR* dir) {
 	NVFS_DECINFO* vinfo = nvfs_decode(Name);
 	
