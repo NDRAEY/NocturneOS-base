@@ -20,7 +20,7 @@ struct ThatDisk {
 }
 
 impl iso9660_simple::Read for ThatDisk {
-    fn read(&mut self, position: usize, size: usize, buffer: &mut [u8]) -> Option<()> {
+    fn read(&mut self, position: usize, buffer: &mut [u8]) -> Option<()> {
         noct_diskman::read(&self.disk_name, position as _, buffer);
 
         Some(())
