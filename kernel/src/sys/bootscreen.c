@@ -10,6 +10,7 @@
 #include <io/ports.h>
 #include "drv/psf.h"
 #include "io/tty.h"
+#include "lib/string.h"
 
 static bool bootscreen_initialized = false;
 uint32_t theme = 0;					/// Текущая тема (0 или 1)

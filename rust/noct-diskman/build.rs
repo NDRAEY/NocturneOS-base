@@ -46,28 +46,26 @@ fn write_diskman_c_header() {
     let mut file = std::fs::OpenOptions::new()
         .write(true)
         .create(true)
+        .truncate(true)
         .open("../../kernel/include/generated/diskman_commands.h")
         .unwrap();
 
-    file.write(b"#pragma once\n\n").unwrap();
+    file.write_all(b"#pragma once\n\n").unwrap();
 
     for (command, code) in DISKMAN_COMMANDS {
-        file.write(format!("#define DISKMAN_COMMAND_{command} ({code})\n").as_bytes())
+        file.write_all(format!("#define DISKMAN_COMMAND_{command} ({code})\n").as_bytes())
             .unwrap();
     }
 
     for (dtype, code) in DISKMAN_DRIVE_TYPES {
-        file.write(format!("#define DISKMAN_TYPE_{dtype} ({code})\n").as_bytes())
+        file.write_all(format!("#define DISKMAN_TYPE_{dtype} ({code})\n").as_bytes())
             .unwrap();
     }
 
     for (mstatus, code) in DISKMAN_MEDIUM_STATUSES {
-        file.write(format!("#define DISKMAN_MEDIUM_{mstatus} ({code})\n").as_bytes())
+        file.write_all(format!("#define DISKMAN_MEDIUM_{mstatus} ({code})\n").as_bytes())
             .unwrap();
     }
-
-    let pos = file.stream_position().unwrap();
-    file.set_len(pos).unwrap();
 }
 
 fn main() {

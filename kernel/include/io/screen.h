@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common.h>
-#include "lib/string.h"
 #include "multiboot.h"
 
 extern uint8_t* framebuffer_addr;
@@ -13,7 +12,6 @@ extern volatile uint32_t framebuffer_size;
 #define VESA_WIDTH  (getScreenWidth())
 #define VESA_HEIGHT (getScreenHeight())
 
-
 #define PACK_INTO_RGB(struct_px) ((struct_px.r & 0xff) << 16)  |\
                                  ((struct_px.g & 0xff) << 8) |\
                                   (struct_px.b & 0xff)
@@ -24,13 +22,6 @@ typedef struct rgba_struct {
 	uint8_t b;
 	uint8_t a;
 } rgba_color;
-
-typedef struct rgb_struct {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} rgb_color;
-
 
 enum colors  {
 	VESA_BLACK = 0x000000,
@@ -127,7 +118,6 @@ inline static __attribute__((always_inline)) uint32_t getDisplaySize(){
 void setPixelAlpha(uint32_t x, uint32_t y, rgba_color color);
 void rect_copy(int x, int y, int width, int height);
 void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch);
-
 
 void init_vbe(const multiboot_header_t *mboot);
 void screen_update();

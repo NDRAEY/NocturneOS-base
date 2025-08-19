@@ -175,7 +175,7 @@ pub extern "C" fn diskman_get_disk_id_by_index(index: c_uint) -> *mut c_char {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn diskman_reload_partitions_for(disk_id: *const c_char) {
+pub unsafe extern "C" fn diskman_reload_partitions_for(disk_id: *const c_char) {
     if disk_id.is_null() {
         return;
     }
