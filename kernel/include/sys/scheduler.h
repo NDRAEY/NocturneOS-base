@@ -46,7 +46,7 @@ typedef	volatile struct {
 	size_t          page_tables_virts[1024];    /* Page table addresses */
     // Every process should have a path that process operates
     char*           cwd;
-} __attribute__((packed)) process_t;
+} process_t;
 
 /*-----------------------------------------------------------------------------
  * 		Thread structure
@@ -75,7 +75,7 @@ typedef volatile struct
     size_t	eax, ebx, ecx, edx, esi, edi, ebp;
     // 72
     thread_state_t state;
-} __attribute__((packed)) thread_t;
+} thread_t;
 
 /* Initialization */
 void init_task_manager(void);
