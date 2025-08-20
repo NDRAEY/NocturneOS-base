@@ -1,7 +1,7 @@
 #include "sys/unwind.h"
 #include "io/ports.h"
 #include "io/tty.h"
-//#include "lib/string.h"
+#include "lib/string.h"
 
 
 volatile size_t NOCTURNE_ksym_data_start = 0;

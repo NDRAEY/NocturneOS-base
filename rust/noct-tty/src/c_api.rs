@@ -6,7 +6,7 @@ use spin::Mutex;
 use crate::{console::Console, renderer::{RenderedConsole}};
 
 lazy_static! {
-    static ref CONSOLE: Mutex<OnceCell<RenderedConsole>> = Mutex::new(OnceCell::new());
+    static ref CONSOLE: Mutex<Option<RenderedConsole>> = Mutex::new(None);
 }
 
 pub fn init() {
@@ -15,7 +15,7 @@ pub fn init() {
     let columns = dimensions.0 / 8;
     let rows = dimensions.1 / 16;
 
-    CONSOLE.lock().get_or_init(|| RenderedConsole::new(Console::new(rows, columns)));
+    *CONSOLE.lock() = Some(RenderedConsole::new(Console::new(rows, columns)));
 }
 
 #[unsafe(no_mangle)]
@@ -25,7 +25,7 @@ pub extern "C" fn tty_init() {
 
 pub fn tty_puts_str(s: &str) {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
     
     console.print_str(s);
 }
@@ -52,7 +52,7 @@ pub unsafe extern "C" fn tty_puts_raw(s: *const c_char, length: usize) {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_putchar(c: c_char) {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
 
     console.console_mut().print_char(char::from(c as u8));
     console.render(None);
@@ -61,7 +61,7 @@ pub extern "C" fn tty_putchar(c: c_char) {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_clear() {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
 
     console.console_mut().clear();
     console.console_mut().set_position(0, 0);
@@ -74,7 +74,7 @@ pub extern "C" fn tty_clear() {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_get_pos_x() -> u32 {
     let binding= CONSOLE.lock();
-    let console = binding.get().unwrap();
+    let console = binding.as_ref().unwrap();
 
     console.console().position().1 as u32
 }
@@ -82,7 +82,7 @@ pub extern "C" fn tty_get_pos_x() -> u32 {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_get_pos_y() -> u32 {
     let binding= CONSOLE.lock();
-    let console = binding.get().unwrap();
+    let console = binding.as_ref().unwrap();
 
     console.console().position().0 as u32
 }
@@ -90,7 +90,7 @@ pub extern "C" fn tty_get_pos_y() -> u32 {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_update() {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
 
     unsafe {
         noct_screen::clean_screen();
@@ -102,7 +102,7 @@ pub extern "C" fn tty_update() {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_set_pos_x(x: u32) {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
 
     let y = console.console().position().1;
     console.console_mut().set_position(x as usize, y);
@@ -111,7 +111,7 @@ pub extern "C" fn tty_set_pos_x(x: u32) {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_set_pos_y(y: u32) {
     let mut binding= CONSOLE.lock();
-    let console = binding.get_mut().unwrap();
+    let console = binding.as_mut().unwrap();
 
     let x = console.console().position().0;
     console.console_mut().set_position(x, y as usize);
@@ -120,7 +120,7 @@ pub extern "C" fn tty_set_pos_y(y: u32) {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_get_width() -> u32 {
     let binding= CONSOLE.lock();
-    let console = binding.get().unwrap();
+    let console = binding.as_ref().unwrap();
 
     console.console().size_chars().1 as u32
 }
@@ -128,7 +128,7 @@ pub extern "C" fn tty_get_width() -> u32 {
 #[unsafe(no_mangle)]
 pub extern "C" fn tty_get_height() -> u32 {
     let binding= CONSOLE.lock();
-    let console = binding.get().unwrap();
+    let console = binding.as_ref().unwrap();
 
     console.console().size_chars().0 as u32
 }

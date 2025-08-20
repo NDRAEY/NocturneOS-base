@@ -27,7 +27,7 @@ size_t prdt_entry_count = 16;
 
 extern ata_drive_t drives[4];
 
-mutex_t ata_dma_mutex = false;
+mutex_t ata_dma_mutex = {};
 
 void ata_dma_init() {
     uint8_t result = pci_find_device(ATA_PCI_VEN, ATA_PCI_DEV, &ata_busnum, &ata_slot, &ata_func);
@@ -185,7 +185,7 @@ status_t ata_dma_read_sectors(uint8_t drive, uint8_t *buf, uint32_t lba, uint8_t
 		return E_DEVICE_NOT_ONLINE;
 	}
 
-	mutex_get(&ata_dma_mutex, true);
+	mutex_get(&ata_dma_mutex);
 
 	// Clear our prdt
 	ata_dma_clear_prdt();

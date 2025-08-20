@@ -228,11 +228,11 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
 #endif
 }
 
-mutex_t graphics_flush_mutex = false;
+mutex_t graphics_flush_mutex = { .lock = false };
 
 __attribute__((force_align_arg_pointer)) void screen_update() {
 // #ifdef __SSE2__
-    mutex_get(&graphics_flush_mutex, true);
+    mutex_get(&graphics_flush_mutex);
 #if 0
     if((size_t)back_framebuffer_addr % 16 == 0) {
         __m128i* src_buffer = (__m128i*)back_framebuffer_addr;

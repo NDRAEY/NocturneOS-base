@@ -1,13 +1,13 @@
-#ifndef		SYNC_H
-#define		SYNC_H
+#pragma once
 
 #include	"common.h"
 
-typedef		bool	mutex_t;
+typedef struct {
+    volatile bool lock;
+} mutex_t;
 
 /* Get mutex */
-bool mutex_get(mutex_t* mutex, bool wait);
+void mutex_get(mutex_t* mutex);
+
 /* Release mutex */
 void mutex_release(mutex_t* mutex);
-
-#endif
