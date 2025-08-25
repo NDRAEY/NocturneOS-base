@@ -58,11 +58,13 @@ void vmm_init()
 	// 	PAGE_SIZE
 	// );
 
-	size_t arena_phys = phys_alloc_single_page();
+	size_t pages_occupied = (system_heap.capacity * sizeof(struct heap_entry)) / PAGE_SIZE;
+
+	size_t arena_phys = phys_alloc_multi_pages(pages_occupied);
 	size_t arena_virt = system_heap.start;
 
 	// FIXME: Setting this to PAGE_SIZE causes undefined behaviour
-	system_heap.start += PAGE_SIZE * 3;
+	system_heap.start += PAGE_SIZE * (pages_occupied + 1);
 
 	map_pages(get_kernel_page_directory(),
 		arena_phys,
