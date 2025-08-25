@@ -77,6 +77,11 @@ pub fn bits_per_pixel() -> usize {
 }
 
 #[inline]
+pub fn buf_size() -> usize {
+    unsafe { framebuffer_size as _ }
+}
+
+#[inline]
 pub fn flush() {
     let backfb = back_framebuffer();
     let real_screen = framebuffer_mut();

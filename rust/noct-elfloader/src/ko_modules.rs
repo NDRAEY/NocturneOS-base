@@ -10,7 +10,7 @@ use elf::{
 };
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 
-use crate::{LoadError, LoadInfo};
+use crate::LoadError;
 
 #[derive(Debug)]
 pub struct ModuleHandle {

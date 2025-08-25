@@ -1,6 +1,6 @@
 use std::{
     env,
-    io::{Seek, Write},
+    io::Write,
 };
 
 pub const DISKMAN_COMMANDS: &[(&str, u32)] = &[

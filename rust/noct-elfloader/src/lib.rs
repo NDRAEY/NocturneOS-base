@@ -4,7 +4,7 @@ extern crate alloc;
 
 pub mod ko_modules;
 
-use core::ffi::{c_char, CStr};
+use core::ffi::c_char;
 
 use alloc::{ffi::CString, string::String, vec::Vec};
 use elf::{abi::PT_LOAD, endian::AnyEndian, ParseError};

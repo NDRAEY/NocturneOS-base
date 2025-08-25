@@ -8,7 +8,6 @@ extern crate alloc;
 use core::cell::OnceCell;
 
 use alloc::vec::Vec;
-use noct_logger::qemu_note;
 use spin::{RwLock, RwLockReadGuard};
 use x86::io::{inl, outl};
 

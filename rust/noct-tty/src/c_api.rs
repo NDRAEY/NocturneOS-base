@@ -1,4 +1,4 @@
-use core::{cell::OnceCell, ffi::{c_char, CStr}};
+use core::ffi::{c_char, CStr};
 
 use lazy_static::lazy_static;
 use spin::Mutex;
