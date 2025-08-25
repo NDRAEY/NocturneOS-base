@@ -395,6 +395,10 @@ uint32_t phys_get_page_data(uint32_t* page_dir, virtual_addr_t virtual) {
 }
 
 size_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
+	if(page_dir == NULL) {
+		return 0;
+	}
+
 	virtual &= ~0xfff;
 
 	uint32_t* pt;
@@ -410,9 +414,32 @@ size_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
 }
 
 uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual) {
+	if(page_dir == NULL) {
+		return 0;
+	}
+	
 	size_t phys = virt2phys(page_dir, virtual & ~0xfff);
 
 	return phys + (virtual & 0xfff);
+}
+
+size_t virt2phys_ext(const uint32_t *page_dir, const uint32_t* virts, virtual_addr_t virtual) {
+	if(page_dir == NULL) {
+		return 0;
+	}
+
+	virtual &= ~0xfff;
+
+	uint32_t* pt;
+	
+	// Check if page table not present.
+	if((page_dir[PD_INDEX(virtual)] & 1) == 0) {
+		return 0;
+	} else {
+		pt = (uint32_t*)(virts[PD_INDEX(virtual)]);
+	}
+
+	return pt[PT_INDEX(virtual)] & ~0x3ff;
 }
 
 void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) {

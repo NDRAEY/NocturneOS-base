@@ -75,3 +75,4 @@ uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual);
 void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length);
 
 void check_memory_map(const memory_map_entry_t* mmap_addr, uint32_t length);
+size_t virt2phys_ext(const uint32_t *page_dir, const uint32_t* virts, virtual_addr_t virtual);

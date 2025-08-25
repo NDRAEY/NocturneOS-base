@@ -28,9 +28,10 @@ use noct_path::Path;
 pub mod cat;
 pub mod cd;
 pub mod cls;
+pub mod datetime;
 pub mod dir;
-pub mod disks;
 pub mod disk_ctl;
+pub mod disks;
 pub mod file;
 pub mod file_ops;
 pub mod gfxinfo;
@@ -42,7 +43,6 @@ pub mod pavi;
 pub mod pci;
 pub mod reboot;
 pub mod sysinfo;
-pub mod datetime;
 
 pub type ShellCommand<E = usize> = fn(&mut ShellContext, &[&str]) -> Result<(), E>;
 pub type ShellCommandEntry<'a, 'b> = (&'a str, ShellCommand, Option<&'b str>);
@@ -163,7 +163,6 @@ fn process_input(context: &mut ShellContext) -> String {
 
                             input.push_str(remnant);
                             print!("{}", remnant);
-
                         } else {
                             // Show variants
 
@@ -207,7 +206,7 @@ fn suggest_completions(stem: &str) -> (Vec<String>, Option<usize>) {
     let is_absolute_path = stem.chars().next().is_some_and(|a| a.is_alphabetic())
         && stem.chars().nth(1).is_some_and(|a| a == ':')
         && stem.chars().nth(2).is_some_and(|a| a == '/');
-    
+
     let fullpath = if !is_absolute_path {
         let mut path = Path::from_path(&noct_sched::me().cwd()).unwrap();
 
@@ -224,7 +223,11 @@ fn suggest_completions(stem: &str) -> (Vec<String>, Option<usize>) {
         path.parent();
     }
 
-    qemu_note!("List all occurencies of `{}` in `{}`", fullpath, path.as_str());
+    qemu_note!(
+        "List all occurencies of `{}` in `{}`",
+        fullpath,
+        path.as_str()
+    );
 
     let rdir = match Directory::from_path(&path) {
         Some(r) => r,
@@ -266,7 +269,12 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
 
         let memused = memmeter(|| process_command(&mut context, &raw_input));
 
-        qemu_note!("Memory delta: {} bytes (used {} bytes); Time: {}ms", memused.virtual_delta, memused.total_memory_run, timestamp() - timestart);
+        qemu_note!(
+            "Memory delta: {} bytes (used {} bytes); Time: {}ms",
+            memused.virtual_delta,
+            memused.total_memory_run,
+            timestamp() - timestart
+        );
         // process_command(&mut context, &raw_input);
 
         context.command_history.push(raw_input);
@@ -360,10 +368,12 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
                             //     }
                             // }
 
-                            let args: Vec<&str> =
-                                arguments.iter().map(|a| a.as_str()).collect();
+                            let args: Vec<&str> = arguments.iter().map(|a| a.as_str()).collect();
 
-                            let cstrings = args.iter().map(|&x| CString::new(x).unwrap()).collect::<Vec<_>>();
+                            let cstrings = args
+                                .iter()
+                                .map(|&x| CString::new(x).unwrap())
+                                .collect::<Vec<_>>();
                             let args = cstrings.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
 
                             let pid = spawn_prog_rust(&path, &args);

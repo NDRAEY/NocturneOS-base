@@ -11,6 +11,8 @@
 #include	"lib/string.h"
 #include	"io/ports.h"
 #include "mem/vmm.h"
+#include "lib/math.h"
+#include "sys/sync.h"
 
 list_t process_list;
 list_t thread_list;				
@@ -27,6 +29,9 @@ extern uint32_t init_esp;
 bool scheduler_working = true;
 
 extern physical_addr_t kernel_page_directory;
+
+mutex_t proclist_scheduler_mutex = {.lock = false};
+mutex_t threadlist_scheduler_mutex = {.lock = false};
 
 /**
  * @brief Initializes scheduler
@@ -87,13 +92,10 @@ void scheduler_mode(bool on) {
 }
 
 size_t create_process(void* entry_point, char* name, bool is_kernel) {
-    scheduler_working = false;
-	__asm__ volatile("cli");
-
-    process_t* proc = (process_t*)kcalloc(1, sizeof(process_t));
+    process_t* proc = allocate_one(process_t);
 
 	proc->pid = next_pid++;
-	proc->list_item.list = nullptr;  // No nested processes hehe :)
+	proc->list_item.list = nullptr;  // No nested processes
 	proc->threads_count = 0;
 
 	proc->name = strdynamize(name);
@@ -101,13 +103,13 @@ size_t create_process(void* entry_point, char* name, bool is_kernel) {
     // Inherit path
 	proc->cwd = strdynamize(get_current_proc()->cwd);
     
-    list_add(&process_list, (void*)&proc->list_item);
+    process_add_prepared(proc);
 
     thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel);
 
     qemu_log("PID: %d, DIR: %x; Threads: %d", proc->pid, proc->page_dir, proc->threads_count);
 
-	list_add(&thread_list, (void*)&thread->list_item);
+	thread_add_prepared(thread);
 
     void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
@@ -116,9 +118,6 @@ size_t create_process(void* entry_point, char* name, bool is_kernel) {
     proc->page_dir_virt = (size_t)virt;
 
     qemu_log("FINISHED!");
-
-	__asm__ volatile("sti");
-    scheduler_working = true;
 
     return proc->pid;
 }
@@ -179,9 +178,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->esp = (uint32_t) stack + stack_size - (7 * 4);
     tmp_thread->stack_top = (uint32_t) stack + stack_size;
 
-    /* Add thread to ring queue */
-    list_add(&thread_list, (void*)&tmp_thread->list_item);
-
     /* Thread's count increment */
     proc->threads_count++;
 
@@ -206,6 +202,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     esp[-5] = 0;
     esp[-6] = 0;
     esp[-7] = 0;
+
+    tmp_thread->state = PAUSED;
+
+    /* Add thread to ring queue */
+    thread_add_prepared(tmp_thread);
 
     return tmp_thread;
 }
@@ -240,7 +241,7 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     tmp_thread->stack_top = (uint32_t) stack + stack_size;
 
     /* Add thread to ring queue */
-    list_add(&thread_list, (void*)&tmp_thread->list_item);
+    thread_add_prepared(tmp_thread);
 
     /* Thread's count increment */
     proc->threads_count++;
@@ -285,6 +286,8 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
     /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, kernel);
 
+    tmp_thread->state = CREATED;
+
     /* Enable all interrupts */
     __asm__ volatile ("sti");
 
@@ -303,6 +306,8 @@ thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_si
     __asm__ volatile ("cli");
 
     thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped_arg1(proc, entry_point, stack_size, kernel, arg1);
+
+    tmp_thread->state = CREATED;
 
     __asm__ volatile ("sti");
 
@@ -375,7 +380,7 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
             process_t* process = next_thread->process;
             qemu_log("REMOVING DEAD THREAD: #%u", next_thread->id);
 
-            list_remove((void*)&next_thread->list_item);
+            thread_remove_prepared((thread_t*)next_thread);
 
             qemu_log("REMOVED FROM LIST");
 
@@ -388,15 +393,43 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
 
             qemu_log("MODIFIED PROCESS");
 
-			bool is_krnl_process = current_proc->pid == 0;
+			bool is_current_process_krnl = current_proc->pid == 0;
+            // NOTE: We should be in kernel process (PID 0) to free page tables and process itself.
             // TODO: Switch to kernel's PD here, because process info stored there
-            if(process->threads_count == 0 && is_krnl_process)  {
-                qemu_log("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
+            if(process->threads_count == 0 && is_current_process_krnl) {
+                qemu_warn("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
 
-                for(size_t pt = 0; pt < 1024; pt++) {
+                if(process->program) {
+                    for (int32_t i = 0; i < process->program->elf_header.e_phnum; i++) {
+                        Elf32_Phdr *phdr = process->program->p_header + i;
+
+                        if(phdr->p_type != PT_LOAD)
+                            continue;
+
+                        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1U);
+
+                        for(size_t x = 0; x < pagecount; x++) {
+                            size_t vaddr = phdr->p_vaddr + (x * PAGE_SIZE);
+                            size_t paddr = virt2phys_ext((void*)process->page_dir_virt, process->page_tables_virts, vaddr);
+
+                            qemu_log("Page dir: %x; Free: %x -> %x", process->page_dir_virt, vaddr, paddr);
+
+                            phys_free_single_page(paddr);
+                        }
+                    }
+
+                    unload_elf(process->program);
+                }
+
+                for(size_t pt = 0; pt < 1023; pt++) {
                     size_t page_table = process->page_tables_virts[pt];
                     if(page_table) {
-                        qemu_note("[%d] FREE PAGE TABLE AT: %x", pt, page_table);
+                        qemu_note("[%-4d] <%08x - %08x> FREE PAGE TABLE AT: %x", 
+                            pt,
+                            (pt * PAGE_SIZE) << 10,
+                            ((pt + 1) * PAGE_SIZE) << 10,
+                            page_table
+                        );
                         kfree((void *) page_table);
                     }
                 }
@@ -406,12 +439,13 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
                 kfree((void *) process->page_dir_virt);
 
                 qemu_log("FREED SPACE FOR TABLES");
+                
+                kfree(process->name);
+                kfree(process->cwd);
 
-                list_remove((void*)&process->list_item);
+                process_remove_prepared((process_t*)process);
 
                 qemu_log("REMOVED PROCESS FROM LIST");
-
-                kfree(process->name);
                 kfree((void*)process);
 
                 qemu_log("FREED PROCESS LIST ITEM");
@@ -429,4 +463,36 @@ void idle_thread(void) {
         __asm__ volatile("hlt" ::: "memory");
         yield();
     }
+}
+
+void process_add_prepared(volatile process_t* process) {
+    mutex_get(&proclist_scheduler_mutex);
+
+    list_add(&process_list, (list_item_t*)&process->list_item);
+
+    mutex_release(&proclist_scheduler_mutex);
+}
+
+void thread_add_prepared(volatile thread_t* thread) {
+    mutex_get(&threadlist_scheduler_mutex);
+
+    list_add(&thread_list, (list_item_t*)&thread->list_item);
+
+    mutex_release(&threadlist_scheduler_mutex);
+}
+
+void process_remove_prepared(volatile process_t* process) {
+    mutex_get(&proclist_scheduler_mutex);
+
+    list_remove(&process->list_item);
+
+    mutex_release(&proclist_scheduler_mutex);
+}
+
+void thread_remove_prepared(volatile thread_t* thread) {
+    mutex_get(&threadlist_scheduler_mutex);
+
+    list_remove(&thread->list_item);
+
+    mutex_release(&threadlist_scheduler_mutex);
 }

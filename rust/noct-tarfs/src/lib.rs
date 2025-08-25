@@ -5,7 +5,7 @@ extern crate alloc;
 use core::ffi::{c_char, c_void, CStr};
 
 use alloc::{
-    borrow::{Cow, ToOwned}, string::{String, ToString}, vec::Vec
+    borrow::ToOwned, string::{String, ToString}, vec::Vec
 };
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,

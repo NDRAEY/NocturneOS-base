@@ -4,8 +4,9 @@
 #include    "sys/registers.h"
 #include	"lib/list.h"
 #include	"mem/pmm.h"
+#include	"elf/elf.h"
 
-#define DEFAULT_STACK_SIZE 0x8000
+#define DEFAULT_STACK_SIZE (64 << 10)
 
 typedef enum {
     CREATED = 0,
@@ -46,6 +47,8 @@ typedef	volatile struct {
 	size_t          page_tables_virts[1024];    /* Page table addresses */
     // Every process should have a path that process operates
     char*           cwd;
+    // If process is a program, it should contain elf header.
+    elf_t*          program;
 } process_t;
 
 /*-----------------------------------------------------------------------------
@@ -71,8 +74,6 @@ typedef volatile struct
 	uint32_t		id;				/* Thread ID */
     // 40
 	uint32_t		stack_top;
-    // registers here [44]
-    size_t	eax, ebx, ecx, edx, esi, edi, ebp;
     // 72
     thread_state_t state;
 } thread_t;
@@ -80,14 +81,11 @@ typedef volatile struct
 /* Initialization */
 void init_task_manager(void);
 
-extern void task_switch(registers_t regs);
 void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs);
 extern void task_switch_v2(thread_t*, thread_t*);
 
 thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
                                    bool kernel);
-
-void kill_process(size_t id);
 
 /* Create new thread */
 thread_t* thread_create(process_t* proc,
@@ -129,3 +127,9 @@ void idle_thread(void);
 __attribute__((noreturn)) void thread_exit_entrypoint();
 
 int32_t spawn_prog(const char *name, int argc, const char* const* eargv);
+
+void process_add_prepared(volatile process_t* process);
+void thread_add_prepared(volatile thread_t* thread);
+
+void process_remove_prepared(volatile process_t* process);
+void thread_remove_prepared(volatile thread_t* thread);

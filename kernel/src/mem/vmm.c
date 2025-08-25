@@ -37,15 +37,13 @@ void vmm_init()
 {
 	memset(&system_heap, 0, sizeof(heap_t));
 
-	system_heap.capacity = PAGE_SIZE / sizeof(struct heap_entry);
+	system_heap.capacity = (PAGE_SIZE * 2) / sizeof(struct heap_entry);
 
 	system_heap.allocated_count = 0;
 	system_heap.used_memory = 0;
 
 	extern size_t grub_last_module_end;
 	size_t real_end = grub_last_module_end + PAGE_BITMAP_SIZE;
-
-	/////
 
 	system_heap.start = 0x1000000;
 
@@ -54,8 +52,6 @@ void vmm_init()
 
 		system_heap.start = ALIGN(real_end, PAGE_SIZE);
 	}
-
-	/////
 
 	// system_heap.memory = (struct heap_entry *)pmm_alloc_and_map_self(
 	// 	get_kernel_page_directory(),
@@ -66,12 +62,17 @@ void vmm_init()
 	size_t arena_virt = system_heap.start;
 
 	// FIXME: Setting this to PAGE_SIZE causes undefined behaviour
-	system_heap.start += PAGE_SIZE * 2;
+	system_heap.start += PAGE_SIZE * 3;
 
-	map_pages(get_kernel_page_directory(), arena_phys, arena_virt, PAGE_SIZE, PAGE_WRITEABLE);
+	map_pages(get_kernel_page_directory(),
+		arena_phys,
+		arena_virt,
+		system_heap.capacity * sizeof(struct heap_entry),
+	    PAGE_WRITEABLE
+	);
 
 	system_heap.memory = (struct heap_entry *)arena_virt;
-	memset(system_heap.memory, 0, PAGE_SIZE);
+	memset(system_heap.memory, 0, system_heap.capacity * sizeof(struct heap_entry));
 
 	qemu_log("ARENA AT: %x (P%x)", arena_virt, arena_phys);
 	qemu_log("CAPACITY: %d", system_heap.capacity);

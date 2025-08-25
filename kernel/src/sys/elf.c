@@ -61,9 +61,9 @@ void unload_elf(elf_t* elf) {
 	kfree(elf);
 }
 
-int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
-    __asm__ volatile("cli");
+mutex_t elf_loader_mutex = {.lock = false};
 
+int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     elf_t* elf_file = load_elf(name);
 
     if (elf_file == nullptr) {
@@ -71,10 +71,12 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
         return -1;
     }
 
-    extern uint32_t next_pid;
+    mutex_get(&elf_loader_mutex);
+
+    extern volatile uint32_t next_pid;
     extern list_t process_list, thread_list;
 
-    process_t* proc = (process_t*)kcalloc(1, sizeof(process_t));
+    process_t* proc = allocate_one(process_t);
 
     proc->pid = next_pid++;
     proc->list_item.list = nullptr;  // No nested processes hehe :)
@@ -114,16 +116,18 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
 
     thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, true);
 
-    list_add(&thread_list, (list_item_t*)&thread->list_item);
+    thread_add_prepared(thread);
 
     void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
 
     proc->page_dir = phys;
+    proc->page_dir_virt = (virtual_addr_t)virt;
+    proc->program = elf_file;
 
-    list_add(&process_list, (list_item_t*)&proc->list_item);
+    process_add_prepared(proc);
 
-    qemu_log("PROCESS CREATED");
+    qemu_log("PROCESS CREATED, CLEANING KERNEL PD");
 
     for (int32_t i = 0; i < elf_file->elf_header.e_phnum; i++) {
         Elf32_Phdr *phdr = elf_file->p_header + i;
@@ -133,7 +137,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
 
         size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1);
 
-        qemu_log("\t??? Cleaning %d: %x [%d]", i, phdr->p_vaddr, pagecount * PAGE_SIZE);
+        qemu_log("\t- Cleaning %d: %x [%d]", i, phdr->p_vaddr, pagecount * PAGE_SIZE);
 
         for(size_t x = 0; x < pagecount; x++) {
             unmap_single_page(
@@ -143,15 +147,13 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
         }
     }
 
-    qemu_log("CLEANED  %d pages",  elf_file->elf_header.e_phnum);
-
-    // FREE ELF DATA
-
-    unload_elf(elf_file);
+    qemu_log("CLEANED %d pages",  elf_file->elf_header.e_phnum);
 
     qemu_log("RESUMING...");
 
-    __asm__ volatile("sti");
+    mutex_release(&elf_loader_mutex);
+
+    thread->state = CREATED;
 
     return proc->pid;
 }
