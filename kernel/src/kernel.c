@@ -433,28 +433,12 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     /// Обновим данные обо всех дисках
     fsm_dpm_update(NULL);
 
-    // vio_ntw_init();
-
-    // igfx_init();
-
-    // void k();
-
-    //	 create_process(k, "process", false, true);
-    //    sleep_ms(500);
-    //    create_process(k, "process2", false, true);
-    //    sleep_ms(1500);
-    //    create_process(k, "process3", false, true);
+    igfx_init();
 
     rust_main();
 
     qemu_log("System initialized everything at: %f seconds.", (double)(getTicks() - kernel_start_time) / getFrequency());
     tty_printf("System initialized everything at: %.2f seconds.\n", (double)(getTicks() - kernel_start_time) / getFrequency());
-
-    // char* args[] = {};
-    // spawn("R:/hellors", 0, args);
-
-    // void sysidle();
-    // thread_create(get_current_proc(), sysidle, 0x100, true);
 
     launch_media_notifier();
 
@@ -465,6 +449,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     while (1)
         ;
 }
+
+// TODO: The following code is a sketch of future socket system. It may change, may not.
 
 // void net_test() {
 //     socket_address_t server_addr = {
@@ -495,10 +481,3 @@ void sysidle() {
       yield();
     }
 }
-
-// void k() {
-//     for(int i = 0; i < 10; i++) {
-//         qemu_err("HELLO");
-//         sleep_ms(250);
-//     }
-// }
