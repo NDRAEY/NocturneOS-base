@@ -3,7 +3,7 @@ extern crate alloc;
 use alloc::{
     boxed::Box,
     format,
-    string::{String, ToString},
+    string::String,
 };
 
 use crate::{
