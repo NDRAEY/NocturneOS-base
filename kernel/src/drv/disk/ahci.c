@@ -906,65 +906,6 @@ void ahci_read(size_t port_num, uint8_t* buf, uint64_t location, uint32_t length
 	kfree(real_buf);
 }
 
-// size_t ahci_dpm_read(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t Size, void* Buffer) {
-// //    qemu_err("TODO: SATA DPM READ");
-// 	(void)high_offset;
-
-// 	DPM_Disk dpm = dpm_info(Disk + 65);
-
-//     ahci_read((size_t) dpm.Point, Buffer, low_offset, Size);
-
-//     return Size;
-// }
-
-// size_t ahci_dpm_write(size_t Disk, uint64_t high_offset, uint64_t low_offset, size_t size, const void* buffer) {
-// 	(void)Disk; (void)high_offset; (void)low_offset; (void)size; (void)buffer;
-    
-// 	qemu_err("TODO: SATA DPM WRITE");
-
-// //    DPM_Disk dpm = dpm_info(Disk + 65);
-
-//     return 0;
-// }
-
-// size_t ahci_dpm_ctl(size_t Disk, size_t command, void* data, size_t length) {
-// 	DPM_Disk dpm = dpm_info(Disk + 65);
-// 	size_t port_nr = (size_t)dpm.Point;
-
-// 	if(command == DPM_COMMAND_EJECT) {
-// 		ahci_eject_cdrom(port_nr);
-
-// 		return 0;
-// 	} else if(command == DPM_COMMAND_GET_MEDIUM_STATUS) {
-// 		size_t status = ahci_atapi_check_media_presence(port_nr);
-
-// 		return DPM_MEDIA_STATUS_MASK | status;
-// 	} else if(command == DPM_COMMAND_READ_SENSE) {
-//         if(data == NULL) {
-//             return DPM_ERROR_BUFFER;
-//         }
-
-//         if(length < 256) {
-//             return DPM_ERROR_NOT_ENOUGH;
-//         }
-
-//         uint8_t command[16] = {
-//             ATAPI_CMD_READY, 0, 0, 0,
-//             0, 0, 0, 0,
-//             0, 0, 0, 0,
-//             0, 0, 0, 0
-//         };
-
-//         ahci_send_atapi_nomem(port_nr, command);
-
-//         ahci_atapi_request_sense(port_nr, data);
-
-//         return DPM_STATUS_HAS_DATA;
-//     }
-
-// 	return DPM_ERROR_NOT_IMPLEMENTED;
-// }
-
 static int64_t ahci_diskman_read(void* priv_data, uint64_t location, uint64_t size, uint8_t* buf) {
 	qemu_note("ahci_diskman_read: p: %x; loc: %x; size: %x; buf: %p", priv_data, (uint32_t)location, (uint32_t)size, buf);
 
@@ -978,7 +919,7 @@ static int64_t ahci_diskman_read(void* priv_data, uint64_t location, uint64_t si
 }
 
 static int64_t ahci_diskman_write(void* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
-	qemu_err("ahci_diskman_write: Not implemented yet");
+	qemu_err("ahci_diskman_write: TODO: Not implemented yet");
 
 	uint8_t drive_nr = *(uint8_t*)priv_data;
 

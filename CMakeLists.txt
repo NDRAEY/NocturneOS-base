@@ -188,7 +188,6 @@ set(C_SRC
 	kernel/src/lib/math/cos.c 
 	kernel/src/lib/math/tan.c 
 	kernel/src/lib/math/sqrt.c 
-	kernel/src/io/rgb_image.c 
 	kernel/src/lib/math/cbrt.c 
 	kernel/src/sys/cpuid.c	
 	kernel/src/drv/disk/ata.c 

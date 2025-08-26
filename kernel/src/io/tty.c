@@ -20,11 +20,6 @@
 #include <lib/asprintf.h>
 #include <io/screen.h>
 
-// TODO: Eurica! Split tty.c into 2 files:
-//       tty.c - only text processing functions
-//       default_console.c - TTY client
-
-// TODO: Keep here.
 volatile uint8_t tty_feedback = 1;		/// ...
 uint32_t tty_pos_x = 0;						/// Позиция на экране по X
 uint32_t tty_pos_y = 0;						/// Позиция на экране по Y

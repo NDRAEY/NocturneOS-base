@@ -11,13 +11,13 @@
 #include <generated/pci.h>
 #include <io/ports.h>
 #include <net/endianess.h>
-#include <net/ethernet.h>
 #include <debug/hexview.h>
 #include <sys/isr.h>
 #include "lib/string.h"
 #include "mem/vmm.h"
 #include "mem/pmm.h"
 #include "net/stack.h"
+#include <net/ethernet.h>
 
 uint8_t rtl8139_busnum, rtl8139_slot, rtl8139_func;
 uint32_t rtl8139_io_base, rtl8139_mem_base, rtl8139_bar_type;
@@ -169,7 +169,6 @@ void rtl8139_handler(SAYORI_UNUSED registers_t regs) {
 	if (status & ROK) {
 		qemu_log("Packet received!\n");
 
-		// TODO: Push packet to stack then, when needed, work with packets on the stack
 		rtl8139_receive_packet();
 	}
 
