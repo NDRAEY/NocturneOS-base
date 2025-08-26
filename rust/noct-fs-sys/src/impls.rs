@@ -24,12 +24,12 @@ impl FSM_FILE {
 
         let mut splitted = path.split('/');
 
-        let name: String = if path.ends_with('/') {
+        let name = if path.ends_with('/') {
             let prelast = splitted.clone().count() - 2;
 
-            splitted.nth(prelast).unwrap().to_string()
+            splitted.nth(prelast).unwrap()
         } else {
-            splitted.next_back().unwrap().to_string()
+            splitted.next_back().unwrap()
         };
 
         let max_len = name.len().min(1024);

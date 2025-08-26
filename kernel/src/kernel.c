@@ -148,6 +148,7 @@ void new_nsh();
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
 
+#ifndef RELEASE
 void scan_kernel(const multiboot_header_t *mboot) {
     kernel_start = (size_t)&KERNEL_BASE_pos;
 	kernel_end = (size_t)&KERNEL_END_pos;
@@ -183,11 +184,10 @@ void scan_kernel(const multiboot_header_t *mboot) {
         );
     }
 
-#ifndef RELEASE
     const multiboot_module_t* last_module = module_list + count - 1;
     qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
-#endif
 }
+#endif
 
 /*
   Спаси да сохрани этот кусок кода
@@ -204,7 +204,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     __com_setInit(1, 1);
     __com_init(PORT_COM1);
     
+#ifndef RELEASE
     scan_kernel(mboot);
+#endif
 
     framebuffer_addr = (uint8_t *)(size_t)(mboot->framebuffer_addr);
 
