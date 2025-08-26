@@ -2,7 +2,7 @@
  * @brief Драйвер ATAPI PIO
  * @author NDRAEY >_
  * @date 2023-07-21
- * @version 0.3.5
+ * @version 0.4.2
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 

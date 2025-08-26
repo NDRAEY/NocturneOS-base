@@ -2,7 +2,7 @@
  * @file drv/input/mouse.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), Рустем Гимадутдинов (https://github.com/rgimad/EOS)
  * @brief Драйвер мыши
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2022-12-11
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

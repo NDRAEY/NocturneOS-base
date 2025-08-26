@@ -1,7 +1,7 @@
 /**
  * @brief Менеджер физической памяти
  * @author NDRAEY >_
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2023-11-04
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

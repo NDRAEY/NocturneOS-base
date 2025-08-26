@@ -2,7 +2,7 @@
  * @file common.h
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Основные определения ядра
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2023-12-07
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

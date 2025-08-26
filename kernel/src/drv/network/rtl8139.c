@@ -1,7 +1,7 @@
 /**
  * @brief Драйвер сетевой карты RTL8139
  * @author NDRAEY >_
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2022-04-12
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

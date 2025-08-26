@@ -2,7 +2,7 @@
  * @file sys/timer.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Модуль системного таймера
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2022-10-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

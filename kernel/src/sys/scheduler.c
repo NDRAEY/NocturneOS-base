@@ -2,7 +2,7 @@
  * @file sys/scheduler.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY (pikachu_andrey@vk.com)
  * @brief Менеджер задач
- * @version 0.3.5
+ * @version 0.4.2
  * @date 2025-04-13
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */

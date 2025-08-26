@@ -2,7 +2,7 @@
  * @file kernel.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Основная точка входа в ядро
- * @version 0.4.1
+ * @version 0.4.2
  * @date 2022-11-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
@@ -37,19 +37,17 @@
 #include <user/env.h>
 #include <arch/init.h>
 
-size_t VERSION_MAJOR = 0;    /// Версия ядра
-size_t VERSION_MINOR = 4;    /// Пре-релиз
-size_t VERSION_PATCH = 1;    /// Патч
+size_t VERSION_MAJOR = 0;      /// Мажор
+size_t VERSION_MINOR = 4;      /// Минор
+size_t VERSION_PATCH = 2;      /// Патч
 
-char* OS_ARCH = "i386";      /// Архитектура
-char* VERSION_NAME = "Sea";  /// Имя версии (изменяется вместе с минорной части версии)
+char* OS_ARCH = "i386";        /// Архитектура
+char* VERSION_NAME = "Space";  /// Имя версии (изменяется вместе с патчем)
 
 extern bool ps2_channel2_okay;
 
 uint32_t init_esp = 0;
-bool test_pcs = true;
 bool test_network = true;
-bool initRD = false;
 size_t kernel_start_time = 0;
 
 /**
@@ -58,7 +56,7 @@ size_t kernel_start_time = 0;
  * @param cmd - Команды
  */
 
-void kHandlerCMD(char *cmd)
+void kHandlerCMD(const char *cmd)
 {
     qemu_log("Kernel command line at address %x and contains: '%s'", (size_t)cmd, cmd);
 
@@ -113,11 +111,6 @@ void kHandlerCMD(char *cmd)
             {
                 test_network = false;
                 qemu_log("\t NETWORK DISABLED");
-            }
-            else if (strcmpn(out_data[1], "pc-speaker"))
-            {
-                test_pcs = false;
-                qemu_log("\t PC-Speaker DISABLED");
             }
             else
             {
