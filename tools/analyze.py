@@ -5,8 +5,8 @@ if not sys.argv[1:]:
     print("./analyze.py <kernel>")
     exit(1)
 
-r = subprocess.Popen(['readelf', '-C', '-s', sys.argv[1]], stdout=subprocess.PIPE)
-d = r.stdout.read().split(b'\n')[3:];
+r = subprocess.Popen(['readelf', '-CWs', sys.argv[1]], stdout=subprocess.PIPE)
+d = r.stdout.read().split(b'\n')[3:]
 
 processed = []
 
@@ -21,21 +21,17 @@ for i in d:
     else:
         data[2] = int(data[2], base=10)
 
-    processed.append(data)
+    if len(data) > 7:
+        data[7] = ' '.join(data[7:])
+        data = data[:8]
 
-processed = sorted(processed, key=lambda x: x[2], reverse=True)
+    processed.append(data[1:])
 
-column_widths = [0] * len(processed[0])
-
-for n, _ in enumerate(processed[0]):
-    for i in processed:
-        if len(i) != len(processed[0]):
-            continue
-
-        column_widths[n] = max(column_widths[n], len(str(i[n])))
-
+processed = sorted(processed, key=lambda x: x[1], reverse=True)
 
 for i in processed:
-    for n, j in enumerate(i):
-        print(j, " " * ((column_widths[n] - len(str(j))) + 1), sep='', end='')
-    print()
+    address, size, type, binding, visibility, index = i[:6]
+
+    symbol = i[6] if len(i) == 7 else "<unknown>"
+
+    print(f"{address} {size:<8} {type} {binding} {visibility} {symbol}")
