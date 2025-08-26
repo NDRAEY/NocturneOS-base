@@ -9,4 +9,4 @@ noct-logger = { path = "../noct-logger" }
 noct-il = { path = "../noct-il" }
 
 [build-dependencies]
-cbindgen = { version = "0.29.0", default-features = false }
+cbindgen = { version = "0.29.0" }

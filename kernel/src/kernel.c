@@ -33,6 +33,8 @@
 #include <lib/pixel.h>
 #include <net/socket.h>
 
+#include <generated/input.h>
+
 #include <sys/sse.h>
 #include <user/env.h>
 #include <arch/init.h>
@@ -137,7 +139,6 @@ extern size_t BSS_start;
 extern size_t BSS_end;
 
 extern void rust_main();
-extern void keyboard_buffer_init();
 extern void ipc_init();
 
 extern void fpu_save();

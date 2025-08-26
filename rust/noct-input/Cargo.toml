@@ -2,8 +2,12 @@
 name = "noct-input"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
 
 [dependencies]
 spin = "0.10.0"
 noct-logger = { path = "../noct-logger" }
 noct-sched = { path = "../noct-sched" }
+
+[build-dependencies]
+cbindgen = { version = "0.29.0" }
