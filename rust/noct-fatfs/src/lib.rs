@@ -179,7 +179,7 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     match candidate {
         Some(Ok(c)) => FSM_FILE::with_data(
-            c.file_name(),
+            &c.file_name(),
             0,
             c.len() as _,
             Some(fat_time_to_fsm(c.modified())),
@@ -237,7 +237,7 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
             let elem = elem.unwrap();
 
             FSM_FILE::with_data(
-                elem.file_name(),
+                &elem.file_name(),
                 0,
                 elem.len() as _,
                 Some(fat_time_to_fsm(elem.modified())),

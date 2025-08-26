@@ -156,7 +156,7 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
         .iter()
         .map(|elem| {
             FSM_FILE::with_data(
-                elem.name.clone(),
+                &elem.name,
                 0,
                 elem.record.data_length.lsb,
                 Some(iso_datetime_to_fsm(elem)),

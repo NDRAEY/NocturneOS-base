@@ -75,7 +75,7 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
     let ftype = tarfs_type_to_fsm_type(entity._type);
 
     FSM_FILE::with_data(
-        entity.name,
+        &entity.name,
         0,
         entity.size as _,
         None,
@@ -114,7 +114,7 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
         .into_iter()
         .map(|elem| {
             FSM_FILE::with_data(
-                elem.name,
+                &elem.name,
                 0,
                 elem.size as _,
                 None,

@@ -12,16 +12,14 @@ use crate::{
 };
 
 impl FSM_FILE {
-    pub fn with_data<T: ToString>(
-        path: T,
+    pub fn with_data(
+        path: &str,
         mode: core::ffi::c_int,
         size: size_t,
         time: Option<FSM_TIME>,
         typ: FSM_ENTITY_TYPE,
         access: u32,
     ) -> Self {
-        let path = path.to_string();
-
         let mut splitted = path.split('/');
 
         let name = if path.ends_with('/') {
