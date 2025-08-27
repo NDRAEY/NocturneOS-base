@@ -16,7 +16,6 @@
 #include <io/status_loggers.h>
 #include <drv/fpu.h>
 #include <lib/math.h>
-#include <io/rgb_image.h>
 #include <lib/asprintf.h>
 #include <io/screen.h>
 
@@ -76,6 +75,8 @@ uint32_t tty_getcolor() {
 void tty_set_bgcolor(uint32_t color) {
     tty_bg_color = color;
 }
+
+#define PIXIDX(width, x, y) (((width) * (y)) + (x))
 
 /**
  * @brief Устновливает пиксель RGB в буфере в котором все пиксели представляют собой RGBA (альфа канал игнорируется)

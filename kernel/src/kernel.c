@@ -53,76 +53,6 @@ bool test_network = true;
 size_t kernel_start_time = 0;
 
 /**
- * @brief Обработка команд указаных ядру при загрузке
- *
- * @param cmd - Команды
- */
-
-void kHandlerCMD(const char *cmd)
-{
-    qemu_log("Kernel command line at address %x and contains: '%s'", (size_t)cmd, cmd);
-
-    if (strlen(cmd) == 0)
-        return;
-
-    size_t kCMDc = str_cdsp(cmd, " ");
-    uint32_t kCMDc_c = 0;
-    char *out[128] = {0};
-    str_split(cmd, out, " ");
-    for (size_t i = 0; kCMDc >= i; i++)
-    {
-        kCMDc_c = str_cdsp(out[i], "=");
-        char *out_data[128] = {0};
-        if (kCMDc_c != 1)
-        {
-            qemu_log("[kCMD] [%d] %s is ignore.", i, out[i]);
-            continue;
-        }
-        str_split(out[i], out_data, "=");
-        if (strcmpn(out_data[0], "bootscreen"))
-        {
-            // Config BOOTSCREEN
-            if (strcmpn(out_data[1], "minimal"))
-            {
-                bootScreenChangeMode(1);
-            }
-            else if (strcmpn(out_data[1], "light"))
-            {
-                bootScreenChangeTheme(1);
-            }
-            else if (strcmpn(out_data[1], "dark"))
-            {
-                bootScreenChangeTheme(0);
-            }
-            else
-            {
-                qemu_log("\t Sorry, no support bootscreen mode!");
-            }
-        }
-        if (strcmpn(out_data[0], "disable"))
-        {
-            if (strcmpn(out_data[1], "coms"))
-            {
-                __com_setInit(1, 0);
-                __com_setInit(2, 0);
-                __com_setInit(3, 0);
-                __com_setInit(4, 0);
-                qemu_log("\t COM-OUT DISABLED");
-            }
-            else if (strcmpn(out_data[1], "network"))
-            {
-                test_network = false;
-                qemu_log("\t NETWORK DISABLED");
-            }
-            else
-            {
-                qemu_log("\t Sorry, no support!");
-            }
-        }
-    }
-}
-
-/**
  * @brief Точка входа в ядро
  *
  * @param multiboot_header_t mboot - Информация MultiBoot
@@ -258,7 +188,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     switch_qemu_logging();
     
-    kHandlerCMD((char *)mboot->cmdline);
+    // kHandlerCMD((char *)mboot->cmdline);
     
     qemu_log("Initializing Task Manager...");
     init_task_manager();
