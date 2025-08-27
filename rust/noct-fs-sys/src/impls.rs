@@ -1,9 +1,7 @@
 extern crate alloc;
 
 use alloc::{
-    boxed::Box,
-    format,
-    string::String,
+    boxed::Box, ffi::CString, format, string::String
 };
 
 use crate::{
@@ -30,28 +28,19 @@ impl FSM_FILE {
             splitted.next_back().unwrap()
         };
 
-        let max_len = name.len().min(1024);
+        let raw_name = CString::new(name).unwrap().into_raw();
+        let raw_path = CString::new(path).unwrap().into_raw();
 
-        let mut file = FSM_FILE {
+        FSM_FILE {
             Ready: true,
-            Name: [0; 1024],
-            Path: [0; 1024],
+            Name: raw_name,
+            Path: raw_path,
             Mode: mode,
             Size: size,
             LastTime: time.unwrap_or_else(|| unsafe { core::mem::zeroed() }),
             Type: typ,
             CHMOD: access,
-        };
-
-        for (i, &byte) in name.as_bytes().iter().take(max_len).enumerate() {
-            file.Name[i] = byte as _;
         }
-
-        for (i, &byte) in path.as_bytes().iter().take(max_len).enumerate() {
-            file.Path[i] = byte as _;
-        }
-
-        file
     }
 
     #[inline]

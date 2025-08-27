@@ -262,3 +262,8 @@ void fsm_dpm_update(const char* disk_id) {
         fsm_scan_for_filesystem(disk_id);
     }
 }
+
+void fsm_file_close(FSM_FILE* file) {
+    kfree(file->Name);
+    kfree(file->Path);
+}

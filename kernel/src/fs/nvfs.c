@@ -28,65 +28,6 @@ SAYORI_INLINE void char_replace(char what, char which, char* string) {
 	}
 }
 
-#if 0
-NVFS_DECINFO* nvfs_decode(const char* Name) {
-	NVFS_DECINFO* info = kcalloc(sizeof(NVFS_DECINFO), 1);
-	
-	info->DriverFS = -1;
-	
-	qemu_log("Decoding name: %s (%p)", Name, Name);
-
-	// Is path header valid?
-	bool is_valid_delim = struntil(Name, ':') == 1 && (struntil(Name, '/') == 2);
-
-	if (!is_valid_delim) {
-		qemu_err("`%s` delimiters are invalid.", Name);
-		goto end;
-	}
-
-	// Disk is always first letter of the path.
-	info->Disk = Name[0];
-
-	// qemu_log("Disk: %c", info->Disk);
-
-
-	// Now cut a rest of path with trailing \ (or /)
-	substr(info->Path, Name, 2, strlen(Name + 2));
-
-	// qemu_log("Supposed path: `%s`", info->Path);
-
-
-	// Get disk info.
-	DPM_Disk disk = dpm_info(info->Disk);
-
-	if (disk.Ready != 1) {
-		qemu_err("Disk `%c` is not ready", info->Disk);
-		goto end;
-	}
-
-	info->Online = 1;
-	
-	memcpy(info->FileSystem, disk.FileSystem, strlen(disk.FileSystem));
-
-	info->DriverFS = fsm_getIDbyName(info->FileSystem);
-
-	// qemu_note("DriverFS = %d", info->DriverFS);
-
-	if (info->DriverFS == -1) {
-		qemu_err("FSID failed (`%s`)", info->FileSystem);
-		goto end;
-	}
-
-	char_replace(0x5C,0x2F,info->Path);
-
-	info->Ready = 1;
-
-	end:
-
-	return info;
-}
-#endif
-
 size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer){
 	if(nvfs_debug) {
 		qemu_log("Name=%s", Name);
@@ -102,7 +43,7 @@ size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer){
 	res = fsm_read(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Offset, Count, Buffer);
 
 end:
-	kfree(vinfo);
+	nvfs_decinfo_free(vinfo);
 
 	return res;
 }
@@ -118,7 +59,7 @@ int nvfs_create(const char* Name, int Mode){
 	res = fsm_create(vinfo->DriverFS, vinfo->disk_id, vinfo->Path, Mode);
 
 end:
-	kfree(vinfo);
+	nvfs_decinfo_free(vinfo);
 	return res;
 }
 
@@ -134,7 +75,7 @@ int nvfs_delete(const char* Name, int Mode){
 
 	end:
 
-	kfree(vinfo);
+	nvfs_decinfo_free(vinfo);
 
 	return res;
 }
@@ -151,7 +92,7 @@ size_t nvfs_write(const char* Name, size_t Offset, size_t Count, const void *Buf
 
 	end:
 
-	kfree(vinfo);
+	nvfs_decinfo_free(vinfo);
 
 	return res;
 }
@@ -188,7 +129,7 @@ FSM_FILE nvfs_info(const char* Name){
 
 end:
 
-	kfree(vinfo);
+	nvfs_decinfo_free(vinfo);
 
 	return file;
 }
@@ -206,16 +147,7 @@ void nvfs_dir_v2(const char* Name, FSM_DIR* dir) {
 	// new_qemu_printf("[%d] Files: %p (%d + %d + %d)\n", dir->Ready, dir->Files, dir->CountFiles, dir->CountDir, dir->CountOther);
 	
 	end:
-	kfree(vinfo);
-}
-
-void nvfs_close_dir(FSM_DIR* dir) {
-	if(dir == NULL) {
-		return;
-	}
-
-	kfree(dir->Files);
-	kfree(dir);
+	nvfs_decinfo_free(vinfo);
 }
 
 void nvfs_close_dir_v2(FSM_DIR* dir) {
@@ -223,25 +155,16 @@ void nvfs_close_dir_v2(FSM_DIR* dir) {
 		return;
 	}
 
+	size_t count = dir->CountDir + dir->CountFiles + dir->CountOther;
+
+	for(size_t i = 0; i < count; i++) {
+		fsm_file_close(dir->Files + i);
+	}
+
 	kfree(dir->Files);
 }
 
-
-/*
-
-void vnfs_test(){
-
-	FSM_FILE file = nvfs_info("R:\\help next you\\main.c");
-	//qemu_log("Ready: %d",file.Ready);
-	fsm_dump(file);
-
-	char* bf1 = kmalloc(file.Size);
-	int rf1 = nvfs_read("R:\\help next you\\main.c",10,5,bf1);
-
-	qemu_log("Read %d / %d |\n%s\n",rf1,file.Size,bf1);
-
-	FSM_FILE file2 = nvfs_info("b:\\pizdec\\вот это драйвер\\ахуеть.exe");
-
-	fsm_dump(file2);
-	while(1){}
-}*/
+void nvfs_decinfo_free(NVFS_DECINFO* decinfo) {
+	kfree(decinfo->Path);
+	kfree(decinfo);
+}

@@ -52,7 +52,6 @@
 #include <fs/fsm.h>
 
 #include <fs/nvfs.h>
-#include <fs/tempfs.h>
 
 #include <gui/pointutils.h>
 #include <gui/line.h>

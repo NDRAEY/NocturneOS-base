@@ -27,6 +27,8 @@ void fcheckerror(FILE* stream){
 	});
 	
 	FSM_FILE finfo = nvfs_info(stream->path);
+    fsm_file_close(&finfo);
+
 	if (finfo.Ready == 0){
 		stream->err = STDIO_ERR_NOT_FOUND;
 	} else if (stream->fmode == 0){
@@ -95,7 +97,10 @@ FILE* fopen(const char* filename, size_t mode) {
 	file->pos = 0; // Установка указателя в самое начало
 	file->err = 0; // Ошибок в работе нет
 
+	
 	memcpy(file->path, filename, strlen(filename));
+	
+    fsm_file_close(&finfo);
 
 	qemu_ok("File opened!");
 
@@ -160,6 +165,8 @@ int fread(FILE* stream, size_t count, size_t size, void* buffer){
 		fcheckerror(stream);
 		return -1;
 	}
+
+	fsm_file_close(&finfo);
 
 	size_t res = nvfs_read(stream->path, stream->pos, size*count, buffer);
 
@@ -268,8 +275,6 @@ size_t fwrite(FILE *stream, size_t size, size_t count, const void *ptr) {
 		return 0;
 	});
 	
-//	FSM_FILE finfo = nvfs_info(stream->path);
-
 	if(stream->pos + (size * count) > stream->size) {
 		qemu_warn("Out of bounds write!");
 	

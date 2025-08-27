@@ -23,7 +23,12 @@
  */
 bool is_file(const char* Path){
     FSM_FILE file = nvfs_info(Path);
+    
     if (file.Ready != 1) return false;
+
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+
     if (file.Type != 0) return false;
     return true;
 }
@@ -38,7 +43,12 @@ bool is_file(const char* Path){
  */
 bool is_dir(const char* Path){
     FSM_FILE file = nvfs_info(Path);
+    
     if (file.Ready != 1) return false;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+    
     if (file.Type != 5) return false;
     return true;
 }
@@ -53,7 +63,11 @@ bool is_dir(const char* Path){
  */
 bool file_exists(const char* Path){
     FSM_FILE file = nvfs_info(Path);
+    
     if (file.Ready != 1) return false;
+    
+    fsm_file_close(&file);
+    
     return true;
 }
 
@@ -67,32 +81,14 @@ bool file_exists(const char* Path){
 size_t filesize(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return 0;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+    
     if (file.Type != 0) return 0;
+    
     return file.Size;
 }
-
-/**
- * @brief [FileIO] Возвращает время последнего изменения файла
- *
- * @param Path - Путь
- *
- * @todo НЕРАБОТАЕТ!!! ПРОБЛЕМА #PF ПОСТАВИЛ ПОКА ЗАГЛУШКУ
- *
- * @return size_t - Время формата Unix
- */
-size_t filemtime(const char* Path){
-    qemu_log("filemtime: %s", Path);
-    FSM_FILE file = nvfs_info(Path);
-    if (file.Ready != 1) return 0;
-    if (file.Type != 0) return 0;
-    return 1234567;
-   // qemu_log(" |--- Query: %x", &file.LastTime);
-    //size_t unix = fsm_DateConvertToUnix(file.LastTime);
-
-    //qemu_log(" |--- Return: %d", unix);
-    // return unix;
-}
-
 
 /**
  * @brief [FileIO] Проверяет права чтения у сущности
@@ -104,9 +100,14 @@ size_t filemtime(const char* Path){
 bool is_readable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+    
     if (file.CHMOD & FSM_MOD_READ) {
         return true;
     }
+    
     return false;
 }
 
@@ -121,6 +122,10 @@ bool is_readable(const char* Path){
 bool is_writable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+    
     if (file.CHMOD & FSM_MOD_WRITE) {
         return true;
     }
@@ -138,6 +143,10 @@ bool is_writable(const char* Path){
 bool is_executable(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+    
     if (file.CHMOD & FSM_MOD_EXEC) {
         return true;
     }
@@ -155,6 +164,10 @@ bool is_executable(const char* Path){
 uint32_t fileperms(const char* Path){
     FSM_FILE file = nvfs_info(Path);
     if (file.Ready != 1) return false;
+    
+    // Free resources immediately - we don't need name and path pointers.
+    fsm_file_close(&file);
+
     uint32_t ret = 0;
     if (file.CHMOD & FSM_MOD_READ) {
         ret |= FSM_MOD_READ;
@@ -178,8 +191,10 @@ uint32_t fileperms(const char* Path){
  */
 bool touch(const char* Path){
     FSM_FILE file = nvfs_info(Path);
-
+    
     if (file.Ready == 1) {
+        // Free resources immediately - we don't need name and path pointers.
+        fsm_file_close(&file);
         return false;
     }
 

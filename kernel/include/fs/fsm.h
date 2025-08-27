@@ -23,8 +23,8 @@ typedef struct
 
 typedef struct {
 	bool Ready;		   /// Существует ли файл?
-	char Name[1024];   /// Имя файла
-	char Path[1024];   /// Путь файла
+	char* Name;   /// Имя файла
+	char* Path;   /// Путь файла
 	int Mode;		   /// Режим файла
 	size_t Size;	   /// Размер файла в байтах (oсt2bin)
 	FSM_TIME LastTime; /// Время последнего изменения файла
@@ -104,3 +104,5 @@ void fsm_dpm_update(const char* disk_id);
 
 const char* fsm_get_disk_filesystem(const char* disk_id);
 void fsm_detach_fs(const char* disk_id);
+
+void fsm_file_close(FSM_FILE* file);

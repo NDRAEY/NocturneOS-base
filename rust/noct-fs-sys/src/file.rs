@@ -13,7 +13,7 @@ pub struct File {
 impl File {
     pub fn from_fsm(file: FSM_FILE) -> Self {
         let name = {
-            let a = unsafe { CStr::from_ptr(file.Name.as_ptr()) };
+            let a = unsafe { CStr::from_ptr(file.Name) };
             a.to_string_lossy()
         }
         .into_owned();
