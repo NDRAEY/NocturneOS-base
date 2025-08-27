@@ -15,16 +15,21 @@ use noct_logger::{qemu_err, qemu_log, qemu_note};
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"ISO9660\0";
 
-struct ThatDisk {
-    disk_name: String
+struct ThatDisk<'disk> {
+    disk_name: &'disk str
 }
 
-impl iso9660_simple::Read for ThatDisk {
+impl iso9660_simple::Read for ThatDisk<'_> {
     fn read(&mut self, position: usize, buffer: &mut [u8]) -> Option<()> {
         noct_diskman::read(&self.disk_name, position as _, buffer);
 
         Some(())
     }
+}
+
+fn raw_ptr_to_str(ptr: *const c_char) -> &'static str {
+    let c_str = unsafe { CStr::from_ptr(ptr) };
+    c_str.to_str().unwrap()
 }
 
 fn raw_ptr_to_string(ptr: *const c_char) -> String {
@@ -62,22 +67,21 @@ unsafe extern "C" fn fun_read(
 ) -> u32 {
     // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
-        disk_name: raw_ptr_to_string(disk_name),
+        disk_name: raw_ptr_to_str(disk_name),
     });
 
-    let rpath = raw_ptr_to_string(path);
+    let rpath = raw_ptr_to_str(path);
 
-    let entries = match get_directory_entry_by_path(&mut fl, &rpath) {
+    let entries = match get_directory_entry_by_path(&mut fl, rpath) {
         Some(entry) => entry,
         None => return 0
     };
 
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let rd = noct_diskman::read(
-        &raw_ptr_to_string(disk_name),
-        ((entries.record.lba.lsb * 2048) + offset) as u64,
+        raw_ptr_to_str(disk_name),
+        ((entries.lsb_position() * 2048) + offset) as u64,
         outbuf,
     );
 
@@ -92,12 +96,12 @@ unsafe extern "C" fn fun_write(_disk_name: *const c_char, _path: *const c_char, 
 unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
     // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
-        disk_name: raw_ptr_to_string(disk_name),
+        disk_name: raw_ptr_to_str(disk_name),
     });
 
-    let rpath = raw_ptr_to_string(path);
+    let rpath = raw_ptr_to_str(path);
 
-    let entry = get_directory_entry_by_path(&mut fl, &rpath);
+    let entry = get_directory_entry_by_path(&mut fl, rpath);
 
     if entry.is_none() {
         return FSM_FILE::missing();
@@ -128,17 +132,14 @@ unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c
 
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
-        disk_name: raw_ptr_to_string(disk_name),
+        disk_name: raw_ptr_to_str(disk_name),
     });
 
-    let path = {
-        let c_str = unsafe { CStr::from_ptr(path) };
-        c_str.to_string_lossy().into_owned()
-    };
+    let path = raw_ptr_to_str(path);
 
     qemu_note!("Path requested: {path}");
 
-    let root = iso9660_simple::helpers::get_directory_entry_by_path(&mut fl, &path);
+    let root = iso9660_simple::helpers::get_directory_entry_by_path(&mut fl, path);
 
     let root = match root {
         Some(root) => root,
@@ -149,8 +150,6 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
     };
 
     let root = fl.read_directory(root.record.lba.lsb as _);
-
-    // qemu_note!("{:#?}", &root);
 
     let files: Vec<FSM_FILE> = root
         .iter()
@@ -178,8 +177,8 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, output: *mut c_char) {
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
     let mut buffer = [0u8; 5];
 
-    let disk_name = raw_ptr_to_string(disk_name);
-    noct_diskman::read(&disk_name, 0x8001, &mut buffer);
+    let disk_name = raw_ptr_to_str(disk_name);
+    noct_diskman::read(disk_name, 0x8001, &mut buffer);
 
     if ISO9660_OEM != buffer {
         // qemu_err!(
