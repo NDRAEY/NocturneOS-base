@@ -152,14 +152,13 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
     let root = fl.read_directory(root.record.lba.lsb as _);
 
     let files: Vec<FSM_FILE> = root
-        .iter()
         .map(|elem| {
             FSM_FILE::with_data(
                 &elem.name,
                 0,
                 elem.record.data_length.lsb,
-                Some(iso_datetime_to_fsm(elem)),
-                iso_type_to_fsm_type(elem),
+                Some(iso_datetime_to_fsm(&elem)),
+                iso_type_to_fsm_type(&elem),
                 FSM_MOD_READ,
             )
         })
