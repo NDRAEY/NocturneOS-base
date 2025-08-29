@@ -48,8 +48,8 @@ static int64_t memdisk_diskman_write(void* priv_data, uint64_t location, uint64_
 
 static int64_t memdisk_diskman_control(void *priv_data,
                             uint32_t command,
-                            const uint8_t *parameters,
-                            uintptr_t param_len,
+                            SAYORI_UNUSED const uint8_t *parameters,
+                            SAYORI_UNUSED uintptr_t param_len,
                             uint8_t *buffer,
                             uintptr_t buffer_len) {
 	memdisk_t* memdisk = (memdisk_t*)priv_data;

@@ -28,7 +28,6 @@ uint32_t tty_off_pos_h = 16;					/// ...
 uint32_t tty_text_color;				/// Текущий цвет шрифта
 uint32_t tty_bg_color;                  /// Текущий задний фон
 bool stateTTY = true;					/// Статус, разрешен ли вывод текста через tty_printf
-static bool tty_autoupdate = true;
 /////////////////////////////////
 
 // TODO: Move to things/cursor.c

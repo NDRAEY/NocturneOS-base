@@ -252,7 +252,7 @@ void find_apic(size_t rsdt_addr, size_t *lapic_addr) {
 
     size_t base_table_end = table_end + sizeof(struct APIC_Base_Table);
 
-    for(int i = 0; i < sdt_count; i++) {
+    for(size_t i = 0; i < sdt_count; i++) {
         struct APIC_Entry* entry = (struct APIC_Entry*)base_table_end;
 
         qemu_log("[%x] Type: %d", entry, entry->type);

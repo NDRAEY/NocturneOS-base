@@ -921,15 +921,19 @@ static int64_t ahci_diskman_read(void* priv_data, uint64_t location, uint64_t si
 static int64_t ahci_diskman_write(void* priv_data, uint64_t location, uint64_t size, const uint8_t* buf) {
 	qemu_err("ahci_diskman_write: TODO: Not implemented yet");
 
-	uint8_t drive_nr = *(uint8_t*)priv_data;
+	uint8_t port_nr = *(uint8_t*)priv_data;
+
+	qemu_note("ahci_diskman_read: port_nr = %x", port_nr);
+
+	// ahci_write(port_nr, buf, location, (uint32_t)size);
 
 	return -1;
 }
 
 static int64_t ahci_diskman_control(void *priv_data,
                             uint32_t command,
-                            const uint8_t *parameters,
-                            uintptr_t param_len,
+                            SAYORI_UNUSED const uint8_t *parameters,
+                            SAYORI_UNUSED uintptr_t param_len,
                             uint8_t *buffer,
                             uintptr_t buffer_len) {
 	uint8_t port_nr = *(uint8_t*)priv_data;
@@ -1010,8 +1014,6 @@ void ahci_identify(size_t port_num, bool is_atapi) {
 
     port->interrupt_status = (uint32_t)-1;
 
-	uint32_t block_size = 512;
-
     AHCI_HBA_CMD_HEADER* hdr = ports[port_num].command_list_addr_virt;
 
     hdr->cfl = sizeof(AHCI_FIS_REG_HOST_TO_DEVICE) / sizeof(uint32_t);
@@ -1039,7 +1041,6 @@ void ahci_identify(size_t port_num, bool is_atapi) {
     cmdfis->c = 1;	// Command
     if(is_atapi) {
         cmdfis->command = ATA_CMD_IDENTIFY_PACKET;
-        block_size = 2048;
     } else {
         cmdfis->command = ATA_CMD_IDENTIFY;
     }
