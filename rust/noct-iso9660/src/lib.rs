@@ -2,15 +2,16 @@
 
 extern crate alloc;
 
-use core::ffi::{c_char, c_void, CStr};
+use core::ffi::{c_char, c_void};
 
-use alloc::{string::String, vec::Vec};
+use alloc::vec::Vec;
 use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
 // use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ, FSM_TIME,
 };
 use noct_logger::{qemu_err, qemu_log, qemu_note};
+use noct_tools::raw_ptr_to_str;
 
 const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"ISO9660\0";
@@ -25,16 +26,6 @@ impl iso9660_simple::Read for ThatDisk<'_> {
 
         Some(())
     }
-}
-
-fn raw_ptr_to_str(ptr: *const c_char) -> &'static str {
-    let c_str = unsafe { CStr::from_ptr(ptr) };
-    c_str.to_str().unwrap()
-}
-
-fn raw_ptr_to_string(ptr: *const c_char) -> String {
-    let c_str = unsafe { CStr::from_ptr(ptr) };
-    c_str.to_string_lossy().into_owned()
 }
 
 #[inline]
@@ -65,7 +56,6 @@ unsafe extern "C" fn fun_read(
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
     });

@@ -8,6 +8,7 @@ tarfs = { version = "0.2.4", default-features = false }
 noct-diskman = { path = "../noct-diskman" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }
+noct-tools = { path = "../noct-tools" }
 no_std_io = { version = "0.6.0", features = ["alloc"] }
 
 [build-dependencies]

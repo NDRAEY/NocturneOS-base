@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use core::ffi::{c_char, c_void, CStr};
+use core::ffi::{c_char, c_void};
 
 use alloc::{string::String, vec::Vec};
 use fatfs::{FsOptions, Read, Seek, SeekFrom};
@@ -12,19 +12,20 @@ use noct_fs_sys::{
     FSM_MOD_READ, FSM_TIME,
 };
 use noct_logger::{qemu_err, qemu_note, qemu_ok};
+use noct_tools::raw_ptr_to_str;
 
 static FSNAME: &[u8] = b"FATFS\0";
 
-struct DiskFile {
-    disk_name: String,
+struct DiskFile<'disk> {
+    disk_name: &'disk str,
     position: u64,
 }
 
-impl fatfs::IoBase for DiskFile {
+impl fatfs::IoBase for DiskFile<'_> {
     type Error = ();
 }
 
-impl fatfs::Read for DiskFile {
+impl fatfs::Read for DiskFile<'_> {
     fn read(&mut self, buffer: &mut [u8]) -> Result<usize, ()> {
         let size = noct_diskman::read(&self.disk_name, self.position, buffer);
 
@@ -36,7 +37,7 @@ impl fatfs::Read for DiskFile {
     }
 }
 
-impl fatfs::Write for DiskFile {
+impl fatfs::Write for DiskFile<'_> {
     fn write(&mut self, buffer: &[u8]) -> Result<usize, Self::Error> {
         let size = noct_diskman::write(&self.disk_name, self.position, buffer);
 
@@ -52,7 +53,7 @@ impl fatfs::Write for DiskFile {
     }
 }
 
-impl fatfs::Seek for DiskFile {
+impl fatfs::Seek for DiskFile<'_> {
     fn seek(&mut self, pos: SeekFrom) -> Result<u64, Self::Error> {
         match pos {
             SeekFrom::Start(p) => {
@@ -71,11 +72,6 @@ impl fatfs::Seek for DiskFile {
     }
 }
 
-fn raw_ptr_to_string(ptr: *const c_char) -> String {
-    let c_str = unsafe { CStr::from_ptr(ptr) };
-    c_str.to_string_lossy().into_owned()
-}
-
 unsafe extern "C" fn fun_read(
     disk_name: *const c_char,
     path: *const c_char,
@@ -87,14 +83,14 @@ unsafe extern "C" fn fun_read(
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_string(disk_name),
+            disk_name: raw_ptr_to_str(disk_name),
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_string(path);
+    let path_binding = raw_ptr_to_str(path);
     let path = path_binding.trim();
 
     qemu_note!("Path: {path:?}");
@@ -132,14 +128,14 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_string(disk_name),
+            disk_name: raw_ptr_to_str(disk_name),
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_string(path);
+    let path_binding = raw_ptr_to_str(path);
     let path = path_binding.trim();
 
     let (pardir, filename) = {
@@ -205,14 +201,14 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_string(disk_name),
+            disk_name: raw_ptr_to_str(disk_name),
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_string(path);
+    let path_binding = raw_ptr_to_str(path);
     let path = path_binding.trim();
 
     qemu_note!("Path: {path:?}");
@@ -283,13 +279,9 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, b: *mut c_char) {
 }
 
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
-    // qemu_note!("Fatfs try to detect!");
-
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_string(disk_name),
+            disk_name: raw_ptr_to_str(disk_name),
             position: 0,
         },
         FsOptions::new(),
@@ -299,10 +291,6 @@ unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
         qemu_ok!("Detected FATFS!");
         return 1;
     }
-
-    // if let Err(e) = fat {
-    //     qemu_err!("Can't detect FATFS! {:?}", e);
-    // }
 
     0
 }

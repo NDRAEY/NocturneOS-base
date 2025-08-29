@@ -2,28 +2,18 @@
 
 extern crate alloc;
 
-use core::ffi::{c_char, c_void, CStr};
+use core::ffi::{c_char, c_void};
 
-use alloc::{
-    borrow::ToOwned, string::{String, ToString}, vec::Vec
-};
+use alloc::{string::ToString, vec::Vec};
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ,
 };
 use noct_logger::{qemu_err, qemu_log};
+use noct_tools::raw_ptr_to_str;
 
 static FSNAME: &[u8] = b"TARFS2\0";
 
 pub mod disk_device;
-
-fn raw_ptr_to_str(ptr: *const c_char) -> &'static str {
-    let c_str = unsafe { CStr::from_ptr(ptr) };
-    c_str.to_str().unwrap()
-}
-
-fn raw_ptr_to_string(ptr: *const c_char) -> String {
-    raw_ptr_to_str(ptr).to_owned()
-}
 
 fn tarfs_type_to_fsm_type(tarfs_type: tarfs::Type) -> u32 {
     match tarfs_type {
@@ -44,7 +34,7 @@ unsafe extern "C" fn fun_read(
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
-    let path = ".".to_string() + &raw_ptr_to_string(path);
+    let path = ".".to_string() + raw_ptr_to_str(path);
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
 
     let result = fl.read_file(&path, offset as _, &mut outbuf[..count as usize]);
@@ -52,7 +42,13 @@ unsafe extern "C" fn fun_read(
     result.unwrap_or(0) as _
 }
 
-unsafe extern "C" fn fun_write(_disk_name: *const c_char, _b: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(
+    _disk_name: *const c_char,
+    _b: *const c_char,
+    _c: u32,
+    _d: u32,
+    _e: *const c_void,
+) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
@@ -65,11 +61,11 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
 
-    let path = ".".to_string() + &raw_ptr_to_string(path);
+    let path = ".".to_string() + raw_ptr_to_str(path);
 
     let entity = match fl.find_file(&path) {
         Err(_) => return FSM_FILE::missing(),
-        Ok(e) => e
+        Ok(e) => e,
     };
 
     let ftype = tarfs_type_to_fsm_type(entity._type);

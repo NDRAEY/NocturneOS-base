@@ -534,6 +534,7 @@ dependencies = [
  "noct-logger",
  "noct-path",
  "noct-timer",
+ "noct-tools",
 ]
 
 [[package]]
@@ -601,6 +602,7 @@ dependencies = [
  "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
+ "noct-tools",
 ]
 
 [[package]]
@@ -718,6 +720,7 @@ dependencies = [
  "noct-diskman",
  "noct-fs-sys",
  "noct-logger",
+ "noct-tools",
  "tarfs",
 ]
 
@@ -730,6 +733,10 @@ dependencies = [
 
 [[package]]
 name = "noct-timer"
+version = "0.1.0"
+
+[[package]]
+name = "noct-tools"
 version = "0.1.0"
 
 [[package]]
