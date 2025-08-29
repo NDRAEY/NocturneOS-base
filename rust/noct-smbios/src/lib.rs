@@ -3,8 +3,7 @@
 use core::ffi::CStr;
 
 use alloc::{
-    string::{String, ToString},
-    vec::Vec,
+    borrow::ToOwned, string::String, vec::Vec
 };
 
 extern crate alloc;
@@ -90,7 +89,7 @@ impl SMBIOS {
         }
     }
 
-    fn parse_string(&self, table_end: usize, nr: usize) -> Option<String> {
+    fn parse_string(&self, table_end: usize, nr: usize) -> Option<&str> {
         if nr == 0 {
             return None;
         }
@@ -108,7 +107,7 @@ impl SMBIOS {
             }
 
             if counter == nr {
-                return Some(c_str.to_string_lossy().to_string());
+                return Some(c_str.to_str().unwrap());
             }
 
             addr += data.len() + 1;
@@ -156,19 +155,19 @@ impl SMBIOS {
 
                     let venstr = self
                         .parse_string(table_end as _, ven as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let fw = self
                         .parse_string(table_end as _, fw_ver as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let fwrel = self
                         .parse_string(table_end as _, firmware_release_date as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
 
                     entries.push(SMBIOSEntry::BIOS {
-                        vendor: venstr,
-                        firmware_version: fw,
+                        vendor: venstr.to_owned(),
+                        firmware_version: fw.to_owned(),
                         segment_address: bios_start,
-                        release_date: fwrel,
+                        release_date: fwrel.to_owned(),
                         rom_size: firmware_rom_size as usize,
                     });
                 }
@@ -184,35 +183,35 @@ impl SMBIOS {
 
                     let manufacturer = self
                         .parse_string(table_end as _, manufacturer as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let product_name = self
                         .parse_string(table_end as _, product_name as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let version = self
                         .parse_string(table_end as _, version as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let serial_number = self
                         .parse_string(table_end as _, serial_number as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let sku = self
                         .parse_string(table_end as _, sku as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let family = self
                         .parse_string(table_end as _, family as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
 
                     entries.push(SMBIOSEntry::System {
-                        manufacturer,
-                        product_name,
-                        version,
-                        serial_number,
+                        manufacturer: manufacturer.to_owned(),
+                        product_name: product_name.to_owned(),
+                        version: version.to_owned(),
+                        serial_number: serial_number.to_owned(),
                         uuid: {
                             let mut n_uuid = [0u8; 16];
                             n_uuid.copy_from_slice(uuid);
                             n_uuid
                         },
-                        sku,
-                        family,
+                        sku: sku.to_owned(),
+                        family: family.to_owned(),
                     });
                 }
                 // Processor Information
@@ -232,21 +231,21 @@ impl SMBIOS {
 
                     let socket_designation = self
                         .parse_string(table_end as _, socket_designation as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let processor_manufacturer = self
                         .parse_string(table_end as _, processor_manufacturer as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
                     let processor_version = self
                         .parse_string(table_end as _, processor_version as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
 
                     entries.push(SMBIOSEntry::Processor {
-                        socket_designation,
+                        socket_designation: socket_designation.to_owned(),
                         processor_type,
                         processor_family,
-                        processor_manufacturer,
+                        processor_manufacturer: processor_manufacturer.to_owned(),
                         processor_id,
-                        processor_version,
+                        processor_version: processor_version.to_owned(),
                         voltage,
                         external_clock,
                         max_speed,
@@ -261,12 +260,12 @@ impl SMBIOS {
 
                     let memory_manufacturer = self
                         .parse_string(table_end as _, memory_manufacturer as _)
-                        .unwrap_or("Unknown".to_string());
+                        .unwrap_or("Unknown");
 
                     entries.push(SMBIOSEntry::MemoryDevice {
                         size,
                         memory_speed,
-                        memory_manufacturer,
+                        memory_manufacturer: memory_manufacturer.to_owned(),
                     });
                 }
                 _ => (),

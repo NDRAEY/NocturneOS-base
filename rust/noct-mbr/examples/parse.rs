@@ -1,6 +1,6 @@
 use std::{fs::File, io::{Read, Seek, SeekFrom}};
 
-use noct_mbr::{parse_from_sector, PartitionRecord, PartitionType};
+use noct_mbr::{PartitionRecord, PartitionType};
 
 fn scan_partitions(
     disk: &mut File,

@@ -18,14 +18,14 @@ pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
         return Box::into_raw(info);
     }
 
-    let owned_string = unsafe {
+    let name = unsafe {
         let cstr = CStr::from_ptr(name);
-        cstr.to_string_lossy().into_owned()
+        cstr.to_str().unwrap()
     };
 
     // qemu_note!("Path: {owned_string:?}");
 
-    let stems = owned_string.split(":/").collect::<Vec<&str>>();
+    let stems = name.split(":/").collect::<Vec<&str>>();
 
     if stems.len() < 2 {
         return Box::into_raw(info);

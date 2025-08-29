@@ -1,23 +1,22 @@
 use core::ffi::c_char;
 
-use alloc::string::String;
 use no_std_io::io::{Read, Seek, Write};
 
-use crate::raw_ptr_to_string;
+use crate::raw_ptr_to_str;
 // use noct_dpm_sys::Disk;
 
-pub struct DiskDevice {
-    disk: String,
+pub struct DiskDevice<'disk> {
+    disk: &'disk str,
     position: u64,
 }
 
-impl DiskDevice {
+impl DiskDevice<'_> {
     pub fn new(disk: *const c_char) -> Self {
-        DiskDevice { disk: raw_ptr_to_string(disk), position: 0 }
+        DiskDevice { disk: raw_ptr_to_str(disk), position: 0 }
     }
 }
 
-impl Read for DiskDevice {
+impl Read for DiskDevice<'_> {
     fn read(&mut self, buffer: &mut [u8]) -> no_std_io::io::Result<usize> {
         let read_size = noct_diskman::read(&self.disk, self.position as _, buffer);
 
@@ -25,7 +24,7 @@ impl Read for DiskDevice {
     }
 }
 
-impl Write for DiskDevice {
+impl Write for DiskDevice<'_> {
     fn write(&mut self, buffer: &[u8]) -> no_std_io::io::Result<usize> {
         let size = noct_diskman::write(&self.disk, self.position as _, buffer);
 
@@ -39,7 +38,7 @@ impl Write for DiskDevice {
     }
 }
 
-impl Seek for DiskDevice {
+impl Seek for DiskDevice<'_> {
     fn seek(&mut self, pos: no_std_io::io::SeekFrom) -> no_std_io::io::Result<u64> {
         match pos {
             no_std_io::io::SeekFrom::Start(pos) => {
@@ -59,4 +58,4 @@ impl Seek for DiskDevice {
     }
 }
 
-impl noctfs::device::Device for DiskDevice {}
+impl noctfs::device::Device for DiskDevice<'_> {}
