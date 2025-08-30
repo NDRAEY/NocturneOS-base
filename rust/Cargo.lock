@@ -385,9 +385,9 @@ checksum = "7943c866cc5cd64cbc25b2e01621d07fa8eb2a1a23160ee81ce38704e97b8ecf"
 
 [[package]]
 name = "iso9660_simple"
-version = "0.1.22"
+version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b813ef85554eb08b05d78f0c37421f86571cefdefa9a8fcec63becdb28b140ae"
+checksum = "24026d8f7fa0f98a99af9d486e65f8865c142c9834c55bc5bf5389f0d27f6c09"
 
 [[package]]
 name = "itertools"
