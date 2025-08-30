@@ -58,7 +58,7 @@ unsafe extern "C" fn fun_read(
 ) -> u32 {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    });
+    }).unwrap();
 
     let rpath = raw_ptr_to_str(path);
 
@@ -87,7 +87,7 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
     // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    });
+    }).unwrap();
 
     let rpath = raw_ptr_to_str(path);
 
@@ -123,7 +123,7 @@ unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    });
+    }).unwrap();
 
     let path = raw_ptr_to_str(path);
 
