@@ -1,3 +1,4 @@
+#include <arch/x86/cpufeature.h>
 #include "common.h"
 #include "sys/cpuid.h"
 #include "io/ports.h"
@@ -11,7 +12,6 @@
 #define WRITEPROTECT 5
 #define WRITEBACK 6
 
-bool mtrr_is_supported = false;
 bool mtrr_wc_available = false;
 bool mtrr_fixed_size_available = false;
 size_t variable_size_mtrrs = 0;
@@ -19,16 +19,10 @@ size_t variable_size_mtrrs = 0;
 #define CALC_MASK(size) (~(size - 1) & 0xffffffff)
 
 void mtrr_init() {
-	uint32_t unused, eax, edx;
+	uint32_t unused, eax;
 
-	cpuid(1, unused, unused, unused, edx);
-
-	qemu_log("%x", edx & (1 << 12));
-
-	if(edx & (1 << 12)) {
-		mtrr_is_supported = true;
-	} else {
-		return;
+	if (!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return;
 	}
 
 	rdmsr(0xFE, eax, unused);

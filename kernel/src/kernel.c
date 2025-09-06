@@ -17,6 +17,7 @@
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
+#include "sys/cpuid.h"
 #include "sys/mtrr.h"
 #include "net/ipv4.h"
 
@@ -183,6 +184,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     vmm_init();
     qemu_ok("VMM OK!");
+
+    cpu_get_info(&boot_cpu_info);
+    qemu_log("Boot CPU: %s (%s)", boot_cpu_info.model_string, boot_cpu_info.brand_string);
     
     init_syscalls();
     
@@ -300,6 +304,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
 
+    tty_printf("\nCPU: %s (%s)\n", boot_cpu_info.model_string, boot_cpu_info.brand_string);
+    
     ahci_init();
 
     sayori_time_t time = get_time();
