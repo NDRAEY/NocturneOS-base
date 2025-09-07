@@ -22,6 +22,12 @@ SECTIONS
     {
         DATA_start = .;
 
+        cpu_vendor_start = .;
+        *(.cpu_vendor_data*)
+        cpu_vendor_end = .;
+        
+        . = ALIGN(8);
+
         *(.data*)
 
         DATA_end = .;

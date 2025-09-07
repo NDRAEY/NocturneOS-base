@@ -138,11 +138,7 @@ size_t syscall_munmap(size_t virtual, size_t size) {
 }
 
 size_t syscall_temperature() {
-    if(is_temperature_module_present()) {
-        return get_cpu_temperature();
-    }
-
-    return 0xFFFFFFFF;
+    return get_cpu_temperature();
 }
 
 size_t syscall_mouse(uint32_t* out_x, uint32_t* out_y, uint32_t* flags) {

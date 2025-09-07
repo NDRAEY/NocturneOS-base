@@ -6,8 +6,6 @@
 
 #include "common.h"
 
-bool is_temperature_module_present();
-
 void cputemp_calibrate();
 
 /**

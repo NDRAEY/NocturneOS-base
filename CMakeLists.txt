@@ -121,7 +121,7 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/asm/paging.s
 		kernel/src/arch/x86/asm/regs.s 
 		kernel/src/lib/setjmp.s 
-		kernel/src/arch/x86/asm/switch_task.s 
+		kernel/src/arch/x86/asm/switch_task.s
 	)
 
 	set(C_SRC
@@ -131,6 +131,8 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/drv/cmos.c
         kernel/src/sys/isr.c 
 		kernel/src/drv/video/intel.c
+		kernel/src/arch/x86/cpuinfo.c
+		kernel/src/arch/x86/cpuvendor.c
 	)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
@@ -188,8 +190,7 @@ set(C_SRC
 	kernel/src/lib/math/cos.c 
 	kernel/src/lib/math/tan.c 
 	kernel/src/lib/math/sqrt.c 
-	kernel/src/lib/math/cbrt.c 
-	kernel/src/sys/cpuid.c	
+	kernel/src/lib/math/cbrt.c 	
 	kernel/src/drv/disk/ata.c 
 	kernel/src/drv/disk/atapi.c 
 	kernel/src/drv/disk/memdisk.c 

@@ -1,46 +1,20 @@
-#include "common.h"
-#include "sys/cpuinfo.h"
+#include "arch/x86/cpu_vendors.h"
+#include "arch/x86/cpufeature.h"
 #include "sys/msr.h"
-#include "sys/cpuid.h"
+#include <sys/cpuid.h>
 
 // X86 CPU Temperature support (partially based on memtest86+ code)
 
-size_t cputemp_calibrate_value = 0;
-
-size_t get_max_cpuid_count() {
-	uint32_t info[4] = {0};
-
-	cpuid(0x0,
-		  info[0],
-		  info[1],
-		  info[2],
-		  info[3]
-	);
-
-	return info[0];
-}
-
-/**
- * @brief Get CPU temperature sensor presence
- * @warning Works only on Intel (R) processors!
- * @return true if present, false otherwise
+/* 
+ * TODO: make a structure with function pointers for similar operations for each CPU vendor.
+ * For example, one could easily do:
+ *      cpu_vendors[X86_VENDOR_INTEL]->ops.cputemp_calibrate();
+ * or
+ *      cpu_vendors[X86_VENDOR_AMD]->ops.cputemp_calibrate();
+ * and that would be good design.
  */
-bool is_temperature_module_present() {
-	if(cpu_get_id() == INTEL_MAGIC && get_max_cpuid_count() >= 6) { // Only possible on real hardware (not QEMU)
-		uint32_t info[4] = {0};
 
-		cpuid(0x6,
-			  info[0],
-			  info[1],  // Not needed
-			  info[2],  // Not needed
-			  info[3]   // Not needed
-		);
-
-		return (bool)(info[0] & 1);
-	}
-
-	return false;
-}
+size_t cputemp_calibrate_value = 0;
 
 /**
  * @brief Get a special value
@@ -49,8 +23,8 @@ bool is_temperature_module_present() {
 void cputemp_calibrate() {
 	uint32_t a = 0;
 	uint32_t b = 0;
-
-	if(is_temperature_module_present()) {
+	
+	if(boot_cpu_has(X86_FEATURE_DTHERM) && boot_cpu_info.manufacturer_id == X86_VENDOR_INTEL) {
 		rdmsr(INTEL_TEMPERATURE_TARGET, a, b);
 		cputemp_calibrate_value = (a >> 16) & 0x7F;
 
@@ -68,7 +42,7 @@ void cputemp_calibrate() {
  * @return Temperature in Celsius
  */
 size_t get_cpu_temperature() {
-	if(is_temperature_module_present()) {
+	if(boot_cpu_has(X86_FEATURE_DTHERM) && boot_cpu_info.manufacturer_id == X86_VENDOR_INTEL) {
 		uint32_t a = 0;
 		uint32_t b = 0;
 
