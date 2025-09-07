@@ -21,7 +21,7 @@
 /* x86-relative. */
 #define NR_CAPS 5
 
-static inline __attribute__((always_inline)) 
+SAYORI_INLINE
 void cpuid(uint32_t leaf, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx) {
 	__asm__ volatile("cpuid" : "=a"(*eax), "=b"(*ebx), "=c"(*ecx), "=d"(*edx) : "a"(leaf));
 }
