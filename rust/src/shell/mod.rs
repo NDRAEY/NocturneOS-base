@@ -36,6 +36,7 @@ pub mod file;
 pub mod file_ops;
 pub mod gfxinfo;
 pub mod log;
+pub mod mtrr;
 pub mod mala;
 pub mod meminfo;
 pub mod pavi;
@@ -63,6 +64,7 @@ static COMMANDS: &[ShellCommandEntry] = &[
     #[cfg(target_arch = "x86")]
     pci::PCI_COMMAND_ENTRY,
     mala::MALA_COMMAND_ENTRY,
+    mtrr::MTRR_COMMAND_ENTRY,
     pavi::PAVI_COMMAND_ENTRY,
     reboot::REBOOT_COMMAND_ENTRY,
     gfxinfo::GFXINFO_COMMAND_ENTRY,

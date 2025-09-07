@@ -45,7 +45,12 @@ void mtrr_init() {
 }
 
 void list_mtrrs() {
-	tty_printf("Physical FB is: %x", getDisplayAddr());
+    if (!boot_cpu_has(X86_FEATURE_MTRR)) {
+        tty_printf("MTRR is not supported on this machine.\n");
+	    return;
+	}
+
+    tty_printf("Physical FB is: %x\n", getDisplayAddr());
 
 	for(size_t i = 0; i < variable_size_mtrrs; i++) {
 		uint32_t base, mask;
