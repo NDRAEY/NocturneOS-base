@@ -7,10 +7,11 @@ enable_language(C ASM)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;OptSym" CACHE STRING "Available configurations" FORCE)
 
-set(VALID_ARCHITECTURES "x86" "armv7")
+set(VALID_ARCHITECTURES "x86" "armv7" "x86_64")
 set(SUPPORTED_ARMV7_BOARDS "opi-lite")
 
 if(NOT NOCTURNE_ARCH)
+  message(WARNING "Target architecture is not selected (NOCTURNE_ARCH), defaulting to x86...")
   set(NOCTURNE_ARCH "x86")
 endif()
 
@@ -40,6 +41,9 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "LANG=en_US.UTF-8 ${COMMAND}")
 if(NOCTURNE_ARCH STREQUAL "x86")
 	set(CLANG_ARCHITECTURE_TRIPLE "i386-pc-none")
 	set(RUST_TARGET_TRIPLE "i686-unknown-none")
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(CLANG_ARCHITECTURE_TRIPLE "x86_64-pc-none")
+	set(RUST_TARGET_TRIPLE "x86_64-unknown-none")
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CLANG_ARCHITECTURE_TRIPLE "armv7-unknown-none")
 	set(RUST_TARGET_TRIPLE "armv7-unknown-none")
@@ -49,7 +53,13 @@ set(ISO_DIR "${CMAKE_SOURCE_DIR}/iso/")
 set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
-set(CMAKE_ASM_FLAGS "-m32 -g")
+
+if(NOCTURNE_ARCH STREQUAL "x86_64")
+    set(CMAKE_ASM_FLAGS "-g")
+else()
+    set(CMAKE_ASM_FLAGS "-m32 -g")
+endif()
+
 set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
 
 if(NOCTURNE_USE_CLANG)
@@ -70,6 +80,13 @@ endif()
 if(NOCTURNE_ARCH STREQUAL "x86")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack -Wl,--gc-sections")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386")
+	
+	if(NOCTURNE_USE_SSE2)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+	endif()
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+    set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack -Wl,--gc-sections")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -march=x86_64")
 	
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
@@ -123,7 +140,11 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/lib/setjmp.s 
 		kernel/src/arch/x86/asm/switch_task.s
 	)
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(C_SRC kernel/src/arch/armv7/init.c)
+endif()
 
+if((NOCTURNE_ARCH STREQUAL "x86") OR (NOCTURNE_ARCH STREQUAL "x86_64"))
 	set(C_SRC
 		kernel/src/arch/x86/init.c
         kernel/src/sys/gdt.c 
@@ -134,8 +155,6 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
 	)
-elseif(NOCTURNE_ARCH STREQUAL "armv7")
-	set(C_SRC kernel/src/arch/armv7/init.c)
 endif()
 
 set(C_SRC

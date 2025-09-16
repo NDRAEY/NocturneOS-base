@@ -58,11 +58,15 @@ void list_mtrrs() {
 		read_mtrr(i, &base, &mask);
 
 		qemu_log("[%d] MTRR: base: %x; mask: %x", i, base, mask);
-		tty_printf("[%d] MTRR: base: %x; mask: %x\n", i, base, mask);
+		tty_printf("[%d] MTRR: base: %x; mask: %x (size: %x)\n", i, base, mask, ~mask + 1);
 	}
 }
 
 uint32_t get_mtrr_index(uint32_t address) {
+    if(!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return 0xffffffff;
+	}
+
     for(size_t i = 0; i < variable_size_mtrrs; i++) {
         uint32_t base, mask;
 
@@ -78,6 +82,10 @@ uint32_t get_mtrr_index(uint32_t address) {
 
 
 void read_mtrr(size_t index, uint32_t* base, uint32_t* mask) {
+    if(!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return;
+	}
+
 	uint32_t unused;
 
 	if(index >= variable_size_mtrrs)
@@ -88,6 +96,10 @@ void read_mtrr(size_t index, uint32_t* base, uint32_t* mask) {
 }
 
 void write_mtrr(size_t index, uint32_t base, uint32_t mask) {
+    if(!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return;
+	}
+
 	uint32_t unused = 0;
 
 	if(index >= variable_size_mtrrs)
@@ -98,6 +110,10 @@ void write_mtrr(size_t index, uint32_t base, uint32_t mask) {
 }
 
 void write_mtrr_size(size_t index, uint32_t base, uint32_t size, size_t type) {
+    if(!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return;
+	}
+
 	uint32_t unused = 0;
 
 	if(index >= variable_size_mtrrs)
@@ -108,6 +124,10 @@ void write_mtrr_size(size_t index, uint32_t base, uint32_t size, size_t type) {
 }
 
 size_t find_free_mtrr() {
+    if(!boot_cpu_has(X86_FEATURE_MTRR)) {
+	    return 0xffffffff;
+	}
+
 	for(size_t i = 0; i < variable_size_mtrrs; i++) {
 		uint32_t base, mask;
 
