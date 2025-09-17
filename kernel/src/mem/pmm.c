@@ -233,15 +233,16 @@ void phys_mark_page_entry(physical_addr_t addr, uint8_t used) {
 // Creates and prepares a page directory
 uint32_t * new_page_directory() {
 	// Allocate a page (page directory is 4096 bytes)
-	uint32_t* dir = (uint32_t*)phys_alloc_single_page();
+	size_t* dir = (size_t*)phys_alloc_single_page();
 
 	qemu_log("Allocated page directory at: %p", dir);
 
 	// Blank it (they can store garbage, so we need to blank it)
-	memset(dir, 0, 4096);
+	memset(dir, 0, PAGE_SIZE);
 
 	qemu_log("Blanked directory.");
-	
+
+    // Recursive paging.
 	dir[1023] = (uint32_t)dir | 3;
 
 	qemu_log("================ Page directory is ready.");
@@ -249,11 +250,11 @@ uint32_t * new_page_directory() {
 	return dir;
 }
 
-uint32_t* get_page_table_by_vaddr(const uint32_t* page_dir, virtual_addr_t vaddr) {
+uint32_t* get_page_table_by_vaddr(const page_directory_t* page_dir, virtual_addr_t vaddr) {
 	if(paging_initialized)
-		return (uint32_t*)((char*)page_directory_start + (PD_INDEX(vaddr) * PAGE_SIZE));
+		return (page_directory_t*)((char*)page_directory_start + (PD_INDEX(vaddr) * PAGE_SIZE));
 	else
-		return (uint32_t*)(page_dir[PD_INDEX(vaddr)] & ~0xfff);
+		return (page_directory_t*)(page_dir[PD_INDEX(vaddr)] & ~0xfff);
 }
 
 void reload_cr3() {
@@ -311,7 +312,7 @@ void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t v
 /// \param physical PHYSICAL address to map
 /// \param virtual VIRTUAL address to map
 /// \param flags Page flags (PAGE_PRESENT is automatically included)
-void map_single_page(physical_addr_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags) {
+void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags) {
 	// Clean flags and some garbage from addresses.
 
 	virtual &= ~0xfff;
@@ -358,7 +359,7 @@ void map_single_page(physical_addr_t* page_dir, physical_addr_t physical, virtua
 	__asm__ volatile ("invlpg (,%0,)"::"a"(virtual));
 }
 
-void unmap_single_page(uint32_t* page_dir, virtual_addr_t virtual) {
+void unmap_single_page(page_directory_t* page_dir, virtual_addr_t virtual) {
 	virtual &= ~0xfff;
 	
 	uint32_t* pt;
@@ -379,7 +380,7 @@ void unmap_single_page(uint32_t* page_dir, virtual_addr_t virtual) {
 	reload_cr3();
 }
 
-uint32_t phys_get_page_data(uint32_t* page_dir, virtual_addr_t virtual) {
+uint32_t phys_get_page_data(page_directory_t* page_dir, virtual_addr_t virtual) {
 	virtual &= ~0x3ff;
 	
 	uint32_t* pt;
@@ -394,7 +395,7 @@ uint32_t phys_get_page_data(uint32_t* page_dir, virtual_addr_t virtual) {
 	return pt[PT_INDEX(virtual)];
 }
 
-size_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
+size_t virt2phys(const page_directory_t *page_dir, virtual_addr_t virtual) {
 	if(page_dir == NULL) {
 		return 0;
 	}
@@ -413,7 +414,7 @@ size_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual) {
 	return pt[PT_INDEX(virtual)] & ~0x3ff;
 }
 
-uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual) {
+uint32_t virt2phys_precise(const page_directory_t *page_dir, virtual_addr_t virtual) {
 	if(page_dir == NULL) {
 		return 0;
 	}
@@ -423,7 +424,7 @@ uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual) {
 	return phys + (virtual & 0xfff);
 }
 
-size_t virt2phys_ext(const uint32_t *page_dir, const uint32_t* virts, virtual_addr_t virtual) {
+size_t virt2phys_ext(const page_directory_t *page_dir, const uint32_t* virts, virtual_addr_t virtual) {
 	if(page_dir == NULL) {
 		return 0;
 	}
@@ -442,7 +443,7 @@ size_t virt2phys_ext(const uint32_t *page_dir, const uint32_t* virts, virtual_ad
 	return pt[PT_INDEX(virtual)] & ~0x3ff;
 }
 
-void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) {
+void phys_set_flags(page_directory_t* page_dir, virtual_addr_t virtual, uint32_t flags) {
     virtual &= ~0xfff;
 
     uint32_t* pt;
@@ -467,7 +468,7 @@ void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) 
  * @param size Amount of BYTES to map (must be aligned by 4096)
  * @param flags Page flags
  */
-void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags) {	
+void map_pages(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags) {	
 	physical_addr_t phys = physical;
 	physical_addr_t virt = virtual;
 
@@ -634,7 +635,7 @@ void init_paging() {
  * @param size Amount of BYTES to map (can be without align, if you want)
  * @param flags Page flags
  */
-void map_pages_overlapping(physical_addr_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags) {
+void map_pages_overlapping(page_directory_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags) {
     // Explanation: We want to map address 0xd000abcd with size 2345
     // If we will use map_pages it will map only one page, because addresses gets aligned to PAGE_SIZE
     // (0xd000abcd -> 0xd000a000), and size too (2345 -> 4096)
@@ -655,7 +656,7 @@ void map_pages_overlapping(physical_addr_t* page_directory, size_t physical_star
     map_pages(page_directory, physical_start, virtual_start, pages_to_map * PAGE_SIZE, flags);
 }
 
-void unmap_pages_overlapping(physical_addr_t* page_directory, size_t virtual, size_t size) {
+void unmap_pages_overlapping(page_directory_t* page_directory, size_t virtual, size_t size) {
 //    size_t pages_to_map = (size + PAGE_SIZE - 1) / PAGE_SIZE;
     virtual &= ~0xfff;
 

@@ -9,6 +9,8 @@
 typedef uint32_t pt_entry;
 typedef uint32_t pd_entry;
 
+typedef size_t page_directory_t;
+
 extern size_t phys_memory_size;
 extern size_t used_phys_memory_size;
 
@@ -54,25 +56,25 @@ physical_addr_t phys_alloc_multi_pages(size_t count);
 
 void phys_free_single_page(physical_addr_t addr);
 void phys_free_multi_pages(physical_addr_t addr, size_t count);
-void map_single_page(physical_addr_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags);
-void unmap_single_page(uint32_t* page_dir, virtual_addr_t virtual);
-void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags);
+void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags);
+void unmap_single_page(page_directory_t* page_dir, virtual_addr_t virtual);
+void map_pages(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags);
 void phys_not_enough_memory();
-void blank_page_directory(uint32_t* pagedir_addr);
+void blank_page_directory(page_directory_t* pagedir_addr);
 bool phys_is_used_page(physical_addr_t addr);
 void phys_mark_page_entry(physical_addr_t addr, uint8_t used);
-uint32_t phys_get_page_data(uint32_t* page_dir, virtual_addr_t virtual);
-uint32_t virt2phys(const uint32_t *page_dir, virtual_addr_t virtual);
+uint32_t phys_get_page_data(page_directory_t* page_dir, virtual_addr_t virtual);
+uint32_t virt2phys(const page_directory_t *page_dir, virtual_addr_t virtual);
 void init_paging();
 uint32_t* get_kernel_page_directory();
 
-void map_pages_overlapping(physical_addr_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags);
-void unmap_pages_overlapping(physical_addr_t* page_directory, size_t virtual, size_t size);
-void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags);
+void map_pages_overlapping(page_directory_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags);
+void unmap_pages_overlapping(page_directory_t* page_directory, size_t virtual, size_t size);
+void phys_set_flags(page_directory_t* page_dir, virtual_addr_t virtual, uint32_t flags);
 
-void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size);
-uint32_t virt2phys_precise(const uint32_t *page_dir, virtual_addr_t virtual);
+void premap_pages(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size);
+uint32_t virt2phys_precise(const page_directory_t *page_dir, virtual_addr_t virtual);
 void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length);
 
 void check_memory_map(const memory_map_entry_t* mmap_addr, uint32_t length);
-size_t virt2phys_ext(const uint32_t *page_dir, const uint32_t* virts, virtual_addr_t virtual);
+size_t virt2phys_ext(const page_directory_t *page_dir, const uint32_t* virts, virtual_addr_t virtual);
