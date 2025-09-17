@@ -3,7 +3,7 @@
 
 #include "arch/x86/cpu_vendors.h"
 #include <mem/vmm.h>
-#include <stdint.h>
+#include <common.h>
 #include <sys/cpuid.h>
 #include <lib/string.h>
 #include <arch/x86/cpufeature.h>
@@ -36,6 +36,7 @@ unsigned int x86_stepping(unsigned int vfms) {
 	return vfms & 0xF;
 }
 
+#ifndef SAYORI64
 static inline bool cpuid_present( ) {
 	uint32_t eax, ebx;
 
@@ -54,6 +55,26 @@ static inline bool cpuid_present( ) {
 	// rax should have the bit flipped if CPUID is supported
 	return (eax & 0x200000) != (ebx & 0x200000);
 }
+#else
+static inline bool cpuid_present( ) {
+	uint64_t eax, ebx;
+
+	__asm__ volatile("pushf\n\t"
+	             "movl\t(%%rsp), %0\n\t"
+	             "movl\t%0, %1\n\t"
+	             "xorl\t$0x00200000, %0\n\t"
+	             "pushl\t%0\n\t"
+	             "popfl\n\t"
+	             "pushf\n\t"
+	             "popl\t%0\n\t"
+	             "popf\n\t"
+
+	             : "=&r"(eax), "=&r"(ebx));
+
+	// rax should have the bit flipped if CPUID is supported
+	return (eax & 0x200000) != (ebx & 0x200000);
+}
+#endif
 
 void cpu_get_info(struct cpu_info* c) {
     memset(c, 0x00, sizeof(struct cpu_info));

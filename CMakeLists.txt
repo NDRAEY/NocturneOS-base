@@ -86,7 +86,7 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 	endif()
 elseif(NOCTURNE_ARCH STREQUAL "x86_64")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack -Wl,--gc-sections")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -march=x86_64")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m64 -march=x86-64 -DSAYORI64 -w")
 	
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
@@ -140,12 +140,8 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/lib/setjmp.s 
 		kernel/src/arch/x86/asm/switch_task.s
 	)
-elseif(NOCTURNE_ARCH STREQUAL "armv7")
-	set(C_SRC kernel/src/arch/armv7/init.c)
-endif()
 
-if((NOCTURNE_ARCH STREQUAL "x86") OR (NOCTURNE_ARCH STREQUAL "x86_64"))
-	set(C_SRC
+    set(C_SRC
 		kernel/src/arch/x86/init.c
         kernel/src/sys/gdt.c 
         kernel/src/sys/cpu_isr.c 
@@ -155,6 +151,13 @@ if((NOCTURNE_ARCH STREQUAL "x86") OR (NOCTURNE_ARCH STREQUAL "x86_64"))
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
 	)
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(C_SRC kernel/src/arch/armv7/init.c)
+endif()
+
+if(NOCTURNE_ARCH STREQUAL "x86_64")
+    set(C_SRC
+        kernel/src/drv/cmos.c)
 endif()
 
 set(C_SRC

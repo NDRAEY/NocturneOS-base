@@ -56,7 +56,7 @@ void phys_free_single_page(physical_addr_t addr);
 void phys_free_multi_pages(physical_addr_t addr, size_t count);
 void map_single_page(physical_addr_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags);
 void unmap_single_page(uint32_t* page_dir, virtual_addr_t virtual);
-void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags);
+void map_pages(size_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags);
 void phys_not_enough_memory();
 void blank_page_directory(uint32_t* pagedir_addr);
 bool phys_is_used_page(physical_addr_t addr);

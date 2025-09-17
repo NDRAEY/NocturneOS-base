@@ -7,7 +7,7 @@ extern uint8_t* framebuffer_addr;
 extern volatile uint32_t framebuffer_bpp;
 extern volatile uint32_t framebuffer_pitch;
 extern uint8_t* back_framebuffer_addr;
-extern volatile uint32_t framebuffer_size;
+extern volatile size_t framebuffer_size;
 
 #define VESA_WIDTH  (getScreenWidth())
 #define VESA_HEIGHT (getScreenHeight())

@@ -467,7 +467,7 @@ void phys_set_flags(uint32_t* page_dir, virtual_addr_t virtual, uint32_t flags) 
  * @param size Amount of BYTES to map (must be aligned by 4096)
  * @param flags Page flags
  */
-void map_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags) {	
+void map_pages(size_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size, uint32_t flags) {	
 	physical_addr_t phys = physical;
 	physical_addr_t virt = virtual;
 

@@ -450,7 +450,7 @@ void kfree(void *ptr)
 
 			if (vmm_debug)
 			{
-				qemu_warn("Unmapping %x => %x", block.address + i, phys_addr);
+				qemu_warn("Unmapping %p => %p", block.address + i, phys_addr);
 			}
 
 			unmap_single_page(get_kernel_page_directory(), block.address + i);
