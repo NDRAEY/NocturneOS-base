@@ -161,7 +161,6 @@ set(C_SRC
 	kernel/src/drv/psf.c 
 	kernel/src/sys/unwind.c 
 	kernel/src/drv/disk/initrd.c 
-	# kernel/src/drv/disk/dpm.c 
 	kernel/src/lib/list.c 
 	kernel/src/lib/fileio.c 
 	kernel/src/sys/sync.c 
@@ -207,7 +206,6 @@ set(C_SRC
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
 	kernel/src/sys/fxsave_region.c 
-	# kernel/src/toys/miniplay.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/lib/asprintf.c
@@ -218,12 +216,9 @@ set(C_SRC
 	kernel/src/sys/elf.c
 	kernel/src/sys/acpi.c
 	kernel/src/sys/mtrr.c 
-  #kernel/src/net/net_info_cli.c 
 	kernel/src/toys/mala.c 
-  #kernel/src/debug/memmeter.c 
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 
-	# kernel/src/toys/minesweeper.c 
 	kernel/src/lib/utf_conversion.c 
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
