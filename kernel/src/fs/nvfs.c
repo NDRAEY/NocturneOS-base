@@ -10,7 +10,6 @@
 #include <io/ports.h>
 #include <fs/nvfs.h>
 
-#include "../lib/libstring/include/string.h"
 #include "mem/vmm.h"
 #include "fs/fsm.h"
 
