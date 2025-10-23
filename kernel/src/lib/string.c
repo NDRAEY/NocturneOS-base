@@ -232,6 +232,7 @@ void* memmove(void *dest, void *src, size_t count) {
  *
  * @return Возращает 0 если строки идентичны или разницу между ними
  */
+/*
 int strcmp(const char *s1, const char *s2) {
     while (*s1 && *s1 == *s2) {
         ++s1;
@@ -240,7 +241,7 @@ int strcmp(const char *s1, const char *s2) {
 
     return (*s1 - *s2);
 }
-
+*/
 /**
  * @brief Сравнение строк
  *

@@ -11,9 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Pre-setup preparation - disable man-db triggers
+        run: |
+          sudo debconf-set man-db/auto-update false
+          sudo rm /var/lib/man-db/auto-update
+
       - name: Step 1 - Software installation
         run: |
-          sudo apt install libclang1 libclang-18-dev libclang1-14t64 libclang1-15t64 libclang1-19 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake -y
+          sudo apt install libclang1 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake -y
 
       - name: Step 1.1 - Install Rust
         run: |
@@ -23,9 +28,6 @@ jobs:
         run: |
           rustup toolchain install nightly-2025-07-01
           rustup component add rust-src --toolchain nightly-2025-07-01-x86_64-unknown-linux-gnu
-
-      - name: Step 1.3 - Report GCC version
-        run: gcc --version
 
       - name: Step 2 - Configuring the kernel
         run: bash tools/build/make_builds.sh
