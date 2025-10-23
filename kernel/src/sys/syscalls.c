@@ -16,36 +16,6 @@
 #include    <kernel.h>
 #include	"io/keyboard.h"
 
-syscall_fn_t* calls_table[NUM_CALLS] = {0};
-
-/**
- * @brief Обработчик системных вызовов
- * 
- * @param regs - Регистр
- */
-void syscall_handler(volatile registers_t regs) {
-	if (regs.eax >= NUM_CALLS) {
-        qemu_err("Invalid system call: %d!", regs.eax);
-
-        __asm__ volatile("movl %0, %%eax" :: "r"(0));
-        return;
-    }
-
-    syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
-
-    if(entry_point == NULL) {
-        qemu_err("System call is not defined right now: %d", regs.eax);
-
-        __asm__ volatile("movl %0, %%eax" :: "r"(0));
-        return;
-    }
-
-    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
-
-    // TODO: Just place result into eax, I know how to do it!
-
-    __asm__ volatile("movl %0, %%eax" :: "r"(regs.eax));
-}
 
 size_t syscall_env(struct env* position) {
     memcpy(position, &system_environment, sizeof(env_t));
@@ -187,40 +157,75 @@ size_t syscall_get_console_size(uint32_t* out_wh) {
   return 0;
 }
 
+syscall_fn_t* calls_table[] = {
+	[0] = (syscall_fn_t *)syscall_env,
+    [1] = (syscall_fn_t *)syscall_mmap,
+    [2] = (syscall_fn_t *)syscall_munmap,
+	[3] = (syscall_fn_t *)syscall_memory_alloc,
+	[4] = (syscall_fn_t *)syscall_memory_realloc,
+	[5] = (syscall_fn_t *)syscall_memory_free,
+	[6] = (syscall_fn_t *)syscall_tty_write,
+    [7] = (syscall_fn_t *)syscall_tty_write_raw,
+    [8] = (syscall_fn_t *)syscall_tty_flush,
+    [9] = (syscall_fn_t *)syscall_getkey,
+    [10] = (syscall_fn_t *)syscall_getch,
+    [11] = (syscall_fn_t *)syscall_mouse,
+    [12] = (syscall_fn_t *)file_descriptor_allocate,
+    [13] = (syscall_fn_t *)file_descriptor_read,
+	[14] = (syscall_fn_t *)file_descriptor_write,
+    [15] = (syscall_fn_t *)file_descriptor_seek,
+    [16] = (syscall_fn_t *)file_descriptor_tell,
+    [17] = (syscall_fn_t *)file_descriptor_close,
+    [18] = (syscall_fn_t *)syscall_datetime,
+    [19] = (syscall_fn_t *)syscall_sleep,
+    [20] = (syscall_fn_t *)syscall_exit,
+    [21] = (syscall_fn_t *)yield,
+    [22] = (syscall_fn_t *)syscall_screen_update,
+    [23] = (syscall_fn_t *)syscall_temperature,
+    [24] = (syscall_fn_t *)syscall_get_timer_ticks,
+    [25] = (syscall_fn_t *)syscall_get_console_size,
+};
+
+#define SYSCALL_COUNT (sizeof(calls_table) / sizeof(syscall_fn_t*))
+
+/**
+ * @brief Обработчик системных вызовов
+ * 
+ * @param regs - Регистр
+ */
+void syscall_handler(volatile registers_t regs) {
+	if (regs.eax >= SYSCALL_COUNT) {
+        qemu_err("Invalid system call: %d!", regs.eax);
+
+        __asm__ volatile("movl %0, %%eax" :: "r"(0));
+        return;
+    }
+
+    syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
+
+    if(entry_point == NULL) {
+        qemu_err("System call is not defined right now: %d", regs.eax);
+
+        __asm__ volatile("movl %0, %%eax" :: "r"(0));
+        return;
+    }
+
+    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
+
+    // TODO: Just place result into eax, I know how to do it!
+
+    __asm__ volatile("movl %0, %%eax" :: "r"(regs.eax));
+}
+
 /**
  * @brief Инициализация системных вызовов
  * 
  * @param regs - Регистр
  */
-void init_syscalls(void){
+void init_syscalls(void) {
 	register_interrupt_handler(SYSCALL, &syscall_handler);
-
-	calls_table[0] = (syscall_fn_t *)syscall_env;
-    calls_table[1] = (syscall_fn_t *)syscall_mmap;
-    calls_table[2] = (syscall_fn_t *)syscall_munmap;
-	calls_table[3] = (syscall_fn_t *)syscall_memory_alloc;
-	calls_table[4] = (syscall_fn_t *)syscall_memory_realloc;
-	calls_table[5] = (syscall_fn_t *)syscall_memory_free;
-	calls_table[6] = (syscall_fn_t *)syscall_tty_write;
-    calls_table[7] = (syscall_fn_t *)syscall_tty_write_raw;
-    calls_table[8] = (syscall_fn_t *)syscall_tty_flush;
-    calls_table[9] = (syscall_fn_t *)syscall_getkey;
-    calls_table[10] = (syscall_fn_t *)syscall_getch;
-    calls_table[11] = (syscall_fn_t *)syscall_mouse;
-    calls_table[12] = (syscall_fn_t *)file_descriptor_allocate;
-    calls_table[13] = (syscall_fn_t *)file_descriptor_read;
-	calls_table[14] = (syscall_fn_t *)file_descriptor_write;
-    calls_table[15] = (syscall_fn_t *)file_descriptor_seek;
-    calls_table[16] = (syscall_fn_t *)file_descriptor_tell;
-    calls_table[17] = (syscall_fn_t *)file_descriptor_close;
-    calls_table[18] = (syscall_fn_t *)syscall_datetime;
-    calls_table[19] = (syscall_fn_t *)syscall_sleep;
-    calls_table[20] = (syscall_fn_t *)syscall_exit;
-    calls_table[21] = (syscall_fn_t *)yield;
-    calls_table[22] = (syscall_fn_t *)syscall_screen_update;
-    calls_table[23] = (syscall_fn_t *)syscall_temperature;
-    calls_table[24] = (syscall_fn_t *)syscall_get_timer_ticks;
-    calls_table[25] = (syscall_fn_t *)syscall_get_console_size;
     
+    qemu_log("There are %d system calls available.", SYSCALL_COUNT);
+
 	qemu_ok("System calls initialized!");
 }
