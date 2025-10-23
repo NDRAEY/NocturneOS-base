@@ -21,7 +21,7 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     dir.apply(path);
 
     if !Directory::is_accessible(&dir) {
-        println!("Cannot access: `{}`", dir.as_str());
+        println!("Cannot access: `{}`", dir);
 
         return Err(1);
     }

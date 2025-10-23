@@ -12,11 +12,11 @@
 #include "mem/vmm.h"
 //#include <emmintrin.h>  // SSE functions and types
 
-bool isalnum(char c){
-	return  (c >= '0' && c <= '9') ||
-			(c >= 'a' && c <= 'z') ||
-			(c >= 'A' && c <= 'Z') ;
-}
+// bool isalnum(char c){
+// 	return  (c >= '0' && c <= '9') ||
+// 			(c >= 'a' && c <= 'z') ||
+// 			(c >= 'A' && c <= 'Z') ;
+// }
 
 /**
  * @brief Проверяет, является ли символ формата UTF-8
@@ -242,17 +242,6 @@ int strcmp(const char *s1, const char *s2) {
     return (*s1 - *s2);
 }
 */
-/**
- * @brief Сравнение строк
- *
- * @param str1 - Строка 1
- * @param str2 - Строка 2
- *
- * @return bool - Возращает true если строки идентичны
- */
-bool strcmpn(const char *str1, const char *str2){
-    return strcmp(str1, str2) == 0;
-}
 
 /**
  * @brief Копирование строк
@@ -262,6 +251,7 @@ bool strcmpn(const char *str1, const char *str2){
  *
  * @return int - Функция возвращает указатель на строку, в которую скопированы данные.
  */
+/*
 int strcpy(char* dest, const char* src){
     int i = 0;
 
@@ -275,7 +265,7 @@ int strcpy(char* dest, const char* src){
 
     return i;
 }
-
+*/
 /**
  * @brief Сравнение массивов
  *
@@ -581,22 +571,6 @@ size_t htoi(const char* hex) {
 }
 
 /**
- * @brief Переворачивает строку задом наперед
- *
- * @param  str - строка символов, которая должна быть обращена
- */
-void strver(char *str) {
-    size_t j = strlen(str) - 1;
-
-    for (size_t i = 0; i < j; i++) {
-        char c = str[i];
-        str[i] = str[j];
-        str[j] = c;
-        j--;
-    }
-}
-
-/**
  * @brief Конвертируем число в символы
  *
  * @param n - Число
@@ -649,37 +623,6 @@ size_t itou(size_t n, char *buffer) {
     } while(n);
 
     return strlen(buffer);
-}
-
-size_t itoh(size_t i, char *buffer) {
-	const char* hex = "0123456789ABCDEF";
-    uint32_t n, d = 0x10000000;
-    char* p = buffer;
-
-    while ((i / d == 0) && (d >= 0x10)) {
-        d /= 0x10;
-    }
-    n = i;
-
-    while (d >= 0xF) {
-         *p++ = hex[n / d];
-        n = n % d;
-        d /= 0x10;
-    }
-
-	*p++ = hex[n];
-    *p = 0;
-
-    return strlen(buffer);
-}
-
-
-int dcmpstr( const char *s1, const char *s2 )
-{
-    while ( *s1 && *s1 == *s2 ) ++s1, ++s2;
-
-    return ( ( unsigned char )*s1 > ( unsigned char )*s2 ) -
-           ( ( unsigned char )*s1 < ( unsigned char )*s2 );
 }
 
 char digit_count(uint64_t num) {
