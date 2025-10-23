@@ -13,7 +13,7 @@ pub struct DiskDevice<'dname> {
 impl DiskDevice<'_> {
     pub fn new(disk: *const c_char) -> Self {
         DiskDevice {
-            disk: raw_ptr_to_str(disk),
+            disk: unsafe { raw_ptr_to_str(disk) },
             position: 0,
         }
     }

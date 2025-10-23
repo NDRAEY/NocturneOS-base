@@ -13,7 +13,6 @@ jobs:
 
       - name: Pre-setup preparation - disable man-db triggers
         run: |
-          sudo debconf-set man-db/auto-update false
           sudo rm /var/lib/man-db/auto-update
 
       - name: Step 1 - Software installation
@@ -22,7 +21,7 @@ jobs:
 
       - name: Step 1.1 - Install Rust
         run: |
-          curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
+          curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2025-07-01 -y
 
       - name: Step 1.2 - Install toolchain
         run: |

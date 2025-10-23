@@ -1,5 +1,5 @@
 //
-// Created by maractus on 27.12.23. (I thought it decides from my GitHub username, but not hahaahahah)
+// Created by NDRAEY on 27.12.23. (I thought it decides from my GitHub username, but not hahaahahah)
 //
 
 #include "lib/utf_conversion.h"
