@@ -24,6 +24,7 @@ use noct_psf::PSF;
 pub use noct_tarfs;
 pub use noct_tty;
 pub use noct_nvfs;
+pub use noct_klib;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;

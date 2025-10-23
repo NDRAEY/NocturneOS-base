@@ -606,6 +606,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-klib"
+version = "0.1.0"
+
+[[package]]
 name = "noct-ksymparser"
 version = "0.1.0"
 dependencies = [
@@ -780,6 +784,7 @@ dependencies = [
  "noct-interrupts",
  "noct-ipc",
  "noct-iso9660",
+ "noct-klib",
  "noct-ksymparser",
  "noct-logger",
  "noct-noctfs",

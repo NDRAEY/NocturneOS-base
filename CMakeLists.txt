@@ -171,7 +171,6 @@ set(C_SRC
 	# kernel/src/drv/video/vbe.c 
 	kernel/src/drv/input/ps2_mouse.c 
 	kernel/src/sys/syscalls.c 
-	kernel/src/sys/testing.c 
 	kernel/src/lib/rand.c 
 	kernel/src/drv/beeper.c 
 	kernel/src/user/env.c

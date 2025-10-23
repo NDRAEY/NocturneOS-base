@@ -66,6 +66,7 @@ uint32_t UTFConvert(char c, char c1){
  *
  * @return size_t - Длину символов
  */
+/*
 size_t strlen(const char *str){
 	if(str == nullptr) {
 		return 0;
@@ -77,7 +78,7 @@ size_t strlen(const char *str){
     }
     return len;
 }
-
+*/
 /**
  * @brief Возращает длину строки с учетом UTF-8
  *
