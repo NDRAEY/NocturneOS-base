@@ -1,7 +1,4 @@
-use std::{
-    env,
-    io::Write,
-};
+use std::{env, io::Write};
 
 pub const DISKMAN_COMMANDS: &[(&str, u32)] = &[
     // Eject the medium.

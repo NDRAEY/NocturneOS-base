@@ -2,7 +2,7 @@ use noct_fs_sys::dir::Directory;
 
 use noct_sys::chdir_nonrelative;
 
-use crate::{println};
+use crate::println;
 
 use super::ShellContext;
 

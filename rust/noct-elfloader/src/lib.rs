@@ -7,7 +7,7 @@ pub mod ko_modules;
 use core::ffi::c_char;
 
 use alloc::{ffi::CString, string::String, vec::Vec};
-use elf::{abi::PT_LOAD, endian::AnyEndian, ParseError};
+use elf::{ParseError, abi::PT_LOAD, endian::AnyEndian};
 use noct_logger::{qemu_err, qemu_note};
 use noct_physmem::{PAGE_PRESENT, PAGE_SIZE, PAGE_USER, PAGE_WRITEABLE};
 
@@ -43,9 +43,17 @@ impl ProgramHandle {
     pub fn run(&mut self, args: &[&str]) {
         let mut normalized: Vec<CString> = Vec::with_capacity(1 + args.len());
         normalized.push(CString::new(self.path.clone()).unwrap());
-        normalized.extend_from_slice(args.iter().map(|a| CString::new(*a).unwrap()).collect::<Vec<_>>().as_slice());
+        normalized.extend_from_slice(
+            args.iter()
+                .map(|a| CString::new(*a).unwrap())
+                .collect::<Vec<_>>()
+                .as_slice(),
+        );
 
-        let mut ptrs = normalized.iter().map(|a| a.as_ptr()).collect::<Vec<*const c_char>>();
+        let mut ptrs = normalized
+            .iter()
+            .map(|a| a.as_ptr())
+            .collect::<Vec<*const c_char>>();
         ptrs.push(core::ptr::null());
 
         let argc: u32 = (ptrs.len() - 1) as u32;

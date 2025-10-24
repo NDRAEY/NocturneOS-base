@@ -9,17 +9,17 @@ use alloc::vec;
 use alloc::vec::Vec;
 use elf::endian::AnyEndian;
 use noct_fs_sys::dir::Directory;
-use noct_input::kbd::get_key;
 use noct_input::kbd::CharKey;
 use noct_input::kbd::Key;
 use noct_input::kbd::SpecialKey;
+use noct_input::kbd::get_key;
 use noct_logger::{qemu_err, qemu_note, qemu_warn};
 use noct_sched::process_wait;
 use noct_sched::spawn_prog_rust;
 use noct_timer::timestamp;
 
-use noct_tools::memory::memmeter;
 use noct_sys::version::version;
+use noct_tools::memory::memmeter;
 use noct_tty::{print, println};
 
 use noct_path::Path;
@@ -35,9 +35,9 @@ pub mod file;
 pub mod file_ops;
 pub mod gfxinfo;
 pub mod log;
-pub mod mtrr;
 pub mod mala;
 pub mod meminfo;
+pub mod mtrr;
 pub mod pavi;
 #[cfg(target_arch = "x86")]
 pub mod pci;

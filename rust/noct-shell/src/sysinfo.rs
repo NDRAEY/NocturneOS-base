@@ -5,7 +5,6 @@ use raw_cpuid::CpuId;
 #[cfg(target_arch = "x86")]
 use noct_tty::print;
 
-
 use noct_tty::println;
 
 use super::ShellContext;
@@ -101,7 +100,7 @@ pub fn sysinfo(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize>
         let id = CpuId::default();
         let brand = id.get_processor_brand_string().unwrap();
 
-        println!("Processor: {brand}", brand=brand.as_str());
+        println!("Processor: {brand}", brand = brand.as_str());
     }
 
     Ok(())

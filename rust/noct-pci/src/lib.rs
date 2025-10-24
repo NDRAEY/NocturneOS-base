@@ -108,7 +108,7 @@ impl From<BARType> for u8 {
 pub struct PCIBar {
     pub bar_type: BARType,
     pub address: usize,
-    pub length: usize
+    pub length: usize,
 }
 
 impl PCIDevice {
@@ -134,11 +134,15 @@ impl PCIDevice {
         }
 
         let raw = self.read32(0x10 + (bar * 4));
-        let bar_type = if raw & 1 == 1 { BARType::IO } else { BARType::Memory };
+        let bar_type = if raw & 1 == 1 {
+            BARType::IO
+        } else {
+            BARType::Memory
+        };
 
         let address = match bar_type {
             BARType::IO => raw & 0xffff_fffc,
-            BARType::Memory => raw & 0xffff_fff0
+            BARType::Memory => raw & 0xffff_fff0,
         };
 
         let orig_cmd = self.read_command();
@@ -148,13 +152,17 @@ impl PCIDevice {
         let meta = self.read32(0x10 + (bar * 4));
         let size = match bar_type {
             BARType::IO => !(meta & 0xffff_fffc),
-            BARType::Memory => !(meta & 0xffff_fff0)
+            BARType::Memory => !(meta & 0xffff_fff0),
         } + 1;
 
         self.write(0x10 + (bar * 4), raw);
         self.write_command(orig_cmd);
 
-        Some(PCIBar { bar_type, address: address as _, length: size as _ })
+        Some(PCIBar {
+            bar_type,
+            address: address as _,
+            length: size as _,
+        })
     }
 
     pub fn write(&self, offset: u8, value: u32) {
@@ -164,9 +172,8 @@ impl PCIDevice {
 
 pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
     let devs = devices();
-    
-    devs
-        .iter()
+
+    devs.iter()
         .find(|x| x.vendor == vendor && x.device == device)
         .cloned()
 }
@@ -174,8 +181,7 @@ pub fn find_device(vendor: u16, device: u16) -> Option<PCIDevice> {
 pub fn find_device_by_class_and_subclass(class: u8, subclass: u8) -> Option<PCIDevice> {
     let devs = devices();
 
-    devs
-        .iter()
+    devs.iter()
         .find(|a| a.class == class && a.subclass == subclass)
         .cloned()
 }

@@ -1,7 +1,6 @@
 use super::ShellContext;
 
-pub static MTRR_COMMAND_ENTRY: crate::ShellCommandEntry =
-    ("mtrr", mtrr, Some("MTRR info"));
+pub static MTRR_COMMAND_ENTRY: crate::ShellCommandEntry = ("mtrr", mtrr, Some("MTRR info"));
 
 unsafe extern "C" {
     fn list_mtrrs();

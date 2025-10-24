@@ -1,6 +1,9 @@
 use alloc::string::String;
 
-use crate::{structures::{Command, Drive}, DRIVES};
+use crate::{
+    DRIVES,
+    structures::{Command, Drive},
+};
 
 #[derive(Debug, Clone)]
 pub struct Partition {
@@ -8,14 +11,13 @@ pub struct Partition {
     pub(crate) parent_disk_id: String,
 
     // pub(crate) parition_number: usize,
-    
     pub(crate) internal_id: String,
 
     /// Starting offset in bytes
     pub(crate) offset_start: u64,
 
     /// Ending offset in bytes
-    pub(crate) offset_end: u64
+    pub(crate) offset_end: u64,
 }
 
 impl Drive for Partition {
@@ -33,29 +35,42 @@ impl Drive for Partition {
 
     fn read(&mut self, location: u64, buffer: &mut [u8]) -> i64 {
         let binding = DRIVES.read();
-        let parent_drive = binding.iter().find(|x| x.read().get_id() == self.parent_disk_id).expect("bug: failed to find a parent disk");
+        let parent_drive = binding
+            .iter()
+            .find(|x| x.read().get_id() == self.parent_disk_id)
+            .expect("bug: failed to find a parent disk");
 
         if location >= self.offset_end {
             return 0;
         }
 
-        parent_drive.write().read(self.offset_start + location, buffer)
+        parent_drive
+            .write()
+            .read(self.offset_start + location, buffer)
     }
 
     fn write(&mut self, location: u64, buffer: &[u8]) -> i64 {
         let binding = DRIVES.read();
-        let parent_drive = binding.iter().find(|x| x.read().get_id() == self.parent_disk_id).expect("bug: failed to find a parent disk");
+        let parent_drive = binding
+            .iter()
+            .find(|x| x.read().get_id() == self.parent_disk_id)
+            .expect("bug: failed to find a parent disk");
 
         if location >= self.offset_end {
             return 0;
         }
 
-        parent_drive.write().write(self.offset_start + location, buffer)
+        parent_drive
+            .write()
+            .write(self.offset_start + location, buffer)
     }
 
     fn control(&mut self, command: Command, command_parameters: &[u8], data: &mut [u8]) -> i64 {
         let binding = DRIVES.read();
-        let parent_drive = binding.iter().find(|x| x.read().get_id() == self.parent_disk_id).expect("bug: failed to find a parent disk");
+        let parent_drive = binding
+            .iter()
+            .find(|x| x.read().get_id() == self.parent_disk_id)
+            .expect("bug: failed to find a parent disk");
 
         if command == Command::GetMediumCapacity {
             let bs = parent_drive.write().get_block_size().unwrap_or(1);
@@ -70,6 +85,8 @@ impl Drive for Partition {
             return 0;
         }
 
-        parent_drive.write().control(command, command_parameters, data)
+        parent_drive
+            .write()
+            .control(command, command_parameters, data)
     }
 }

@@ -7,11 +7,11 @@ const ANSI_COLORS: [u32; 8] = [
     0x00_0000, // Black
     0xff_0000, // Red
     0x00_ff00, // Green
-    0xffff00, // Yellow
+    0xffff00,  // Yellow
     0x00_00ff, // Blue
     0xff_00ff, // Magenta
     0x00_ffff, // Cyan
-    0xffffff, // White
+    0xffffff,  // White
 ];
 
 #[derive(Debug)]
@@ -139,7 +139,7 @@ impl Console {
             self.scroll();
             self.row = self.dimensions.rows - 1;
         }
-        
+
         let pos = self.data_position();
 
         if character == '\n' {
@@ -167,7 +167,9 @@ impl Console {
     }
 
     pub fn get_attribute(&self, row: usize, column: usize) -> Option<&Attribute> {
-        self.attributes.iter().find(|a| a.row == row && a.column == column)
+        self.attributes
+            .iter()
+            .find(|a| a.row == row && a.column == column)
     }
 
     pub fn print_str(&mut self, input: &str) {

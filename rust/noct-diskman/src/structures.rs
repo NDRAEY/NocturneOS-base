@@ -16,7 +16,7 @@ pub enum DriveType {
 pub enum MediumStatus {
     Offline = 0x00,
     Loading = 0x01,
-    Online = 0x02
+    Online = 0x02,
 }
 
 /// Command that can be sent by using `diskman_command` function.
@@ -56,7 +56,7 @@ pub trait Drive {
 
         match u64::from_ne_bytes(data[..8].try_into().unwrap()) {
             0 => None,
-            n => Some(n)
+            n => Some(n),
         }
     }
 
@@ -67,7 +67,7 @@ pub trait Drive {
 
         match u32::from_ne_bytes(data[8..].try_into().unwrap()) {
             0 => None,
-            n => Some(n)
+            n => Some(n),
         }
     }
 

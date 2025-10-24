@@ -2,9 +2,7 @@
 
 use core::ffi::CStr;
 
-use alloc::{
-    borrow::ToOwned, string::String, vec::Vec
-};
+use alloc::{borrow::ToOwned, string::String, vec::Vec};
 
 extern crate alloc;
 
@@ -256,7 +254,8 @@ impl SMBIOS {
                 17 => {
                     let size = u16::from_le_bytes(data[0xC..=0xD].try_into().unwrap());
                     let memory_speed = u16::from_le_bytes(data[0x15..=0x16].try_into().unwrap());
-                    let memory_manufacturer = u16::from_le_bytes(data[0x20..=0x21].try_into().unwrap());
+                    let memory_manufacturer =
+                        u16::from_le_bytes(data[0x20..=0x21].try_into().unwrap());
 
                     let memory_manufacturer = self
                         .parse_string(table_end as _, memory_manufacturer as _)

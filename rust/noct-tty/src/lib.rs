@@ -2,9 +2,9 @@
 
 extern crate alloc;
 
+pub mod c_api;
 pub mod console;
 pub mod renderer;
-pub mod c_api;
 
 use core::fmt;
 use core::fmt::Write;

@@ -8,11 +8,7 @@ pub mod partition;
 pub mod structures;
 
 use alloc::{
-    borrow::ToOwned,
-    boxed::Box,
-    collections::linked_list::LinkedList,
-    format,
-    string::String,
+    borrow::ToOwned, boxed::Box, collections::linked_list::LinkedList, format, string::String,
     vec::Vec,
 };
 use noct_mbr::{PartitionRecord, PartitionType};

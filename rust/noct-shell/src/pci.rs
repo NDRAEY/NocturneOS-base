@@ -1,5 +1,5 @@
-use noct_pci::BARType;
 use alloc::string::String;
+use noct_pci::BARType;
 use noct_pci::PCIDevice;
 use noct_tty::{print, println};
 
@@ -97,8 +97,7 @@ const PCI_DEVICE_TYPE_STRINGS: [(u8, u8, &str); 89] = [
     (0x0D, 0x80, "Другой беспроводной контроллер"),
 ];
 
-pub static PCI_COMMAND_ENTRY: crate::ShellCommandEntry =
-    ("pci", pci, Some("Lists PCI devices"));
+pub static PCI_COMMAND_ENTRY: crate::ShellCommandEntry = ("pci", pci, Some("Lists PCI devices"));
 
 pub fn pci(_context: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     fn pci_print_nth(dev: &noct_pci::PCIDevice) {

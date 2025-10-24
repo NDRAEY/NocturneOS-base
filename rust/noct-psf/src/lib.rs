@@ -3,7 +3,7 @@
 extern crate alloc;
 
 use alloc::vec::Vec;
-use noct_logger::{qemu_err};
+use noct_logger::qemu_err;
 use noct_screen::set_pixel;
 
 pub mod c_api;

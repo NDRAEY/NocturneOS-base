@@ -4,7 +4,7 @@
 #![allow(non_snake_case)]
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use core::ffi::{c_char, c_void, CStr};
+use core::ffi::{CStr, c_char, c_void};
 
 use alloc::{boxed::Box, ffi::CString, string::String};
 

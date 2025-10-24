@@ -11,10 +11,7 @@ use alloc::{
 use embedded_canvas::Canvas;
 use embedded_graphics::{
     Drawable,
-    mono_font::{
-        MonoTextStyle,
-        ascii::FONT_8X13_BOLD,
-    },
+    mono_font::{MonoTextStyle, ascii::FONT_8X13_BOLD},
     pixelcolor::Rgb888,
     prelude::{Dimensions, Point, RgbColor, Size},
     text::{Baseline, Text},
@@ -121,7 +118,8 @@ impl Pavi<'_> {
                     continue;
                 };
 
-                pixel = ((pixel & 0xff0000) >> 16) | (pixel & 0x00ff00) | ((pixel & 0x0000ff) << 16);
+                pixel =
+                    ((pixel & 0xff0000) >> 16) | (pixel & 0x00ff00) | ((pixel & 0x0000ff) << 16);
 
                 let rx = start_x + x as isize;
                 let ry = start_y + y as isize;

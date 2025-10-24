@@ -7,8 +7,11 @@ extern crate alloc;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-use core::{ffi::{c_char, CStr}, mem};
 use alloc::{boxed::Box, ffi::CString, string::String, vec::Vec};
+use core::{
+    ffi::{CStr, c_char},
+    mem,
+};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
@@ -37,17 +40,15 @@ pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
     // qemu_note!("DiskId: {disk_id:?}; Path: {path:?}");
 
     info.disk_id[..disk_id.len()].copy_from_slice(unsafe { mem::transmute(disk_id.as_bytes()) });
-    
+
     info.Path = CString::new(String::from('/') + path).unwrap().into_raw();
 
     let disk_id_owned = CString::new(disk_id).unwrap();
 
-    let filesystem_name = unsafe {
-        fsm_get_disk_filesystem(disk_id_owned.as_ptr())
-    };
-    
-	info.DriverFS = unsafe { fsm_getIDbyName(filesystem_name) };
-    
+    let filesystem_name = unsafe { fsm_get_disk_filesystem(disk_id_owned.as_ptr()) };
+
+    info.DriverFS = unsafe { fsm_getIDbyName(filesystem_name) };
+
     if info.DriverFS == -1 {
         return Box::into_raw(info);
     }

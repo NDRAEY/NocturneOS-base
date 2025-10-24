@@ -6,7 +6,7 @@ pub struct MemoryInfo {
     pub heap_allocated_count: usize,
     pub used_virtual: usize,
     pub peak_heap_usage: usize,
-    pub total_memory_run: usize
+    pub total_memory_run: usize,
 }
 
 impl MemoryInfo {
@@ -33,6 +33,6 @@ pub fn get_stats() -> MemoryInfo {
         heap_allocated_count: unsafe { heap_allocated_count() },
         used_virtual: unsafe { heap_used_memory() },
         peak_heap_usage: unsafe { peak_heap_usage as _ },
-        total_memory_run: unsafe {total_memory_run as _ }
+        total_memory_run: unsafe { total_memory_run as _ },
     }
 }

@@ -1,11 +1,10 @@
-use noct_fs_sys::{dir::Directory, FSM_ENTITY_TYPE_TYPE_DIR};
+use noct_fs_sys::{FSM_ENTITY_TYPE_TYPE_DIR, dir::Directory};
 
 use crate::println;
 
 use super::ShellContext;
 
-pub static DIR_COMMAND_ENTRY: crate::ShellCommandEntry =
-    ("dir", dir, Some("Lists a directory"));
+pub static DIR_COMMAND_ENTRY: crate::ShellCommandEntry = ("dir", dir, Some("Lists a directory"));
 
 pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let path = {

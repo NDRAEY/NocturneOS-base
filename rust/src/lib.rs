@@ -16,14 +16,14 @@ pub use noct_diskman;
 use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
+pub use noct_klib;
 pub use noct_noctfs;
+pub use noct_nvfs;
 pub use noct_psf;
 use noct_psf::PSF;
+pub use noct_shell;
 pub use noct_tarfs;
 pub use noct_tty;
-pub use noct_nvfs;
-pub use noct_klib;
-pub use noct_shell;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;

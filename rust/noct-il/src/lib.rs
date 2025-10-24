@@ -1,9 +1,6 @@
 #![no_std]
 
-use alloc::{
-    collections::linked_list::LinkedList,
-    string::String,
-};
+use alloc::{collections::linked_list::LinkedList, string::String};
 use lazy_static::lazy_static;
 use noct_timer::timestamp;
 use spin::RwLock;

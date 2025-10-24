@@ -86,7 +86,6 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
         })
         .unwrap();
 
-
     // The list of loaded segments. Contains the segment name and its address.
     let mut loaded_segments: Vec<(&str, usize)> = Vec::new();
 
@@ -95,7 +94,7 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
 
     for i in all_progbits {
         let memsize = i.sh_size as usize;
-        
+
         // Allocate an array in memory pool
         let ptr: *mut u8 = mempool.allocate_array(Layout::array::<u8>(memsize).unwrap());
 
@@ -260,5 +259,8 @@ pub fn load_module(path: &str) -> Result<ModuleHandle, LoadError> {
     // We don't need to unload our module now, so forget it.
     core::mem::forget(mempool);
 
-    Ok(ModuleHandle { path: path.to_owned(), entry_point: entry_point })
+    Ok(ModuleHandle {
+        path: path.to_owned(),
+        entry_point: entry_point,
+    })
 }

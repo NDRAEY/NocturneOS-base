@@ -1,4 +1,4 @@
-use crate::{println};
+use crate::println;
 
 use super::ShellContext;
 

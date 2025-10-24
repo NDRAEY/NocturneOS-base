@@ -1,9 +1,12 @@
 use noct_input::keyboard_buffer_put;
-use noct_interrupts::{register_interrupt_handler, registers_t, IRQ1};
+use noct_interrupts::{IRQ1, register_interrupt_handler, registers_t};
 use noct_logger::{qemu_err, qemu_ok};
 use x86::io::inb;
 
-use crate::{controller::{ps2_read, ps2_read_configuration_byte, ps2_write, ps2_write_configuration_byte}, PS2_STATE_REG};
+use crate::{
+    PS2_STATE_REG,
+    controller::{ps2_read, ps2_read_configuration_byte, ps2_write, ps2_write_configuration_byte},
+};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn ps2_keyboard_init() {
@@ -70,4 +73,3 @@ pub fn ps2_keyboard_install_irq() {
     unsafe { register_interrupt_handler(IRQ1 as _, Some(keyboard_handler)) };
     qemu_ok!("PS/2 keyboard interrupt installed!");
 }
-

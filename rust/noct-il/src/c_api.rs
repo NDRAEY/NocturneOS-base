@@ -1,6 +1,6 @@
-use core::ffi::{c_char, CStr};
+use core::ffi::{CStr, c_char};
 
-use crate::{info, INTERNAL_LOGGER};
+use crate::{INTERNAL_LOGGER, info};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn il_log(message: *const c_char) {

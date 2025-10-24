@@ -1,8 +1,6 @@
 extern crate alloc;
 
-use alloc::{
-    boxed::Box, ffi::CString, format, string::String
-};
+use alloc::{boxed::Box, ffi::CString, format, string::String};
 
 use crate::{
     size_t, FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE,

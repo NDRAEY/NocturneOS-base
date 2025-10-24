@@ -1,4 +1,3 @@
-
 #[repr(C, packed)]
 #[derive(Default)]
 pub struct Registers {

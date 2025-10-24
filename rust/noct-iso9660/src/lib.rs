@@ -17,7 +17,7 @@ const ISO9660_OEM: [u8; 5] = [67, 68, 48, 48, 49];
 static FSNAME: &[u8] = b"ISO9660\0";
 
 struct ThatDisk<'disk> {
-    disk_name: &'disk str
+    disk_name: &'disk str,
 }
 
 impl iso9660_simple::Read for ThatDisk<'_> {
@@ -58,13 +58,14 @@ unsafe extern "C" fn fun_read(
 ) -> u32 {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    }).unwrap();
+    })
+    .unwrap();
 
     let rpath = raw_ptr_to_str(path);
 
     let entries = match get_directory_entry_by_path(&mut fl, rpath) {
         Some(entry) => entry,
-        None => return 0
+        None => return 0,
     };
 
     let outbuf = core::slice::from_raw_parts_mut(buffer as *mut u8, count as _);
@@ -78,7 +79,13 @@ unsafe extern "C" fn fun_read(
     rd as _
 }
 
-unsafe extern "C" fn fun_write(_disk_name: *const c_char, _path: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(
+    _disk_name: *const c_char,
+    _path: *const c_char,
+    _c: u32,
+    _d: u32,
+    _e: *const c_void,
+) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }
@@ -87,7 +94,8 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
     // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    }).unwrap();
+    })
+    .unwrap();
 
     let rpath = raw_ptr_to_str(path);
 
@@ -123,7 +131,8 @@ unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
-    }).unwrap();
+    })
+    .unwrap();
 
     let path = raw_ptr_to_str(path);
 
@@ -171,15 +180,13 @@ unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
 
     if ISO9660_OEM != buffer {
         // qemu_err!(
-        //     "Not valid ISO! (Disk: {disk_name:?})"            
+        //     "Not valid ISO! (Disk: {disk_name:?})"
         // );
 
         return 0;
     }
 
-    qemu_log!(
-        "Detected ISO! {disk_name:?}"
-    );
+    qemu_log!("Detected ISO! {disk_name:?}");
 
     1
 }

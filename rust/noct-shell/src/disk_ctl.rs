@@ -1,7 +1,7 @@
 use noct_diskman::structures::Command;
 use noct_tty::print;
 
-use crate::{println};
+use crate::println;
 
 use super::ShellContext;
 
@@ -12,14 +12,14 @@ pub enum DPMControlResult {
     Ok,
     Error(&'static str),
     MediaStatus(MediaStatus),
-    HasData
+    HasData,
 }
 
 #[derive(Debug)]
 pub enum MediaStatus {
     Offline,
     Loading,
-    Online
+    Online,
 }
 
 fn command_to_bin(command: &str) -> Option<Command> {

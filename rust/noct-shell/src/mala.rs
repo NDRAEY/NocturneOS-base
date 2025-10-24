@@ -3,8 +3,7 @@ use core::ffi::c_char;
 use super::ShellContext;
 use alloc::vec::Vec;
 
-pub static MALA_COMMAND_ENTRY: crate::ShellCommandEntry =
-    ("mala", mala, Some("A drawing program"));
+pub static MALA_COMMAND_ENTRY: crate::ShellCommandEntry = ("mala", mala, Some("A drawing program"));
 
 unsafe extern "C" {
     fn mala_draw(argc: u32, argv: *const *const c_char) -> u32;

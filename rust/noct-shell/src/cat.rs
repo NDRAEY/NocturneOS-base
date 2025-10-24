@@ -4,8 +4,7 @@ use noct_tty::{print, println};
 
 use super::ShellContext;
 
-pub static CAT_COMMAND_ENTRY: crate::ShellCommandEntry =
-    ("cat", cat, Some("Prints out a file"));
+pub static CAT_COMMAND_ENTRY: crate::ShellCommandEntry = ("cat", cat, Some("Prints out a file"));
 
 pub fn cat(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let filepath = args[0];

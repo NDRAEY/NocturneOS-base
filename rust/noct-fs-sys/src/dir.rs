@@ -1,4 +1,7 @@
-use alloc::{ffi::CString, string::{String, ToString}};
+use alloc::{
+    ffi::CString,
+    string::{String, ToString},
+};
 
 use crate::{file::File, nvfs_close_dir_v2, nvfs_dir_v2, nvfs_info, FSM_DIR, FSM_FILE};
 

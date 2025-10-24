@@ -8,7 +8,7 @@ extern crate alloc;
 pub struct CHS {
     pub cylinders: usize,
     pub heads: usize,
-    pub sectors: usize
+    pub sectors: usize,
 }
 
 #[repr(u8)]
@@ -29,7 +29,7 @@ pub struct PartitionRecord {
 
     pub start_head: u8,
     pub start_sector_cylinder: u16,
-    
+
     pub partition_type: PartitionType,
 
     pub end_head: u8,
@@ -75,7 +75,8 @@ pub fn parse_from_sector(data: &[u8]) -> Vec<PartitionRecord> {
     }
 
     for i in data[446..510].chunks(size_of::<PartitionRecord>()) {
-        let entry: PartitionRecord = unsafe { (i.as_ptr() as *const PartitionRecord).read_unaligned() };
+        let entry: PartitionRecord =
+            unsafe { (i.as_ptr() as *const PartitionRecord).read_unaligned() };
 
         records.push(entry);
     }

@@ -31,7 +31,7 @@ impl RenderedConsole {
         &mut self.console
     }
 
-    pub fn print_char(&mut self, c: char) {        
+    pub fn print_char(&mut self, c: char) {
         self.console.print_char(c);
 
         if c == '\n' {

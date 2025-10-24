@@ -118,7 +118,13 @@ unsafe extern "C" fn fun_read(
     count
 }
 
-unsafe extern "C" fn fun_write(_disk_name: *const c_char, _path: *const c_char, _c: u32, _d: u32, _e: *const c_void) -> u32 {
+unsafe extern "C" fn fun_write(
+    _disk_name: *const c_char,
+    _path: *const c_char,
+    _c: u32,
+    _d: u32,
+    _e: *const c_void,
+) -> u32 {
     qemu_err!("Writing is not supported!");
     0
 }

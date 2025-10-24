@@ -1,6 +1,4 @@
-use alloc::{
-    vec::Vec,
-};
+use alloc::vec::Vec;
 
 use noct_input::kbd::{Key, SpecialKey};
 use noct_tty::println;

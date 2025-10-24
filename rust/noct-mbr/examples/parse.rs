@@ -1,4 +1,7 @@
-use std::{fs::File, io::{Read, Seek, SeekFrom}};
+use std::{
+    fs::File,
+    io::{Read, Seek, SeekFrom},
+};
 
 use noct_mbr::{PartitionRecord, PartitionType};
 
@@ -56,9 +59,13 @@ fn main() {
     let filename = std::env::args().nth(1).expect("No disk specified");
     let mut file = File::open(&filename).expect("Failed to open file");
     let partitions = scan_partitions(&mut file, 512, None, None);
-    
+
     for (n, i) in partitions.iter().enumerate() {
-        println!("{n}. {:?} => {:?}", i.partition_type, i.start_sector_lba..(i.start_sector_lba+i.num_sectors));
+        println!(
+            "{n}. {:?} => {:?}",
+            i.partition_type,
+            i.start_sector_lba..(i.start_sector_lba + i.num_sectors)
+        );
     }
     // println!("{records:#?}");
 }

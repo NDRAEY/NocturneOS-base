@@ -4,7 +4,7 @@ use bindgen::RustTarget;
 
 fn main() {
     println!("cargo:rerun-if-changed=../../kernel/include/fs/nvfs.h");
-    
+
     let bindings = bindgen::Builder::default()
         .header("../../kernel/include/fs/nvfs.h")
         .clang_arg("-I../../kernel/include/")
