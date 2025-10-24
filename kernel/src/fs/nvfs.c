@@ -17,16 +17,6 @@
 
 bool nvfs_debug = false;
 
-SAYORI_INLINE void char_replace(char what, char which, char* string) {
-	int i = 0;
-	while (string[i] != '\0') {
-		if (string[i] == what) {
-			string[i] = which;
-		}
-		i++;
-	}
-}
-
 size_t nvfs_read(const char* Name, size_t Offset, size_t Count, void* Buffer){
 	if(nvfs_debug) {
 		qemu_log("Name=%s", Name);
