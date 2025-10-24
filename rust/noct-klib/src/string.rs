@@ -29,7 +29,7 @@ pub unsafe extern "C" fn strcmp(mut stra: *const c_char, mut strb: *const c_char
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn strcpy(dest: *mut c_char, src: *const c_char) -> isize {
+pub unsafe extern "C" fn strcpy(dest: *mut c_char, src: *const c_char) -> *const c_char {
     let mut i: usize = 0;
 
     unsafe {
@@ -41,7 +41,7 @@ pub unsafe extern "C" fn strcpy(dest: *mut c_char, src: *const c_char) -> isize 
         dest.add(i).write(0);
     }
 
-    i as _
+    dest.cast()
 }
 
 #[unsafe(no_mangle)]

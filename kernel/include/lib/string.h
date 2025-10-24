@@ -9,7 +9,7 @@ void* memmove(void *dest, void *src, size_t count);
 
 char *strcat(char *s, const char *t);
 size_t strspn(const char *s, const char *accept);
-int strcpy(char* dest, const char* src);
+char* strcpy(char* dest, const char* src);
 char *strtok(char *s, const char *delim);
 size_t strlen(const char *str);
 size_t mb_strlen(const char *str);
