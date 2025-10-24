@@ -1,7 +1,6 @@
 [package]
-name = "noct-tools"
+name = "noct-mem"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-noct-mem = { path = "../noct-mem" }

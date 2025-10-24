@@ -586,6 +586,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-io"
+version = "0.1.0"
+
+[[package]]
 name = "noct-ipc"
 version = "0.1.0"
 dependencies = [
@@ -626,6 +630,10 @@ dependencies = [
 
 [[package]]
 name = "noct-mbr"
+version = "0.1.0"
+
+[[package]]
+name = "noct-mem"
 version = "0.1.0"
 
 [[package]]
@@ -712,7 +720,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "noct-shell"
+version = "0.1.0"
+dependencies = [
+ "elf",
+ "eni-player",
+ "noct-diskman",
+ "noct-fileio",
+ "noct-fs",
+ "noct-fs-sys",
+ "noct-il",
+ "noct-input",
+ "noct-io",
+ "noct-logger",
+ "noct-mem",
+ "noct-path",
+ "noct-pci",
+ "noct-sched",
+ "noct-screen",
+ "noct-smbios",
+ "noct-sys",
+ "noct-time",
+ "noct-timer",
+ "noct-tools",
+ "noct-tty",
+ "pavi",
+ "raw-cpuid 11.5.0",
+]
+
+[[package]]
 name = "noct-smbios"
+version = "0.1.0"
+
+[[package]]
+name = "noct-sys"
 version = "0.1.0"
 
 [[package]]
@@ -742,6 +783,9 @@ version = "0.1.0"
 [[package]]
 name = "noct-tools"
 version = "0.1.0"
+dependencies = [
+ "noct-mem",
+]
 
 [[package]]
 name = "noct-tty"
@@ -787,6 +831,7 @@ dependencies = [
  "noct-klib",
  "noct-ksymparser",
  "noct-logger",
+ "noct-mem",
  "noct-noctfs",
  "noct-nvfs",
  "noct-path",
@@ -795,6 +840,7 @@ dependencies = [
  "noct-psf",
  "noct-sched",
  "noct-screen",
+ "noct-shell",
  "noct-smbios",
  "noct-tarfs",
  "noct-time",

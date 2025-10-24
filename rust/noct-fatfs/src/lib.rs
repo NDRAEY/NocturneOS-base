@@ -83,14 +83,14 @@ unsafe extern "C" fn fun_read(
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_str(disk_name),
+            disk_name: unsafe { raw_ptr_to_str(disk_name) },
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_str(path);
+    let path_binding = unsafe { raw_ptr_to_str(path) };
     let path = path_binding.trim();
 
     qemu_note!("Path: {path:?}");
@@ -128,14 +128,14 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_str(disk_name),
+            disk_name: unsafe { raw_ptr_to_str(disk_name) },
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_str(path);
+    let path_binding = unsafe { raw_ptr_to_str(path) };
     let path = path_binding.trim();
 
     let (pardir, filename) = {
@@ -201,14 +201,14 @@ unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out:
 
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_str(disk_name),
+            disk_name: unsafe { raw_ptr_to_str(disk_name) },
             position: 0,
         },
         FsOptions::new(),
     )
     .unwrap();
 
-    let path_binding = raw_ptr_to_str(path);
+    let path_binding = unsafe { raw_ptr_to_str(path) };
     let path = path_binding.trim();
 
     qemu_note!("Path: {path:?}");
@@ -281,7 +281,7 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, b: *mut c_char) {
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
     let fat = fatfs::FileSystem::new(
         DiskFile {
-            disk_name: raw_ptr_to_str(disk_name),
+            disk_name: unsafe { raw_ptr_to_str(disk_name) },
             position: 0,
         },
         FsOptions::new(),

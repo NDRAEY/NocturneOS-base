@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+pub mod memory;
+
 use core::ffi::{CStr, c_char};
 
 use alloc::{borrow::ToOwned, string::String};

@@ -183,7 +183,6 @@ set(C_SRC
 	kernel/src/lib/math/asin.c 
 	kernel/src/lib/math/atan.c 
 	kernel/src/lib/math/modf.c 
-	kernel/src/lib/math/integral.c 
 	kernel/src/lib/math/sin.c 
 	kernel/src/lib/math/cos.c 
 	kernel/src/lib/math/tan.c 

@@ -9,9 +9,7 @@ use core::{arch::asm, cell::OnceCell, panic::PanicInfo};
 
 pub mod drv;
 pub mod gfx;
-pub mod shell;
 pub mod std;
-pub mod system;
 
 use alloc::string::String;
 pub use noct_diskman;
@@ -25,6 +23,7 @@ pub use noct_tarfs;
 pub use noct_tty;
 pub use noct_nvfs;
 pub use noct_klib;
+pub use noct_shell;
 
 use noct_alloc::Allocator;
 pub use noct_logger::*;

@@ -1,0 +1,34 @@
+[package]
+name = "noct-shell"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+noct-input = { path = "../noct-input" }
+noct-sched = { path = "../noct-sched" }
+noct-timer = { path = "../noct-timer" }
+noct-fs-sys = { path = "../noct-fs-sys" }
+noct-logger = { path = "../noct-logger" }
+noct-path = { path = "../noct-path" }
+noct-tty = { path = "../noct-tty" }
+noct-io = { path = "../noct-io" }
+noct-screen = { path = "../noct-screen" }
+noct-tools = { path = "../noct-tools" }
+noct-sys = { path = "../noct-sys" }
+noct-mem = { path = "../noct-mem" }
+elf = { version = "0.7.4", default-features = false }
+
+# Internal program dependencies
+
+noct-il = { path = "../noct-il" }
+noct-fs = { path = "../noct-fs" }
+noct-diskman = { path = "../noct-diskman" }
+noct-time = { path = "../noct-time" }
+noct-fileio = { path = "../noct-fileio" }
+eni-player = { path = "../eni-player" }
+pavi = { path = "../pavi" }
+
+[target.'cfg(target_arch = "x86")'.dependencies]
+noct-pci = { path = "../noct-pci" }
+noct-smbios = { path = "../noct-smbios" }
+raw-cpuid = "11.4.0"
