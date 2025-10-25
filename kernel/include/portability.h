@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mem/vmm.h"
-#include "lib/stdlib.h"
 
 #define malloc(a) kmalloc(a)
 #define calloc(a, b) kcalloc(a, b)

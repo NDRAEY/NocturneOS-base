@@ -1,7 +1,6 @@
 // libvector - simple dynamic array (vector) library for C by NDRAEY.
 
 #include "portability.h"
-#include "lib/stdlib.h"
 #include "lib/string.h"
 #include "../include/vector.h"
 

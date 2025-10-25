@@ -9,10 +9,8 @@
 #endif
 
 #include "lib/string.h"
-#include "lib/stdlib.h"
 #include "lib/sprintf.h"
 #include "lib/stdio.h"
-#include "lib/split.h"
 #include "lib/math.h"
 #include "lib/setjmp.h"
 #include "lib/fileio.h"

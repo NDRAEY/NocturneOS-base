@@ -7,7 +7,6 @@
 #include "net/endianess.h"
 #include "io/ports.h"
 #include "debug/hexview.h"
-#include "lib/stdlib.h"
 #include "mem/vmm.h"
 #include "net/arp.h"
 #include "net/udp.h"

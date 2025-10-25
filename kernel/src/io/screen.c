@@ -1,6 +1,5 @@
 #include <io/screen.h>
 #include <multiboot.h>
-#include <lib/stdlib.h>
 #include <sys/timer.h>
 #include <io/ports.h>
 #include <common.h>

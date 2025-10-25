@@ -50,3 +50,16 @@ pub extern "C" fn isalnum(c: c_char) -> bool {
         || (c >= 'a' as _ && c <= 'z' as _)
         || (c >= 'A' as _ && c <= 'Z' as _)
 }
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn strncpy(dest: *mut c_char, src: *const c_char, n: usize) -> *mut c_char {
+    for i in 0..n {
+        if unsafe { src.add(i).read() } == 0 {
+            break;
+        }
+
+		unsafe { dest.add(i).write(src.add(i).read()) };
+	}
+
+	return dest;
+}

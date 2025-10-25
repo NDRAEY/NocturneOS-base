@@ -19,6 +19,8 @@
     "files.associations": {
         "sync.h": "c",
         "hexview.h": "c",
-        "list.h": "c"
+        "list.h": "c",
+        "stdio.h": "c",
+        "icmp.h": "c"
     },
 }

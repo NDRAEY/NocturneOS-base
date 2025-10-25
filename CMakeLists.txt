@@ -148,8 +148,7 @@ set(C_SRC
 	kernel/src/lib/math/math.c 
 	kernel/src/mem/pmm.c	
 	kernel/src/mem/vmm.c	
-	kernel/src/lib/stdio.c 
-	kernel/src/lib/split.c 
+	kernel/src/lib/stdio.c
 	kernel/src/io/screen.c 
 	kernel/src/io/tty.c 
 	kernel/src/fs/fsm.c 
