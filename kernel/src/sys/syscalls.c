@@ -152,9 +152,9 @@ size_t syscall_get_console_size(uint32_t* out_wh) {
     uint32_t h = tty_get_height();
     qemu_printf("Console rq: %d %d\n", w, h);
 
-  *out_wh = (h << 16) | w;
+    *out_wh = (h << 16) | w;
 
-  return 0;
+    return 0;
 }
 
 syscall_fn_t* calls_table[] = {
