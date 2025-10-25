@@ -9,7 +9,7 @@
 
 #include	"sys/syscalls.h"
 #include	"io/ports.h"
-#include "io/screen.h"
+#include    "io/screen.h"
 #include	"io/tty.h"
 #include	"user/env.h"
 #include    "sys/file_descriptors.h"
@@ -157,33 +157,109 @@ size_t syscall_get_console_size(uint32_t* out_wh) {
     return 0;
 }
 
+size_t syscall_get_screen_parameters(size_t screen_id, size_t parameter, uint8_t* out_buffer, size_t length) {
+    // TODO: Utilize screen_id somehow.
+
+    if(out_buffer == NULL) {
+        return (size_t)-1;
+    }
+
+    // Size checking
+    if(parameter == SCREEN_QUERY_WIDTH
+        || parameter == SCREEN_QUERY_HEIGHT
+        || parameter == SCREEN_QUERY_BITS_PER_PIXEL) {
+        if(length < 4) {
+            return -1;
+        }
+    } else {
+        qemu_err("Parameter #%x doesn't have size checking, quitting early1", parameter);
+        return (size_t)-1;
+    }
+
+    switch(parameter) {
+        case SCREEN_QUERY_WIDTH: 
+            *(uint32_t*)out_buffer = getScreenWidth();
+            break;
+        case SCREEN_QUERY_HEIGHT: 
+            *(uint32_t*)out_buffer = getScreenHeight();
+            break;
+        case SCREEN_QUERY_BITS_PER_PIXEL: 
+            *(uint32_t*)out_buffer = getDisplayBpp();
+            break;
+    }
+
+    return (size_t)-1;
+}
+
+size_t syscall_copy_to_screen(size_t screen_id, uint8_t* buffer) {
+    // TODO: Utilize screen_id somehow.
+    if(buffer == NULL) {
+        return (size_t)-1;
+    }
+
+    memcpy(getFrameBufferAddr(), buffer, getDisplaySize());
+
+    return 0;
+}
+
+size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
+    // TODO: Utilize screen_id somehow.
+    if(buffer == NULL) {
+        return (size_t)-1;
+    }
+
+    memcpy(buffer, getFrameBufferAddr(), getDisplaySize());
+
+    return 0;
+}
+
 syscall_fn_t* calls_table[] = {
+    // Environment
 	[0] = (syscall_fn_t *)syscall_env,
+
+    // Memory
     [1] = (syscall_fn_t *)syscall_mmap,
     [2] = (syscall_fn_t *)syscall_munmap,
 	[3] = (syscall_fn_t *)syscall_memory_alloc,
 	[4] = (syscall_fn_t *)syscall_memory_realloc,
 	[5] = (syscall_fn_t *)syscall_memory_free,
+    
+    // TTY
 	[6] = (syscall_fn_t *)syscall_tty_write,
     [7] = (syscall_fn_t *)syscall_tty_write_raw,
     [8] = (syscall_fn_t *)syscall_tty_flush,
+
+    // Input
     [9] = (syscall_fn_t *)syscall_getkey,
     [10] = (syscall_fn_t *)syscall_getch,
     [11] = (syscall_fn_t *)syscall_mouse,
+
+    // Files
     [12] = (syscall_fn_t *)file_descriptor_allocate,
     [13] = (syscall_fn_t *)file_descriptor_read,
 	[14] = (syscall_fn_t *)file_descriptor_write,
     [15] = (syscall_fn_t *)file_descriptor_seek,
     [16] = (syscall_fn_t *)file_descriptor_tell,
     [17] = (syscall_fn_t *)file_descriptor_close,
+    
+    // Date & Time
     [18] = (syscall_fn_t *)syscall_datetime,
     [19] = (syscall_fn_t *)syscall_sleep,
+
+    // Control flow
     [20] = (syscall_fn_t *)syscall_exit,
     [21] = (syscall_fn_t *)yield,
+    
+    // Misc.
     [22] = (syscall_fn_t *)syscall_screen_update,
     [23] = (syscall_fn_t *)syscall_temperature,
     [24] = (syscall_fn_t *)syscall_get_timer_ticks,
     [25] = (syscall_fn_t *)syscall_get_console_size,
+
+    // Screen
+    [26] = (syscall_fn_t *)syscall_get_screen_parameters,
+    [27] = (syscall_fn_t *)syscall_copy_to_screen,
+    [28] = (syscall_fn_t *)syscall_copy_from_screen,
 };
 
 #define SYSCALL_COUNT (sizeof(calls_table) / sizeof(syscall_fn_t*))
