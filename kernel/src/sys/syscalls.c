@@ -197,7 +197,7 @@ size_t syscall_copy_to_screen(size_t screen_id, uint8_t* buffer) {
         return (size_t)-1;
     }
 
-    memcpy(getFrameBufferAddr(), buffer, getDisplaySize());
+    memcpy((char*)getFrameBufferAddr(), (char*)buffer, getDisplaySize());
 
     return 0;
 }
@@ -208,7 +208,7 @@ size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
         return (size_t)-1;
     }
 
-    memcpy(buffer, getFrameBufferAddr(), getDisplaySize());
+    memcpy((char*)buffer, (char*)getFrameBufferAddr(), getDisplaySize());
 
     return 0;
 }

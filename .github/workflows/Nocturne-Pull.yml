@@ -6,13 +6,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
 
+      - name: Step 0.5 - Install LLVM 21
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21
+
       - name: Step 1 - Software installation
         run: |
-          sudo apt install libclang1-19 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake
+          sudo apt list "llvm*"
+          sudo apt install libclang1-19 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools lld ninja-build cmake
 
       - name: Step 1.1 - Install Rust
         run: |

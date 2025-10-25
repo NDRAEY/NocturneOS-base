@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: "!contains(github.event.head_commit.message, '[no ci]')"
     steps:
       - uses: actions/checkout@v3
@@ -15,9 +15,21 @@ jobs:
         run: |
           sudo rm /var/lib/man-db/auto-update
 
+      - name: Step 0.5 - Install LLVM 21
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21
+
       - name: Step 1 - Software installation
         run: |
-          sudo apt install libclang1 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools llvm lld ninja-build cmake -y
+          sudo apt list "llvm*"
+          sudo apt install gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools ninja-build cmake
+
+      - name: Check
+        run: |
+          sudo ln -sf /usr/bin/ld.lld-21 /usr/bin/ld.lld
+          ld.lld --version
 
       - name: Step 1.1 - Install Rust
         run: |
