@@ -1,6 +1,4 @@
-use alloc::string::String;
 use noct_pci::BARType;
-use noct_pci::PCIDevice;
 use noct_tty::{print, println};
 
 use super::ShellContext;

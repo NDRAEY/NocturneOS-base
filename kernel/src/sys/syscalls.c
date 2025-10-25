@@ -210,7 +210,7 @@ void syscall_handler(volatile registers_t regs) {
         return;
     }
 
-    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx);
+    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx, regs.esi, regs.edi);
 
     // TODO: Just place result into eax, I know how to do it!
 

@@ -5,7 +5,7 @@
 
 #define		SYSCALL					0x80
 
-typedef size_t syscall_fn_t (size_t, size_t, size_t);
+typedef size_t syscall_fn_t (size_t, size_t, size_t, size_t, size_t);
 // typedef size_t syscall_fn_t (void*, void*, void*);
 
 // extern syscall_fn_t* calls_table[];
