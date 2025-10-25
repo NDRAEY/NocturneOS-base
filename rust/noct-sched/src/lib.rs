@@ -4,9 +4,9 @@
 #![allow(non_snake_case)]
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use core::ffi::{CStr, c_char, c_void};
+use core::ffi::{CStr, c_void};
 
-use alloc::{boxed::Box, ffi::CString, string::String};
+use alloc::{boxed::Box, ffi::CString, string::String, vec::Vec};
 
 extern crate alloc;
 
@@ -31,15 +31,19 @@ pub fn task_yield() {
     };
 }
 
-pub fn spawn_prog_rust(path: &str, args: &[*const c_char]) -> i32 {
-    let path = CString::new(path).unwrap();
-
+pub fn spawn_prog_rust(path: &str, args: &[&str]) -> i32 {
     let argc = args.len();
-    let argv = args.as_ptr();
 
+    let cstrings = args
+        .iter()
+        .map(|&x| CString::new(x).unwrap())
+        .collect::<Vec<_>>();
+    let argv = cstrings.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
+
+    let path = CString::new(path).unwrap();
     let name = path.as_ptr();
 
-    unsafe { spawn_prog(name, argc as _, argv) }
+    unsafe { spawn_prog(name, argc as _, argv.as_ptr()) }
 }
 
 type BoxedFnOnce = Box<dyn FnOnce() + Send>;

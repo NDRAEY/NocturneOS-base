@@ -391,12 +391,10 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
 
             process->threads_count--;
 
-            qemu_log("MODIFIED PROCESS");
-
-			bool is_current_process_krnl = current_proc->pid == 0;
+			bool is_kernels_pid = current_proc->pid == 0;
             // NOTE: We should be in kernel process (PID 0) to free page tables and process itself.
             // TODO: Switch to kernel's PD here, because process info stored there
-            if(process->threads_count == 0 && is_current_process_krnl) {
+            if(process->threads_count == 0 && is_kernels_pid) {
                 qemu_warn("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
 
                 if(process->program) {
@@ -419,12 +417,14 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
                     }
 
                     unload_elf(process->program);
+
+                    qemu_log("Program unloaded.");
                 }
 
                 for(size_t pt = 0; pt < 1023; pt++) {
                     size_t page_table = process->page_tables_virts[pt];
                     if(page_table) {
-                        qemu_note("[%-4d] <%08x - %08x> FREE PAGE TABLE AT: %x", 
+                        qemu_note("[%-4d] <%08x - %08x> USED PAGE TABLE AT: %x", 
                             pt,
                             (pt * PAGE_SIZE) << 10,
                             ((pt + 1) * PAGE_SIZE) << 10,
@@ -438,7 +438,7 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
 
                 kfree((void *) process->page_dir_virt);
 
-                qemu_log("FREED SPACE FOR TABLES");
+                qemu_log("FREED PAGE DIR");
                 
                 kfree(process->name);
                 kfree(process->cwd);

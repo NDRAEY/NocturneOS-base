@@ -6,7 +6,6 @@ use core::ffi::{c_char, c_void};
 
 use alloc::vec::Vec;
 use iso9660_simple::{helpers::get_directory_entry_by_path, ISODirectoryEntry};
-// use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE, FSM_MOD_READ, FSM_TIME,
 };
@@ -91,7 +90,6 @@ unsafe extern "C" fn fun_write(
 }
 
 unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let mut fl = iso9660_simple::ISO9660::from_device(ThatDisk {
         disk_name: raw_ptr_to_str(disk_name),
     })

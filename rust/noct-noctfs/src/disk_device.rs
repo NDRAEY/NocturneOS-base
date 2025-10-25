@@ -3,7 +3,6 @@ use core::ffi::c_char;
 use no_std_io::io::{Read, Seek, Write};
 
 use crate::raw_ptr_to_str;
-// use noct_dpm_sys::Disk;
 
 pub struct DiskDevice<'disk> {
     disk: &'disk str,

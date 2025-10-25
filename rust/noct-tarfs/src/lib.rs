@@ -29,7 +29,6 @@ unsafe extern "C" fn fun_read(
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
@@ -54,9 +53,6 @@ unsafe extern "C" fn fun_write(
 }
 
 unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
-    // qemu_note!("INFO!!!!!");
-
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(disk_name);
 
     let mut fl = tarfs::TarFS::from_device(device).unwrap();
@@ -130,7 +126,6 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, output_buffer: *mut c_
 }
 
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
     let device = disk_device::DiskDevice::new(disk_name);
 
     let fl = tarfs::TarFS::from_device(device);

@@ -821,7 +821,5 @@ char* strdynamize(const char* str) {
     char* mem = kmalloc(len + 1);
     strcpy(mem, str);
 
-    mem[len] = 0;
-
     return mem;
 }

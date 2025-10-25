@@ -6,7 +6,6 @@ use core::ffi::{c_char, c_void};
 
 use alloc::{string::String, vec::Vec};
 use fatfs::{FsOptions, Read, Seek, SeekFrom};
-// use noct_dpm_sys::Disk;
 use noct_fs_sys::{
     FSM_DIR, FSM_ENTITY_TYPE, FSM_ENTITY_TYPE_TYPE_DIR, FSM_ENTITY_TYPE_TYPE_FILE, FSM_FILE,
     FSM_MOD_READ, FSM_TIME,
@@ -79,8 +78,6 @@ unsafe extern "C" fn fun_read(
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let fat = fatfs::FileSystem::new(
         DiskFile {
             disk_name: unsafe { raw_ptr_to_str(disk_name) },
@@ -130,8 +127,6 @@ unsafe extern "C" fn fun_write(
 }
 
 unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let fat = fatfs::FileSystem::new(
         DiskFile {
             disk_name: unsafe { raw_ptr_to_str(disk_name) },
@@ -203,8 +198,6 @@ unsafe extern "C" fn fun_delete(_disk_name: *const c_char, _b: *const c_char, _c
 }
 
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, path: *const c_char, out: *mut FSM_DIR) {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let fat = fatfs::FileSystem::new(
         DiskFile {
             disk_name: unsafe { raw_ptr_to_str(disk_name) },

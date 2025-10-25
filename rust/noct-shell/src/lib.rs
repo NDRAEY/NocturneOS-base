@@ -2,7 +2,6 @@
 
 extern crate alloc;
 
-use alloc::ffi::CString;
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
@@ -276,7 +275,6 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
             memused.total_memory_run,
             timestamp() - timestart
         );
-        // process_command(&mut context, &raw_input);
 
         context.command_history.push(raw_input);
     }
@@ -352,30 +350,7 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
 
                     match elf::file::parse_ident::<AnyEndian>(&data) {
                         Ok(_) => {
-                            // todo!("Run ELF file");
-                            // run(path.as_str(), &com);
-
-                            // let program = noct_elfloader::load_elf_file(path.as_str());
-
-                            // match program {
-                            //     Ok(mut prog) => {
-                            //         let args: Vec<&str> =
-                            //             arguments.iter().map(|a| a.as_str()).collect();
-
-                            //         prog.run(&args);
-                            //     }
-                            //     Err(e) => {
-                            //         println!("Error: {e:?}");
-                            //     }
-                            // }
-
                             let args: Vec<&str> = arguments.iter().map(|a| a.as_str()).collect();
-
-                            let cstrings = args
-                                .iter()
-                                .map(|&x| CString::new(x).unwrap())
-                                .collect::<Vec<_>>();
-                            let args = cstrings.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
 
                             let pid = spawn_prog_rust(&path, &args);
 

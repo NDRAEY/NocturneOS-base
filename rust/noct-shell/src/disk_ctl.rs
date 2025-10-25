@@ -117,40 +117,5 @@ pub fn disk_ctl(_context: &mut ShellContext, args: &[&str]) -> Result<(), usize>
         println!();
     }
 
-    // let reply = unsafe { noct_dpm_sys::dpm_ctl(disk as u32 as _, command, output_buffer.as_mut_ptr() as *mut _, output_buffer.len() as _) };
-
-    // match parse_reply(reply) {
-    //     Some(r) => {
-    //         match r {
-    //             DPMControlResult::Ok => {
-    //                 println!("Ok!");
-    //             }
-    //             DPMControlResult::Error(e) => {
-    //                 println!("Drive error: {}", e);
-    //             },
-    //             DPMControlResult::MediaStatus(b) => {
-    //                 println!("Drive responsed with media status: {:?}", b);
-    //             },
-    //             DPMControlResult::HasData => {
-    //                 println!("Disk driver reported data presence.\n");
-
-    //                 for chunk in (&output_buffer).chunks(16) {
-    //                     for subchunk in chunk.chunks(4) {
-    //                         for value in subchunk {
-    //                             print!("{:02x} ", value);
-    //                         }
-
-    //                         print!(" ");
-    //                     }
-    //                     println!();
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     None => {
-    //         println!("Unknown reply: {reply:x}");
-    //     }
-    // }
-
     Ok(())
 }

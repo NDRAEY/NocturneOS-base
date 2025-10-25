@@ -31,8 +31,6 @@ unsafe extern "C" fn fun_read(
     count: u32,
     buffer: *mut c_void,
 ) -> u32 {
-    // let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let mut diskdev = DiskDevice::new(disk_name);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
@@ -53,8 +51,6 @@ unsafe extern "C" fn fun_write(
     count: u32,
     buffer: *const c_void,
 ) -> u32 {
-    // let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let mut diskdev = DiskDevice::new(disk_name);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
@@ -69,8 +65,6 @@ unsafe extern "C" fn fun_write(
 }
 
 unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> FSM_FILE {
-    // let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
-
     let mut diskdev = DiskDevice::new(disk_name);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
 
@@ -190,7 +184,7 @@ fn find_by_path(fs: &mut NoctFS<'_>, path: &str) -> Option<(Entity, Entity)> {
 }
 
 unsafe extern "C" fn fun_dir(disk_name: *const c_char, _b: *const c_char, out: *mut FSM_DIR) {
-    // let disk = noct_dpm_sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
+    // let disk = _sys::get_disk(char::from_u32(letter as u32).unwrap()).unwrap();
 
     let mut diskdev = DiskDevice::new(disk_name);
     let mut fs = noctfs::NoctFS::new(&mut diskdev).unwrap();
@@ -226,7 +220,6 @@ unsafe extern "C" fn fun_label(_disk_name: *const c_char, output_buffer: *mut c_
 }
 
 unsafe extern "C" fn fun_detect(disk_name: *const c_char) -> i32 {
-    // let dev = noct_dpm_sys::get_disk(char::from_u32(disk_letter as u32).unwrap()).unwrap();
     let mut device = disk_device::DiskDevice::new(disk_name);
 
     if noctfs::NoctFS::new(&mut device).is_err() {

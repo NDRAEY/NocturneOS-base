@@ -161,3 +161,9 @@ impl File {
         unsafe { fsize(self.raw_file) as _ }
     }
 }
+
+impl Drop for File {
+    fn drop(&mut self) {
+        unsafe { fclose(self.raw_file as *mut FILE) }
+    }
+}
