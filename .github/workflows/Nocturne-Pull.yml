@@ -19,7 +19,7 @@ jobs:
       - name: Step 1 - Software installation
         run: |
           sudo apt list "llvm*"
-          sudo apt install libclang1-19 gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools lld ninja-build cmake
+          sudo apt install gcc-multilib nasm python3 build-essential xorriso grub-pc-bin mtools lld ninja-build cmake
 
       - name: Step 1.1 - Install Rust
         run: |
@@ -27,7 +27,7 @@ jobs:
 
       - name: Step 1.2 - Install toolchain
         run: |
-          rustup component add rust-src --toolchain nightly-2025-09-01-x86_64-unknown-linux-gnu
+          rustup component add rust-src --toolchain nightly-2025-07-01-x86_64-unknown-linux-gnu
 
       - name: Step 2 - Configuring the kernel
         run: bash tools/build/make_builds.sh

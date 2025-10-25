@@ -19,7 +19,7 @@
   },
   "panic-strategy": "abort",
   "relocation-model": "static",
-  "target-pointer-width": 32,
+  "target-pointer-width": "32",
   "features": "+v7,+thumb2,-neon,+strict-align"
 }
 
