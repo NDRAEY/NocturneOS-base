@@ -97,7 +97,7 @@ thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_si
 bool kernel, size_t arg1);
 
 /* Get current process */
-volatile process_t * get_current_proc(void);
+volatile process_t* get_current_proc(void);
 
 /* Exit from thread */
 void thread_exit(thread_t* thread);

@@ -16,7 +16,7 @@ bool get_func_name_by_addr(size_t addr) {
     char* temp = (char*)NOCTURNE_ksym_data_start;
 
     if(temp == 0) {
-        qemu_err("ksym was not initialized before.");
+        // qemu_err("ksym was not initialized before.");
         return false;
     }
 
@@ -50,17 +50,26 @@ void unwind_stack(uint32_t max_frames) {
     struct stackframe *stk = 0;
     __asm__ volatile("movl %%ebp, %0" : "=r"(stk) :: );
 
-    qemu_printf("Stack trace:");
-    tty_printf("Stack trace:\n");
+    qemu_printf("Stack trace:\n");
+
+    if(tty_is_initialized()) {
+        tty_printf("Stack trace:\n");
+    }
 
     for(uint32_t frame = 0; stk && frame < max_frames; ++frame) {
         bool exists = get_func_name_by_addr(stk->eip);
 
         qemu_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
-        tty_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
+
+        if(tty_is_initialized()) {
+            tty_printf("  Frame #%d => %x  ->   ", frame, stk->eip);
+        }
 
         qemu_printf("%s\n", exists ? _temp_funcname : "???");
-        tty_printf("%s\n", exists ? _temp_funcname : "???");
+
+        if(tty_is_initialized()) {
+            tty_printf("%s\n", exists ? _temp_funcname : "???");
+        }
 
         stk = stk->ebp;
     }

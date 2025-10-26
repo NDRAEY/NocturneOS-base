@@ -23,6 +23,11 @@ pub extern "C" fn tty_init() {
     init();
 }
 
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_is_initialized() -> bool {
+    CONSOLE.lock().is_some()
+}
+
 pub fn tty_puts_str(s: &str) {
     let mut binding = CONSOLE.lock();
     let console = binding.as_mut().unwrap();

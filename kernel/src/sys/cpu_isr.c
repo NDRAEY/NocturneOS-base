@@ -34,12 +34,14 @@ _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint3
 
     unwind_stack(10);
 
-    qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
-
-	if(get_current_proc()->pid != 0) {
-		qemu_note("EXIT HERE");
-		thread_exit_entrypoint();
-	}
+    if(is_multitask()) {
+        qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
+        
+        if(get_current_proc()->pid != 0) {
+            qemu_note("EXIT HERE");
+            thread_exit_entrypoint();
+        }
+    }
 
     __asm__ volatile("cli");  // Disable interrupts
     __asm__ volatile("hlt");  // Halt
@@ -213,25 +215,26 @@ void page_fault(registers_t regs){
     }
     qemu_log("at address (virtual) %x",fault_addr);
 
-    tty_printf("Process nr.%d caused page fault: ", get_current_proc()->pid); 
-    if (present){
-        tty_printf("NOT PRESENT, ");
-    }
-    if (rw){
-        tty_printf("READ ONLY, ");
-    }
-    if (user){
-        tty_printf("USER MODE,  ");
-    }
-    if (reserved){
-        tty_printf("WRITING TO RESERVED BITS, ");
-    }
-    if (id){
-        tty_printf("EIP error ");
-    }
+    if(tty_is_initialized()) {
+        tty_printf("Process nr.%d caused page fault: ", get_current_proc()->pid); 
+        if (present){
+            tty_printf("NOT PRESENT, ");
+        }
+        if (rw){
+            tty_printf("READ ONLY, ");
+        }
+        if (user){
+            tty_printf("USER MODE,  ");
+        }
+        if (reserved){
+            tty_printf("WRITING TO RESERVED BITS, ");
+        }
+        if (id){
+            tty_printf("EIP error ");
+        }
 
-    tty_printf("at address (virtual) %x",fault_addr);
-
+        tty_printf("at address (virtual) %x",fault_addr);
+    }
 
     // Prevent kmallocs (in bsod_screen()) in Page Fault
     sod_screen_legacy(regs, "CRITICAL_ERROR_PF_PAGE_FAULT", msg, fault_addr);

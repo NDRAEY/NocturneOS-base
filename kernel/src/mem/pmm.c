@@ -14,6 +14,7 @@
 #include "mem/pmm.h"
 #include "lib/string.h"
 #include "io/ports.h"
+#include "sys/scheduler.h"
 
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
@@ -599,6 +600,7 @@ void init_paging() {
 
 	qemu_log("New page directory at: %p", kernel_page_directory);
 
+	// map_pages(kernel_page_directory, 0x1000, 0x1000, real_end - 0x1000, PAGE_WRITEABLE);
 	map_pages(kernel_page_directory, 0, 0, real_end, PAGE_WRITEABLE);
 
 	qemu_log("Max: %x", phys_memory_size);

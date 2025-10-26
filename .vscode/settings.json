@@ -21,6 +21,10 @@
         "hexview.h": "c",
         "list.h": "c",
         "stdio.h": "c",
-        "icmp.h": "c"
+        "icmp.h": "c",
+        "ports.h": "c",
+        "vmm.h": "c",
+        "cpufeature.h": "c",
+        "string.h": "c"
     },
 }

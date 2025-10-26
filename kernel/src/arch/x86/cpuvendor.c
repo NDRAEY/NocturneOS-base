@@ -3,6 +3,7 @@
 
 #include <arch/x86/cpu_vendors.h>
 #include <lib/string.h>
+#include <io/ports.h>
 
 extern const struct cpu_vendor *cpu_vendor_start[], *cpu_vendor_end[];
 const struct cpu_vendor *const *cpu_vendors = (const struct cpu_vendor* const *)cpu_vendor_start;
@@ -94,6 +95,8 @@ cpu_register_vendor(cpu_intel);
 cpu_register_vendor(cpu_amd);
 
 const struct cpu_vendor* cpu_vendor_by_signature(const char* name) {
+	// qemu_log("Vendor count: %x (%x - %x)", NR_X86_VENDORS, cpu_vendor_start, cpu_vendor_end);
+
 	struct cpu_vendor* cpu_vendor;
 	for (int vendor = 0; vendor < NR_X86_VENDORS; vendor++) {
 		cpu_vendor = cpu_vendors[vendor];

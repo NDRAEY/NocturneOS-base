@@ -7,6 +7,7 @@
 #include <sys/cpuid.h>
 #include <lib/string.h>
 #include <arch/x86/cpufeature.h>
+#include <io/ports.h>
 
 struct cpu_info boot_cpu_info;
 
@@ -73,7 +74,10 @@ void cpu_get_info(struct cpu_info* c) {
 	c->family_id = 4;
 
 	c->vendor = cpu_vendor_by_signature(c->brand_string);
-	c->manufacturer_id = c->vendor->vendor;
+
+	if(c->vendor) {
+		c->manufacturer_id = c->vendor->vendor;
+	}
 	
 	if (c->cpuid_max_leaf >= 0x00000001) {
 		cpuid(0x00000001, &eax, &ebx, &ecx, &edx);
@@ -107,7 +111,8 @@ void cpu_get_info(struct cpu_info* c) {
 		      (uint32_t *)&c->model_string[36], (uint32_t *)&c->model_string[40],
 		      (uint32_t *)&c->model_string[44]);
 	} else {
-		strcpy(c->model_string, cpu_vendor_legacy_model(c->vendor, c->family_id, c->model_id));
+		char* legacy_model = cpu_vendor_legacy_model(c->vendor, c->family_id, c->model_id);
+		strcpy(c->model_string, legacy_model);
 	}
 
 	if (c->extended_cpuid_max_leaf >= 0x80000007) {

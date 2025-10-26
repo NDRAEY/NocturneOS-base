@@ -20,7 +20,10 @@ void file_descriptors_init() {
 
 // WARNING: Part of system calls! So every func needs to return size_t
 size_t file_descriptor_allocate(const char *filename, size_t mode, int *out) {
+    qemu_log("Open: `%s`", filename);
+
     FILE* file = fopen(filename, mode);
+
     if(!file) {
         *out = -1;
         return 0;
@@ -75,8 +78,6 @@ size_t file_descriptor_read(int descriptor_number, size_t count, void* buffer) {
 	fread(inf->file, count, 1, buffer);
     
 	qemu_note("Read finished!");
-
-	qemu_log("%s\n", buffer);
 
 	return 0;
 }
