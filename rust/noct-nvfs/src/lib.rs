@@ -28,14 +28,15 @@ pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
 
     // qemu_note!("Path: {owned_string:?}");
 
-    let stems = name.split(":/").collect::<Vec<&str>>();
+    let mut stems = name.split(":/");
 
-    if stems.len() < 2 {
+    let Some(disk_id) = stems.next() else {
         return Box::into_raw(info);
-    }
+    };
 
-    let disk_id = stems[0];
-    let path = stems[1];
+    let Some(path) = stems.next() else {
+        return Box::into_raw(info);
+    };
 
     // qemu_note!("DiskId: {disk_id:?}; Path: {path:?}");
 
