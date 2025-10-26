@@ -53,7 +53,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest-unstable"
           prerelease: true
-          title: "💽 NocturneOS Sea - [Autobuild] Unstable release"
+          title: "💽 NocturneOS Space - [Autobuild] Unstable release"
           description: "Attention! This release is built from the latest kernel changes! This is not the final version and contains bugs and is not recommended to run without testing on a virtual machine."
           files: |
             cmake-build-debug/NocturneOS_Debug.iso
