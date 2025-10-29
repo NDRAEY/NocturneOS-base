@@ -65,7 +65,7 @@ bool phys_is_used_page(physical_addr_t addr);
 void phys_mark_page_entry(physical_addr_t addr, uint8_t used);
 uint32_t phys_get_page_data(page_directory_t* page_dir, virtual_addr_t virtual);
 uint32_t virt2phys(const page_directory_t *page_dir, virtual_addr_t virtual);
-void init_paging();
+void init_paging(const multiboot_header_t *mboot);
 uint32_t* get_kernel_page_directory();
 
 void map_pages_overlapping(page_directory_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags);

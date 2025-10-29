@@ -538,7 +538,7 @@ uint32_t* get_kernel_page_directory() {
 
 extern size_t grub_last_module_end;
 
-void init_paging() {
+void init_paging(const multiboot_header_t *mboot) {
 	__asm__ volatile("cli");
 
 	kernel_start = (size_t)&KERNEL_BASE_pos;
@@ -598,14 +598,29 @@ void init_paging() {
 
 	kernel_page_directory = (physical_addr_t*)new_page_directory();
 
-	qemu_log("New page directory at: %p", kernel_page_directory);
+	qemu_log("New page directory at: %x", (size_t)kernel_page_directory);
 
-	// map_pages(kernel_page_directory, 0x1000, 0x1000, real_end - 0x1000, PAGE_WRITEABLE);
-	map_pages(kernel_page_directory, 0, 0, real_end, PAGE_WRITEABLE);
+	qemu_log("Map (P/V) from %x to %x (%d bytes)", kernel_start, real_end, real_end - kernel_start);
 
-	qemu_log("Max: %x", phys_memory_size);
+	map_pages(
+		kernel_page_directory,
+		kernel_start,
+		kernel_start,
+		real_end - kernel_start,
+		PAGE_WRITEABLE
+	);
 
-	// while(1);
+	// TODO: Detect mboot sizes correctly
+	map_pages(
+		kernel_page_directory,
+		(size_t)mboot,
+		(size_t)mboot,
+		PAGE_SIZE,
+		PAGE_WRITEABLE
+	);
+
+	qemu_log("Physical memory size: %x", phys_memory_size);
+
 	load_page_directory((size_t) kernel_page_directory);
 
 	qemu_log("Ok?");

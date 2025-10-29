@@ -7,9 +7,8 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
- #include	"sys/registers.h"
- #include	"sys/cpu_isr.h"
-#include	"sys/logo.h"
+#include	"sys/registers.h"
+#include	"sys/cpu_isr.h"
 #include	"sys/unwind.h"
 #include 	<io/ports.h>
 #include    "sys/scheduler.h"

@@ -176,7 +176,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     grub_modules_prescan(mboot);
 
-    init_paging();
+    init_paging(mboot);
 
     mark_reserved_memory_as_used((memory_map_entry_t *)mboot->mmap_addr, mboot->mmap_length);
 

@@ -13,6 +13,8 @@ uint32_t system_processors_found = 0;
 extern uint16_t century_register;
 
 RSDPDescriptor* rsdp_find() {
+    map_pages(get_kernel_page_directory(), 0xE0000, 0xE0000, 0x100000 - 0xE0000, 0);
+
     size_t saddr = 0x000E0000;
     char rsdp_ptr[8] = {'R','S','D',' ','P','T','R',' '};
 

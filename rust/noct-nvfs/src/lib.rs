@@ -7,7 +7,7 @@ extern crate alloc;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-use alloc::{boxed::Box, ffi::CString, string::String, vec::Vec};
+use alloc::{boxed::Box, ffi::CString, string::String};
 use core::{
     ffi::{CStr, c_char},
     mem,
