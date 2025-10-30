@@ -11,7 +11,7 @@
 #include <lib/stdio.h>
 #include <io/ports.h>
 #include "mem/vmm.h"
-#include "io/serial_port.h"
+#include "arch/x86/serial_port.h"
 #include "io/screen.h"
 #include "debug/hexview.h"
 

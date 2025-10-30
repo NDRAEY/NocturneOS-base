@@ -8,7 +8,7 @@
  */
 
 #include <lib/string.h>
-#include <io/serial_port.h>
+#include <arch/x86/serial_port.h>
 #include <stdarg.h>
 #include <arch/x86/ports.h>
 #include "drv/fpu.h"
@@ -66,15 +66,6 @@ void __com_writeString(uint16_t port, char *buf){
     for (size_t i = 0, len = strlen(buf); i < len; i++) {
         __com_writeChar(port, buf[i]);
     }
-}
-
-/**
- * @brief Небольшая задержка используя порт 128(0x80)
- * 
- * @test Тип нахуя?
- */
-void __com_io_wait(){
-    outb(0x80, 0);
 }
 
 

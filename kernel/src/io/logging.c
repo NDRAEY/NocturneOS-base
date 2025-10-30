@@ -2,6 +2,7 @@
 
 #ifdef NOCTURNE_X86
 #include <arch/x86/ports.h>
+#include <arch/x86/serial_port.h>
 
 // Check if character received.
 #define is_signal_received(port) (inb(port + 5) & 1)
@@ -12,7 +13,6 @@
 #include <mem/vmm.h>
 #include <lib/asprintf.h>
 #include <sys/scheduler.h>
-#include <io/serial_port.h>
 #include <io/ports.h>
 
 void (*default_qemu_printf)(const char *text, ...) = qemu_printf;
@@ -31,13 +31,11 @@ void switch_qemu_logging() {
     va_list args;
     va_start(args, text);
 
-    if (__com_getInit(1)) {
-        scheduler_mode(false);  // Stop scheduler
+    scheduler_mode(false);  // Stop scheduler
 
-        __com_pre_formatString(PORT_COM1, text, args);
+    __com_pre_formatString(PORT_COM1, text, args);
 
-        scheduler_mode(true);  // Start scheduler
-    }
+    scheduler_mode(true);  // Start scheduler
     
     va_end(args);
 }

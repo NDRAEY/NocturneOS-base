@@ -28,7 +28,6 @@
 #include "sys/system.h"
 
 #include <io/ports.h>
-#include <io/serial_port.h>
 #include <io/screen.h>
 #include <io/status_loggers.h>
 #include <io/tty.h>

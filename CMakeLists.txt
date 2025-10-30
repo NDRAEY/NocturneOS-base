@@ -132,13 +132,16 @@ if(NOCTURNE_ARCH STREQUAL "x86")
         kernel/src/arch/x86/isr.c 
 		kernel/src/sys/acpi.c
 		kernel/src/arch/x86/mtrr.c 	
-		kernel/src/drv/video/intel.c
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
 		kernel/src/arch/x86/cputemp.c	
 		kernel/src/arch/x86/fxsave_region.c 
-
+		kernel/src/arch/x86/pit.c
+		
 		kernel/src/arch/x86/power.c
+		kernel/src/arch/x86/serial_port.c 
+		kernel/src/drv/input/ps2_mouse.c
+		kernel/src/drv/video/intel.c
 
 		kernel/src/drv/network/rtl8139.c 
 		kernel/src/drv/disk/ata_dma.c
@@ -154,9 +157,7 @@ endif()
 set(C_SRC
 	${C_SRC}
 	kernel/src/io/logging.c 
-	kernel/src/io/serial_port.c 
 	kernel/src/lib/string.c 
-	kernel/src/sys/timer.c 
 	kernel/src/sys/logo.c 
 	kernel/src/lib/math/math.c 
 	kernel/src/mem/pmm.c
@@ -181,7 +182,6 @@ set(C_SRC
 	kernel/src/sys/bootscreen.c 
 	kernel/src/debug/hexview.c 
 	# kernel/src/drv/video/vbe.c 
-	kernel/src/drv/input/ps2_mouse.c 
 	kernel/src/sys/syscalls.c 
 	kernel/src/lib/rand.c 
 	kernel/src/drv/beeper.c 

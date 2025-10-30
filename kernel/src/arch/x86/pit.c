@@ -6,7 +6,7 @@
  * @date 2022-10-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
-#include  "sys/timer.h"
+#include  "arch/x86/pit.h"
 #include  "arch/x86/isr.h"
 #include  "drv/fpu.h"
 #include  "arch/x86/ports.h"

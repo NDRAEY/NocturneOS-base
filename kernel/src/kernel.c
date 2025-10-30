@@ -24,6 +24,7 @@
 #include "arch/x86/cputemp.h"
 #include "arch/x86/descriptor_tables.h"
 #include <arch/x86/sse.h>
+#include <arch/x86/serial_port.h>
 #endif
 
 #include "net/ipv4.h"
