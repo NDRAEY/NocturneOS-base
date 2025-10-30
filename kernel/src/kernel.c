@@ -18,7 +18,14 @@
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
 #include "sys/cpuid.h"
-#include "sys/mtrr.h"
+
+#ifdef NOCTURNE_X86
+#include "arch/x86/mtrr.h"
+#include "arch/x86/cputemp.h"
+#include "arch/x86/descriptor_tables.h"
+#include <arch/x86/sse.h>
+#endif
+
 #include "net/ipv4.h"
 
 #include "net/stack.h"
@@ -36,7 +43,6 @@
 
 #include <generated/input.h>
 
-#include <sys/sse.h>
 #include <user/env.h>
 #include <arch/init.h>
 

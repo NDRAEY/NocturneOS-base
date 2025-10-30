@@ -127,14 +127,16 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 	set(C_SRC
 		kernel/src/arch/x86/init.c
 		kernel/src/drv/cmos.c
-        kernel/src/sys/gdt.c
+        kernel/src/arch/x86/gdt.c
         kernel/src/sys/cpu_isr.c 
-        kernel/src/sys/isr.c 
+        kernel/src/arch/x86/isr.c 
 		kernel/src/sys/acpi.c
-		kernel/src/sys/mtrr.c 	
+		kernel/src/arch/x86/mtrr.c 	
 		kernel/src/drv/video/intel.c
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
+		kernel/src/arch/x86/cputemp.c	
+		kernel/src/arch/x86/fxsave_region.c 
 	)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
@@ -193,7 +195,6 @@ set(C_SRC
 	kernel/src/drv/disk/ata.c 
 	kernel/src/drv/disk/atapi.c 
 	kernel/src/drv/disk/memdisk.c 
-	kernel/src/sys/cputemp.c	
 	kernel/src/net/endianess.c 
 	kernel/src/net/cards.c 
 	kernel/src/net/ethernet.c 
@@ -205,7 +206,6 @@ set(C_SRC
 	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	kernel/src/sys/fxsave_region.c 
 	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/lib/asprintf.c

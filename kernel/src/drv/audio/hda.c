@@ -8,7 +8,7 @@
 #include "io/tty.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
-#include "sys/isr.h"
+#include "arch/x86/isr.h"
 #include "sys/registers.h"
 #include "../../lib/libvector/include/vector.h"
 

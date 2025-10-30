@@ -10,7 +10,7 @@
 #include <arch/x86/ports.h>
 #include <drv/input/mouse.h>
 #include "io/screen.h"
-#include "sys/isr.h"
+#include "arch/x86/isr.h"
 #include "drv/ps2.h"
 
 uint8_t mouse_ready = 0;        /// Готова ли мышь к работе

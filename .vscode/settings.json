@@ -35,6 +35,9 @@
         "future": "c",
         "system_error": "c",
         "diskman_commands.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "syscalls.h": "c",
+        "isr.h": "c",
+        "cputemp.h": "c"
     },
 }

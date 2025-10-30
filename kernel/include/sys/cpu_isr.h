@@ -27,7 +27,7 @@
 #define			ERR_CODE_MASK	0xFFF8
 
 #include		"common.h"
-#include		"sys/isr.h"
+#include		"arch/x86/isr.h"
 
 /*------------------------------------------------------------------------------
 //		Handlers prototypes

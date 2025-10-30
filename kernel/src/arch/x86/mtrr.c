@@ -2,8 +2,8 @@
 #include "common.h"
 #include "sys/cpuid.h"
 #include "io/logging.h"
-#include "sys/msr.h"
-#include "sys/mtrr.h"
+#include "arch/x86/msr.h"
+#include "arch/x86/mtrr.h"
 #include "io/tty.h"
 
 #define UNCACHED 0

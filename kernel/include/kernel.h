@@ -24,7 +24,6 @@
 #include "sys/cpu_isr.h"
 #include "sys/bootscreen.h"
 #include "sys/logo.h"
-#include "sys/descriptor_tables.h"
 #include "sys/syscalls.h"
 #include "sys/system.h"
 
@@ -64,8 +63,6 @@
 #include "net/arp.h"
 
 #include "debug/hexview.h"
-
-#include "sys/cputemp.h"
 
 #include "generated/audiosystem_headers.h"
 #include "generated/iso9660.h"

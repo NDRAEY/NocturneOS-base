@@ -6,7 +6,7 @@
  * @date 2022-10-01
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
-#include  "sys/descriptor_tables.h"
+#include  "arch/x86/descriptor_tables.h"
 #include  "lib/string.h"
 #include  <arch/x86/ports.h>
 

@@ -15,7 +15,7 @@
 #include    "sys/file_descriptors.h"
 #include    <kernel.h>
 #include	"io/keyboard.h"
-
+#include	"arch/x86/cputemp.h"
 
 size_t syscall_env(struct env* position) {
     memcpy(position, &system_environment, sizeof(env_t));
@@ -108,7 +108,11 @@ size_t syscall_munmap(size_t virtual, size_t size) {
 }
 
 size_t syscall_temperature() {
+#ifdef NOCTURNE_X86
     return get_cpu_temperature();
+#else
+    return 0;
+#endif
 }
 
 size_t syscall_mouse(uint32_t* out_x, uint32_t* out_y, uint32_t* flags) {

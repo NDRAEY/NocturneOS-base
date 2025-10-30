@@ -7,7 +7,7 @@
 #include <io/logging.h>
 #include "mem/pmm.h"
 #include "mem/vmm.h"
-#include "sys/isr.h"
+#include "arch/x86/isr.h"
 #include "drv/disk/ata.h"
 #include "drv/atapi.h"
 #include "net/endianess.h"

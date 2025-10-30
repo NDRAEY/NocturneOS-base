@@ -1,4 +1,4 @@
-#include "sys/sse.h"
+#include "arch/x86/sse.h"
 
 extern void fpu_save();
 

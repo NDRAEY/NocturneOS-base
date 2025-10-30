@@ -1,7 +1,10 @@
 #pragma once
 
 #include	"common.h"
-#include	"sys/isr.h"
+
+#ifdef NOCTURNE_X86
+#include	"arch/x86/isr.h"
+#endif
 
 #define		SYSCALL					0x80
 

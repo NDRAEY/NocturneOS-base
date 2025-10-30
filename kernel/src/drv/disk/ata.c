@@ -3,7 +3,7 @@
 #include <drv/atapi.h>
 #include <mem/vmm.h>
 #include <io/tty.h>
-#include "sys/isr.h"
+#include "arch/x86/isr.h"
 #include "net/endianess.h"
 #include "drv/disk/ata_dma.h"
 #include "drv/disk/ata_pio.h"

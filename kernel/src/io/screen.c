@@ -5,7 +5,11 @@
 #include <common.h>
 #include "mem/pmm.h"
 #include "mem/vmm.h"
-#include "sys/mtrr.h"
+
+#ifdef NOCTURNE_X86
+#include "arch/x86/mtrr.h"
+#endif
+
 #include "sys/sync.h"
 
 uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана

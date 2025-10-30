@@ -12,7 +12,7 @@
 #include <arch/x86/ports.h>
 #include <net/endianess.h>
 #include <debug/hexview.h>
-#include <sys/isr.h>
+#include <arch/x86/isr.h>
 #include "lib/string.h"
 #include "mem/vmm.h"
 #include "mem/pmm.h"

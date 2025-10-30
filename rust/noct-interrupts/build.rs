@@ -4,7 +4,7 @@ use bindgen::RustTarget;
 
 fn main() {
     let bindings = bindgen::Builder::default()
-        .header("../../kernel/include/sys/isr.h")
+        .header("../../kernel/include/arch/x86/isr.h")
         .clang_arg("-I../../kernel/include/")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .use_core()

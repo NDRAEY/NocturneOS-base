@@ -1,6 +1,6 @@
 #include "arch/x86/cpu_vendors.h"
 #include "arch/x86/cpufeature.h"
-#include "sys/msr.h"
+#include "arch/x86/msr.h"
 #include <sys/cpuid.h>
 
 // X86 CPU Temperature support (partially based on memtest86+ code)
