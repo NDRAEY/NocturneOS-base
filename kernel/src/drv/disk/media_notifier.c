@@ -1,6 +1,7 @@
 #include <common.h>
 #include <io/ports.h>
 #include <sys/scheduler.h>
+#include <sys/timer.h>
 #include <lib/asprintf.h>
 #include <lib/math.h>
 

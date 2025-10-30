@@ -48,9 +48,9 @@ endif()
 set(ISO_DIR "${CMAKE_SOURCE_DIR}/iso/")
 set(KERNEL kernel.elf)
 
-set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libstring/include -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
+set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
 set(CMAKE_ASM_FLAGS "-m32 -g")
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type")
+set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
 
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")
@@ -69,14 +69,14 @@ endif()
 
 if(NOCTURNE_ARCH STREQUAL "x86")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack -Wl,--gc-sections")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386 -DNOCTURNE_X86")
 	
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
 	endif()
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
-	
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_ARMV7")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -126,10 +126,12 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 
 	set(C_SRC
 		kernel/src/arch/x86/init.c
-        kernel/src/sys/gdt.c 
-        kernel/src/sys/cpu_isr.c 
 		kernel/src/drv/cmos.c
+        kernel/src/sys/gdt.c
+        kernel/src/sys/cpu_isr.c 
         kernel/src/sys/isr.c 
+		kernel/src/sys/acpi.c
+		kernel/src/sys/mtrr.c 	
 		kernel/src/drv/video/intel.c
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
@@ -141,12 +143,13 @@ endif()
 set(C_SRC
 	${C_SRC}
 	kernel/src/io/ports.c 
+	kernel/src/io/logging.c 
 	kernel/src/io/serial_port.c 
 	kernel/src/lib/string.c 
 	kernel/src/sys/timer.c 
 	kernel/src/sys/logo.c 
 	kernel/src/lib/math/math.c 
-	kernel/src/mem/pmm.c	
+	kernel/src/mem/pmm.c
 	kernel/src/mem/vmm.c	
 	kernel/src/lib/stdio.c
 	kernel/src/io/screen.c 
@@ -211,8 +214,6 @@ set(C_SRC
 	kernel/src/drv/disk/ata_dma.c
 	kernel/src/drv/audio/ac97.c
 	kernel/src/sys/elf.c
-	kernel/src/sys/acpi.c
-	kernel/src/sys/mtrr.c 
 	kernel/src/toys/mala.c 
 	kernel/src/drv/disk/ahci.c 
 	kernel/src/drv/disk/ata_pio.c 

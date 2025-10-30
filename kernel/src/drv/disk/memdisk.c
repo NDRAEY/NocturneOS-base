@@ -2,7 +2,7 @@
 
 #include <lib/math.h>
 
-#include "io/ports.h"
+#include <io/logging.h>
 #include "io/tty.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"

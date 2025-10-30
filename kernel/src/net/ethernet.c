@@ -1,10 +1,10 @@
 #include "net/ipv4.h"
 #include "io/ports.h"
+#include "io/logging.h"
 #include "net/endianess.h"
 #include "net/arp.h"
 #include "net/ethernet.h"
 #include "mem/vmm.h"
-//#include "debug/hexview.h"
 #include "net/stack.h"
 
 void ethernet_dump(void* data, size_t size, uint16_t type){

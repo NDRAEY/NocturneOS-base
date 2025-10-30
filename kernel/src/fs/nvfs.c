@@ -14,6 +14,7 @@
 #include "fs/fsm.h"
 
 #include "generated/nvfs_helper.h"
+#include <io/logging.h>
 
 bool nvfs_debug = false;
 

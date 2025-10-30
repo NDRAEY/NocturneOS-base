@@ -128,10 +128,11 @@ void scan_kernel(const multiboot_header_t *mboot) {
 */
 void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t initial_esp)
 {
-    __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
-    
     arch_init();
 
+#if NOCTURNE_X86
+    __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
+    
     __com_setInit(1, 1);
     __com_init(PORT_COM1);
     
@@ -296,9 +297,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     bootScreenClose(0x000000, 0xFFFFFF);
     tty_set_bgcolor(COLOR_BG);
 
-    tty_printf("NocturneOS v%d.%d.%d '%s'\nДата компиляции: %s\n",
+    tty_printf("NocturneOS v%d.%d.%d '%s' for %s\nДата компиляции: %s\n",
                VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, // Версия ядра
                VERSION_NAME,
+               NOCTURNE_ARCH_STRING,
                __TIMESTAMP__                                // Время окончания компиляции ядра
     );
 
@@ -377,6 +379,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // net_test();
 
     new_nsh();
+
+#endif
 
     while (1)
         ;

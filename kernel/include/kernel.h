@@ -33,6 +33,7 @@
 #include <io/screen.h>
 #include <io/status_loggers.h>
 #include <io/tty.h>
+#include <io/logging.h>
 
 #include <drv/input/keyboard.h>
 #include <drv/input/mouse.h>

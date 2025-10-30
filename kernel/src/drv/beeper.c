@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
 */
 
-#include <io/ports.h>
+#include <arch/x86/ports.h>
 #include <drv/beeper.h>
 #include <sys/timer.h>
 

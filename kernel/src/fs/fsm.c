@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS & NocturneOS Team (c) 2022-2025
 */
 
-#include <io/ports.h>
+#include <io/logging.h>
 #include <fs/fsm.h>
 #include <lib/php/pathinfo.h>
 #include "mem/vmm.h"

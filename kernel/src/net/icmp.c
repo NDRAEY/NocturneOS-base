@@ -1,5 +1,5 @@
 #include "net/icmp.h"
-#include "io/ports.h"
+#include <io/logging.h>
 
 void icmp_handle_packet(SAYORI_UNUSED netcard_entry_t* card, SAYORI_UNUSED char* packet_data) {
 	qemu_log("Type: %x", *packet_data);

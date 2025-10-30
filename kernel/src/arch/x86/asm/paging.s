@@ -31,3 +31,9 @@ flush_tlb_entry:
     mov %ebp, %esp
     pop %ebp
     ret
+
+.globl reload_cr3
+reload_cr3:
+    mov %cr3, %eax
+	mov %eax, %cr3
+    ret

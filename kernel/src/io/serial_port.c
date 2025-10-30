@@ -10,7 +10,7 @@
 #include <lib/string.h>
 #include <io/serial_port.h>
 #include <stdarg.h>
-#include "io/ports.h"
+#include <arch/x86/ports.h>
 #include "drv/fpu.h"
 #include "lib/math.h"
 

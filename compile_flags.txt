@@ -3,10 +3,11 @@
 -fno-stack-protector
 -fno-builtin
 -Ikernel/include/
--Ikernel/src/lib/libstring/include/
 -Ikernel/src/lib/libvector/include/
 -ffreestanding
 -Wall
 -Wextra
 -mno-red-zone
 -m32
+-DNOCTURNE_X86
+-DNOCTURNE_ARCH_STRING=""

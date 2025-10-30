@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 #include <version.h>
-#include <io/ports.h>
+#include <io/logging.h>
 #include "drv/psf.h"
 #include "io/tty.h"
 #include "lib/string.h"

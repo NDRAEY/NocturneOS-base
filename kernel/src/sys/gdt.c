@@ -8,7 +8,7 @@
  */
 #include  "sys/descriptor_tables.h"
 #include  "lib/string.h"
-#include  "io/ports.h"
+#include  <arch/x86/ports.h>
 
 extern uint32_t init_esp;
 

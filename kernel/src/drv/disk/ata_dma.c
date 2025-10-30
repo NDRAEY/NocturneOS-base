@@ -1,7 +1,8 @@
 #include "common.h"
 #include "drv/disk/ata_dma.h"
 #include "generated/pci.h"
-#include "io/ports.h"
+#include <io/logging.h>
+#include "arch/x86/ports.h"
 #include "mem/vmm.h"
 #include "mem/pmm.h"
 #include "drv/disk/ata.h"

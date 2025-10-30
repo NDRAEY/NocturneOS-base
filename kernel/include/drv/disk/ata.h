@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "io/ports.h"
+#include "arch/x86/ports.h"
 
 #define ATA_SR_BSY     0x80
 #define ATA_SR_DRDY    0x40

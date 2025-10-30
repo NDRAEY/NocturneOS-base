@@ -12,6 +12,7 @@
 #include "drv/atapi.h"
 #include "net/endianess.h"
 #include "debug/hexview.h"
+#include <io/logging.h>
 
 // FIXME: Add REQUEST_SENSE command to handle errors.
 

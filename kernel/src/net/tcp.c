@@ -7,7 +7,7 @@
 #include "net/ethernet.h"
 #include "net/tcp.h"
 #include "net/endianess.h"
-#include "io/ports.h"
+#include <io/logging.h>
 #include "net/ipv4.h"
 #include "mem/vmm.h"
 #include "lib/rand.h"

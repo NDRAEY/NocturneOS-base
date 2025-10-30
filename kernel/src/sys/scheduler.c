@@ -7,9 +7,9 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include	"sys/scheduler.h"
-#include	"lib/string.h"
-#include	"io/ports.h"
+#include <sys/scheduler.h>
+#include <lib/string.h>
+#include <io/logging.h>
 #include "mem/vmm.h"
 #include "lib/math.h"
 #include "sys/sync.h"

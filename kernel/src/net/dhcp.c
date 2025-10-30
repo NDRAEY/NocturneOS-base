@@ -4,7 +4,7 @@
 #include "mem/vmm.h"
 #include "lib/rand.h"
 #include "net/udp.h"
-#include "io/ports.h"
+#include <io/logging.h>
 
 void dhcp_discover(netcard_entry_t* card) {
 	// DHCP-клиент должен быть готов принять DHCP-сообщение длиной в 576 байт.

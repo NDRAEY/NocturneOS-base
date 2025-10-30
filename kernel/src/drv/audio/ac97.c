@@ -5,7 +5,8 @@
 #include <common.h>
 #include <lib/math.h>
 #include <drv/audio/ac97.h>
-#include "io/ports.h"
+#include <arch/x86/ports.h>
+#include <io/logging.h>
 #include "generated/pci.h"
 #include "mem/pmm.h"
 #include "lib/stdio.h"

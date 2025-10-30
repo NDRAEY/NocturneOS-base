@@ -4,7 +4,7 @@
 
 #include "lib/asprintf.h"
 #include "generated/pci.h"
-#include "io/ports.h"
+#include <io/logging.h>
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "sys/isr.h"

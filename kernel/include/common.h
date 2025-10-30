@@ -55,6 +55,7 @@ typedef size_t ptrdiff_t;
 
 // Use ON_NULLPTR macro to tell a user (developer) that he passed a nullptr
 #ifndef RELEASE
+#include <io/logging.h>
 #define ON_NULLPTR(ptr, code) \
 	do {                         \
 		if((ptr) == 0) { \

@@ -1,7 +1,7 @@
 #include "net/udp.h"
 #include "mem/vmm.h"
 #include "net/endianess.h"
-#include "io/ports.h"
+#include <io/logging.h>
 #include "net/ipv4.h"
 #include "debug/hexview.h"
 #include "net/dhcp.h"

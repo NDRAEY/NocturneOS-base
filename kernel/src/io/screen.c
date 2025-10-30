@@ -1,7 +1,7 @@
 #include <io/screen.h>
 #include <multiboot.h>
 #include <sys/timer.h>
-#include <io/ports.h>
+#include <io/logging.h>
 #include <common.h>
 #include "mem/pmm.h"
 #include "mem/vmm.h"
@@ -89,13 +89,13 @@ void init_vbe(const multiboot_header_t *mboot) {
 
     framebuffer_size = framebuffer_height * framebuffer_pitch;
 
-    qemu_log("[VBE] [USING LEGACY INFO] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %p",
+    qemu_log("[VBE] [USING LEGACY INFO] Width: %d; Height: %d; Pitch: %d; BPP: %d; Size: %d; Address: %x",
              mboot->framebuffer_width,
              mboot->framebuffer_height,
              mboot->framebuffer_pitch,
              mboot->framebuffer_bpp,
              mboot->framebuffer_height * mboot->framebuffer_pitch,
-             (void*)mboot->framebuffer_addr
+             (size_t)mboot->framebuffer_addr
     );
     
     physical_addr_t frame = (physical_addr_t)framebuffer_addr;

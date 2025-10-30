@@ -11,7 +11,7 @@
 
 #include "mem/vmm.h"
 #include "mem/pmm.h"
-#include "io/ports.h"
+#include "io/logging.h"
 #include "lib/math.h"
 #include "sys/scheduler.h"
 

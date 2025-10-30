@@ -7,6 +7,7 @@
 #include "io/ports.h"
 #include "lib/string.h"
 #include "drv/disk/initrd.h"
+#include <io/logging.h>
 
 size_t grub_last_module_end = 0;
 

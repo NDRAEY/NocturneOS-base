@@ -9,7 +9,7 @@
 #include <drv/rtl8139.h>
 #include <net/cards.h>
 #include <generated/pci.h>
-#include <io/ports.h>
+#include <arch/x86/ports.h>
 #include <net/endianess.h>
 #include <debug/hexview.h>
 #include <sys/isr.h>
@@ -18,6 +18,7 @@
 #include "mem/pmm.h"
 #include "net/stack.h"
 #include <net/ethernet.h>
+#include <io/logging.h>
 
 uint8_t rtl8139_busnum, rtl8139_slot, rtl8139_func;
 uint32_t rtl8139_io_base, rtl8139_mem_base, rtl8139_bar_type;

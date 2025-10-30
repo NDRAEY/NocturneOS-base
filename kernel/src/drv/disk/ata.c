@@ -1,5 +1,5 @@
-#include "drv/disk/ata.h"
-#include <io/ports.h>
+#include <io/logging.h>
+#include <arch/x86/ports.h>
 #include <drv/atapi.h>
 #include <mem/vmm.h>
 #include <io/tty.h>

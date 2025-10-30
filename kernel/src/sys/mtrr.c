@@ -1,7 +1,7 @@
 #include <arch/x86/cpufeature.h>
 #include "common.h"
 #include "sys/cpuid.h"
-#include "io/ports.h"
+#include "io/logging.h"
 #include "sys/msr.h"
 #include "sys/mtrr.h"
 #include "io/tty.h"

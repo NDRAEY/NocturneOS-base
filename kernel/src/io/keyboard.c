@@ -1,5 +1,5 @@
 #include <common.h>
-#include <io/ports.h>
+#include <io/logging.h>
 #include <io/tty.h>
 #include <io/keyboard.h>
 #include <lib/keymap.h>

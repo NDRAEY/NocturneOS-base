@@ -13,16 +13,15 @@ members = [ "eni-player", "noct-alloc", "noct-audio", "noct-diskman", "noct-elfl
 [dependencies]
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 spin = "0.10.0"
+elf = { version = "0.7.4", default-features = false }
 noct-alloc = { path = "./noct-alloc" }
 noct-fs-sys = { path = "./noct-fs-sys" }
 noct-logger = { path = "./noct-logger" }
 noct-path = { path = "./noct-path" }
 noct-iso9660 = { path = "./noct-iso9660" }
 noct-screen = { path = "./noct-screen" }
-elf = { version = "0.7.4", default-features = false }
 noct-tarfs = { path = "./noct-tarfs" }
 noct-fileio = { path = "./noct-fileio" }
-pavi = { path = "./pavi" }
 noct-fs = { path = "./noct-fs" }
 noct-tty = { path = "./noct-tty" }
 noct-input = { path = "./noct-input" }
@@ -34,7 +33,6 @@ noct-timer = { path = "./noct-timer" }
 noct-elfloader = { path = "./noct-elfloader" }
 noct-ksymparser = { path = "./noct-ksymparser" }
 noct-audio = { path = "./noct-audio" }
-eni-player = { path = "./eni-player" }
 noct-il = { path = "./noct-il" }
 noct-fatfs = { path = "./noct-fatfs" }
 noct-interrupts = { path = "./noct-interrupts" }
@@ -44,6 +42,8 @@ noct-nvfs = { path = "./noct-nvfs" }
 noct-klib = { path = "./noct-klib" }
 noct-shell = { path = "./noct-shell" }
 noct-mem = { path = "./noct-mem" }
+pavi = { path = "./pavi" }
+eni-player = { path = "./eni-player" }
 
 [target.'cfg(target_arch = "x86")'.dependencies]
 x86 = "0.52.0"

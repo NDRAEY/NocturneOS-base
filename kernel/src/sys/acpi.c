@@ -2,7 +2,7 @@
 #include "sys/apic_table.h"
 #include "sys/fadt.h"
 #include "lib/string.h"
-#include "io/ports.h"
+#include "io/logging.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
 

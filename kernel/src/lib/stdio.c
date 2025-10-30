@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include "io/ports.h"
+#include "io/logging.h"
 #include "mem/vmm.h"
 #include <lib/stdio.h>
 #include <fs/fsm.h>

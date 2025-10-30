@@ -25,6 +25,16 @@
         "ports.h": "c",
         "vmm.h": "c",
         "cpufeature.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "ata.h": "c",
+        "ac97.h": "c",
+        "common.h": "c",
+        "stack.h": "c",
+        "pmm.h": "c",
+        "scheduler.h": "c",
+        "future": "c",
+        "system_error": "c",
+        "diskman_commands.h": "c",
+        "math.h": "c"
     },
 }

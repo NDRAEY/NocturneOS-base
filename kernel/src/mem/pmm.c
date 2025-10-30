@@ -12,9 +12,10 @@
 #include <common.h>
 #include "lib/math.h"
 #include "mem/pmm.h"
-#include "lib/string.h"
-#include "io/ports.h"
+#include  "arch/x86/ports.h"
+#include "io/logging.h"
 #include "sys/scheduler.h"
+#include "arch/x86/paging.h"
 
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
@@ -258,55 +259,8 @@ uint32_t* get_page_table_by_vaddr(const page_directory_t* page_dir, virtual_addr
 		return (page_directory_t*)(page_dir[PD_INDEX(vaddr)] & ~0xfff);
 }
 
-void reload_cr3() {
-	__asm__ volatile("mov %cr3, %eax\n"
-		"mov %eax, %cr3");
-}
-
-/*
-void premap_pages(uint32_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, size_t size) {
-	virtual_addr_t vend = ALIGN(virtual + size, PAGE_SIZE);
-
-	while(virtual <= vend) {
-		virtual_addr_t v = virtual & ~0xfff;
-		physical_addr_t p = physical & ~0xfff;
-
-		// Get our Page Directory Index and Page Table Index.
-		uint32_t pdi = PD_INDEX(v);
-		//uint32_t pti = PT_INDEX(v);
-
-		// Check if page table not present.
-		if((page_dir[pdi] & 1) == 0) {
-			uint32_t* pt = (uint32_t *)phys_alloc_single_page();
-
-			qemu_ok("FOUND A MISSING PAGE TABLE TO MAP! %p", pt);
-
-			page_dir[pdi] = (uint32_t)pt | PAGE_WRITEABLE | PAGE_PRESENT;
-
-			if(paging_initialized && page_dir == get_kernel_page_directory()) {
-				uint32_t pt_addr = (uint32_t)page_directory_start + (pdi * PAGE_SIZE);
-
-				memset((uint32_t*)pt_addr, 0, PAGE_SIZE);
-
-				pt = (uint32_t*)pt_addr;
-			} else if(paging_initialized && page_dir != get_kernel_page_directory()) {
-				qemu_warn("FIXME: Mapping other page directories");
-				while(1);
-			}
-		}
-
-		physical += PAGE_SIZE;
-		virtual += PAGE_SIZE;
-	}
-
-	reload_cr3();
-}
-
-*/
-
 // Maps a page.
 // Note: No need to set PAGE_PRESENT flag, it sets automatically.
-// TODO: Rewrite this, this is buggy
 
 /// \brief Maps physical page with virtual address space
 /// \param page_dir VIRTUAL address of page directory

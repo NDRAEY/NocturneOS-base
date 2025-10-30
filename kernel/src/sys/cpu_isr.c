@@ -10,9 +10,10 @@
 #include	"sys/registers.h"
 #include	"sys/cpu_isr.h"
 #include	"sys/unwind.h"
-#include 	<io/ports.h>
+#include <arch/x86/ports.h>
 #include    "sys/scheduler.h"
 #include 	<io/status_loggers.h>
+#include 	<io/logging.h>
 
 _Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint32_t code) {
     qemu_printf("=== ЯДРО УПАЛО =======================================\n");

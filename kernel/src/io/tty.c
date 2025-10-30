@@ -12,7 +12,7 @@
 #include <mem/vmm.h>
 #include <io/tty.h>
 #include <sys/scheduler.h>
-#include <io/ports.h>
+#include <io/logging.h>
 #include <io/status_loggers.h>
 #include <drv/fpu.h>
 #include <lib/math.h>

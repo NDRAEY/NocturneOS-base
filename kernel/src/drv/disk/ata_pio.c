@@ -4,7 +4,7 @@
 
 #include "drv/disk/ata.h"
 #include "drv/disk/ata_pio.h"
-#include "io/ports.h"
+#include <io/logging.h>
 
 extern ata_drive_t drives[4];
 

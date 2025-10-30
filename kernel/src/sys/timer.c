@@ -9,7 +9,8 @@
 #include  "sys/timer.h"
 #include  "sys/isr.h"
 #include  "drv/fpu.h"
-#include  "io/ports.h"
+#include  "arch/x86/ports.h"
+#include "io/logging.h"
 #include "sys/scheduler.h"
 
 extern bool scheduler_working;

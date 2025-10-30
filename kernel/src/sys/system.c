@@ -9,7 +9,8 @@
 
 #include <io/status_loggers.h>
 #include "mem/vmm.h"
-#include "io/ports.h"
+#include <arch/x86/ports.h>
+#include <io/logging.h>
 
 // FIXME: These variables gets rewritten to address 0 when
 //        user types 'cd /' in shell

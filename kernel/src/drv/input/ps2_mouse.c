@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 
-#include <io/ports.h>
+#include <arch/x86/ports.h>
 #include <drv/input/mouse.h>
 #include "io/screen.h"
 #include "sys/isr.h"

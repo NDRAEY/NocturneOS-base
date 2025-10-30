@@ -9,7 +9,7 @@
 
 #include <mem/pmm.h>
 #include <elf/elf.h>
-#include <io/ports.h>
+#include <io/logging.h>
 #include <lib/stdio.h>
 #include <lib/math.h>
 #include "sys/scheduler.h"

@@ -7,7 +7,7 @@
 #include "sys/file_descriptors.h"
 #include "../src/lib/libvector/include/vector.h"
 #include "mem/vmm.h"
-#include "io/ports.h"
+#include <io/logging.h>
 
 vector_t* descriptors = 0;
 int last_descriptor_number = 0;

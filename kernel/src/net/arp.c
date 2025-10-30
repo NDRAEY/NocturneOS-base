@@ -4,7 +4,7 @@
 #include "mem/vmm.h"
 #include "net/endianess.h"
 #include "lib/string.h"
-#include "io/ports.h"
+#include <io/logging.h>
 #include "net/ethernet.h"
 
 uint8_t default_broadcast_mac_address[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
