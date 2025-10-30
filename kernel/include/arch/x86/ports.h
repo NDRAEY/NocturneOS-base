@@ -70,3 +70,27 @@ SAYORI_INLINE uint16_t inw(uint16_t port) {
 SAYORI_INLINE void outw(uint16_t port, uint16_t data) {
     __asm__ volatile ("outw %1, %0" :: "Nd" (port), "a" (data));
 }
+
+SAYORI_INLINE void insl(uint16_t port, uint32_t *buffer, uint32_t times) {
+    for (uint32_t index = 0; index < times; index++) {
+        buffer[index] = inl(port);
+    }
+}
+
+SAYORI_INLINE void outsl(uint16_t port, const uint32_t *buffer, int32_t times) {
+    for (int32_t index = 0; index < times; index++) {
+        outl(port, buffer[index]);
+    }
+}
+
+SAYORI_INLINE void insw(uint16_t __port, void *__buf, unsigned long __n) {
+	__asm__ volatile("cld; rep; insw"
+			: "+D"(__buf), "+c"(__n)
+			: "d"(__port));
+}
+ 
+SAYORI_INLINE void outsw(uint16_t __port, const void *__buf, unsigned long __n) {
+	__asm__ volatile("cld; rep; outsw"
+			: "+S"(__buf), "+c"(__n)
+			: "d"(__port));
+}

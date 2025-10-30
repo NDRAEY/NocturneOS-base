@@ -1,7 +1,7 @@
 #pragma once
 
 #include	"common.h"
-#include "sys/registers.h"
+#include "arch/x86/registers.h"
 
 #define		IRQ0	32
 #define		IRQ1	33

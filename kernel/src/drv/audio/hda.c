@@ -9,7 +9,7 @@
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "arch/x86/isr.h"
-#include "sys/registers.h"
+#include "arch/x86/registers.h"
 #include "../../lib/libvector/include/vector.h"
 
 uint8_t hda_bus = 0,
@@ -55,6 +55,8 @@ size_t hda_afg_codec_id = 0;
 size_t hda_afg_node_id = 0;
 
 vector_t* hda_output_nodes;
+
+void hda_interrupt_handler(SAYORI_UNUSED registers_t regs);
 
 void hda_init() {
     // Find devce by its class and subclass numbers.

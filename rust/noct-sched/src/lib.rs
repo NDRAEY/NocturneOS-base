@@ -27,7 +27,7 @@ pub fn me() -> &'static process_t {
 #[inline]
 pub fn task_yield() {
     unsafe {
-        task_switch_v2_wrapper(core::mem::zeroed::<registers>());
+        task_switch_v2_wrapper(core::mem::zeroed::<registers_t>());
     };
 }
 

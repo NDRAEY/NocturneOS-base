@@ -111,7 +111,7 @@ void mouse_parse_packet(const char *buf, uint8_t has_wheel, uint8_t has_5_button
  *
  * @warning Не нужно вызывать самостоятельно, только для обработчика ядра!
  */
-void mouse_handler(SAYORI_UNUSED struct registers r) {
+void mouse_handler(SAYORI_UNUSED registers_t r) {
     uint8_t status = inb(0x64);
     if ((status & 1) == 0 || (status >> 5 & 1) == 0) {
         return;

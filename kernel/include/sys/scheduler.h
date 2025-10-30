@@ -1,7 +1,11 @@
 #pragma once
 
 #include	"common.h"
-#include    "sys/registers.h"
+
+// #ifdef NOCTURNE_X86
+#include    "arch/x86/registers.h"
+// #endif
+
 #include	"lib/list.h"
 #include	"mem/pmm.h"
 #include	"elf/elf.h"

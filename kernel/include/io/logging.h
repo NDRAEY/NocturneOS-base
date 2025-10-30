@@ -2,6 +2,10 @@
 
 #include <sys/timer.h>
 
+#ifdef NOCTURNE_X86
+#include <sys/cpu_isr.h>
+#endif
+
 void qemu_printf(const char *text, ...);
 void new_qemu_printf(const char *format, ...);
 
@@ -32,3 +36,5 @@ extern void (*default_qemu_printf)(const char *text, ...) __attribute__((format(
     qemu_printf("======================================\n");          \
     bsod_screen((registers_t){}, "ASSERT_FAIL", "See additional information on COM1 port. (Or Qemu.log if you're using QEMU)", 0xFFFF); \
 } } while(0)
+
+void switch_qemu_logging();

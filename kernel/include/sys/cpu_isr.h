@@ -1,5 +1,4 @@
-#ifndef			CPU_ISR_H
-#define			CPU_ISR_H
+#pragma once
 
 #define			INT_0		0x00
 #define			INT_1		0x01
@@ -26,8 +25,7 @@
 #define			TI_BIT			(1 << 2)
 #define			ERR_CODE_MASK	0xFFF8
 
-#include		"common.h"
-#include		"arch/x86/isr.h"
+#include		"arch/x86/registers.h"
 
 /*------------------------------------------------------------------------------
 //		Handlers prototypes
@@ -63,4 +61,3 @@ void fpu_fault(registers_t regs);
 extern uint32_t read_cr2();
 
 void bsod_screen(registers_t regs, char* title, char* msg, uint32_t code);
-#endif
