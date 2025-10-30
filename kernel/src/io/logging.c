@@ -22,38 +22,6 @@ void switch_qemu_logging() {
 }
 
 /**
- * @brief Проверка занятости порта
- *
- * @return int32_t - состояние
- */
-int32_t is_transmit_empty(uint16_t port) {
-    return inb(port + 5) & 0x20;
-}
-
-// Read 1 byte (char) from port.
-uint8_t serial_readchar(uint16_t port) {
-    while (is_signal_received(port) == 0)
-        ;
-    return inb(port);
-}
-
-// Read 1 byte (char) from port.
-int8_t serial_readchar_timeout(uint16_t port,size_t timeout, bool Alert) {
-    size_t to = 0;
-    while (is_signal_received(port) == 0){
-        to++;
-        //qemu_warn("TIMEOUT: %d",to);
-        if (to >= timeout){
-            if (Alert) {
-                qemu_warn("TIMEOUT: %d",to);
-            }
-            return -1;
-        }
-    }
-    return inb(port);
-}
-
-/**
  * @brief Вывод QEMU через COM1 информации
  *
  * @param text Форматная строка

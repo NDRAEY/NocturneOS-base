@@ -137,6 +137,15 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/cpuvendor.c
 		kernel/src/arch/x86/cputemp.c	
 		kernel/src/arch/x86/fxsave_region.c 
+
+		kernel/src/arch/x86/power.c
+
+		kernel/src/drv/network/rtl8139.c 
+		kernel/src/drv/disk/ata_dma.c
+		kernel/src/drv/audio/ac97.c
+		kernel/src/drv/audio/hda.c	
+		kernel/src/drv/disk/ata.c 
+		kernel/src/drv/disk/atapi.c 
 	)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(C_SRC kernel/src/arch/armv7/init.c)
@@ -144,7 +153,6 @@ endif()
 
 set(C_SRC
 	${C_SRC}
-	kernel/src/io/ports.c 
 	kernel/src/io/logging.c 
 	kernel/src/io/serial_port.c 
 	kernel/src/lib/string.c 
@@ -192,8 +200,6 @@ set(C_SRC
 	kernel/src/lib/math/tan.c 
 	kernel/src/lib/math/sqrt.c 
 	kernel/src/lib/math/cbrt.c 	
-	kernel/src/drv/disk/ata.c 
-	kernel/src/drv/disk/atapi.c 
 	kernel/src/drv/disk/memdisk.c 
 	kernel/src/net/endianess.c 
 	kernel/src/net/cards.c 
@@ -203,16 +209,12 @@ set(C_SRC
 	kernel/src/net/udp.c 
 	kernel/src/net/dhcp.c 
 	kernel/src/net/icmp.c 
-	kernel/src/sys/system.c 
 	kernel/src/io/status_sounds.c 
 	kernel/src/io/status_loggers.c 
-	kernel/src/drv/network/rtl8139.c 
 	# kernel/src/drv/network/virtio_network.c 
 	kernel/src/lib/asprintf.c
 	kernel/src/lib/sprintf.c
   # kernel/src/drv/disk/floppy.c
-	kernel/src/drv/disk/ata_dma.c
-	kernel/src/drv/audio/ac97.c
 	kernel/src/sys/elf.c
 	kernel/src/toys/mala.c 
 	kernel/src/drv/disk/ahci.c 
@@ -221,7 +223,6 @@ set(C_SRC
 	kernel/src/sys/file_descriptors.c 
 	kernel/src/net/tcp.c 
 	kernel/src/net/stack.c 
-	kernel/src/drv/audio/hda.c 
 	kernel/src/sys/grub_modules.c 
     kernel/src/lib/libvector/src/vector.c
     # kernel/src/lib/intrin.c
