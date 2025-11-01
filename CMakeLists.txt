@@ -7,7 +7,7 @@ enable_language(C ASM)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Dev;Release;ReleaseOptimized;OptSym" CACHE STRING "Available configurations" FORCE)
 
-set(VALID_ARCHITECTURES "x86" "armv7")
+set(VALID_ARCHITECTURES "x86" "armv7" "x86_64")
 set(SUPPORTED_ARMV7_BOARDS "opi-lite")
 
 if(NOT NOCTURNE_ARCH)
@@ -43,13 +43,22 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CLANG_ARCHITECTURE_TRIPLE "armv7-unknown-none")
 	set(RUST_TARGET_TRIPLE "armv7-unknown-none")
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(CLANG_ARCHITECTURE_TRIPLE "x86_64-pc-none")
+	set(RUST_TARGET_TRIPLE "x86_64-unknown-none")
 endif()
 
 set(ISO_DIR "${CMAKE_SOURCE_DIR}/iso/")
 set(KERNEL kernel.elf)
 
 set(C_INCLUDES "-I${CMAKE_SOURCE_DIR}/kernel/include/ -I${CMAKE_SOURCE_DIR}/kernel/src/lib/libvector/include")
-set(CMAKE_ASM_FLAGS "-m32 -g")
+
+if(NOCTURNE_ARCH STREQUAL "x86")
+	set(CMAKE_ASM_FLAGS "-m32 -g")
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(CMAKE_ASM_FLAGS "-m64 -g")
+endif()
+
 set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
 
 if(NOCTURNE_USE_CLANG)
@@ -77,6 +86,13 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_ARMV7")
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86_64/link.ld -static -z noexecstack")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_X86_64")
+
+	if(NOCTURNE_USE_SSE2)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+	endif()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -96,66 +112,26 @@ set(CMAKE_C_FLAGS_RELEASE "-DRELEASE -O0" CACHE STRING "Flags for Release" FORCE
 set(CMAKE_C_FLAGS_RELEASEOPTIMIZED "-DRELEASE -O2" CACHE STRING "Flags for ReleaseOptimized" FORCE)
 set(CMAKE_C_FLAGS_OPTSYM "-DRELEASE -O2 -ggdb3" CACHE STRING "Flags for OptSym" FORCE)
 
-set(ISO_FILE "NocturneOS_${CMAKE_BUILD_TYPE}.iso")
-
+set(ISO_FILE "NocturneOS_${NOCTURNE_ARCH}_${CMAKE_BUILD_TYPE}.iso")
 
 set(QEMU_MEMORY_SIZE 256M)
 
-#set(QEMU "qemu-system-x86_64")
-set(QEMU "qemu-system-i386")
-set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*")
+if(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(QEMU "qemu-system-x86_64")
+elseif(NOCTURNE_ARCH STREQUAL "x86")
+	set(QEMU "qemu-system-i386")
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(QEMU "qemu-system-arm")
+endif()
+
+set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*" -no-reboot -no-shutdown)
 
 set(MKRESCUE grub-mkrescue)
 set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} --locales="" -V NocturneOS --themes="" --fonts="ascii")
 
 # Sources
 
-if(NOCTURNE_ARCH STREQUAL "x86")
-	set(ASM_SRC
-		kernel/src/arch/x86/asm/init.s
-		kernel/src/arch/x86/asm/interrupt.s
-		kernel/src/arch/x86/asm/sys_calls.s
-		kernel/src/arch/x86/asm/usr.s
-		kernel/src/arch/x86/asm/sse.s
-		kernel/src/arch/x86/asm/gdt.s
-		kernel/src/arch/x86/asm/paging.s
-		kernel/src/arch/x86/asm/regs.s 
-		kernel/src/lib/setjmp.s 
-		kernel/src/arch/x86/asm/switch_task.s
-	)
-
-	set(C_SRC
-		kernel/src/arch/x86/init.c
-		kernel/src/drv/cmos.c
-        kernel/src/arch/x86/gdt.c
-        kernel/src/sys/cpu_isr.c 
-        kernel/src/arch/x86/isr.c 
-		kernel/src/sys/acpi.c
-		kernel/src/arch/x86/mtrr.c 	
-		kernel/src/arch/x86/cpuinfo.c
-		kernel/src/arch/x86/cpuvendor.c
-		kernel/src/arch/x86/cputemp.c	
-		kernel/src/arch/x86/fxsave_region.c 
-		kernel/src/arch/x86/pit.c
-		
-		kernel/src/arch/x86/power.c
-		kernel/src/arch/x86/serial_port.c 
-		kernel/src/drv/input/ps2_mouse.c
-		kernel/src/drv/video/intel.c
-
-		kernel/src/drv/network/rtl8139.c 
-		kernel/src/drv/disk/ata_dma.c
-		kernel/src/drv/audio/ac97.c
-		kernel/src/drv/audio/hda.c	
-		kernel/src/drv/disk/ata.c 
-		kernel/src/drv/disk/atapi.c 
-	)
-elseif(NOCTURNE_ARCH STREQUAL "armv7")
-	set(C_SRC kernel/src/arch/armv7/init.c)
-endif()
-
-set(C_SRC
-	${C_SRC}
+set(COMMON_C_SRC
 	kernel/src/io/logging.c 
 	kernel/src/lib/string.c 
 	kernel/src/sys/logo.c 
@@ -230,6 +206,73 @@ set(C_SRC
 	kernel/src/drv/disk/media_notifier.c
 	kernel/src/kernel.c 
 )
+
+if(NOCTURNE_ARCH STREQUAL "x86")
+	set(ASM_SRC
+		kernel/src/arch/x86/asm/init.s
+		kernel/src/arch/x86/asm/interrupt.s
+		kernel/src/arch/x86/asm/sys_calls.s
+		kernel/src/arch/x86/asm/usr.s
+		kernel/src/arch/x86/asm/sse.s
+		kernel/src/arch/x86/asm/gdt.s
+		kernel/src/arch/x86/asm/paging.s
+		kernel/src/arch/x86/asm/regs.s 
+		kernel/src/lib/setjmp.s 
+		kernel/src/arch/x86/asm/switch_task.s
+	)
+
+	set(C_SRC
+		kernel/src/arch/x86/init.c
+		kernel/src/drv/cmos.c
+        kernel/src/arch/x86/gdt.c
+        kernel/src/sys/cpu_isr.c 
+        kernel/src/arch/x86/isr.c 
+		kernel/src/sys/acpi.c
+		kernel/src/arch/x86/mtrr.c 	
+		kernel/src/arch/x86/cpuinfo.c
+		kernel/src/arch/x86/cpuvendor.c
+		kernel/src/arch/x86/cputemp.c	
+		kernel/src/arch/x86/fxsave_region.c 
+		kernel/src/arch/x86/pit.c
+		
+		kernel/src/arch/x86/power.c
+		kernel/src/arch/x86/serial_port.c 
+		kernel/src/drv/input/ps2_mouse.c
+		kernel/src/drv/video/intel.c
+
+		kernel/src/drv/network/rtl8139.c 
+		kernel/src/drv/disk/ata_dma.c
+		kernel/src/drv/audio/ac97.c
+		kernel/src/drv/audio/hda.c	
+		kernel/src/drv/disk/ata.c 
+		kernel/src/drv/disk/atapi.c 
+	)
+
+    set(C_SRC ${C_SRC} ${COMMON_C_SRC})
+elseif(NOCTURNE_ARCH STREQUAL "armv7")
+	set(ASM_SRC
+		kernel/src/arch/armv7/boards/${NOCTURNE_BOARD}/init.s
+	)
+
+	set(C_SRC
+		kernel/src/arch/armv7/init.c
+		kernel/src/arch/armv7/boards/${NOCTURNE_BOARD}/init.c
+	)
+elseif(NOCTURNE_ARCH STREQUAL "x86_64")
+	set(ASM_SRC
+		kernel/src/arch/x86_64/asm/init.s
+	)
+
+	set(C_SRC 
+		kernel/src/arch/x86_64/init.c
+		# kernel/src/arch/x86_64/paging32.c
+	)
+	
+	# set_source_files_properties(kernel/src/arch/x86_64/paging32.c PROPERTIES COMPILE_FLAGS "-m32")
+endif()
+
+# set(C_SRC ${C_SRC} ${COMMON_C_SRC})
+
 
 set(SRC ${ASM_SRC} ${C_SRC})
 

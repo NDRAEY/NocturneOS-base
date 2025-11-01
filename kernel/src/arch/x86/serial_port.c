@@ -51,7 +51,7 @@ int32_t __com_is_ready(uint16_t port){
  *
  * @param a - символ
  */
-void __com_writeChar(uint16_t port,char a) {
+void __com_writeChar(uint16_t port, char a) {
     while (__com_is_ready(port) == 0);
     outb(port, a);
 }

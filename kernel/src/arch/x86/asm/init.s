@@ -1,12 +1,9 @@
-/*
- * SayoriOS
- * Старт инициализации ядра
- */
+// NocturneOS - kernel initialization code for x86 platforms.
 
 .code32
-.set ALIGN,		 						1<<0			# Выравнивание загруженных модулей по границам страницы
-.set MEMINFO,	 						1<<1			# Просим предоставить карту памяти
-.set VBE_MODE,   						1<<2            # VBE mode flag. GRUB will set it for us and provide info about it.
+.set ALIGN,    1 << 0      # Alignment of loaded modules by page boundaries
+.set MEMINFO,  1 << 1      # Request to provide memory map
+.set VBE_MODE, 1 << 2      # VBE mode flag. GRUB will set it for us and provide info about it.
 .set INIT_MBOOT_HEADER_MAGIC,           0x1BADB002
 .set INIT_MBOOT_HEADER_FLAGS,           ALIGN | MEMINFO | VBE_MODE
 .set INIT_MBOOT_CHECKSUM,               0x00000000 - (INIT_MBOOT_HEADER_MAGIC + INIT_MBOOT_HEADER_FLAGS)
@@ -20,9 +17,9 @@
 .int INIT_MBOOT_HEADER_MAGIC
 .int INIT_MBOOT_HEADER_FLAGS
 .int INIT_MBOOT_CHECKSUM
-.long 0, 0, 0, 0, 0     # Неиспользуется
-.long 0                 # 0 - графический режим
-.long 800, 600, 32      # Ширина, длина, глубина
+.long 0, 0, 0, 0, 0     # Unused
+.long 0                 # 0 - graphical mode
+.long 800, 600, 32      # Width, height, depth
 
 .section .bss
     .align 16
@@ -30,10 +27,8 @@
         .skip STACK_SIZE
     stack_top:
 
-.section	.text
-
-.global		__pre_init
-
+.section .text
+.globl __pre_init
 __pre_init:
         cli
 
