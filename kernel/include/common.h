@@ -40,7 +40,7 @@ typedef	short		int16_t;
 typedef	unsigned char	uint8_t;
 typedef	signed char		int8_t;
 
-#ifdef SAYORI64
+#ifdef NOCTURNE_X86_64
 typedef	uint64_t		size_t;
 typedef	int64_t			ssize_t;
 #else

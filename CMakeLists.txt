@@ -126,6 +126,14 @@ elseif(NOCTURNE_ARCH STREQUAL "x86")
 	set(QEMU "qemu-system-i386")
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(QEMU "qemu-system-arm")
+
+    if(NOCTURNE_BOARD STREQUAL "opi-lite")
+        set(NOCTURNE_ARM_MACHINE "orangepi-pc")
+    else()
+        message(FATAL_ERROR "Could not determine QEMU machine name for target ${NOCTURNE_BOARD}. Check and update CMakeLists.txt for this board.")
+    endif()
+
+    set(QEMU_FLAGS -M ${NOCTURNE_ARM_MACHINE} )
 endif()
 
 set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*" -no-reboot -no-shutdown)
@@ -269,10 +277,10 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 
 	set(C_SRC 
 		kernel/src/arch/x86_64/init.c
-		# kernel/src/arch/x86_64/paging32.c
+		kernel/src/arch/x86/serial_port.c
 	)
-	
-	# set_source_files_properties(kernel/src/arch/x86_64/paging32.c PROPERTIES COMPILE_FLAGS "-m32")
+
+    set(C_SRC ${C_SRC} ${COMMON_C_SRC})
 endif()
 
 # set(C_SRC ${C_SRC} ${COMMON_C_SRC})
@@ -293,7 +301,7 @@ set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TOOLCHAIN_FULLNAME}/bin/src/car
 
 add_custom_command(
 	OUTPUT "${CMAKE_SOURCE_DIR}/utils/chen/target/release/chen" ".fake"
-	COMMAND cargo build --release 
+	COMMAND cargo build --release
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/utils/chen
 	COMMENT "Building Chen utility..."
 	DEPENDS "${CMAKE_SOURCE_DIR}/utils/chen/src"

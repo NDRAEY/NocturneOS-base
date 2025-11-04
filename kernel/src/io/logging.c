@@ -9,6 +9,16 @@
 
 #endif
 
+#ifdef NOCTURNE_X86_64
+
+#include <arch/x86/ports.h>
+#include <arch/x86/serial_port.h>
+
+// Check if character received.
+#define is_signal_received(port) (inb(port + 5) & 1)
+
+#endif
+
 #include <io/logging.h>
 #include <mem/vmm.h>
 #include <lib/asprintf.h>
@@ -41,9 +51,6 @@ void switch_qemu_logging() {
 }
 
 void new_qemu_printf(const char *format, ...) {
-    if (!__com_getInit(1))
-        return;
-
     va_list args;
     va_start(args, format);
 

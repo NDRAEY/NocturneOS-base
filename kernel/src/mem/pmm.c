@@ -217,7 +217,7 @@ bool phys_is_used_page(physical_addr_t addr) {
 }
 
 // Marks page.
-void phys_mark_page_entry(physical_addr_t addr, uint8_t used) {
+void phys_mark_page_entry(physical_addr_t addr, bool used) {
 	if(!addr)
 		return;
 
@@ -483,7 +483,7 @@ void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t 
 	qemu_log("RAM: %d MB | %d KB | %d B", phys_memory_size/(1024*1024), phys_memory_size/1024, phys_memory_size);
 }
 
-uint32_t* get_kernel_page_directory() {
+size_t* get_kernel_page_directory() {
 	if(paging_initialized)
 		return page_directory_virt;
 	else

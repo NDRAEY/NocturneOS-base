@@ -80,7 +80,7 @@ __pre_init:
     or $(1 << 0 | 1 << 1), %esi
     mov %esi, (%edi)
 
-    // Map first 2 MB
+    // Map first 2 MB by using one large page
     mov $pdt, %edi
     mov $0, %esi
     or $(1 << 0 | 1 << 1 | 1 << 7), %esi

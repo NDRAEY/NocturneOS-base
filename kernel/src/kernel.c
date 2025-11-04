@@ -140,7 +140,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 #if NOCTURNE_X86
     __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
     
-    __com_setInit(1, 1);
     __com_init(PORT_COM1);
     
 #ifndef RELEASE

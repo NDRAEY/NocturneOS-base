@@ -14,35 +14,12 @@
 #include "drv/fpu.h"
 #include "lib/math.h"
 
-uint16_t com_init[8] = {0};    /// Массив с инициализированными портами
-
-/**
- * @brief Установка значения для инициализированного порта
- *
- * @param port - порт
- * @param value - данные
- */
-void __com_setInit(uint16_t key, uint16_t value){
-    com_init[key] = value;
-}
-
-/**
- * @brief Чтение значения для инициализированного порта
- *
- * @param key - порт
- *
- * @return uint16_t - данные
- */
-uint16_t __com_getInit(uint16_t key){
-    return com_init[key];
-}
-
 /**
  * @brief Проверка занятости com-порта
  *
  * @return int32_t - состояние (если 0 - готов)
  */
-int32_t __com_is_ready(uint16_t port){
+int32_t __com_is_ready(uint16_t port) {
     return inb(port + 5) & 0x20;
 }
 
@@ -197,9 +174,9 @@ void __com_pre_formatString(int16_t port, const char* format, va_list args){
 void __com_formatString(int16_t port, char *text, ...) {
     va_list args;
     va_start(args, text);
-    if (__com_getInit(1) == 1){
-        __com_pre_formatString(port,text, args);
-    }
+    
+    __com_pre_formatString(port,text, args);
+    
     va_end(args);
 }
 

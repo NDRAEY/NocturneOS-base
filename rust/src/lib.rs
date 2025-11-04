@@ -21,7 +21,10 @@ pub use noct_noctfs;
 pub use noct_nvfs;
 pub use noct_psf;
 use noct_psf::PSF;
+
+#[cfg(target_arch = "x86")]
 pub use noct_shell;
+
 pub use noct_tarfs;
 pub use noct_tty;
 

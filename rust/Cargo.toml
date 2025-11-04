@@ -21,7 +21,6 @@ noct-path = { path = "./noct-path" }
 noct-iso9660 = { path = "./noct-iso9660" }
 noct-screen = { path = "./noct-screen" }
 noct-tarfs = { path = "./noct-tarfs" }
-noct-fileio = { path = "./noct-fileio" }
 noct-fs = { path = "./noct-fs" }
 noct-tty = { path = "./noct-tty" }
 noct-input = { path = "./noct-input" }
@@ -40,10 +39,7 @@ noct-time = { path = "./noct-time" }
 noct-diskman = { path = "./noct-diskman" }
 noct-nvfs = { path = "./noct-nvfs" }
 noct-klib = { path = "./noct-klib" }
-noct-shell = { path = "./noct-shell" }
 noct-mem = { path = "./noct-mem" }
-pavi = { path = "./pavi" }
-eni-player = { path = "./eni-player" }
 
 [target.'cfg(target_arch = "x86")'.dependencies]
 x86 = "0.52.0"
@@ -51,6 +47,10 @@ raw-cpuid = "11.4.0"
 noct-smbios = { path = "./noct-smbios" }
 noct-pci = { path = "./noct-pci" }
 noct-ps2 = { path = "./noct-ps2" }
+noct-fileio = { path = "./noct-fileio" }
+pavi = { path = "./pavi" }
+eni-player = { path = "./eni-player" }
+noct-shell = { path = "./noct-shell" }
 
 [profile.release]
 panic = "abort"
