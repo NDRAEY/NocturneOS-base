@@ -1,2 +1,3 @@
 __pre_init:
-  bx lr
+    .loop_l:
+        b .loop_l
