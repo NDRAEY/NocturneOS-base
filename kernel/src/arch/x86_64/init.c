@@ -3,13 +3,7 @@
 #include <arch/x86/serial_port.h>
 
 void arch_init() {
-    char* string = "Finally x86_64!\n";
-
-    while(*string) {
-        outb(PORT_COM1, *string);
-
-        string++;
-    }
+    qemu_log("Hello, world!");
 
     while(1)
         ;

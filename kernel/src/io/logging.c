@@ -27,9 +27,11 @@
 
 void (*default_qemu_printf)(const char *text, ...) = qemu_printf;
 
+#ifdef NOCTURNE_X86
 void switch_qemu_logging() {
     default_qemu_printf = new_qemu_printf;
 }
+#endif
 
 /**
  * @brief Вывод QEMU через COM1 информации
@@ -41,15 +43,20 @@ void switch_qemu_logging() {
     va_list args;
     va_start(args, text);
 
+    #ifdef NOCTURNE_X86
     scheduler_mode(false);  // Stop scheduler
 
     __com_pre_formatString(PORT_COM1, text, args);
 
     scheduler_mode(true);  // Start scheduler
-    
+    #else
+    __com_pre_formatString(PORT_COM1, text, args);
+    #endif
+
     va_end(args);
 }
 
+#ifdef NOCTURNE_X86
 void new_qemu_printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -66,3 +73,4 @@ void new_qemu_printf(const char *format, ...) {
 
     kfree(container);
 }
+#endif

@@ -32,13 +32,23 @@
 __pre_init:
         cli
 
+        # Load stack
+        mov $stack_top, %esp
+
         call sse_enable
+
+        # Initialize FPU
+        push %eax
+
+        mov %cr4, %eax
+        or $0x200, %eax
+        mov %eax, %cr4
+        
+        pop %eax
 
         # init FPU
         fninit
         fldcw (conword)
-
-        mov $stack_top, %esp
 
         push	%esp
         push	%ebx

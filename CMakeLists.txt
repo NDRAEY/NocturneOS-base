@@ -278,9 +278,12 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(C_SRC 
 		kernel/src/arch/x86_64/init.c
 		kernel/src/arch/x86/serial_port.c
+		kernel/src/arch/x86/pit.c
+		kernel/src/lib/math/math.c
+		kernel/src/io/logging.c
 	)
 
-    set(C_SRC ${C_SRC} ${COMMON_C_SRC})
+    # set(C_SRC ${C_SRC} ${COMMON_C_SRC})
 endif()
 
 # set(C_SRC ${C_SRC} ${COMMON_C_SRC})

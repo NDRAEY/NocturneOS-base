@@ -12,6 +12,26 @@
 #include "mem/vmm.h"
 //#include <emmintrin.h>  // SSE functions and types
 
+size_t strlen(const char* input) {
+    register size_t len = 0;
+
+    while(*(input + len)) {
+        len += 1;
+    }
+
+    return len;
+}
+
+
+int strcmp(const char* stra, const char* strb) {
+    while(*stra && *stra == *strb) {
+        stra++;
+        strb++;
+    }
+
+    return *stra - *strb;
+}
+
 /**
  * @brief Проверяет, является ли символ формата UTF-8
  *

@@ -14,7 +14,6 @@
 #include <sys/scheduler.h>
 #include <io/logging.h>
 #include <io/status_loggers.h>
-#include <drv/fpu.h>
 #include <lib/math.h>
 #include <lib/asprintf.h>
 #include <io/screen.h>

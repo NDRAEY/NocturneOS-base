@@ -9,7 +9,6 @@
 
 #include "kernel.h"
 
-#include <drv/fpu.h>
 #include <sys/unwind.h>
 
 #include "io/ports.h"
@@ -164,9 +163,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     
     qemu_log("Setting `ISR`...");
     isr_init();
-
-    qemu_log("Initializing FPU...");
-    fpu_init();
 
     init_timer(CLOCK_FREQ);
 

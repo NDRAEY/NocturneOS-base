@@ -11,7 +11,6 @@
 #include <arch/x86/serial_port.h>
 #include <stdarg.h>
 #include <arch/x86/ports.h>
-#include "drv/fpu.h"
 #include "lib/math.h"
 
 /**
@@ -122,11 +121,6 @@ void __com_pre_formatString(int16_t port, const char* format, va_list args){
                 break;
             case 'f': {
                 double a = va_arg(args, double);
-
-				if(!fpu_is_initialized()) {
-					__com_writeString(port,"!0.0000000");
-					break;
-				}
 
 				if((int)a < 0) {
 					a = -a;

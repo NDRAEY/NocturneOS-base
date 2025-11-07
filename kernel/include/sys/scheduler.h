@@ -120,7 +120,9 @@ void init_user_mode(void* entry_point, size_t stack_size);
 void scheduler_mode(bool on);
 
 SAYORI_INLINE void yield() {
+    #ifdef NOCTURNE_X86
     task_switch_v2_wrapper((registers_t){});
+    #endif
 }
 
 bool process_exists(size_t pid);

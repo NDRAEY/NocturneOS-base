@@ -8,7 +8,6 @@
  */
 #include  "arch/x86/pit.h"
 #include  "arch/x86/isr.h"
-#include  "drv/fpu.h"
 #include  "arch/x86/ports.h"
 #include "io/logging.h"
 #include "sys/scheduler.h"
@@ -79,9 +78,11 @@ void sleep_ms(uint32_t milliseconds) {
 void timer_callback(SAYORI_UNUSED registers_t regs){
     tick++;
 
+    #ifdef NOCTURNE_X86
     if (is_multitask() && scheduler_working) {
         task_switch_v2_wrapper(regs);
     }
+    #endif
 }
 
 /**
@@ -106,5 +107,7 @@ void init_timer(uint32_t f){
     outb(0x40, low);
     outb(0x40, high);
 
+    #ifdef NOCTURNE_X86
 	register_interrupt_handler(IRQ0, &timer_callback);
+    #endif
 }
