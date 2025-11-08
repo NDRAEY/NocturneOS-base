@@ -10,7 +10,7 @@
 
 .set STACK_SIZE, 1024 * 32  # 128 KB
 
-.extern kmain
+.extern arch_init
 
 .section .mboot, "a", @progbits
 
@@ -25,7 +25,13 @@
     .align 16
     stack_bottom:
         .skip STACK_SIZE
+    .globl stack_top
     stack_top:
+
+.section .rodata
+.align 4
+conword:
+        .word 0x37f
 
 .section .text
 .globl __pre_init
@@ -55,12 +61,10 @@ __pre_init:
 
         xor %ebp, %ebp
 
-        call	kmain
+        call	arch_init
 
+        cli
         hlt
-
-conword:
-        .word 0x37f
 
 loop:
         jmp	loop

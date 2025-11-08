@@ -20,8 +20,11 @@
 // The kernel stack
 .section .bss
     .align 16
+    .globl stack_bottom
     stack_bottom:
         .skip STACK_SIZE
+    
+    .globl stack_top
     stack_top:
         .skip 4
 
@@ -33,8 +36,6 @@
         .skip 4096
     pdt:
         .skip 4096
-    pt:
-        .skip 4096
 
 .extern KERNEL_BASE_pos
 
@@ -43,18 +44,25 @@ kernel_start: .int 0
 kernel_end: .int 0
 kernel_size: .int 0
 
+.section .rodata
+.align 4
+conword:
+        .word 0x37f
+
 // We are currently in 32-bit protected mode
 .section .text
 .globl __pre_init
 __pre_init:
     cli
+
     // Load stack
     mov $stack_top, %esp
-    xor %ebp, %ebp
+
+    // Save multiboot header address on stack
+    push $0
+    push %ebx
 
     // Calculate kernel size (will be used in paging setup)
-    push %ebx
-    push %ecx
 
     mov $(KERNEL_BASE_pos), %ebx
     mov $(KERNEL_END_pos), %ecx
@@ -63,9 +71,6 @@ __pre_init:
     movl $(kernel_size), %ebx
 
     mov %ecx, (%ebx)
-
-    pop %ecx
-    pop %ebx
 
     // Setup paging hierarchy
     // PML4T
@@ -108,6 +113,33 @@ __pre_init:
     lgdt gdtr
     ljmp $0x08, $go64
 
+.code64
+go64:
+    cli
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+
+    finit
+    fldcw (conword)
+
+    // RDI = first argument
+    // RSI = second argument
+    pop %rdi
+
+    xor %rbp, %rbp
+
+    callq arch_init
+
+    cli
+    hlt
+
+    .lp: jmp .lp
+
+.section .data
 .align 8
 gdtr:
     .word gdt_end - gdt_base
@@ -128,21 +160,3 @@ gdt_base:
     .byte 0
     .byte 0
 gdt_end:
-
-.code64
-go64:
-    cli
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %ax, %ss
-    finit
-
-    callq arch_init
-
-    cli
-    hlt
-
-    .lp: jmp .lp

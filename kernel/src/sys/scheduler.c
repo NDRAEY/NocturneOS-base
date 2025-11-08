@@ -23,8 +23,9 @@ bool multi_task = false;
 process_t* kernel_proc = 0;		
 thread_t* kernel_thread = 0;	
 process_t* current_proc = 0;	
-thread_t* current_thread = 0;	
-extern uint32_t init_esp;
+thread_t* current_thread = 0;
+
+extern uint32_t __init_esp;
 
 bool scheduler_working = true;
 
@@ -70,7 +71,7 @@ void init_task_manager(void){
 	kernel_thread->id = next_thread_id++;
 	kernel_thread->stack_size = DEFAULT_STACK_SIZE;
 	kernel_thread->esp = esp;
-	kernel_thread->stack_top = init_esp;
+	kernel_thread->stack_top = __init_esp;
 
 	list_add((void*)&thread_list, (void*)&kernel_thread->list_item);
 

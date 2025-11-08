@@ -21,7 +21,8 @@
 #ifdef NOCTURNE_X86
 #include "arch/x86/mtrr.h"
 #include "arch/x86/cputemp.h"
-#include "arch/x86/descriptor_tables.h"
+#include <arch/x86/gdt.h>
+#include <arch/x86/idt.h>
 #include <arch/x86/sse.h>
 #include <arch/x86/serial_port.h>
 #endif
@@ -55,7 +56,6 @@ char* VERSION_NAME = "Space";  /// Имя версии (изменяется в�
 
 extern bool ps2_channel2_okay;
 
-uint32_t init_esp = 0;
 bool test_network = true;
 size_t kernel_start_time = 0;
 
@@ -134,20 +134,11 @@ void scan_kernel(const multiboot_header_t *mboot) {
 */
 void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t initial_esp)
 {
-    arch_init();
-
-#if NOCTURNE_X86
-    __asm__ volatile("movl %%esp, %0" : "=r"(init_esp));
-    
-    __com_init(PORT_COM1);
-    
-#ifndef RELEASE
-    scan_kernel(mboot);
-#endif
-
-    framebuffer_addr = (uint8_t *)(size_t)(mboot->framebuffer_addr);
-
     drawASCIILogo(0);
+
+    #ifndef RELEASE
+    scan_kernel(mboot);
+    #endif
 
     qemu_log("SayoriOS v%d.%d.%d\nBuilt: %s",
              VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, // Версия ядра
@@ -158,8 +149,9 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     qemu_log("SSE: %s", sse_check() ? "Supported" : "Not supported");
 
-    qemu_log("Setting `Interrupt Descriptor Table`...");
-    init_descriptor_tables();
+    qemu_log("Initializing GDT and IDT...");
+    init_gdt();
+    init_idt();
     
     qemu_log("Setting `ISR`...");
     isr_init();
@@ -206,10 +198,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     qemu_log("Audio system init");
     audio_system_init();
-
-    // audio_system_add_output("Duper", NULL, noc_open, noc_set_volume, noc_set_rate, noc_write, noc_close);
-
-    // audio_system_open(0);
 
     qemu_log("FSM Init");
     fsm_init();
@@ -381,8 +369,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // net_test();
 
     new_nsh();
-
-#endif
 
     while (1)
         ;
