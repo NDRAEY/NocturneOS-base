@@ -80,7 +80,7 @@ impl Drop for ProgramHandle {
                 for page in 0..seg.page_count {
                     noct_physmem::unmap_single_page(
                         noct_physmem::get_kernel_page_directory(),
-                        (seg.virtual_addr + (page * PAGE_SIZE as usize)) as u32,
+                        (seg.virtual_addr + (page * PAGE_SIZE as usize)) as _,
                     )
                 }
 
@@ -129,7 +129,7 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
                         for page in 0..seg.page_count {
                             noct_physmem::unmap_single_page(
                                 noct_physmem::get_kernel_page_directory(),
-                                (seg.virtual_addr + (page * PAGE_SIZE as usize)) as u32,
+                                (seg.virtual_addr + (page * PAGE_SIZE as usize)) as _,
                             )
                         }
 
@@ -157,8 +157,8 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
             noct_physmem::map_pages(
                 noct_physmem::get_kernel_page_directory(),
                 physical_address,
-                i.p_vaddr as u32,
-                page_count as u32 * PAGE_SIZE,
+                i.p_vaddr as _,
+                (page_count as u32 * PAGE_SIZE) as _,
                 PAGE_PRESENT | PAGE_USER | PAGE_WRITEABLE,
             );
 

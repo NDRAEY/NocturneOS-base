@@ -30,11 +30,14 @@
 
 .section .bootstrap_tables, "aw", @progbits
     .align 4096
-    pml4t:
+    .global _pml4t
+    _pml4t:
         .skip 4096
-    pdpt:
+    .global _pdpt
+    _pdpt:
         .skip 4096
-    pdt:
+    .global _pdt
+    _pdt:
         .skip 4096
 
 .extern KERNEL_BASE_pos
@@ -74,26 +77,36 @@ __pre_init:
 
     // Setup paging hierarchy
     // PML4T
-    mov $pml4t, %edi
-    mov $pdpt, %esi
-    or $(1 << 0 | 1 << 1), %esi
-    mov %esi, (%edi)
-    
-    // PDPTE
-    mov $pdpt, %edi
-    mov $pdt, %esi
+    mov $_pml4t, %edi
+    mov $_pdpt, %esi
     or $(1 << 0 | 1 << 1), %esi
     mov %esi, (%edi)
 
-    // Map first 2 MB by using one large page
-    mov $pdt, %edi
+    // Recursive paging
+    mov $(_pml4t), %esi
+    or $(1 << 0 | 1 << 1), %esi
+    mov %esi, (4096 - 8)(%edi)
+    
+    // PDPTE
+    mov $_pdpt, %edi
+    mov $_pdt, %esi
+    or $(1 << 0 | 1 << 1), %esi
+    mov %esi, (%edi)
+
+    // Recursive paging
+    mov $(_pdpt), %esi
+    or $(1 << 0 | 1 << 1), %esi
+    mov %esi, (4096 - 8)(%edi)
+
+    // Map first 2 MB by using large pages
+    mov $_pdt, %edi
     mov $0, %esi
     or $(1 << 0 | 1 << 1 | 1 << 7), %esi
     mov %esi, (%edi)
 
     // Load PML4T
 
-    mov $pml4t, %eax
+    mov $_pml4t, %eax
     mov %eax, %cr3
 
     // Enable PAE

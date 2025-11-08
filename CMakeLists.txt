@@ -246,7 +246,10 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/fxsave_region.c 
 		kernel/src/arch/x86/pit.c
 		kernel/src/arch/x86/power.c
-		kernel/src/arch/x86/serial_port.c 
+		kernel/src/arch/x86/serial_port.c
+        kernel/src/arch/x86/mem/paging_common.c
+
+		kernel/src/arch/x86/mem/paging.c
 		
 		kernel/src/sys/acpi.c
 		kernel/src/drv/cmos.c
@@ -276,22 +279,21 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/arch/x86_64/asm/init.s
 		kernel/src/arch/x86_64/asm/interrupt.s
 		kernel/src/arch/x86_64/asm/regs64.s
+		kernel/src/arch/x86_64/mem/paging.s
 	)
 
 	set(C_SRC 
 		kernel/src/arch/x86_64/init.c
 		kernel/src/arch/x86_64/idt64.c
+        kernel/src/arch/x86_64/cpu_isr.c 
+        kernel/src/arch/x86_64/mem/paging.c
+        kernel/src/arch/x86/mem/paging_common.c
 		kernel/src/arch/x86/serial_port.c
 		kernel/src/arch/x86/pit.c
 		kernel/src/arch/x86/isr.c
-        kernel/src/arch/x86_64/cpu_isr.c 
 		kernel/src/lib/math/math.c
 		kernel/src/io/logging.c
-		# kernel/src/lib/stdio.c
-		# kernel/src/fs/nvfs.c
-		# kernel/src/fs/fsm.c
-		# kernel/src/lib/libvector/src/vector.c
-
+		kernel/src/mem/pmm.c
 	)
 
     # set(C_SRC ${C_SRC} ${COMMON_C_SRC})
