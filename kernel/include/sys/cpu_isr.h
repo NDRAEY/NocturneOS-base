@@ -25,7 +25,13 @@
 #define			TI_BIT			(1 << 2)
 #define			ERR_CODE_MASK	0xFFF8
 
-#include		"arch/x86/registers.h"
+#ifdef NOCTURNE_X86
+#include "arch/x86/registers.h"
+#endif
+
+#ifdef NOCTURNE_X86_64
+#include "arch/x86_64/registers64.h"
+#endif
 
 /*------------------------------------------------------------------------------
 //		Handlers prototypes

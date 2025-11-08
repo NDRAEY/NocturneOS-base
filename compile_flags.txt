@@ -9,5 +9,5 @@
 -Wextra
 -mno-red-zone
 -m32
--DNOCTURNE_X86
+-DNOCTURNE_X86_64
 -DNOCTURNE_ARCH_STRING=""

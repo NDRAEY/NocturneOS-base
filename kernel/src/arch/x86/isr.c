@@ -1,6 +1,6 @@
 /**
  * @file sys/isr.c
- * @author Пиминов Никита (nikita.piminoff@yandex.ru)
+ * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY
  * @brief Обработчик прерывания высокого уровня
  * @version 0.4.2
  * @date 2022-10-01
@@ -12,16 +12,16 @@
 #include <io/logging.h>
 #include "sys/cpu_isr.h"
 
-volatile isr_t	interrupt_handlers[256];
+volatile isr_t interrupt_handlers[256];
 
 void isr_handler(const registers_t regs){
-    if (interrupt_handlers[regs.int_num] != 0){
+    if (interrupt_handlers[regs.int_num] != 0) {
         isr_t handler = interrupt_handlers[regs.int_num];
         handler(regs);
     }
 }
 
-void irq_handler(registers_t regs){
+void irq_handler(registers_t regs) {
     if (regs.int_num >= 40){
         outb(0xA0, 0x20);
     }

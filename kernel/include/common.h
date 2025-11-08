@@ -66,3 +66,43 @@ typedef size_t ptrdiff_t;
 #else
 #define ON_NULLPTR(ptr, code)
 #endif
+
+/*
+Tier 0:
+	- Kernel runs on VM and on real hardware and doesn't crash
+	- Kernel can log into debug console (serial port or UART)
+
+Tier 1:
+	- Page allocation and mapping (if paging is supported by platform)
+	- Working heap
+	- Multitasking supported (at least context-switching)
+
+Tier 2:
+	- Device bus support
+	- Storage support
+	- Filesystems
+
+Tier 3:
+	- Screen output (VESA or HDMI)
+	- Audio devices (if any)
+	- Input (keyboard, mouse, other controller)
+
+Tier 4:
+	- Program running support
+*/
+
+#ifdef NOCTURNE_x86
+#define NOCTURNE_SUPPORT_TIER0
+#define NOCTURNE_SUPPORT_TIER1
+#define NOCTURNE_SUPPORT_TIER2
+#define NOCTURNE_SUPPORT_TIER3
+#define NOCTURNE_SUPPORT_TIER4
+#endif
+
+#ifdef NOCTURNE_x86_64
+#define NOCTURNE_SUPPORT_TIER0
+#endif
+
+#ifdef NOCTURNE_ARMV7
+#define NOCTURNE_SUPPORT_TIER0
+#endif

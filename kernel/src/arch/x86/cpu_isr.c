@@ -14,42 +14,6 @@
 #include 	<io/status_loggers.h>
 #include 	<io/logging.h>
 
-_Noreturn void sod_screen_legacy(registers_t regs, char* title, char* msg, uint32_t code) {
-    qemu_printf("=== ЯДРО УПАЛО =======================================\n");
-    qemu_printf("| \n");
-    qemu_printf("| Наименование: %s\n",title);
-    qemu_printf("| Код ошибки: %x\n",code);
-    qemu_printf("| Сообщение: %s\n",msg);
-    qemu_printf("| EAX: %x\n",regs.eax);
-    qemu_printf("| EBX: %x\n",regs.ebx);
-    qemu_printf("| ECX: %x\n",regs.ecx);
-    qemu_printf("| EDX: %x\n",regs.edx);
-    qemu_printf("| ESP: %x\n",regs.esp);
-    qemu_printf("| EBP: %x\n",regs.ebp);
-    qemu_printf("| EIP: %x\n",regs.eip);
-    qemu_printf("| EFLAGS: %x\n",regs.eflags);
-    qemu_printf("| \n");
-    qemu_printf("======================================================\n");
-
-    unwind_stack(10);
-
-    if(is_multitask()) {
-        qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
-        
-        if(get_current_proc()->pid != 0) {
-            qemu_note("EXIT HERE");
-            thread_exit_entrypoint();
-        }
-    }
-
-    __asm__ volatile("cli");  // Disable interrupts
-    __asm__ volatile("hlt");  // Halt
-
-    while(1) {
-        __asm__ volatile("nop");
-    }
-}
-
 _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t code){
     qemu_printf("=== ЯДРО УПАЛО =======================================\n");
     qemu_printf("| \n");
@@ -70,6 +34,17 @@ _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t co
     qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
 
     unwind_stack(10);
+
+    #ifdef NOCTURNE_SUPPORT_TIER1
+    if(is_multitask()) {
+        qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
+        
+        if(get_current_proc()->pid != 0) {
+            qemu_note("EXIT HERE");
+            thread_exit_entrypoint();
+        }
+    }
+    #endif
 
     __asm__ volatile("cli");  // Disable interrupts
     __asm__ volatile("hlt");  // Halt
@@ -236,7 +211,7 @@ void page_fault(registers_t regs){
     }
 
     // Prevent kmallocs (in bsod_screen()) in Page Fault
-    sod_screen_legacy(regs, "CRITICAL_ERROR_PF_PAGE_FAULT", msg, fault_addr);
+    bsod_screen(regs, "CRITICAL_ERROR_PF_PAGE_FAULT", msg, fault_addr);
 }
 
 void fpu_fault(registers_t regs){

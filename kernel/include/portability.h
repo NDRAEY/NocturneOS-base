@@ -8,7 +8,6 @@
 #define free(a) kfree(a)
 #define printf(a, ...) qemu_printf(a, ##__VA_ARGS__)
 
-
 #define passert(expression) \
     if (!(expression)) { \
         qemu_warn("Assertion failed: file %s, line %d\n", __FILE__, __LINE__); \
@@ -74,9 +73,6 @@ typedef int			int_fast32_t;
 typedef uint8_t		uint_fast8_t;
 typedef uint32_t	uint_fast16_t;
 typedef uint32_t	uint_fast32_t;
-
-typedef int			intptr_t;
-typedef unsigned int		uintptr_t;
 
 __extension__ typedef long long int __intmax_t;
 __extension__ typedef unsigned long long int __uintmax_t;

@@ -78,7 +78,7 @@ void sleep_ms(uint32_t milliseconds) {
 void timer_callback(SAYORI_UNUSED registers_t regs){
     tick++;
 
-    #ifdef NOCTURNE_X86
+    #ifdef NOCTURNE_SUPPORT_TIER1
     if (is_multitask() && scheduler_working) {
         task_switch_v2_wrapper(regs);
     }
@@ -93,21 +93,15 @@ void timer_callback(SAYORI_UNUSED registers_t regs){
 void init_timer(uint32_t f){
     frequency = f;
 
-    uint32_t divisor;
-    uint8_t low;
-    uint8_t high;
+    uint32_t divisor = BASE_FREQ / f;
 
-    divisor = BASE_FREQ / f;
-
-    outb(0x43, 0x36);
-
-    low = (uint8_t) (divisor & 0xFF);
-    high = (uint8_t) ((divisor >> 8) & 0xFF);
+    uint8_t low = (uint8_t)(divisor & 0xFF);
+    uint8_t high = (uint8_t)((divisor >> 8) & 0xFF);
 
     outb(0x40, low);
     outb(0x40, high);
 
-    #ifdef NOCTURNE_X86
 	register_interrupt_handler(IRQ0, &timer_callback);
-    #endif
+
+    __asm__ volatile("sti");
 }

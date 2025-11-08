@@ -13,7 +13,7 @@ void idt_set_gate(uint8_t num, uint32_t base, uint16_t selector, uint8_t flags){
     idt_entries[num].base_high = (base >> 16) & 0xFFFF;
     idt_entries[num].selector = selector;
     idt_entries[num].always0 = 0;
-    idt_entries[num].flags = flags; /* - для пользовательского режима */
+    idt_entries[num].flags = flags;
 }
 
 void init_idt(void) {

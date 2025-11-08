@@ -237,20 +237,19 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/init.c
 		kernel/src/arch/x86/gdt.c
 		kernel/src/arch/x86/idt.c
-		kernel/src/drv/cmos.c
-        kernel/src/arch/x86/gdt.c
-        kernel/src/sys/cpu_isr.c 
+        kernel/src/arch/x86/cpu_isr.c 
         kernel/src/arch/x86/isr.c 
-		kernel/src/sys/acpi.c
 		kernel/src/arch/x86/mtrr.c 	
 		kernel/src/arch/x86/cpuinfo.c
 		kernel/src/arch/x86/cpuvendor.c
 		kernel/src/arch/x86/cputemp.c	
 		kernel/src/arch/x86/fxsave_region.c 
 		kernel/src/arch/x86/pit.c
-		
 		kernel/src/arch/x86/power.c
 		kernel/src/arch/x86/serial_port.c 
+		
+		kernel/src/sys/acpi.c
+		kernel/src/drv/cmos.c
 		kernel/src/drv/input/ps2_mouse.c
 		kernel/src/drv/video/intel.c
 
@@ -275,14 +274,24 @@ elseif(NOCTURNE_ARCH STREQUAL "armv7")
 elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(ASM_SRC
 		kernel/src/arch/x86_64/asm/init.s
+		kernel/src/arch/x86_64/asm/interrupt.s
+		kernel/src/arch/x86_64/asm/regs64.s
 	)
 
 	set(C_SRC 
 		kernel/src/arch/x86_64/init.c
+		kernel/src/arch/x86_64/idt64.c
 		kernel/src/arch/x86/serial_port.c
 		kernel/src/arch/x86/pit.c
+		kernel/src/arch/x86/isr.c
+        kernel/src/arch/x86_64/cpu_isr.c 
 		kernel/src/lib/math/math.c
 		kernel/src/io/logging.c
+		# kernel/src/lib/stdio.c
+		# kernel/src/fs/nvfs.c
+		# kernel/src/fs/fsm.c
+		# kernel/src/lib/libvector/src/vector.c
+
 	)
 
     # set(C_SRC ${C_SRC} ${COMMON_C_SRC})

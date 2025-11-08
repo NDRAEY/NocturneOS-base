@@ -43,7 +43,7 @@ void switch_qemu_logging() {
     va_list args;
     va_start(args, text);
 
-    #ifdef NOCTURNE_X86
+    #ifdef NOCTURNE_TIER1
     scheduler_mode(false);  // Stop scheduler
 
     __com_pre_formatString(PORT_COM1, text, args);

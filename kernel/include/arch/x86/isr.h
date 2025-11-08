@@ -1,7 +1,14 @@
 #pragma once
 
 #include	"common.h"
+
+#ifdef NOCTURNE_X86
 #include "arch/x86/registers.h"
+#endif
+
+#ifdef NOCTURNE_X86_64
+#include "arch/x86_64/registers64.h"
+#endif
 
 #define		IRQ0	32
 #define		IRQ1	33
