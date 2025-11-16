@@ -311,14 +311,14 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     tty_taskInit();
 
     {
-        RSDPDescriptor *rsdp = rsdp_find();
+        RSDPDescriptor *rsdp = acpi_rsdp_find();
         qemu_log("RSDP at: %p", rsdp);
 
         if (rsdp)
         {
             acpi_scan_all_tables(rsdp->RSDTaddress);
 
-            find_facp(rsdp->RSDTaddress);
+            acpi_find_facp(rsdp->RSDTaddress);
         }
         else
         {

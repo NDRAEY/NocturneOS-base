@@ -5,6 +5,7 @@
 #include "io/logging.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
+#include "mem/vmm.h"
 
 #define ACPI_PAGE_COUNT 32
 
@@ -12,7 +13,7 @@ uint32_t system_processors_found = 0;
 
 extern uint16_t century_register;
 
-RSDPDescriptor* rsdp_find() {
+RSDPDescriptor* acpi_rsdp_find() {
     map_pages(get_kernel_page_directory(), 0xE0000, 0xE0000, 0x100000 - 0xE0000, 0);
 
     size_t saddr = 0x000E0000;
@@ -50,7 +51,7 @@ bool acpi_checksum_sdt(const ACPISDTHeader *tableHeader) {
     return sum == 0;
 }
 
-ACPISDTHeader* find_table(uint32_t rsdt_addr, uint32_t sdt_count, const char* signature) {
+ACPISDTHeader* acpi_find_table(uint32_t rsdt_addr, uint32_t sdt_count, const char* signature) {
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
 
     map_pages_overlapping(
@@ -89,40 +90,67 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
         get_kernel_page_directory(),
         rsdt_addr,
 		rsdt_addr,
-        PAGE_SIZE * ACPI_PAGE_COUNT,
+        sizeof(ACPISDTHeader),
         PAGE_PRESENT
     );
+    size_t rsdt_length = rsdt->Length;
 
     uint32_t sdt_count = (rsdt->Length - sizeof(ACPISDTHeader)) / sizeof(uint32_t);
 
-    qemu_log("LEN: %d (// %d)", rsdt->Length, sizeof(ACPISDTHeader));
+    map_pages_overlapping(
+        get_kernel_page_directory(),
+        rsdt_addr,
+		rsdt_addr,
+        rsdt->Length,
+        PAGE_PRESENT
+    );
+
+    qemu_log("RSDT length: %d (sizeof(ACPISDTHeader) == %d)", rsdt->Length, sizeof(ACPISDTHeader));
 
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
+
+    uint32_t* addresses = kcalloc(sdt_count, sizeof(uint32_t));
+
+    memcpy(addresses, rsdt_end, sdt_count * sizeof(uint32_t));
 
     qemu_log("RSDT start: %x", rsdt_addr);
     qemu_log("RSDT end: %x", rsdt_end);
     qemu_log("RSDT size: %d", sizeof(ACPISDTHeader));
 
-    tty_printf("RSDT start: %x\n", rsdt_addr);
-    tty_printf("RSDT end: %x\n", rsdt_end);
-    tty_printf("SDT COUNT: %u\n", sdt_count);
+    qemu_log("SDT COUNT: %u\n", sdt_count);
 
     for(uint32_t i = 0; i < sdt_count; i++) {
-        ACPISDTHeader* entry = (ACPISDTHeader*)(rsdt_end[i]);
+        qemu_log("Mapping %x", addresses[i]);
+        map_pages_overlapping(
+            get_kernel_page_directory(),
+            addresses[i] & ~0xfff,
+            addresses[i] & ~0xfff,
+            128,
+            PAGE_PRESENT
+        );
+
+        ACPISDTHeader* entry = (ACPISDTHeader*)(addresses[i]);
 
 		tty_printf("[%d/%d] [%x] Found table: %.4s\n", i, sdt_count, entry, entry->Signature);
 		qemu_log("[%x] Found table: %.4s", (size_t)entry, entry->Signature);
+
+        qemu_log("Unmapping %x", addresses[i]);
+        unmap_pages_overlapping(
+            get_kernel_page_directory(),
+            addresses[i] & ~0xfff,
+            128
+        );
     }
 
     unmap_pages_overlapping(
             get_kernel_page_directory(),
             rsdt_addr,
-            PAGE_SIZE * ACPI_PAGE_COUNT
+            rsdt_length
     );
 }
 
 
-void find_facp(size_t rsdt_addr) {
+void acpi_find_facp(size_t rsdt_addr) {
 	qemu_log("FACP at P%x", rsdt_addr);
 
     map_pages_overlapping(
@@ -157,7 +185,7 @@ void find_facp(size_t rsdt_addr) {
 
     // Find FACP here
 
-    ACPISDTHeader* pre_fadt = find_table((uint32_t) rsdt_addr, sdt_count, "FACP");
+    ACPISDTHeader* pre_fadt = acpi_find_table((uint32_t) rsdt_addr, sdt_count, "FACP");
 
     if(!pre_fadt) {
         qemu_log("FADT not found...");
@@ -198,7 +226,7 @@ void find_facp(size_t rsdt_addr) {
     unmap_pages_overlapping(get_kernel_page_directory(), (virtual_addr_t) rsdt_addr, PAGE_SIZE * 2);
 }
 
-void find_apic(size_t rsdt_addr, size_t *lapic_addr) {
+void acpi_find_apic(size_t rsdt_addr, size_t *lapic_addr) {
 	size_t start = rsdt_addr & ~0xfff;
 	size_t end = ALIGN(rsdt_addr + PAGE_SIZE, PAGE_SIZE);
 
@@ -232,7 +260,7 @@ void find_apic(size_t rsdt_addr, size_t *lapic_addr) {
 
     // Find APIC here
 
-    ACPISDTHeader* apic = find_table(rsdt_addr, sdt_count, "APIC");
+    ACPISDTHeader* apic = acpi_find_table(rsdt_addr, sdt_count, "APIC");
 
     if(!apic) {
         qemu_log("APIC not found...");
