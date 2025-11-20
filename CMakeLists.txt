@@ -123,7 +123,7 @@ set(QEMU_MEMORY_SIZE 256M)
 if(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(QEMU "qemu-system-x86_64")
 elseif(NOCTURNE_ARCH STREQUAL "x86")
-	set(QEMU "qemu-system-i386")
+    set(QEMU "qemu-system-i386")
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(QEMU "qemu-system-arm")
 
@@ -252,6 +252,7 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/mem/paging.c
 		
 		kernel/src/sys/acpi.c
+		kernel/src/sys/apic.c
 		kernel/src/drv/cmos.c
 		kernel/src/drv/input/ps2_mouse.c
 		kernel/src/drv/video/intel.c

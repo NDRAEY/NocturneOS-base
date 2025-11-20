@@ -21,13 +21,10 @@ void isr_handler(const registers_t regs){
     }
 }
 
+extern bool __using_apic;
+uint32_t apic_write(uint32_t reg, uint32_t value);
+
 void irq_handler(registers_t regs) {
-    if (regs.int_num >= 40){
-        outb(0xA0, 0x20);
-    }
-
-    outb(0x20, 0x20);
-
     if (interrupt_handlers[regs.int_num] != 0){
         isr_t handler = interrupt_handlers[regs.int_num];
 
@@ -36,6 +33,16 @@ void irq_handler(registers_t regs) {
         }
 
         handler(regs);
+    }
+
+    if(!__using_apic) {
+        if (regs.int_num >= 40){
+            outb(0xA0, 0x20);
+        }
+
+        outb(0x20, 0x20);
+    } else {
+        apic_write(0xB0, 0x00);
     }
 }
 

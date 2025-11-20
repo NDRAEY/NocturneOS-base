@@ -14,7 +14,13 @@ uint32_t system_processors_found = 0;
 extern uint16_t century_register;
 
 RSDPDescriptor* acpi_rsdp_find() {
-    map_pages(get_kernel_page_directory(), 0xE0000, 0xE0000, 0x100000 - 0xE0000, 0);
+    map_pages(
+        get_kernel_page_directory(),
+        0xE0000, 
+        0xE0000, 
+        0x100000 - 0xE0000,
+        0
+    );
 
     size_t saddr = 0x000E0000;
     char rsdp_ptr[8] = {'R','S','D',' ','P','T','R',' '};
@@ -58,13 +64,13 @@ ACPISDTHeader* acpi_find_table(uint32_t rsdt_addr, uint32_t sdt_count, const cha
             get_kernel_page_directory(),
             rsdt_addr,
             rsdt_addr,
-            PAGE_SIZE * ACPI_PAGE_COUNT,
+            sdt_count * sizeof(uint32_t),
             PAGE_PRESENT
     );
 
     qemu_log("RSDT start: %x", rsdt_addr);
-    qemu_log("RSDT end: %x", rsdt_end);
-    qemu_log("RSDT size: %d", sizeof(ACPISDTHeader));
+    qemu_log("RSDT end: %x", (size_t)rsdt_end);
+    qemu_log("RSDT size: %d", sizeof(ACPISDTHeader) + (sdt_count * sizeof(uint32_t)));
 
     for(uint32_t i = 0; i < sdt_count; i++) {
         ACPISDTHeader* entry = (ACPISDTHeader*)(rsdt_end[i]);
@@ -73,12 +79,6 @@ ACPISDTHeader* acpi_find_table(uint32_t rsdt_addr, uint32_t sdt_count, const cha
             return entry;
         }
     }
-
-    unmap_pages_overlapping(
-            get_kernel_page_directory(),
-            rsdt_addr,
-            PAGE_SIZE * ACPI_PAGE_COUNT
-    );
 
     return 0;
 }
@@ -93,9 +93,9 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
         sizeof(ACPISDTHeader),
         PAGE_PRESENT
     );
+    
     size_t rsdt_length = rsdt->Length;
-
-    uint32_t sdt_count = (rsdt->Length - sizeof(ACPISDTHeader)) / sizeof(uint32_t);
+    uint32_t sdt_count = (rsdt_length - sizeof(ACPISDTHeader)) / sizeof(uint32_t);
 
     map_pages_overlapping(
         get_kernel_page_directory(),
@@ -113,40 +113,38 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
 
     memcpy(addresses, rsdt_end, sdt_count * sizeof(uint32_t));
 
-    qemu_log("RSDT start: %x", rsdt_addr);
-    qemu_log("RSDT end: %x", rsdt_end);
-    qemu_log("RSDT size: %d", sizeof(ACPISDTHeader));
+    qemu_printf("Addresses: [");
+    
+    for(register int i = 0; i < sdt_count; i++) {
+        qemu_printf("%x, ", addresses[i]);
+    }
 
-    qemu_log("SDT COUNT: %u\n", sdt_count);
+    qemu_printf("]\n");
+
+    qemu_log("RSDT start: %x", rsdt_addr);
+    qemu_log("RSDT end: %x", (size_t)rsdt_end);
+
+    qemu_log("SDT COUNT: %u", sdt_count);
 
     for(uint32_t i = 0; i < sdt_count; i++) {
         qemu_log("Mapping %x", addresses[i]);
         map_pages_overlapping(
             get_kernel_page_directory(),
-            addresses[i] & ~0xfff,
-            addresses[i] & ~0xfff,
-            128,
+            addresses[i],
+            addresses[i],
+            PAGE_SIZE,
             PAGE_PRESENT
         );
 
         ACPISDTHeader* entry = (ACPISDTHeader*)(addresses[i]);
 
-		tty_printf("[%d/%d] [%x] Found table: %.4s\n", i, sdt_count, entry, entry->Signature);
-		qemu_log("[%x] Found table: %.4s", (size_t)entry, entry->Signature);
+		tty_printf("[%d/%d] [%x] Found table: %.4s (len: %d)\n", i, sdt_count, entry, entry->Signature, entry->Length);
+		qemu_log("[%x] Found table: %.4s (len: %d)", (size_t)entry, entry->Signature, entry->Length);
 
         qemu_log("Unmapping %x", addresses[i]);
-        unmap_pages_overlapping(
-            get_kernel_page_directory(),
-            addresses[i] & ~0xfff,
-            128
-        );
     }
 
-    unmap_pages_overlapping(
-            get_kernel_page_directory(),
-            rsdt_addr,
-            rsdt_length
-    );
+    kfree(addresses);
 }
 
 
@@ -206,9 +204,9 @@ void acpi_find_facp(size_t rsdt_addr) {
     qemu_log("Enable Command: %x", fadt->AcpiEnable);
     qemu_log("FirmwareControl: %x", fadt->FirmwareCtrl);
     qemu_log("Century: %x", fadt->Century);
-    qemu_log("ResetReg: %x", fadt->ResetReg.AddressLow);
-    qemu_log("ResetReg: %x", fadt->ResetReg.AddressHigh);
-    qemu_log("ResetReg AS: %d", fadt->ResetReg.AddressSpace);
+    qemu_log("ResetRegAddress(L): %x", fadt->ResetReg.AddressLow);
+    qemu_log("ResetRegAddress(H): %x", fadt->ResetReg.AddressHigh);
+    qemu_log("ResetReg AddressSpace: %d", fadt->ResetReg.AddressSpace);
     qemu_log("ResetValue: %x", fadt->ResetValue);
     qemu_log("TODO: Write 'Enable Command' to 'SMI Port' using `outb()` func");
 
@@ -353,5 +351,5 @@ void acpi_find_apic(size_t rsdt_addr, size_t *lapic_addr) {
 
     apic_detect_end:
 
-    unmap_single_page(get_kernel_page_directory(), rsdt_addr);
+    // unmap_single_page(get_kernel_page_directory(), rsdt_addr);
 }

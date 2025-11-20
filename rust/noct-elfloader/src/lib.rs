@@ -161,7 +161,7 @@ pub fn load_elf_file(path: &str) -> Result<ProgramHandle, LoadError> {
                 (page_count as u32 * PAGE_SIZE) as _,
                 PAGE_PRESENT | PAGE_USER | PAGE_WRITEABLE,
             );
-
+            
             let memory_area = core::slice::from_raw_parts_mut(
                 i.p_vaddr as *mut u8,
                 (page_count as u32 * PAGE_SIZE) as usize,

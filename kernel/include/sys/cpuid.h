@@ -26,7 +26,8 @@ void cpuid(uint32_t leaf, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t*
 	__asm__ volatile("cpuid" : "=a"(*eax), "=b"(*ebx), "=c"(*ecx), "=d"(*edx) : "a"(leaf));
 }
 
-static inline void cpuid_count(uint32_t leaf, uint32_t count, uint32_t* eax, uint32_t* ebx,
+SAYORI_INLINE
+void cpuid_count(uint32_t leaf, uint32_t count, uint32_t* eax, uint32_t* ebx,
                                  uint32_t* ecx, uint32_t* edx) {
 	__asm__ volatile("cpuid"
 	             : "=a"(*eax), "=b"(*ebx), "=c"(*ecx), "=d"(*edx)

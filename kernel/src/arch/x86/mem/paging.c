@@ -281,7 +281,7 @@ void map_pages_overlapping(page_directory_t* page_directory, size_t physical_sta
 
     size_t pages_to_map = (nth2 - nth1) + 1;
 
-    qemu_log("Range: %x - %x", virtual_start, virtual_start + size);
+    // qemu_log("Range: %x - %x", virtual_start, virtual_start + size);
 
     qemu_note("Mapping %u pages to %x", pages_to_map, physical_start);
     map_pages(page_directory, physical_start, virtual_start, pages_to_map * PAGE_SIZE, flags);

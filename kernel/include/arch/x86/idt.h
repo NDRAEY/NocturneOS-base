@@ -74,7 +74,10 @@ extern void irq12(void);
 extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
+extern void irq_apic(void);
 
 extern void isr80(void);
 
 void init_idt(void);
+
+void idt_set_gate(uint8_t num, uint32_t base, uint16_t selector, uint8_t flags);

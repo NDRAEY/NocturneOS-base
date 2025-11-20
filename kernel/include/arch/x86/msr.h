@@ -2,6 +2,7 @@
 
 #define INTEL_THERMAL_STATUS 0x19c
 #define INTEL_TEMPERATURE_TARGET 0x1a2
+#define INTEL_APIC_BASE_MSR 0x1B
 
 #define rdmsr(msr, value1, value2)  \
     __asm__ volatile("rdmsr"    \

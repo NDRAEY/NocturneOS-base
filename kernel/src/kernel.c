@@ -19,12 +19,14 @@
 #include "sys/cpuid.h"
 
 #ifdef NOCTURNE_X86
+#include "arch/x86/msr.h"
 #include "arch/x86/mtrr.h"
 #include "arch/x86/cputemp.h"
 #include <arch/x86/gdt.h>
 #include <arch/x86/idt.h>
 #include <arch/x86/sse.h>
 #include <arch/x86/serial_port.h>
+#include "sys/apic.h"
 #endif
 
 #include "net/ipv4.h"
@@ -156,10 +158,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_log("Setting `ISR`...");
     isr_init();
 
-    init_timer(CLOCK_FREQ);
-
-    __asm__ volatile("sti");
-
     qemu_log("Checking RAM...");
     check_memory_map((memory_map_entry_t *)mboot->mmap_addr, mboot->mmap_length);
     qemu_log("Memory summary:");
@@ -181,12 +179,36 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     vmm_init();
     qemu_ok("VMM OK!");
 
+    switch_qemu_logging();
+
+    keyboard_buffer_init();
+
+    ps2_init();
+
+    ps2_keyboard_init();
+
+    if (ps2_channel2_okay)
+    {
+        mouse_install();
+    }
+
+    ps2_keyboard_install_irq();
+    ps2_mouse_install_irq();
+
+    init_syscalls();
+
+    __asm__ volatile("cli");
+
+    apic_init();
+
+    init_timer(CLOCK_FREQ);
+    // STI is called in init_timer
+
+    //while(1)
+    //    ;
+
     cpu_get_info(&boot_cpu_info);
     qemu_log("Boot CPU: %s (%s)", boot_cpu_info.model_string, boot_cpu_info.brand_string);
-    
-    init_syscalls();
-    
-    switch_qemu_logging();
     
     // kHandlerCMD((char *)mboot->cmdline);
     
@@ -241,20 +263,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     bootScreenInit(15);
     bootScreenLazy(true);
-
-    keyboard_buffer_init();
-
-    ps2_init();
-
-    ps2_keyboard_init();
-
-    if (ps2_channel2_okay)
-    {
-        mouse_install();
-    }
-
-    ps2_keyboard_install_irq();
-    ps2_mouse_install_irq();
 
     bootScreenPaint("PCI Setup...");
     pci_scan_everything();
