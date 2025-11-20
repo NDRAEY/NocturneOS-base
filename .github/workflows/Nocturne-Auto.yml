@@ -13,7 +13,7 @@ jobs:
 
       - name: Pre-setup preparation - disable man-db triggers
         run: |
-          sudo rm /var/lib/man-db/auto-update
+          sudo rm -f /var/lib/man-db/auto-update
 
       - name: Step 0.5 - Install LLVM 21
         run: |
