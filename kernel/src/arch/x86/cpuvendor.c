@@ -109,9 +109,7 @@ const struct cpu_vendor* cpu_vendor_by_signature(const char* name) {
 	return NULL;
 }
 
-const char* cpu_vendor_legacy_model(const struct cpu_vendor* vendor, uint8_t x86_family,
-                                        uint8_t x86_model) {
-                                            
+const char* cpu_vendor_legacy_model(const struct cpu_vendor* vendor, uint8_t x86_family, uint8_t x86_model) {	
 	for (size_t i = 0; i < vendor->nr_legacy_models; i++) {
 		if (vendor->legacy_models[i].x86_family == x86_family) {
 			return vendor->legacy_models[i].model_names[x86_model];

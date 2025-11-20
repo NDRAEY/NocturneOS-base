@@ -124,6 +124,7 @@ if(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(QEMU "qemu-system-x86_64")
 elseif(NOCTURNE_ARCH STREQUAL "x86")
     set(QEMU "qemu-system-i386")
+	set(QEMU_ADDITIONAL_FLAGS -cpu pentium)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(QEMU "qemu-system-arm")
 
@@ -136,7 +137,7 @@ elseif(NOCTURNE_ARCH STREQUAL "armv7")
     set(QEMU_FLAGS -M ${NOCTURNE_ARM_MACHINE} )
 endif()
 
-set(QEMU_FLAGS -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*" -no-reboot -no-shutdown)
+set(QEMU_FLAGS ${QEMU_ADDITIONAL_FLAGS} -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*" -no-reboot -no-shutdown)
 
 set(MKRESCUE grub-mkrescue)
 set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} --locales="" -V NocturneOS --themes="" --fonts="ascii")

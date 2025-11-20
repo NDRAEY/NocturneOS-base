@@ -111,8 +111,10 @@ void cpu_get_info(struct cpu_info* c) {
 		      (uint32_t *)&c->model_string[36], (uint32_t *)&c->model_string[40],
 		      (uint32_t *)&c->model_string[44]);
 	} else {
-		char* legacy_model = cpu_vendor_legacy_model(c->vendor, c->family_id, c->model_id);
-		strcpy(c->model_string, legacy_model);
+		if(c->vendor) {
+			char* legacy_model = cpu_vendor_legacy_model(c->vendor, c->family_id, c->model_id);
+			strcpy(c->model_string, legacy_model);
+		}
 	}
 
 	if (c->extended_cpuid_max_leaf >= 0x80000007) {

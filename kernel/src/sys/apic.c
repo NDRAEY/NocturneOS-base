@@ -35,7 +35,7 @@ void spurious_vec_handler(registers_t registers) {
     qemu_log("SPURIOUS!");
 }
 
-void apic_find_ioapic() {
+bool apic_find_ioapic() {
     RSDPDescriptor *rsdp = acpi_rsdp_find();
     qemu_log("RSDP FOUND!");
 
@@ -47,6 +47,10 @@ void apic_find_ioapic() {
     qemu_log("RSDT Length: %x", length);
 
     ACPISDTHeader* apic = acpi_find_table(rsdp->RSDTaddress, sdt_count, "APIC");
+
+    if(apic == NULL) {
+        return false;
+    }
 
     size_t table_size = apic->Length - (sizeof(ACPISDTHeader) + sizeof(struct APIC_Base_Table));
     
@@ -92,6 +96,8 @@ void apic_find_ioapic() {
 
         offset += entry->record_length;
     }
+
+    return true;
 }
 
 uint32_t ioapic_read(uint32_t reg) {
@@ -106,8 +112,6 @@ void ioapic_write(uint32_t reg, uint32_t value) {
 }
 
 void ioapic_post_initialize() {
-
-
     RSDPDescriptor *rsdp = acpi_rsdp_find();
 
     uint32_t length = ((ACPISDTHeader*)(rsdp->RSDTaddress))->Length;
@@ -155,7 +159,10 @@ void ioapic_post_initialize() {
 }
 
 void apic_init() {
-    apic_find_ioapic();
+    if(!apic_find_ioapic()) {
+        qemu_err("Could not initialize IOAPIC, bailing out...");
+        return;
+    }
 
     qemu_log("IOAPIC: %x", ioapic_addr);
 
