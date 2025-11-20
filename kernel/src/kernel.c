@@ -181,10 +181,19 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     switch_qemu_logging();
 
+    __asm__ volatile("cli");
+
+    apic_init();
+
+    init_timer(CLOCK_FREQ);
+
+    // STI is called in init_timer
+    
+    init_syscalls();
+    
     keyboard_buffer_init();
-
+    
     ps2_init();
-
     ps2_keyboard_init();
 
     if (ps2_channel2_okay)
@@ -194,15 +203,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
-
-    init_syscalls();
-
-    __asm__ volatile("cli");
-
-    apic_init();
-
-    init_timer(CLOCK_FREQ);
-    // STI is called in init_timer
 
     //while(1)
     //    ;

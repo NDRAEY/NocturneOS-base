@@ -124,7 +124,7 @@ if(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(QEMU "qemu-system-x86_64")
 elseif(NOCTURNE_ARCH STREQUAL "x86")
     set(QEMU "qemu-system-i386")
-	set(QEMU_ADDITIONAL_FLAGS -cpu pentium)
+	#set(QEMU_ADDITIONAL_FLAGS -cpu pentium)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(QEMU "qemu-system-arm")
 

@@ -61,11 +61,11 @@ ACPISDTHeader* acpi_find_table(uint32_t rsdt_addr, uint32_t sdt_count, const cha
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
 
     map_pages_overlapping(
-            get_kernel_page_directory(),
-            rsdt_addr,
-            rsdt_addr,
-            sdt_count * sizeof(uint32_t),
-            PAGE_PRESENT
+        get_kernel_page_directory(),
+        rsdt_addr,
+        rsdt_addr,
+        sdt_count * sizeof(uint32_t),
+        0
     );
 
     qemu_log("RSDT start: %x", rsdt_addr);
@@ -91,7 +91,7 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
         rsdt_addr,
 		rsdt_addr,
         sizeof(ACPISDTHeader),
-        PAGE_PRESENT
+        0
     );
     
     size_t rsdt_length = rsdt->Length;
@@ -102,22 +102,12 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
         rsdt_addr,
 		rsdt_addr,
         rsdt->Length,
-        PAGE_PRESENT
+        0
     );
 
     qemu_log("RSDT length: %d (sizeof(ACPISDTHeader) == %d)", rsdt->Length, sizeof(ACPISDTHeader));
 
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
-
-    uint32_t* addresses = kcalloc(sdt_count, sizeof(uint32_t));
-
-    memcpy(addresses, rsdt_end, sdt_count * sizeof(uint32_t));
-
-    qemu_printf("Addresses: [");
-    
-    for(register int i = 0; i < sdt_count; i++) {
-        qemu_printf("%x, ", addresses[i]);
-    }
 
     qemu_printf("]\n");
 
@@ -127,24 +117,20 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
     qemu_log("SDT COUNT: %u", sdt_count);
 
     for(uint32_t i = 0; i < sdt_count; i++) {
-        qemu_log("Mapping %x", addresses[i]);
+        qemu_log("Mapping %x", rsdt_end[i]);
         map_pages_overlapping(
             get_kernel_page_directory(),
-            addresses[i],
-            addresses[i],
+            rsdt_end[i],
+            rsdt_end[i],
             PAGE_SIZE,
-            PAGE_PRESENT
+            0
         );
 
-        ACPISDTHeader* entry = (ACPISDTHeader*)(addresses[i]);
+        ACPISDTHeader* entry = (ACPISDTHeader*)(rsdt_end[i]);
 
 		tty_printf("[%d/%d] [%x] Found table: %.4s (len: %d)\n", i, sdt_count, entry, entry->Signature, entry->Length);
 		qemu_log("[%x] Found table: %.4s (len: %d)", (size_t)entry, entry->Signature, entry->Length);
-
-        qemu_log("Unmapping %x", addresses[i]);
     }
-
-    kfree(addresses);
 }
 
 
@@ -221,7 +207,7 @@ void acpi_find_facp(size_t rsdt_addr) {
     qemu_log("Found FADT!");
 
 //    unmap_single_page(get_kernel_page_directory(), (virtual_addr_t) fadt);
-    unmap_pages_overlapping(get_kernel_page_directory(), (virtual_addr_t) rsdt_addr, PAGE_SIZE * 2);
+    // unmap_pages_overlapping(get_kernel_page_directory(), (virtual_addr_t) rsdt_addr, PAGE_SIZE * 2);
 }
 
 void acpi_find_apic(size_t rsdt_addr, size_t *lapic_addr) {

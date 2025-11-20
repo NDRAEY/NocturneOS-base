@@ -1,3 +1,4 @@
+#include "arch/x86/mem/paging.h"
 #include "arch/x86/mem/paging_common.h"
 #include "arch/x86/ports.h"
 #include "arch/x86/registers.h"
@@ -37,9 +38,18 @@ void spurious_vec_handler(registers_t registers) {
 
 bool apic_find_ioapic() {
     RSDPDescriptor *rsdp = acpi_rsdp_find();
-    qemu_log("RSDP FOUND!");
 
-    map_pages(get_kernel_page_directory(), rsdp->RSDTaddress, rsdp->RSDTaddress, PAGE_SIZE, 0);
+    if(!rsdp) {
+        return false;
+    }
+
+    map_pages_overlapping(
+        get_kernel_page_directory(), 
+        rsdp->RSDTaddress,
+        rsdp->RSDTaddress,
+        PAGE_SIZE, 
+        0
+    );
 
     uint32_t length = ((ACPISDTHeader*)(rsdp->RSDTaddress))->Length;
     uint32_t sdt_count = (length - sizeof(ACPISDTHeader)) / sizeof(uint32_t);
