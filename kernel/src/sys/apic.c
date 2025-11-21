@@ -200,7 +200,8 @@ void apic_init() {
 
     lapic_addr = eax & 0xfffff000;
 
-    wrmsr(INTEL_APIC_BASE_MSR, (lapic_addr & 0xfffff000) | 0x100 | (1 << 11), 0);
+	// Enable APIC by setting 11th bit, and settijng bootstrap processor by setting 8th bit
+    wrmsr(INTEL_APIC_BASE_MSR, (lapic_addr & 0xfffff000) | (1 << 8) | (1 << 11), 0);
 
     qemu_log("APIC BASE: %x", lapic_addr);
 
