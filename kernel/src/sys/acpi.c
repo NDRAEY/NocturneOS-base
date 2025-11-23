@@ -3,7 +3,13 @@
 #include "sys/fadt.h"
 #include "lib/string.h"
 #include "io/logging.h"
+
+#ifdef NOCTURNE_X86
 #include "io/tty.h"
+#else
+#define tty_printf(M, ...)
+#endif
+
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 

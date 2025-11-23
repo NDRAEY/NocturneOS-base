@@ -590,23 +590,26 @@ void *krealloc(void *ptr, size_t memory_size)
 	return (void *)block->address;
 }
 
+#ifdef NOCTURNE_X86
 /**
  * @brief Копирует адресное пространство ядра в новое адресное пространство
  * @return Виртуальный адрес директории страниц нового адресного пространства
  */
 void *clone_kernel_page_directory(size_t virts_out[1024])
 {
-	uint32_t *page_dir = kmalloc_common(PAGE_SIZE, PAGE_SIZE);
+	size_t *page_dir = kmalloc_common(PAGE_SIZE, PAGE_SIZE);
 	memset(page_dir, 0, PAGE_SIZE);
 
-	uint32_t physaddr = virt2phys(get_kernel_page_directory(), (virtual_addr_t)page_dir);
+	size_t physaddr = virt2phys(get_kernel_page_directory(), (virtual_addr_t)page_dir);
 
-	const uint32_t *kern_dir = get_kernel_page_directory();
-	const uint32_t linaddr = (const uint32_t)(page_directory_start);
+	const size_t *kern_dir = get_kernel_page_directory();
+	const size_t linaddr = (const size_t)(page_directory_start);
 
-	//    uint32_t* addresses[1024] = {0};
+	const size_t page_count = PAGE_SIZE / sizeof(size_t);
 
-	for (int i = 0; i < 1023; i++)
+	qemu_log("Pages in one hierarchy unit: %d", page_count);
+
+	for (size_t i = 0; i < (page_count - 1); i++)
 	{
 		if (kern_dir[i])
 		{
@@ -616,7 +619,7 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 		}
 	}
 
-	for (int i = 0; i < 1023; i++)
+	for (size_t i = 0; i < (page_count - 1); i++)
 	{
 		if (kern_dir[i])
 		{
@@ -636,9 +639,9 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 		}
 	}
 
-	page_dir[1023] = physaddr | 3;
+	page_dir[page_count - 1] = physaddr | 3;
 
-	for (int i = 0; i < 1024; i++) {
+	for (size_t i = 0; i < page_count; i++) {
 		if (page_dir[i]) {
 			qemu_log("[%d] %x = %x", i, kern_dir[i], page_dir[i]);
 		}
@@ -648,6 +651,7 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 
 	return page_dir;
 }
+#endif
 
 void vmm_debug_switch(bool enable)
 {

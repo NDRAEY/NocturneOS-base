@@ -8,6 +8,9 @@
 #include "arch/x86_64/registers64.h"
 #include "arch/x86_64/mem/paging.h"
 #include "io/logging.h"
+#include "mem/vmm.h"
+#include "sys/apic.h"
+#include "sys/grub_modules.h"
 #include <mem/pmm.h>
 #include <lib/string.h>
 #include <multiboot.h>
@@ -17,15 +20,31 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     init_idt();
     isr_init();
+    
+    check_memory_map((const memory_map_entry_t*)mboot->mmap_addr, mboot->mmap_length);
+    mark_reserved_memory_as_used((const memory_map_entry_t*)mboot->mmap_addr, mboot->mmap_length);
+    
+    paging_preinit(mboot);
+    
+    grub_modules_prescan(mboot);
+    
+    init_pmm(mboot);
+    
+    mark_reserved_memory_as_used((memory_map_entry_t *)mboot->mmap_addr, mboot->mmap_length);
+
+    qemu_ok("Physical memory manager and paging initialized!");
+
+    vmm_init();
+
+    qemu_ok("Heap initialized!");
+
+    __asm__ volatile("cli");
+    apic_init();
 
     init_timer(1000);
 
-    check_memory_map((const memory_map_entry_t*)mboot->mmap_addr, mboot->mmap_length);
-    mark_reserved_memory_as_used((const memory_map_entry_t*)mboot->mmap_addr, mboot->mmap_length);
+    // STI called after init_timer().
 
-    paging_preinit(mboot);
-    init_pmm(mboot);
-    
     size_t screen_size = mboot->framebuffer_pitch * mboot->framebuffer_height;
 
     qemu_log("Screen size: %d bytes", screen_size);
@@ -35,12 +54,12 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
         mboot->framebuffer_addr,
         mboot->framebuffer_addr,
         screen_size,
-        PAGE_WRITEABLE
+        PAGE_WRITEABLE | PAGE_CACHE_DISABLE
     );
 
     qemu_log("OK!");
     
-    memset((void*)mboot->framebuffer_addr, 0xff, screen_size);
+    memset((void*)mboot->framebuffer_addr, 0x35, screen_size);
 
     while(1)
         ;

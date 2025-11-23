@@ -38,7 +38,12 @@ typedef size_t page_directory_t;
 // The space where we can modify page directory
 /// Начало директории таблиц для страниц
 #define page_directory_virt ((uint32_t*)(0xffffffff - (4 * KB) + 1))
+#else
+// #error "TODO: page_directory(root)_start and other recursive paging addresses"
 #endif
+
+uint32_t phys_get_page_data(const page_directory_t* page_dir, virtual_addr_t virtual);
+size_t virt2phys(const page_directory_t *page_dir, virtual_addr_t virtual);
 
 void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags);
 void unmap_single_page(page_directory_t* page_dir, virtual_addr_t virtual);
@@ -48,3 +53,6 @@ size_t* get_kernel_page_directory();
 
 // This function is here, because both x86 and x86_64 implement it in their respective assemblies.
 void reload_cr3();
+
+void map_pages_overlapping(page_directory_t* page_directory, size_t physical_start, size_t virtual_start, size_t size, uint32_t flags);
+void unmap_pages_overlapping(page_directory_t* page_directory, size_t virtual, size_t size);

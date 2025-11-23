@@ -102,9 +102,10 @@ isr80:
     push  %rsi
     push  %rdi
     push  %rbp
+    push  %r8
 
     mov %rsp, %rax
-    add $64, %rax
+    add $72, %rax
 
     mov %ds, %rbp
     push %rbp
@@ -116,7 +117,8 @@ isr80:
 
     pop %rbp
     mov %rbp, %ds
-    
+
+    pop  %r8
     pop  %rbp
     pop   %rdi
     pop   %rsi
@@ -138,9 +140,10 @@ isr_common_stub_err:
     push  %rsi
     push  %rdi
     push  %rbp
+    push  %r8
 
     mov %rsp, %rax
-    add $64, %rax
+    add $72, %rax
 
     mov %ds, %rbp
     push %rbp
@@ -152,6 +155,7 @@ isr_common_stub_err:
     pop %rbp
     mov %rbp, %ds
 
+    pop  %r8
     pop  %rbp
     pop   %rdi
     pop   %rsi
@@ -171,9 +175,10 @@ isr_common_stub_noerr:
     push  %rsi
     push  %rdi
     push  %rbp
+    push  %r8
 
     mov %rsp, %rax
-    add $56, %rax
+    add $64, %rax
     // add $64, %rax
 
     // mov %ds, %rbp
@@ -186,6 +191,7 @@ isr_common_stub_noerr:
     // pop %rbp
     // mov %rbp, %ds
 
+    pop  %r8
     pop  %rbp
     pop   %rdi
     pop   %rsi
@@ -206,9 +212,10 @@ irq_common_stub:
     push  %rsi
     push  %rdi
     push  %rbp
+    push  %r8
 
     mov %rsp, %rax
-    add $64, %rax
+    add $72, %rax
 
     mov %ds, %rbp
     push %rbp
@@ -220,6 +227,7 @@ irq_common_stub:
     pop %rbp
     mov %rbp, %ds
 
+    pop  %r8
     pop  %rbp
     pop   %rdi
     pop   %rsi

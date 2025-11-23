@@ -4,6 +4,7 @@
 
 typedef	struct {
     uint64_t ds;
+    uint64_t r8;
     uint64_t rbp;
     uint64_t rdi;
     uint64_t rsi;

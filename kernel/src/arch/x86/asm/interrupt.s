@@ -81,7 +81,6 @@ IRQ 12, 44
 IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
-IRQ _apic, 0xf0
 
 /* Вызов сервиса ОС */
 .global isr80

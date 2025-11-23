@@ -48,7 +48,12 @@ void unwind_stack(uint32_t max_frames) {
     qemu_log("Unwind!");
     
     struct stackframe *stk = 0;
+
+    #ifdef NOCTURNE_X86
     __asm__ volatile("movl %%ebp, %0" : "=r"(stk) :: );
+    #else
+    __asm__ volatile("mov %%rbp, %0" : "=r"(stk) :: );
+    #endif
 
     qemu_printf("Stack trace:\n");
 

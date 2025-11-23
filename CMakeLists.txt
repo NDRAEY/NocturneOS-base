@@ -296,6 +296,12 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/lib/math/math.c
 		kernel/src/io/logging.c
 		kernel/src/mem/pmm.c
+		kernel/src/mem/vmm.c
+		kernel/src/sys/acpi.c
+		kernel/src/sys/apic.c
+		kernel/src/drv/cmos.c
+		kernel/src/sys/grub_modules.c
+		kernel/src/sys/unwind.c
 	)
 
     # set(C_SRC ${C_SRC} ${COMMON_C_SRC})

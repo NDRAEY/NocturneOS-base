@@ -59,6 +59,45 @@ static size_t map_new_pt(page_directory_t* page_dir, virtual_addr_t virtual) {
     return addr;
 }
 
+uint32_t phys_get_page_data(const page_directory_t* page_dir, virtual_addr_t virtual) {
+    // qemu_log("! Map P%x => V%x", physical, virtual);
+
+    size_t pml4t_idx = PML4T_IDX(virtual);
+    size_t pdpt_idx = PDPT_IDX(virtual);
+    size_t pd_idx = PD_IDX(virtual);
+    size_t pt_idx = PT_IDX(virtual);
+
+    if((page_dir[pml4t_idx] & 1) == 0) {
+        qemu_log("PML4T[%d] is not mapped!", pml4t_idx);
+
+        return 0;
+    }
+
+    uint64_t* pdpt_addr = (uint64_t*)(page_dir[pml4t_idx] & ~0x3ff);
+
+    if((pdpt_addr[pdpt_idx] & 1) == 0) {
+        qemu_log("PDPT[%d] is not mapped!", pdpt_idx);
+
+        return 0;
+    }
+
+    uint64_t* pdt_addr = (uint64_t*)(pdpt_addr[pdpt_idx] & ~0x3ff);
+
+    if((pdt_addr[pd_idx] & 1) == 0) {
+        qemu_log("PD[%d] is not mapped!", pd_idx);
+
+        return 0;
+    }
+
+    uint64_t* pt_addr = (uint64_t*)(pdt_addr[pd_idx] & ~0x3ff);
+
+    return pt_addr[pt_idx];
+}
+
+size_t virt2phys(const page_directory_t *page_dir, virtual_addr_t virtual) {
+	return phys_get_page_data(page_dir, virtual) & ~0x3ff;
+}
+
 void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtual_addr_t virtual, uint32_t flags) {
     // qemu_log("! Map P%x => V%x", physical, virtual);
 
@@ -91,6 +130,39 @@ void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtu
 
     pt_addr[pt_idx] = physical | flags | PAGE_PRESENT;
     // qemu_log("%d %d %d %d", pml4t_idx, pdpt_idx, pd_idx, pt_idx);
+}
+
+void unmap_single_page(page_directory_t* page_dir, virtual_addr_t virtual) {
+    // qemu_log("! Map P%x => V%x", physical, virtual);
+
+    size_t pml4t_idx = PML4T_IDX(virtual);
+    size_t pdpt_idx = PDPT_IDX(virtual);
+    size_t pd_idx = PD_IDX(virtual);
+    size_t pt_idx = PT_IDX(virtual);
+
+    if((page_dir[pml4t_idx] & 1) == 0) {
+        qemu_log("PML4T[%d] is not mapped!", pml4t_idx);
+    }
+
+    uint64_t* pdpt_addr = (uint64_t*)(page_dir[pml4t_idx] & ~0x3ff);
+
+    if((pdpt_addr[pdpt_idx] & 1) == 0) {
+        qemu_log("PDPT[%d] is not mapped!", pdpt_idx);
+
+        map_new_pd(page_dir, virtual);
+    }
+
+    uint64_t* pdt_addr = (uint64_t*)(pdpt_addr[pdpt_idx] & ~0x3ff);
+
+    if((pdt_addr[pd_idx] & 1) == 0) {
+        qemu_log("PD[%d] is not mapped!", pd_idx);
+
+        map_new_pt(page_dir, virtual);
+    }
+
+    uint64_t* pt_addr = (uint64_t*)(pdt_addr[pd_idx] & ~0x3ff);
+
+    pt_addr[pt_idx] = 0;
 }
 
 extern uint64_t _pdt[512];

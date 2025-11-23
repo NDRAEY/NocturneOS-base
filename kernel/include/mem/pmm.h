@@ -13,6 +13,7 @@
 
 #ifdef NOCTURNE_X86_64
 #include	"arch/x86/mem/paging_common.h"
+#include	"arch/x86_64/mem/paging.h"
 #endif
 
 extern size_t phys_memory_size;

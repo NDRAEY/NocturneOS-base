@@ -32,10 +32,6 @@ uint32_t apic_read(uint32_t reg) {
     return *((uint32_t volatile*)(lapic_addr + reg));
 }
 
-void spurious_vec_handler(registers_t registers) {
-    qemu_log("SPURIOUS!");
-}
-
 bool apic_find_ioapic() {
     RSDPDescriptor *rsdp = acpi_rsdp_find();
 
@@ -177,20 +173,22 @@ void apic_init() {
     qemu_log("IOAPIC: %x", ioapic_addr);
 
     // RSDPDescriptor *rsdp = acpi_rsdp_find();
-
     // acpi_find_apic(rsdp->RSDTaddress, &lapic_addr);
-
     // qemu_log("LAPIC: %x", lapic_addr);
 
     // Disable old PIC
     outb(0xA0, 0x11);
     outb(0x20, 0x10);
+
     outb(0xA1, 0x20);
     outb(0x21, 0x28);
+    
     outb(0xA1, 0x2);
     outb(0x21, 0x4);
+    
     outb(0xA1, 0x01);
     outb(0x21, 0x01);
+    
     outb(0xA1, 0xFF);
     outb(0x21, 0xFF);
 
@@ -214,8 +212,6 @@ void apic_init() {
     );
 
     apic_write(0xF0, 0x1FF);
-    // apic_write(0xE0, 0xFFFFFFFF);
-    // apic_write(0x80, 0);
 
     size_t ver = ioapic_read(IOAPIC_REG_VER) & 0xff;
 
