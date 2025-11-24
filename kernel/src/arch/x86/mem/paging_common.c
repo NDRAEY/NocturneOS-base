@@ -1,4 +1,5 @@
 #include <common.h>
+#include <io/logging.h>
 #include <arch/x86/mem/paging_common.h>
 
 /**
