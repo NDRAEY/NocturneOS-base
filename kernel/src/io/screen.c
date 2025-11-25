@@ -13,10 +13,10 @@
 #include "sys/sync.h"
 
 uint8_t *framebuffer_addr = 0;			/// Указатель на кадровый буфер экрана
-volatile uint32_t framebuffer_pitch;				/// Частота обновления экрана
-volatile uint32_t framebuffer_bpp;				/// Глубина цвета экрана
-volatile uint32_t framebuffer_width;				/// Длина экрана
-volatile uint32_t framebuffer_height;			/// Высота экрана
+volatile size_t framebuffer_pitch;				/// Частота обновления экрана
+volatile size_t framebuffer_bpp;				/// Глубина цвета экрана
+volatile size_t framebuffer_width;				/// Длина экрана
+volatile size_t framebuffer_height;			/// Высота экрана
 volatile size_t framebuffer_size;				/// Кол-во пикселей
 uint8_t *back_framebuffer_addr = 0;		/// Позиция буфера экрана
 
@@ -70,10 +70,12 @@ void create_back_framebuffer() {
 
     qemu_log("Physical is: %x", phys_bfb);
 
+    #ifdef NOCTURNE_ARCH_X86
 	bfb_mtrr_idx = find_free_mtrr();
     write_mtrr_size(bfb_mtrr_idx, phys_bfb, framebuffer_size, 1);
 
 	phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
+    #endif
 	
     qemu_log("framebuffer_size = %d (%dK) (%dM)", framebuffer_size, framebuffer_size/1024, framebuffer_size/(1024*1024));
     qemu_log("back_framebuffer_addr = %p", back_framebuffer_addr);
@@ -117,9 +119,11 @@ void init_vbe(const multiboot_header_t *mboot) {
 
     qemu_log("Created back framebuffer");
 
+    #ifdef NOCTURNE_ARCH_X86
 	fb_mtrr_idx = find_free_mtrr();
 
     write_mtrr_size(fb_mtrr_idx, frame, framebuffer_size, 1);
+    #endif
 }
 
 /**
@@ -196,16 +200,20 @@ void graphics_update(uint32_t new_width, uint32_t new_height, uint32_t new_pitch
   back_framebuffer_addr = kmalloc_common(framebuffer_size, PAGE_SIZE);
   memset(back_framebuffer_addr, 0, framebuffer_size);
 
+  #ifdef NOCTURNE_ARCH_X86
 	phys_set_flags(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr, PAGE_WRITEABLE | PAGE_CACHE_DISABLE);
 
     uint32_t bfb_new_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)back_framebuffer_addr);
 
     write_mtrr_size(fb_mtrr_idx, (uint32_t)framebuffer_addr, framebuffer_size, 1);
     write_mtrr_size(bfb_mtrr_idx, (uint32_t)bfb_new_phys, framebuffer_size, 1);
+    #endif
 }
 
-#ifdef __SSE2__
-#include <emmintrin.h>
+#ifdef NOCTURNE_X86
+    #ifdef __SSE2__
+        #include <emmintrin.h>
+    #endif
 #endif
 
 /**

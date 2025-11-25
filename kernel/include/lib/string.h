@@ -30,4 +30,11 @@ SAYORI_INLINE bool isdigit(char a) {
 	return a >= '0' && a <= '9';
 }
 
+SAYORI_INLINE
+bool isalnum(char c) {
+    return (c >= '0' && c <= '9')
+        || (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z');
+}
+
 char* strdynamize(const char* str);

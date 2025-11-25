@@ -15,6 +15,9 @@
 #include <lib/string.h>
 #include <multiboot.h>
 
+// void _tty_printf() {}
+
+
 void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
     qemu_log("Hello, world! (MBOOT = %x)", (uint32_t)(size_t)mboot);
 
@@ -34,9 +37,9 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     qemu_ok("Physical memory manager and paging initialized!");
 
-    vmm_init();
+    // vmm_init();
 
-    qemu_ok("Heap initialized!");
+    // qemu_ok("Heap initialized!");
 
     __asm__ volatile("cli");
     apic_init();
@@ -47,7 +50,7 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     size_t screen_size = mboot->framebuffer_pitch * mboot->framebuffer_height;
 
-    qemu_log("Screen size: %d bytes", screen_size);
+    qemu_log("[%x]: Screen size: %d bytes", mboot->framebuffer_addr, screen_size);
 
     map_pages(
         get_kernel_page_directory(), 
@@ -57,9 +60,12 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
         PAGE_WRITEABLE | PAGE_CACHE_DISABLE
     );
 
-    qemu_log("OK!");
-    
     memset((void*)mboot->framebuffer_addr, 0x35, screen_size);
+    
+    while(1)
+    ;
+    
+    qemu_log("OK!");
 
     while(1)
         ;

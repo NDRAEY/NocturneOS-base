@@ -4,10 +4,10 @@
 #include "multiboot.h"
 
 extern uint8_t* framebuffer_addr;
-extern volatile uint32_t framebuffer_bpp;
-extern volatile uint32_t framebuffer_pitch;
+extern volatile size_t framebuffer_bpp;
+extern volatile size_t framebuffer_pitch;
 extern uint8_t* back_framebuffer_addr;
-extern volatile uint32_t framebuffer_size;
+extern volatile size_t framebuffer_size;
 
 typedef enum {
 	SCREEN_QUERY_WIDTH = 0,

@@ -60,7 +60,7 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(CMAKE_ASM_FLAGS "-m64 -g")
 endif()
 
-set(CMAKE_C_FLAGS "-static -nostdlib -fno-stack-protector -fno-builtin -ffreestanding -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
+set(CMAKE_C_FLAGS "-ffreestanding -static -nostdlib -fno-stack-protector -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
 
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")
@@ -91,7 +91,7 @@ elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_ARMV7")
 elseif(NOCTURNE_ARCH STREQUAL "x86_64")
-	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86_64/link.ld -static -z noexecstack")
+    set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86_64/link.ld -static -z noexecstack -Wl,--error-limit=0")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_X86_64")
 
 	if(NOCTURNE_USE_SSE2)
@@ -296,12 +296,21 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/lib/math/math.c
 		kernel/src/io/logging.c
 		kernel/src/mem/pmm.c
-		kernel/src/mem/vmm.c
 		kernel/src/sys/acpi.c
 		kernel/src/sys/apic.c
 		kernel/src/drv/cmos.c
 		kernel/src/sys/grub_modules.c
-		kernel/src/sys/unwind.c
+		kernel/src/mem/vmm.c
+		kernel/src/lib/string.c
+		# kernel/src/lib/stdio.c
+		# kernel/src/io/screen.c
+		# kernel/src/sys/unwind.c
+		# kernel/src/sys/sync.c
+		# kernel/src/drv/disk/memdisk.c
+		# kernel/src/drv/disk/initrd.c
+		# kernel/src/fs/fsm.c
+		# kernel/src/fs/nvfs.c
+		# kernel/src/lib/libvector/src/vector.c
 	)
 
     # set(C_SRC ${C_SRC} ${COMMON_C_SRC})

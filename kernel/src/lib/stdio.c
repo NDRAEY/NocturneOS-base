@@ -294,7 +294,11 @@ size_t fwrite(FILE *stream, size_t size, size_t count, const void *ptr) {
 
 
 void getcwd(char* str) {
+#ifdef NOCTURNE_SUPPORT_TIER1
 	char* cwd = get_current_proc()->cwd;
+#else
+	char* cwd = "rd0:/";
+#endif
 
 	size_t len = strlen(cwd);
 	
@@ -303,6 +307,7 @@ void getcwd(char* str) {
 
 // TODO: Relative paths
 void chdir(const char* str) {
+#ifdef NOCTURNE_SUPPORT_TIER1
 	process_t* proc = get_current_proc();
 	
 	char* cwd = proc->cwd;
@@ -312,4 +317,5 @@ void chdir(const char* str) {
 	proc->cwd = strdynamize(str);
 
 	qemu_printf("Now path is `%s`\n", proc->cwd);
+#endif
 }

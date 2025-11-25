@@ -22,7 +22,6 @@ size_t strlen(const char* input) {
     return len;
 }
 
-
 int strcmp(const char* stra, const char* strb) {
     while(*stra && *stra == *strb) {
         stra++;
@@ -30,6 +29,31 @@ int strcmp(const char* stra, const char* strb) {
     }
 
     return *stra - *strb;
+}
+
+char* strcpy(char* dest, const char* src) {
+    size_t i = 0;
+
+    while(src[i]) {
+        dest[i] = src[i];
+        i++;
+    }
+
+    dest[i] = 0;
+
+    return dest;
+}
+
+char* strncpy(char* dest, const char* src, size_t n) {
+    for(size_t i = 0; i < n; i++) {
+        if (src[i] == 0) {
+            break;
+        }
+
+        dest[i] = src[i];
+	}
+
+	return dest;
 }
 
 /**
