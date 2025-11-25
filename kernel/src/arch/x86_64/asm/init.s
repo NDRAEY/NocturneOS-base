@@ -6,7 +6,7 @@
 .set INIT_MBOOT_HEADER_FLAGS,           ALIGN | MEMINFO | VBE_MODE
 .set INIT_MBOOT_CHECKSUM,               0x00000000 - (INIT_MBOOT_HEADER_MAGIC + INIT_MBOOT_HEADER_FLAGS)
 
-.set STACK_SIZE, 1024 * 16  # 16 KB
+.set STACK_SIZE, 1024 * 24  # 24 KB
 
 .section .mboot, "a", @progbits
 

@@ -91,7 +91,7 @@ Tier 4:
 	- Program running support
 */
 
-#ifdef NOCTURNE_x86
+#ifdef NOCTURNE_X86
 #define NOCTURNE_SUPPORT_TIER0
 #define NOCTURNE_SUPPORT_TIER1
 #define NOCTURNE_SUPPORT_TIER2
@@ -99,7 +99,7 @@ Tier 4:
 #define NOCTURNE_SUPPORT_TIER4
 #endif
 
-#ifdef NOCTURNE_x86_64
+#ifdef NOCTURNE_X86_64
 #define NOCTURNE_SUPPORT_TIER0
 #endif
 

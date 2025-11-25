@@ -22,7 +22,6 @@ size_t strlen(const char* input) {
     return len;
 }
 
-
 int strcmp(const char* stra, const char* strb) {
     while(*stra && *stra == *strb) {
         stra++;
@@ -30,6 +29,31 @@ int strcmp(const char* stra, const char* strb) {
     }
 
     return *stra - *strb;
+}
+
+char* strcpy(char* dest, const char* src) {
+    size_t i = 0;
+
+    while(src[i]) {
+        dest[i] = src[i];
+        i++;
+    }
+
+    dest[i] = 0;
+
+    return dest;
+}
+
+char* strncpy(char* dest, const char* src, size_t n) {
+    for(size_t i = 0; i < n; i++) {
+        if (src[i] == 0) {
+            break;
+        }
+
+        dest[i] = src[i];
+	}
+
+	return dest;
 }
 
 /**
@@ -133,13 +157,15 @@ void* memcpy(void *restrict destination, const void *restrict source, size_t n){
  *
  * @param ptr - Указатель на заполняемый массив
  * @param value - Код символа для заполнения
- * @param size_t size - Размер заполняемой части массива в байтах
+ * @param size_t num - Размер заполняемой части массива в байтах
  */
-void* memset(void* ptr, char value, size_t num) {
+void* memset(void* ptr, int value, size_t num) {
+    // qemu_log("%x: %x * %d", (uint32_t)ptr, value, num);
+
 	uint8_t* p = (uint8_t*)ptr;
 
-	for (size_t i = 0; i < num; i++) {
-		p[i] = value;
+	while(num--) {
+		*(p++) = (uint8_t)value;
 	}
 
 	return ptr;
@@ -361,6 +387,7 @@ size_t htoi(const char* hex) {
     return result;
 }
 
+#ifdef NOCTURNE_SUPPORT_TIER1
 char* strdynamize(const char* str) {
     size_t len = strlen(str);
 
@@ -369,3 +396,4 @@ char* strdynamize(const char* str) {
 
     return mem;
 }
+#endif

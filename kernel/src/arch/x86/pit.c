@@ -12,7 +12,9 @@
 #include "io/logging.h"
 #include "sys/scheduler.h"
 
-extern bool scheduler_working;
+#ifdef NOCTURNE_SUPPORT_TIER1
+extern volatile bool scheduler_working;
+#endif
 
 volatile size_t tick = 0;                /* Количество тиков */
 size_t frequency = CLOCK_FREQ;  /* Частота */
@@ -50,7 +52,7 @@ size_t getFrequency(){
  */
 void sleep_ticks(uint32_t delay){
     size_t current_ticks = getTicks();
-    while (1){
+    while (1) {
         if (current_ticks + delay < getTicks()){
             break;
         } else {
@@ -90,7 +92,9 @@ void timer_callback(SAYORI_UNUSED registers_t regs){
  *
  * @param - Частота
  */
-void init_timer(uint32_t f){
+void init_timer(uint32_t f) {
+    __asm__ volatile("cli" ::: "memory");
+
     frequency = f;
 
     uint32_t divisor = BASE_FREQ / f;
@@ -98,10 +102,15 @@ void init_timer(uint32_t f){
     uint8_t low = (uint8_t)(divisor & 0xFF);
     uint8_t high = (uint8_t)((divisor >> 8) & 0xFF);
 
+    qemu_log("Divisor: %x", divisor);
+
+    // Channel 0 (bits 7:6), Access mode: lobyte/hibyte (bits 5:4), Operating mode: Rate generator (bits 3:1)
+    outb(0x43, (0b00 << 6) | (0b11 << 4) | (0b010 << 1));
+
     outb(0x40, low);
     outb(0x40, high);
 
 	register_interrupt_handler(IRQ0, &timer_callback);
 
-    __asm__ volatile("sti");
+    __asm__ volatile("sti" ::: "memory");
 }

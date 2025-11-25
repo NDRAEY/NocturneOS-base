@@ -4,7 +4,7 @@
 
 int32_t memcmp(const char *s1, const char *s2, size_t n);
 void* memcpy(void *restrict destination, const void *restrict source, size_t n);
-void* memset(void* ptr, char value, size_t num);
+void* memset(void* ptr, int value, size_t num);
 void* memmove(void *dest, void *src, size_t count);
 
 char *strcat(char *s, const char *t);
@@ -28,6 +28,13 @@ int atoi(const char* s);
 
 SAYORI_INLINE bool isdigit(char a) {
 	return a >= '0' && a <= '9';
+}
+
+SAYORI_INLINE
+bool isalnum(char c) {
+    return (c >= '0' && c <= '9')
+        || (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z');
 }
 
 char* strdynamize(const char* str);

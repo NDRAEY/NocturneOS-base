@@ -274,7 +274,9 @@ void free_no_map(void *ptr)
 
 void *kmalloc_common(size_t size, size_t align)
 {
+#ifdef NOCTURNE_SUPPORT_TIER1
 	scheduler_mode(false);
+#endif
 
 	void *allocated = alloc_no_map(size, align);
 
@@ -331,7 +333,9 @@ void *kmalloc_common(size_t size, size_t align)
 
 	end:
 
+#ifdef NOCTURNE_SUPPORT_TIER1
 	scheduler_mode(true);
+#endif
 
 	return allocated;
 }
@@ -420,7 +424,9 @@ size_t heap_get_block_idx(size_t address)
 
 void kfree(void *ptr)
 {
+#ifdef NOCTURNE_SUPPORT_TIER1
 	scheduler_mode(false);
+#endif
 
 	if (!ptr)
 	{
@@ -461,7 +467,9 @@ void kfree(void *ptr)
 
 	end:
 
+#ifdef NOCTURNE_SUPPORT_TIER1
 	scheduler_mode(true);
+#endif
 }
 
 void *krealloc(void *ptr, size_t memory_size)

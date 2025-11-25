@@ -16,7 +16,6 @@ pub use noct_diskman;
 use noct_elfloader::ko_modules::load_module;
 use noct_il::log;
 pub use noct_iso9660;
-pub use noct_klib;
 pub use noct_noctfs;
 pub use noct_nvfs;
 pub use noct_psf;

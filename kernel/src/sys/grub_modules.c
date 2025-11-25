@@ -2,6 +2,7 @@
 // Created by ndraey on 2/10/24.
 //
 
+#include <common.h>
 #include "sys/grub_modules.h"
 #include "multiboot.h"
 #include "io/ports.h"
@@ -19,6 +20,8 @@ void grub_modules_prescan(const multiboot_header_t* hdr) {
 
     qemu_note("Set end to: %x", grub_last_module_end);
 }
+
+#ifdef NOCTURNE_SUPPORT_TIER1
 
 extern volatile size_t NOCTURNE_ksym_data_start;
 extern volatile size_t NOCTURNE_ksym_data_end;
@@ -63,3 +66,4 @@ void grub_modules_init(const multiboot_header_t* hdr) {
         }
     }
 }
+#endif
