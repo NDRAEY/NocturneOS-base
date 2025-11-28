@@ -46,7 +46,7 @@ void __com_writeString(uint16_t port, char *buf){
 
 
 void __com_writeInt(int16_t port, ssize_t i){
-    char buffer[44] = {0};
+    char buffer[128] = {0};
     int index = 0;
 
     if(i == 0) {

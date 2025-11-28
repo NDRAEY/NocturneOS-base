@@ -17,7 +17,7 @@ extern volatile bool scheduler_working;
 #endif
 
 volatile size_t tick = 0;                /* Количество тиков */
-size_t frequency = CLOCK_FREQ;  /* Частота */
+volatile size_t frequency = CLOCK_FREQ;  /* Частота */
 
 /**
  * @brief Получить количество тиков
@@ -41,7 +41,7 @@ double getUptime() {
  *
  * @return uint32_t - Частота таймера
  */
-size_t getFrequency(){
+size_t getFrequency() {
     return frequency;
 }
 
@@ -50,7 +50,7 @@ size_t getFrequency(){
  *
  * @param delay - Тики
  */
-void sleep_ticks(uint32_t delay){
+void sleep_ticks(size_t delay){
     size_t current_ticks = getTicks();
     while (1) {
         if (current_ticks + delay < getTicks()){
@@ -67,7 +67,7 @@ void sleep_ticks(uint32_t delay){
  *
  * @param milliseconds - Миллисекунды
  */
-void sleep_ms(uint32_t milliseconds) {
+void sleep_ms(size_t milliseconds) {
     uint32_t needticks = milliseconds * frequency;
     sleep_ticks(needticks / 1000);
 }
@@ -92,17 +92,17 @@ void timer_callback(SAYORI_UNUSED registers_t regs){
  *
  * @param - Частота
  */
-void init_timer(uint32_t f) {
+void init_timer(size_t f) {
     __asm__ volatile("cli" ::: "memory");
 
     frequency = f;
 
-    uint32_t divisor = BASE_FREQ / f;
+    size_t divisor = BASE_FREQ / f;
+
+    qemu_log("Divisor: %x", (uint32_t)divisor);
 
     uint8_t low = (uint8_t)(divisor & 0xFF);
     uint8_t high = (uint8_t)((divisor >> 8) & 0xFF);
-
-    qemu_log("Divisor: %x", divisor);
 
     // Channel 0 (bits 7:6), Access mode: lobyte/hibyte (bits 5:4), Operating mode: Rate generator (bits 3:1)
     outb(0x43, (0b00 << 6) | (0b11 << 4) | (0b010 << 1));
@@ -110,7 +110,7 @@ void init_timer(uint32_t f) {
     outb(0x40, low);
     outb(0x40, high);
 
-	register_interrupt_handler(IRQ0, &timer_callback);
+	register_interrupt_handler(IRQ0, timer_callback);
 
     __asm__ volatile("sti" ::: "memory");
 }

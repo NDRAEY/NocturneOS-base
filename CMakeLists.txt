@@ -35,6 +35,10 @@ endif()
 option(NOCTURNE_USE_CLANG "Use Clang compiler for building" OFF)
 option(NOCTURNE_USE_SSE2 "Use SSE2 instructuions" ON)
 
+if(NOCTURNE_USE_SSE2)
+	message("SSE2 enabled for this build")
+endif()
+
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "LANG=en_US.UTF-8 ${COMMAND}")
 
 if(NOCTURNE_ARCH STREQUAL "x86")
@@ -86,16 +90,20 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 	
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+	else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-sse2")
 	endif()
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/armv7/link.ld -static -z noexecstack")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_ARMV7")
 elseif(NOCTURNE_ARCH STREQUAL "x86_64")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86_64/link.ld -static -z noexecstack -Wl,--error-limit=0")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_X86_64")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m64 -DNOCTURNE_X86_64")
 
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+		else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-sse2")
 	endif()
 endif()
 
@@ -137,7 +145,7 @@ elseif(NOCTURNE_ARCH STREQUAL "armv7")
     set(QEMU_FLAGS -M ${NOCTURNE_ARM_MACHINE} )
 endif()
 
-set(QEMU_FLAGS ${QEMU_ADDITIONAL_FLAGS} -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*" -no-reboot -no-shutdown)
+set(QEMU_FLAGS ${QEMU_ADDITIONAL_FLAGS} -m ${QEMU_MEMORY_SIZE} -cdrom ${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE} -d int,cpu_reset,guest_errors,invalid_mem -serial mon:stdio -rtc base=localtime -boot d -usb -audiodev pa,id=audiopa -device ac97,audiodev=audiopa -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 -device rtl8139,netdev=net0,id=mydev0 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap -trace "*ac97*")
 
 set(MKRESCUE grub-mkrescue)
 set(MKRESCUE_FLAGS -o "${CMAKE_CURRENT_BINARY_DIR}/${ISO_FILE}" ${ISO_DIR} --locales="" -V NocturneOS --themes="" --fonts="ascii")
@@ -281,6 +289,7 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/arch/x86_64/asm/init.s
 		kernel/src/arch/x86_64/asm/interrupt.s
 		kernel/src/arch/x86_64/asm/regs64.s
+		kernel/src/arch/x86_64/asm/sse.s
 		kernel/src/arch/x86_64/mem/paging.s
 	)
 
@@ -328,12 +337,14 @@ add_executable(${KERNEL} ${SRC})
 
 include(cmake/Rust.cmake)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_rust_integration("debug")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-	add_rust_integration("release_no_opt")
-else()
-	add_rust_integration("release")
+if(NOT (NOCTURNE_ARCH STREQUAL "x86_64"))
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		add_rust_integration("debug")
+	elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+		add_rust_integration("release_no_opt")
+	else()
+		add_rust_integration("release")
+	endif()
 endif()
 
 # Targets

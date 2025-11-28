@@ -42,13 +42,9 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     // qemu_ok("Heap initialized!");
 
-    // apic_init();
+    apic_init();
 
     init_timer(1000);
-
-    // for(int i = 0; i < 0xffff; i++) {
-    //     __asm__ volatile("int $0x80" ::: "memory");
-    // }
 
     // STI called after init_timer().
 
@@ -66,24 +62,6 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     memset((void*)mboot->framebuffer_addr, 0x3a, screen_size);
 
-    // for(register size_t a = mboot->framebuffer_addr, b = a + screen_size; a < b; a += sizeof(size_t)) {
-    //     *((size_t*)a) = 0x3a3a3a3a3a3a3a3a;
-    // }
-
-    // for(size_t i = 0; i < 0xffffff; i++) {
-    //     memset((void*)mboot->framebuffer_addr, i & 0xff, screen_size);
-
-    //     // {
-    //     //     uint8_t* p = (uint8_t*)mboot->framebuffer_addr;
-
-    //     //     size_t sz = screen_size;
-
-    //     //     while(sz--) {
-    //     //         *p++ = i & 0xff;
-    //     //     }
-    //     // }
-    // }
-    
     qemu_log("OK!");
 
     while(1)

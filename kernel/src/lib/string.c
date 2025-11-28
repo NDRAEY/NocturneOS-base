@@ -162,7 +162,29 @@ void* memcpy(void *restrict destination, const void *restrict source, size_t n){
 void* memset(void* ptr, int value, size_t num) {
     // qemu_log("%x: %x * %d", (uint32_t)ptr, value, num);
 
-	uint8_t* p = (uint8_t*)ptr;
+    size_t mem = (size_t)ptr;
+    
+    if(num / sizeof(size_t) > 0) {
+        size_t fw = 0;
+        
+        // Fill all the bits with our 8-bit value
+        // Example for 32-bit:
+        // 0x67 -> 0x67676767
+        // Example for 64-bit:
+        // 0x67 -> 0x6767676767676767
+        for(register size_t shft = 0; shft < (sizeof(size_t) * 8); shft += 8) {
+            fw |= ((size_t)value & 0xff) << shft;
+        }
+
+        while(num >= sizeof(size_t)) {
+            *((size_t*)mem) = fw;
+
+            mem += sizeof(size_t);
+            num -= sizeof(size_t);
+        }
+    }
+
+	uint8_t* p = (uint8_t*)mem;
 
 	while(num--) {
 		*(p++) = (uint8_t)value;

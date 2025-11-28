@@ -136,6 +136,16 @@ go64:
     mov %ax, %gs
     mov %ax, %ss
 
+    call sse_enable
+
+    push %rax
+
+    mov %cr4, %rax
+    or $0x200, %rax
+    mov %rax, %cr4
+    
+    pop %rax
+
     finit
     fldcw (conword)
 

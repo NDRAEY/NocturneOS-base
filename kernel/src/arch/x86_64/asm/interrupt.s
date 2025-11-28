@@ -31,7 +31,7 @@ isr\isr_num:
 .macro IRQ irq_num, isr_num
     .global irq\irq_num
 irq\irq_num:
-    cli
+    // cli
     push	$0
     push	$\isr_num
     jmp	irq_common_stub
@@ -103,11 +103,12 @@ isr80:
     push  %rdi
     push  %rbp
 
-    mov %rsp, %rax
-    add $64, %rax
-
     mov %ds, %rbp
     push %rbp
+
+    mov %rsp, %rax
+    add $80, %rax
+
     mov $0x10, %rbp
     mov %rbp, %ds
 
@@ -139,11 +140,12 @@ isr_common_stub_err:
     push  %rdi
     push  %rbp
 
-    mov %rsp, %rax
-    add $64, %rax
-
     mov %ds, %rbp
     push %rbp
+
+    mov %rsp, %rax
+    add $80, %rax
+
     mov $0x10, %rbp
     mov %rbp, %ds
 
@@ -152,7 +154,7 @@ isr_common_stub_err:
     pop %rbp
     mov %rbp, %ds
 
-    pop  %rbp
+    pop   %rbp
     pop   %rdi
     pop   %rsi
     pop   %rdx
@@ -172,18 +174,19 @@ isr_common_stub_noerr:
     push  %rdi
     push  %rbp
 
-    mov %rsp, %rax
-    add $64, %rax
+    mov %ds, %rbp
+    push %rbp
 
-    // mov %ds, %rbp
-    // push %rbp
-    // mov $0x10, %rbp
-    // mov %rbp, %ds
+    mov %rsp, %rax
+    add $80, %rax
+
+    mov $0x10, %rbp
+    mov %rbp, %ds
 
     call isr_handler
 
-    // pop %rbp
-    // mov %rbp, %ds
+    pop %rbp
+    mov %rbp, %ds
 
     pop  %rbp
     pop   %rdi
@@ -206,20 +209,23 @@ irq_common_stub:
     push  %rdi
     push  %rbp
 
-    mov %rsp, %rax
-    add $64, %rax
+    mov %ds, %rdx
+    push %rdx
 
-    mov %ds, %rdi
-    push %rdi
-    mov $0x10, %rdi
-    mov %rdi, %ds
+    mov %rsp, %rax
+    add $80, %rax
+
+    mov $0x10, %rdx
+    mov %rdx, %ds
+
+    cld
 
     call irq_handler
 
-    pop %rdi
-    mov %rdi, %ds
+    pop %rdx
+    mov %rdx, %ds
 
-    pop  %rbp
+    pop   %rbp
     pop   %rdi
     pop   %rsi
     pop   %rdx
@@ -227,5 +233,6 @@ irq_common_stub:
     pop   %rbx
     pop   %rax
 
+    // Push out interrupt number and errcode
     add   $(2 * 8), %rsp
     iretq

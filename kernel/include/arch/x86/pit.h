@@ -5,12 +5,12 @@
 
 #include <common.h>
 
-#define sleep(_d) sleep_ms((_d) * CLOCK_FREQ);
-#define timestamp() (getTicks() / (getFrequency() / 1000))
+#define sleep(_d) sleep_ms((_d) * CLOCK_FREQ)
+#define timestamp() ((getTicks() * 1000) / getFrequency())
 
 size_t getTicks();
 double getUptime();
 size_t getFrequency();
-void sleep_ticks(uint32_t delay);
-void sleep_ms(uint32_t milliseconds);
-void init_timer(uint32_t f);
+void sleep_ticks(size_t delay);
+void sleep_ms(size_t milliseconds);
+void init_timer(size_t f);

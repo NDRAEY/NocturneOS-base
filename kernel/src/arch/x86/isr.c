@@ -8,6 +8,7 @@
  */
 
 #include "arch/x86/isr.h"
+#include "sys/apic.h"
 #include <arch/x86/ports.h>
 #include <io/logging.h>
 #include "sys/cpu_isr.h"
@@ -22,36 +23,45 @@ void isr_handler(const registers_t regs){
 }
 
 extern bool __using_apic;
-uint32_t apic_write(uint32_t reg, uint32_t value);
 
 void irq_handler(registers_t regs) {
-    if (interrupt_handlers[regs.int_num] != 0){
-        isr_t handler = interrupt_handlers[regs.int_num];
+    // qemu_log("REGS: IN=%d; SS=%x; RSP=%x; RFLAGS=%x; CS=%x; RIP=%x; DS=%x", 
+    //     (uint32_t)regs.int_num,
+    //     (uint32_t)regs.ss,
+    //     (uint32_t)regs.rsp,
+    //     (uint32_t)regs.rflags,
+    //     (uint32_t)regs.cs,
+    //     (uint32_t)regs.rip,
+    //     (uint32_t)regs.ds
+    // );
+    
+    isr_t handler = interrupt_handlers[regs.int_num];
 
-        if(!handler) {
-            return;
-        }
-
+    if (handler != 0){
         handler(regs);
     }
 
-    if(!__using_apic) {
+    if(__using_apic) {
+        apic_write(0xB0, 0x00);
+    } else {
         if (regs.int_num >= 40){
             outb(0xA0, 0x20);
         }
 
         outb(0x20, 0x20);
-    } else {
-        apic_write(0xB0, 0x00);
     }
 }
 
 /* @param n - Номер обработчика */
 /* @param handler - Функция обработчик */
 void register_interrupt_handler(uint8_t n, isr_t handler) {
-    qemu_warn("Updated handler for IRQ%d", n);
+    qemu_warn("Updated handler for IRQ %d", n);
+
+    // __asm__ volatile("cli");
 
     interrupt_handlers[n] = handler;
+    
+    // __asm__ volatile("sti");
 }
 
 /* Инициализация ISR */
