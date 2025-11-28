@@ -38,9 +38,9 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     qemu_ok("Physical memory manager and paging initialized!");
 
-    // vmm_init();
+    vmm_init();
 
-    // qemu_ok("Heap initialized!");
+    qemu_ok("Heap initialized!");
 
     apic_init();
 
@@ -61,8 +61,6 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
     );
 
     memset((void*)mboot->framebuffer_addr, 0x3a, screen_size);
-
-    qemu_log("OK!");
 
     while(1)
         ;

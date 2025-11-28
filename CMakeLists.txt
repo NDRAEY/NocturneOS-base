@@ -309,7 +309,7 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/sys/apic.c
 		kernel/src/drv/cmos.c
 		kernel/src/sys/grub_modules.c
-		# kernel/src/mem/vmm.c
+		kernel/src/mem/vmm.c
 		kernel/src/lib/string.c
 		# kernel/src/lib/stdio.c
 		# kernel/src/io/screen.c
