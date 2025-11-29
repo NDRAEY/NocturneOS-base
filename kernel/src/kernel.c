@@ -179,7 +179,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     vmm_init();
     qemu_ok("VMM OK!");
 
-    switch_qemu_logging();
+    mtrr_init();
 
     __asm__ volatile("cli");
 
@@ -237,8 +237,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     fsm_dpm_update("rd0");
 
     kernel_start_time = getTicks();
-
-    mtrr_init();
 
     qemu_log("Initializing the virtual video memory manager...");
     init_vbe(mboot);

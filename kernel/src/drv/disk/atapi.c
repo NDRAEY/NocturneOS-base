@@ -293,7 +293,7 @@ atapi_error_code atapi_request_sense(uint8_t bus, bool slave, uint8_t out[18]) {
 
 	// First byte should be 0xf0
 
-	hexview_advanced(out, 18, 10, false, new_qemu_printf);
+	hexview_advanced(out, 18, 10, false, qemu_printf);
 
 	return (atapi_error_code){(out[0] >> 7) & 1, out[2] & 0b00001111, out[12], out[13]};
 }

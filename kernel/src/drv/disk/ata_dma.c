@@ -433,7 +433,7 @@ status_t ata_dma_read(uint8_t drive, char *buf, uint32_t location, uint32_t leng
 		}
 	}
 
-//    hexview_advanced(real_buf, 512, 32, true, new_qemu_printf);
+//    hexview_advanced(real_buf, 512, 32, true, qemu_printf);
 
     void* source = real_buf + (location % drives[drive].block_size);
 

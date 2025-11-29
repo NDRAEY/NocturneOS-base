@@ -14,7 +14,7 @@
 static size_t lapic_addr;
 static size_t ioapic_addr;
 
-bool __using_apic = false;
+bool volatile __using_apic = false;
 
 // {
 //     uint32_t eax, edx;

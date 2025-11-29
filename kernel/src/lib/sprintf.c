@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <common.h>
 
 #include "lib/sprintf.h"
 
@@ -874,6 +874,15 @@ int snprintf_(char* buffer, size_t count, const char* format, ...)
 int vsnprintf_(char* buffer, size_t count, const char* format, va_list va)
 {
   return _vsnprintf(_out_buffer, buffer, count, format, va);
+}
+
+
+int vfctprintf(void (*out)(char character, void* arg), void* arg, const char* format, va_list va)
+{
+  const out_fct_wrap_type out_fct_wrap = { out, arg };
+  const int ret = _vsnprintf(_out_fct, (char*)(uintptr_t)&out_fct_wrap, (size_t)-1, format, va);
+
+  return ret;
 }
 
 

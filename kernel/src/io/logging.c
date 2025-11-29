@@ -1,3 +1,4 @@
+#include "lib/sprintf.h"
 #include <common.h>
 
 #ifdef NOCTURNE_X86
@@ -27,50 +28,21 @@
 
 void (*default_qemu_printf)(const char *text, ...) = qemu_printf;
 
-#ifdef NOCTURNE_X86
-void switch_qemu_logging() {
-    default_qemu_printf = new_qemu_printf;
+void qemu_printchar_wrapper(char chr, SAYORI_UNUSED void* argument) {
+    __com_writeChar(PORT_COM1, chr);
 }
-#endif
 
-/**
- * @brief Вывод QEMU через COM1 информации
- *
- * @param text Форматная строка
- * @param ... Дополнительные параметры
- */
- void qemu_printf(const char *text, ...) {
+void qemu_printf(const char *format, ...) {
     va_list args;
-    va_start(args, text);
+    va_start(args, format);
 
-    #ifdef NOCTURNE_TIER1
+    #ifdef NOCTURNE_FEATURE_MULTITASKING
     scheduler_mode(false);  // Stop scheduler
-
-    __com_pre_formatString(PORT_COM1, text, args);
-
+    vfctprintf(qemu_printchar_wrapper, 0, format, args);
     scheduler_mode(true);  // Start scheduler
     #else
-    __com_pre_formatString(PORT_COM1, text, args);
+    vfctprintf(qemu_printchar_wrapper, 0, format, args);
     #endif
 
     va_end(args);
 }
-
-#ifdef NOCTURNE_X86
-void new_qemu_printf(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    char* container;
-
-    vasprintf(&container, format, args);
-
-    va_end(args);
-
-    scheduler_mode(false);  // Stop scheduler
-    __com_writeString(PORT_COM1, container);
-    scheduler_mode(true);  // Start scheduler
-
-    kfree(container);
-}
-#endif

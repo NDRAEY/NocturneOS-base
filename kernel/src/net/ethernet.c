@@ -133,7 +133,7 @@ void ethernet_handle_packet(netcard_entry_t *card, ethernet_frame_t *packet, siz
 			 bit_flip_short(packet->type)
 		 );
 
-//	hexview_advanced(data, data_len, 10, true, new_qemu_printf);
+//	hexview_advanced(data, data_len, 10, true, qemu_printf);
 
 	ethernet_dump(data, data_len,bit_flip_short(packet->type));
 

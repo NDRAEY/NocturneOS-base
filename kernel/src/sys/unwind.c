@@ -2,7 +2,7 @@
 #include "io/ports.h"
 #include "io/tty.h"
 #include "lib/string.h"
-
+#include "io/logging.h"
 
 volatile size_t NOCTURNE_ksym_data_start = 0;
 volatile size_t NOCTURNE_ksym_data_end = 0;

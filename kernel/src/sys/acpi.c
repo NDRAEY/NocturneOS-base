@@ -153,9 +153,9 @@ void acpi_find_facp(size_t rsdt_addr) {
 
     ACPISDTHeader* rsdt = (ACPISDTHeader*)rsdt_addr;
 
-//	new_qemu_printf("OEM: %.11s\n", rsdt->OEMID);
+//	qemu_printf("OEM: %.11s\n", rsdt->OEMID);
 //	qemu_log("Length: %d", rsdt->Length);
-//	new_qemu_printf("OEMTableID: %.8s\n", rsdt->OEMTableID);
+//	qemu_printf("OEMTableID: %.8s\n", rsdt->OEMTableID);
 
     bool check = acpi_checksum_sdt(rsdt);
 
@@ -187,7 +187,7 @@ void acpi_find_facp(size_t rsdt_addr) {
 
     struct FADT* fadt = (struct FADT*)(pre_fadt + 1);  // It skips SDT header
   //
-    //hexview_advanced(fadt, pre_fadt->Length - 36, 24, false, new_qemu_printf);
+    //hexview_advanced(fadt, pre_fadt->Length - 36, 24, false, qemu_printf);
 
 //    map_single_page(get_kernel_page_directory(), (virtual_addr_t) fadt, (virtual_addr_t) fadt, PAGE_WRITEABLE);
 

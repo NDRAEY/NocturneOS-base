@@ -28,8 +28,8 @@
 #define IS_ALIGNED(value, align) ((value) % (align) == 0)
 
 /* 64-bit types */
-typedef	unsigned long long	uint64_t;
-typedef	long long			int64_t;
+typedef	long long unsigned int	uint64_t;
+typedef	long long int			int64_t;
 /* 32-bit types */
 typedef	unsigned int	uint32_t;
 typedef	int		int32_t;
@@ -40,16 +40,18 @@ typedef	short		int16_t;
 typedef	unsigned char	uint8_t;
 typedef	signed char		int8_t;
 
+typedef __SIZE_TYPE__   size_t;
+
 #ifdef NOCTURNE_X86_64
-typedef	uint64_t		size_t;
 typedef	int64_t			ssize_t;
 #else
-typedef	uint32_t		size_t;
 typedef	int32_t			ssize_t;
 #endif
 
 typedef size_t uintptr_t;
 typedef size_t ptrdiff_t;
+
+typedef int64_t intmax_t;
 
 #define allocate_one(T) kcalloc(sizeof(T), 1)
 
@@ -101,8 +103,16 @@ Tier 4:
 
 #ifdef NOCTURNE_X86_64
 #define NOCTURNE_SUPPORT_TIER0
+#define NOCTURNE_FEATURE_HEAP
 #endif
 
 #ifdef NOCTURNE_ARMV7
 #define NOCTURNE_SUPPORT_TIER0
+#endif
+
+// Features
+
+#ifdef NOCTURNE_SUPPORT_TIER1
+#define NOCTURNE_FEATURE_MULTITASKING
+#define NOCTURNE_FEATURE_HEAP
 #endif

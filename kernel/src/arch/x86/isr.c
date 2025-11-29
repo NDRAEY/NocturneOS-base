@@ -22,19 +22,7 @@ void isr_handler(const registers_t regs){
     }
 }
 
-extern bool __using_apic;
-
-void irq_handler(registers_t regs) {
-    // qemu_log("REGS: IN=%d; SS=%x; RSP=%x; RFLAGS=%x; CS=%x; RIP=%x; DS=%x", 
-    //     (uint32_t)regs.int_num,
-    //     (uint32_t)regs.ss,
-    //     (uint32_t)regs.rsp,
-    //     (uint32_t)regs.rflags,
-    //     (uint32_t)regs.cs,
-    //     (uint32_t)regs.rip,
-    //     (uint32_t)regs.ds
-    // );
-    
+void irq_handler(registers_t regs) {    
     isr_t handler = interrupt_handlers[regs.int_num];
 
     if (handler != 0){
@@ -55,13 +43,9 @@ void irq_handler(registers_t regs) {
 /* @param n - Номер обработчика */
 /* @param handler - Функция обработчик */
 void register_interrupt_handler(uint8_t n, isr_t handler) {
-    qemu_warn("Updated handler for IRQ %d", n);
-
-    // __asm__ volatile("cli");
-
     interrupt_handlers[n] = handler;
     
-    // __asm__ volatile("sti");
+    qemu_warn("Updated handler for IRQ %d", n);
 }
 
 /* Инициализация ISR */

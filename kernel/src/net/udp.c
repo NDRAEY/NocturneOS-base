@@ -36,7 +36,7 @@ void udp_handle_packet(netcard_entry_t *card, udp_packet_t *packet) {
 	
 	qemu_log("UDP: Source port: %d; Destination port: %d; Length: %d", src_port, dst_port, length);
 
-//	hexview_advanced(data_ptr, data_len, 16, true, new_qemu_printf);
+//	hexview_advanced(data_ptr, data_len, 16, true, qemu_printf);
 
 	if(dst_port == 68) {
 		dhcp_handle_packet(card, data_ptr);

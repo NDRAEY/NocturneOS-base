@@ -803,7 +803,7 @@ atapi_error_code ahci_atapi_request_sense(size_t port_num, uint8_t* output) {
 
 	ahci_send_atapi(port_num, command, output, 252);
 
-	// hexview_advanced(output, 18, 16, false, new_qemu_printf);
+	// hexview_advanced(output, 18, 16, false, qemu_printf);
 	
 	return (atapi_error_code){(output[0] >> 7) & 1, output[2] & 0b00001111, output[12], output[13]};
 }
@@ -843,7 +843,7 @@ size_t ahci_atapi_check_media_presence(size_t port_num) {
     // tty_printf("Fetching sense\n");
 	atapi_error_code error_code = ahci_atapi_request_sense(port_num, errorcode);
 
-	// hexview_advanced(errorcode, 24, 16, false, new_qemu_printf);
+	// hexview_advanced(errorcode, 24, 16, false, qemu_printf);
 
 	bool is_ready = error_code.sense_key != SCSI_SENSEKEY_NOT_READY;
 	bool is_loading = error_code.sense_code == SCSI_ASC_NOT_READY && error_code.sense_code_qualifier == SCSI_ASCQ_NR_BECOMING_READY;

@@ -57,7 +57,6 @@ _Noreturn void bsod_screen(registers_t regs, char* title, char* msg, uint32_t co
 }
 
 void print_regs(registers_t regs) {
-
     qemu_printf("EAX = %x\n", regs.eax);
     qemu_printf("EBX = %x\n", regs.ebx);
     qemu_printf("ECX = %x\n", regs.ecx);

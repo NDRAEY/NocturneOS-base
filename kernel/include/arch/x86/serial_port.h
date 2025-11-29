@@ -14,6 +14,7 @@
 
 void __com_pre_formatString(int16_t port, const char* format, va_list args);
 void __com_writeString(uint16_t port, char *buf);
+void __com_writeChar(uint16_t port, char chr);
 void __com_formatString(int16_t port, char *text, ...);
 void __com_setInit(uint16_t key, uint16_t value);
 int __com_init(uint16_t port);

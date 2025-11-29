@@ -13,14 +13,21 @@
 #include "sys/grub_modules.h"
 #include <mem/pmm.h>
 #include <lib/string.h>
+#include <lib/asprintf.h>
+#include <lib/sprintf.h>
 #include <multiboot.h>
 
 // void _tty_printf() {}
 
+// void char_fn(char a, void* b) {
+//     qemu_printf("%c", a);
+// }
+
+
 void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
     __com_init(PORT_COM1);
 
-    qemu_log("Hello, world! (MBOOT = %x)", (uint32_t)(size_t)mboot);
+    qemu_log("Hello, world! (MBOOT = %p)", mboot);
 
     init_idt();
     isr_init();
@@ -38,9 +45,9 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     qemu_ok("Physical memory manager and paging initialized!");
 
-    // vmm_init();
+    vmm_init();
 
-    // qemu_ok("Heap initialized!");
+    qemu_ok("Heap initialized!");
 
     apic_init();
 
@@ -50,7 +57,7 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
 
     size_t screen_size = mboot->framebuffer_pitch * mboot->framebuffer_height;
 
-    qemu_log("[%x]: Screen size: %d bytes", mboot->framebuffer_addr, screen_size);
+    qemu_log("[%llx]: Screen size: %zu bytes", mboot->framebuffer_addr, screen_size);
 
     map_pages(
         get_kernel_page_directory(), 
