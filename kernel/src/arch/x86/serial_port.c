@@ -28,7 +28,10 @@ int32_t __com_is_ready(uint16_t port) {
  * @param a - символ
  */
 void __com_writeChar(uint16_t port, char a) {
-    while (__com_is_ready(port) == 0);
+    while (__com_is_ready(port) == 0) {
+        __asm__ volatile("nop");
+    }
+    
     outb(port, a);
 }
 
@@ -181,7 +184,7 @@ void __com_formatString(int16_t port, char *text, ...) {
 int __com_init(uint16_t port) {
     outb(port + 1, 0x00);    // Disable all interrupts
     outb(port + 3, 0x80);    // Enable DLAB (set baud rate divisor)
-    outb(port + 0, 0x03);    // Set divisor to 1 (lo byte) 115200 / divisor (1) = 115200 baud
+    outb(port + 0, 0x02);    // Set divisor to 2 (lo byte) 115200 / divisor (2) = 57600 baud
     outb(port + 1, 0x00);    //                  (hi byte)
     outb(port + 3, 0x03);    // 8 bits, no parity, one stop bit
     outb(port + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold

@@ -18,31 +18,10 @@ void idt_set_gate(uint8_t num, uint32_t base, uint16_t selector, uint8_t flags){
 
 void init_idt(void) {
     /* Инициализация структуры указателя размером и адресом IDT */
-    idt_ptr.limit = sizeof(idt_entry_t)*256 - 1;
+    idt_ptr.limit = sizeof(idt_entry_t) * 256 - 1;
     idt_ptr.base = (uint32_t)idt_entries;
     /* Очистка памяти */
-    memset(idt_entries, 0, sizeof(idt_entry_t)*256);
-    /* Инициализация первого PIC и установка режима ICW1
-       (Initialization Command Word 1). */
-    outb(0x20, 0x11);
-    /* Инициализация второго PIC и установка режима ICW1. */
-    outb(0xA0, 0x11);
-    /* Установка базового вектора прерывания для первого PIC (ICW2). */
-    outb(0x21, 0x20);
-    /* Установка базового вектора прерывания для второго PIC (ICW2). */
-    outb(0xA1, 0x28);
-    /* Конфигурация мастер-системы (ICW3 для первого PIC). */
-    outb(0x21, 0x04);
-    /* Конфигурация слейв-системы (ICW3 для второго PIC). */
-    outb(0xA1, 0x02);
-    /* Установка режима работы (ICW4 для первого PIC). */
-    outb(0x21, 0x01);
-    /* Установка режима работы (ICW4 для второго PIC). */
-    outb(0xA1, 0x01);
-    /* Окончательная настройка маски прерываний для первого PIC. */
-    outb(0x21, 0x0);
-    /* Окончательная настройка маски прерываний для второго PIC. */
-    outb(0xA1, 0x0);
+    memset(idt_entries, 0, sizeof(idt_entry_t) * 256);
 
     /* Создание записей в таблице прерываний */
     idt_set_gate(0, (uint32_t)isr0, 0x08, 0x8E);

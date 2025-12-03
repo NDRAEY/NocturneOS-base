@@ -153,6 +153,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
                                    bool kernel) {
     (void)kernel;
 
+    if(!multi_task) {
+        qemu_err("Scheduler is disabled!");
+        return NULL;
+    }
+
     void*	stack = nullptr;
     uint32_t	eflags;
 
@@ -214,6 +219,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 
 thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size, bool kernel, size_t arg1) {
     (void)kernel;
+
+    if(!multi_task) {
+        qemu_err("Scheduler is disabled!");
+        return NULL;
+    }
 
     void*	stack = nullptr;
     uint32_t	eflags;

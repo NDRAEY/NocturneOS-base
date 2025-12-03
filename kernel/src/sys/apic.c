@@ -6,6 +6,7 @@
 #include "io/logging.h"
 #include "sys/acpi.h"
 #include "arch/x86/msr.h"
+#include "arch/x86/pic.h"
 #include "sys/apic_table.h"
 #include "sys/ioapic.h"
 #include "sys/rsdt.h"
@@ -177,20 +178,7 @@ void apic_init() {
     // qemu_log("LAPIC: %x", lapic_addr);
 
     // Disable old PIC
-    outb(0xA0, 0x11);
-    outb(0x20, 0x10);
-
-    outb(0xA1, 0x20);
-    outb(0x21, 0x28);
-    
-    outb(0xA1, 0x2);
-    outb(0x21, 0x4);
-    
-    outb(0xA1, 0x01);
-    outb(0x21, 0x01);
-    
-    outb(0xA1, 0xFF);
-    outb(0x21, 0xFF);
+    pic_disable();
 
     uint32_t eax, edx;
 

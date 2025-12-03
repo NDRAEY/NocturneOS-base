@@ -15,11 +15,12 @@ fn main() {
         .generate_comments(false)
         .rust_target(RustTarget::default());
 
-    if target == "i686-unknown-none" {
-        builder = builder.clang_arg("-DNOCTURNE_X86");
-    } else if target == "x86_64-unknown-none" {
-        builder = builder.clang_arg("-DNOCTURNE_X86_64");
-    }
+        if target == "x86_64-unknown-none" {
+            builder = builder.clang_arg("-DNOCTURNE_X86_64");
+        } else /* if target == "i686-unknown-none" */ {
+            builder = builder.clang_arg("-DNOCTURNE_X86");
+        }
+    
 
     let bindings = builder.generate().expect("Binding generation error");
     

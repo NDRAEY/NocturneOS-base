@@ -11,6 +11,7 @@
 
 #include <sys/unwind.h>
 
+#include "arch/x86/pic.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
@@ -153,6 +154,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     qemu_log("Initializing GDT and IDT...");
     init_gdt();
+
+    pic_init();
     init_idt();
     
     qemu_log("Setting `ISR`...");

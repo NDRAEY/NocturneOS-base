@@ -40,6 +40,7 @@ pub unsafe extern "C" fn ps2_write_configuration_byte(byte: u8) {
 fn ps2_in_wait_until_empty() {
     while (unsafe { inb(PS2_STATE_REG) } & (1 << 1)) != 0 {
         unsafe {
+            core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
             asm!("nop");
         }
     }
@@ -49,7 +50,9 @@ fn ps2_in_wait_until_empty() {
 /// It uses IO ports
 #[unsafe(no_mangle)]
 fn ps2_out_wait_until_full() {
-    while (unsafe { inb(PS2_STATE_REG) } & 1) == 0 {}
+    while (unsafe { inb(PS2_STATE_REG) } & 1) == 0 {
+        core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
+    }
 }
 
 /// Reads byte from PCI Controller
@@ -94,7 +97,7 @@ pub fn ps2_enable_second_device() {
 
 pub fn ps2_flush() {
     unsafe {
-        while inb(PS2_STATE_REG) & 1 != 0 {
+        while (inb(PS2_STATE_REG) & 1) != 0 {
             inb(PS2_DATA_PORT);
         }
     }
@@ -124,7 +127,7 @@ pub extern "C" fn ps2_init() {
     ps2_in_wait_until_empty();
 
     let conf: u8 = ps2_read_configuration_byte();
-    unsafe { ps2_write_configuration_byte(conf & !(0b1000011)) };
+    unsafe { ps2_write_configuration_byte(conf & !(0b0100_0011)) };
 
     // TEST CONTROLLER
 

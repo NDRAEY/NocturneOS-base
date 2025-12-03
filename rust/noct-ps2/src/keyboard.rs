@@ -1,6 +1,6 @@
 use noct_input::keyboard_buffer_put;
 use noct_interrupts::{IRQ1, register_interrupt_handler, registers_t};
-use noct_logger::{qemu_err, qemu_note, qemu_ok};
+use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_ok};
 use x86::io::inb;
 
 use crate::{
@@ -56,7 +56,9 @@ pub extern "C" fn ps2_keyboard_init() {
 
     let conf = ps2_read_configuration_byte();
 
-    unsafe { ps2_write_configuration_byte(conf | 0b1000001) };
+    qemu_log!("Configuration byte is: {conf:b}");
+
+    unsafe { ps2_write_configuration_byte(conf | 0b0100_0001) };
 }
 
 #[unsafe(no_mangle)]
@@ -65,11 +67,15 @@ pub extern "C" fn keyboard_handler(_regs: registers_t) {
 
     if (kbdstatus & 0x01) != 0 {
         keyboard_buffer_put(ps2_read() as u32);
+        // let _ = ps2_read();
     }
+
+    //qemu_ok!("Key!");
 }
 
 #[unsafe(no_mangle)]
 pub fn ps2_keyboard_install_irq() {
     unsafe { register_interrupt_handler(IRQ1 as _, Some(keyboard_handler)) };
+
     qemu_ok!("PS/2 keyboard interrupt installed!");
 }

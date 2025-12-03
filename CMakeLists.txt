@@ -132,7 +132,7 @@ if(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(QEMU "qemu-system-x86_64")
 elseif(NOCTURNE_ARCH STREQUAL "x86")
     set(QEMU "qemu-system-i386")
-	#set(QEMU_ADDITIONAL_FLAGS -cpu pentium)
+	#set(QEMU_FLAGS ${QEMU_FLAGS} -cpu pentium)
 elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(QEMU "qemu-system-arm")
 
@@ -254,6 +254,7 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/cputemp.c	
 		kernel/src/arch/x86/fxsave_region.c 
 		kernel/src/arch/x86/pit.c
+		kernel/src/arch/x86/pic.c
 		kernel/src/arch/x86/power.c
 		kernel/src/arch/x86/serial_port.c
         kernel/src/arch/x86/mem/paging_common.c
@@ -300,6 +301,7 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
         kernel/src/arch/x86_64/mem/paging.c
         kernel/src/arch/x86/mem/paging_common.c
 		kernel/src/arch/x86/serial_port.c
+		kernel/src/arch/x86/pic.c
 		kernel/src/arch/x86/pit.c
 		kernel/src/arch/x86/isr.c
 		kernel/src/lib/math/math.c
@@ -490,6 +492,13 @@ add_custom_target(
 add_custom_target(
 	run_with_hda
     COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -device ich9-intel-hda -device hda-output,audiodev=audiopa,debug=1
+    USES_TERMINAL
+    DEPENDS iso
+)
+
+add_custom_target(
+	debug
+    COMMAND ${QEMU} -accel kvm ${QEMU_FLAGS} -s -S
     USES_TERMINAL
     DEPENDS iso
 )

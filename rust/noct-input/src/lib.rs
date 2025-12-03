@@ -9,6 +9,8 @@ use core::cell::OnceCell;
 use noct_logger::{qemu_err, qemu_ok};
 use noct_sched::task_yield;
 
+use spin::RwLock;
+
 pub mod kbd;
 
 /// Global keyboard buffer (kernel-wide). Used everywhere.
@@ -28,19 +30,23 @@ impl Default for KeyboardBuffer {
 impl KeyboardBuffer {
     /// Creates a new keyboard buffer instance.
     pub fn new() -> Self {
-        let buffer = Vec::<u32>::with_capacity(1024);
+        let buffer = Vec::<u32>::with_capacity(512);
 
         KeyboardBuffer { buffer }
     }
 
     /// Push a character into a buffer.
     pub fn push(&mut self, character: u32) {
-        self.buffer.push(character);
+        let bind = &mut self.buffer;
+
+        bind.push(character);
     }
 
     /// Pop a character from a buffer, just calls for Vec::pop().
     pub fn get_raw(&mut self) -> Option<u32> {
-        self.buffer.pop()
+        let bind = &mut self.buffer;
+        
+        bind.pop()
     }
 
     /// Polls for a character from a buffer.
