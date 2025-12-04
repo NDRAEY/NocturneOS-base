@@ -415,7 +415,7 @@ bool ahci_send_cmd(volatile AHCI_HBA_PORT *port, size_t slot) {
 
         spin++;
 
-		__asm__ volatile("hlt");
+		//__asm__ volatile("hlt");
     }
 
 	qemu_warn("OK");
