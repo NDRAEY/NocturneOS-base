@@ -5,16 +5,15 @@
 .global		task_switch_v2
 task_switch_v2:
     pushf
-
-    cli
     
+    push %eax
     push %ebx
     push %esi
     push %edi
     push %ebp
 
-    mov 24(%esp), %eax  # Current task
-    mov 28(%esp), %ebx  # Next task
+    mov 28(%esp), %eax  # Current task
+    mov 32(%esp), %ebx  # Next task
 
     cmp %eax, %ebx
     je .no_need
@@ -49,6 +48,7 @@ task_switch_v2:
     mov %cr3, %eax
     cmp %eax, %ebx
 
+    # If Page Directories are equal, we don't have to load it.
     je .no_need
 
     mov %ebx, %cr3
@@ -59,6 +59,7 @@ task_switch_v2:
     pop %edi
     pop %esi
     pop %ebx
+    pop %eax
 
     popf
 

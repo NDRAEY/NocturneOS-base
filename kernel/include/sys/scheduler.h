@@ -75,15 +75,17 @@ typedef volatile struct
     // 24
 	void*			stack;
     // 28
-	uint32_t		esp;				/* Thread state */
+	size_t		    esp;				/* Thread state */
     // 32
-	uint32_t		entry_point;
+	size_t		    entry_point;
     // 36
-	uint32_t		id;				/* Thread ID */
+	size_t		    id;				/* Thread ID */
     // 40
-	uint32_t		stack_top;
-    // 72
-    thread_state_t state;
+	size_t  		stack_top;
+    // 44
+    thread_state_t  state;
+    // 48
+    char*           fxsave_region;
 } thread_t;
 
 /* Initialization */

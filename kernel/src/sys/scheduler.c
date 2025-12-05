@@ -19,11 +19,12 @@ list_t thread_list;
 
 uint32_t next_pid = 0;			
 uint32_t next_thread_id = 0;	
-bool multi_task = false;		
-process_t* kernel_proc = 0;		
-thread_t* kernel_thread = 0;	
-process_t* current_proc = 0;	
-thread_t* current_thread = 0;
+bool multi_task = false;
+process_t* kernel_proc = 0;	
+thread_t* kernel_thread = 0;
+
+process_t volatile* current_proc = 0;
+thread_t volatile* current_thread = 0;
 
 extern uint32_t __init_esp;
 
@@ -72,6 +73,7 @@ void init_task_manager(void){
 	kernel_thread->stack_size = DEFAULT_STACK_SIZE;
 	kernel_thread->esp = esp;
 	kernel_thread->stack_top = __init_esp;
+	kernel_thread->fxsave_region = kmalloc_common(512, 16);
 
 	list_add((void*)&thread_list, (void*)&kernel_thread->list_item);
 
@@ -175,6 +177,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
     tmp_thread->entry_point = (uint32_t) entry_point;
+	tmp_thread->fxsave_region = kmalloc_common(512, 16);
 
     /* Create thread's stack */
     stack = kmalloc_common(stack_size, 16);
@@ -242,6 +245,7 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
     tmp_thread->entry_point = (uint32_t) entry_point;
+	tmp_thread->fxsave_region = kmalloc_common(512, 16);
 
     /* Create thread's stack */
     stack = kmalloc_common(stack_size, 16);
@@ -395,6 +399,7 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
 
             qemu_log("REMOVED FROM LIST");
 
+            kfree(next_thread->fxsave_region);
             kfree(next_thread->stack);
             kfree((void*)next_thread);
 
@@ -466,7 +471,12 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
         next_thread = next_thread_soon;
     }
 
+    __asm__ volatile("fxsave (%0) " :: "a"(current_thread->fxsave_region));
+
     task_switch_v2(current_thread, next_thread);
+
+    // next_thread is now current_thread. (I'm not sure)
+    __asm__ volatile("fxrstor (%0)" :: "a"(current_thread->fxsave_region));
 }
 
 void idle_thread(void) {
