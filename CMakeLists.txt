@@ -86,7 +86,7 @@ endif()
 
 if(NOCTURNE_ARCH STREQUAL "x86")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86/link.ld -static -z noexecstack -Wl,--gc-sections")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386 -mabi=sysv -DNOCTURNE_X86")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m32 -march=i386 -DNOCTURNE_X86")
 	
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
@@ -98,7 +98,7 @@ elseif(NOCTURNE_ARCH STREQUAL "armv7")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOCTURNE_ARMV7")
 elseif(NOCTURNE_ARCH STREQUAL "x86_64")
     set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_SOURCE_DIR}/kernel/src/arch/x86_64/link.ld -static -z noexecstack")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -mabi=sysv -m64 -DNOCTURNE_X86_64")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mno-red-zone -m64 -DNOCTURNE_X86_64")
 
 	if(NOCTURNE_USE_SSE2)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
