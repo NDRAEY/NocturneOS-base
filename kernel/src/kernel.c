@@ -12,6 +12,7 @@
 #include <sys/unwind.h>
 
 #include "arch/x86/pic.h"
+#include "arch/x86/registers.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
@@ -206,9 +207,6 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
-
-    //while(1)
-    //    ;
 
     cpu_get_info(&boot_cpu_info);
     qemu_log("Boot CPU: %s (%s)", boot_cpu_info.model_string, boot_cpu_info.brand_string);

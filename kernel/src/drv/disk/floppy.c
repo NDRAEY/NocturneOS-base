@@ -46,7 +46,7 @@ void irq_waitFloppy() {
 	}
 }
 
-static void irqFloppy(SAYORI_UNUSED registers_t regs){
+static void irqFloppy(SAYORI_UNUSED registers_t* regs){
 	interrupted = 0;
 }
 

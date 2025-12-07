@@ -40,11 +40,11 @@ bool ide_poll_bsy(uint16_t io) {
 	}
 }
 
-void ide_primary_irq(SAYORI_UNUSED registers_t regs) {
+void ide_primary_irq(SAYORI_UNUSED registers_t* regs) {
 	inb(ATA_PRIMARY_IO + ATA_REG_STATUS);
 }
 
-void ide_secondary_irq(SAYORI_UNUSED registers_t regs) {
+void ide_secondary_irq(SAYORI_UNUSED registers_t* regs) {
 	inb(ATA_SECONDARY_IO + ATA_REG_STATUS);
 }
 

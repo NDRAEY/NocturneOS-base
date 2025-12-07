@@ -77,7 +77,7 @@ void sleep_ms(size_t milliseconds) {
  *
  * @param regs - Регистры процессора
  */
-void timer_callback(SAYORI_UNUSED registers_t regs){
+void timer_callback(SAYORI_UNUSED registers_t* regs){
     tick++;
 
     #ifdef NOCTURNE_SUPPORT_TIER1

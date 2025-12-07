@@ -29,9 +29,13 @@ extern void (*default_qemu_printf)(const char *text, ...) __attribute__((format(
 #define qemu_err(M, ...) default_qemu_printf("[\033[31;1mERROR\033[33;0m %u] (%s:%s:%d) \033[31;1m" M "\033[0m\n", (uint32_t)(timestamp()), __FILE_NAME__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #endif
 
+// FIXME: Add `get_regs()` function.
 #define assert(condition, format, ...) do { if (condition) {                 \
     qemu_printf("======================================\n");          \
     qemu_printf("[%s:%s:%d]  ASSERT FAILED: " format "\n", __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);   \
     qemu_printf("======================================\n");          \
-    bsod_screen((registers_t){}, "ASSERT_FAIL", "See additional information on COM1 port. (Or Qemu.log if you're using QEMU)", 0xFFFF); \
+    \
+    registers_t regs; \
+    get_regs(&regs);\
+    bsod_screen(&regs, "ASSERT_FAIL", "See additional information on COM1 port. (Or Qemu.log if you're using QEMU)", 0xFFFF); \
 } } while(0)

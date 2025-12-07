@@ -91,7 +91,7 @@ typedef volatile struct
 /* Initialization */
 void init_task_manager(void);
 
-void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs);
+void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs);
 extern void task_switch_v2(thread_t*, thread_t*);
 
 thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
@@ -127,7 +127,11 @@ void scheduler_mode(bool on);
 
 SAYORI_INLINE void yield() {
     #ifdef NOCTURNE_X86
-    task_switch_v2_wrapper((registers_t){});
+    registers_t dummy_regs;
+    
+    get_regs(&dummy_regs);
+
+    task_switch_v2_wrapper(&dummy_regs);
     #endif
 }
 

@@ -38,32 +38,32 @@
 //----------------------------------------------------------------------------*/
 
 /* INT 00h - division by zero */
-void division_by_zero(registers_t regs);
+void division_by_zero(registers_t* regs);
 
 /* INT 06h - fault opcode */
-void fault_opcode(registers_t regs);
+void fault_opcode(registers_t* regs);
 
 /* INT 08h - double error */
-void double_error(registers_t regs);
+void double_error(registers_t* regs);
 
 /* INT 0Ah - invalid TSS */
-void invalid_tss(registers_t regs);
+void invalid_tss(registers_t* regs);
 
 /* INT 0Bh - Segment isn't available */
-void segment_is_not_available(registers_t regs);
+void segment_is_not_available(registers_t* regs);
 
 /* INT 0Ch - Stack error */
-void stack_error(registers_t regs);
+void stack_error(registers_t* regs);
 
 /* INT 0Dh - General protection error */
-void general_protection_error(registers_t regs);
+void general_protection_error(registers_t* regs);
 
 /* INT 0Eh - page fault */
-void page_fault(registers_t regs);
+void page_fault(registers_t* regs);
 
 /* INT 10h - FPU fault */
-void fpu_fault(registers_t regs);
+void fpu_fault(registers_t* regs);
 
 extern uint32_t read_cr2();
 
-void bsod_screen(registers_t regs, char* title, char* msg, uint32_t code);
+void bsod_screen(registers_t* regs, char* title, char* msg, uint32_t code);

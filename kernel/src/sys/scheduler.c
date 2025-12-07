@@ -378,7 +378,7 @@ bool is_multitask(void){
     return multi_task;
 }
 
-void task_switch_v2_wrapper(SAYORI_UNUSED registers_t regs) {
+void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
     if(!multi_task) {
         // qemu_err("Scheduler is disabled!");
         return;

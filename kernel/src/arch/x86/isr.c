@@ -15,18 +15,19 @@
 
 volatile isr_t interrupt_handlers[256];
 
-void isr_handler(const registers_t regs){
+void isr_handler(registers_t regs){
     if (interrupt_handlers[regs.int_num] != 0) {
         isr_t handler = interrupt_handlers[regs.int_num];
-        handler(regs);
+        
+        handler(&regs);
     }
 }
 
-void irq_handler(registers_t regs) {    
+void irq_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
     if (handler != 0){
-        handler(regs);
+        handler(&regs);
     }
 
     if(__using_apic) {

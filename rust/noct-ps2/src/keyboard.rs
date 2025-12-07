@@ -62,7 +62,7 @@ pub extern "C" fn ps2_keyboard_init() {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn keyboard_handler(_regs: registers_t) {
+pub extern "C" fn keyboard_handler(_regs: *mut registers_t) {
     let kbdstatus = unsafe { inb(PS2_STATE_REG) };
 
     if (kbdstatus & 0x01) != 0 {

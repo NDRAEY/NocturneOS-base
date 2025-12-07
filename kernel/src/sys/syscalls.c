@@ -274,28 +274,28 @@ syscall_fn_t* calls_table[] = {
  * 
  * @param regs - Регистр
  */
-void syscall_handler(volatile registers_t regs) {
-	if (regs.eax >= SYSCALL_COUNT) {
-        qemu_err("Invalid system call: %d!", regs.eax);
+void syscall_handler(registers_t* regs) {
+	if (regs->eax >= SYSCALL_COUNT) {
+        qemu_err("Invalid system call: %d!", regs->eax);
 
         __asm__ volatile("movl %0, %%eax" :: "r"(0));
         return;
     }
 
-    syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs.eax];
+    syscall_fn_t* entry_point = (syscall_fn_t*)calls_table[regs->eax];
 
     if(entry_point == NULL) {
-        qemu_err("System call is not defined right now: %d", regs.eax);
+        qemu_err("System call is not defined right now: %d", regs->eax);
 
         __asm__ volatile("movl %0, %%eax" :: "r"(0));
         return;
     }
 
-    regs.eax = entry_point(regs.ebx, regs.ecx, regs.edx, regs.esi, regs.edi);
+    regs->eax = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
 
     // TODO: Just place result into eax, I know how to do it!
 
-    __asm__ volatile("movl %0, %%eax" :: "r"(regs.eax));
+    __asm__ volatile("movl %0, %%eax" :: "r"(regs->eax));
 }
 
 /**

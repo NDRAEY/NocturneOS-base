@@ -56,7 +56,7 @@ size_t hda_afg_node_id = 0;
 
 vector_t* hda_output_nodes;
 
-void hda_interrupt_handler(SAYORI_UNUSED registers_t regs);
+void hda_interrupt_handler(SAYORI_UNUSED registers_t* regs);
 
 void hda_init() {
     // Find devce by its class and subclass numbers.
@@ -294,7 +294,7 @@ void hda_initialize_afg() {
     }
 }
 
-void hda_interrupt_handler(SAYORI_UNUSED registers_t regs) {
+void hda_interrupt_handler(SAYORI_UNUSED registers_t* regs) {
 //    qemu_warn("HDA Interrupt!");
 
     size_t interrupt_status = READ32(0x24);
