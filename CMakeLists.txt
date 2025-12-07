@@ -262,7 +262,8 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/arch/x86/mem/paging.c
 		
 		kernel/src/sys/acpi.c
-		kernel/src/sys/apic.c
+		kernel/src/sys/apic/apic.c
+		kernel/src/sys/apic/ioapic.c
 		kernel/src/drv/cmos.c
 		kernel/src/drv/input/ps2_mouse.c
 		kernel/src/drv/video/intel.c
@@ -308,7 +309,8 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 		kernel/src/io/logging.c
 		kernel/src/mem/pmm.c
 		kernel/src/sys/acpi.c
-		kernel/src/sys/apic.c
+		kernel/src/sys/apic/apic.c
+		kernel/src/sys/apic/ioapic.c
 		kernel/src/drv/cmos.c
 		kernel/src/sys/grub_modules.c
 		kernel/src/mem/vmm.c

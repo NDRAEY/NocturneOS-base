@@ -1,5 +1,5 @@
 #include "sys/acpi.h"
-#include "sys/apic_table.h"
+#include "sys/apic.h"
 #include "sys/fadt.h"
 #include "lib/string.h"
 #include "io/logging.h"

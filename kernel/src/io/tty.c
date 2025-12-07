@@ -44,7 +44,7 @@ void tty_taskInit() {
     qemu_log("Process at: %p", proc);
     threadTTY01 = thread_create(proc,
 			   &animTextCursor,
-			   0x4000,
+			   0x1000,
 			   true);
 }
 
