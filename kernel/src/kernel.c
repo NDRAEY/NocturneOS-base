@@ -186,12 +186,17 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     mtrr_init();
 
     __asm__ volatile("cli");
-
-    apic_init();
-
+    
     init_timer(CLOCK_FREQ);
+    
+    apic_init();
+    
+    __asm__ volatile("sti");
 
-    // STI is called in init_timer
+    // while(1) {
+    //     qemu_log("Crazy!");
+    //     sleep_ms(1000);
+    // }
     
     init_syscalls();
     

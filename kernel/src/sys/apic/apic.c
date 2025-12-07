@@ -9,10 +9,11 @@
 #include "arch/x86/pic.h"
 #include "sys/apic.h"
 #include "sys/ioapic.h"
+#include "sys/lapic.h"
 #include "sys/rsdt.h"
 #include <common.h>
 
-static size_t lapic_addr;
+size_t lapic_addr = 0;
 
 bool volatile __using_apic = false;
 
@@ -79,7 +80,11 @@ void apic_init() {
 
     ioapic_post_initialize();
 
-    qemu_log("INITIALIZED!");
+    qemu_log("IOAPIC INITIALIZED!");
 
     __using_apic = true;
+
+    // lapic_init();
+
+    // qemu_log("LAPIC INITIALIZED!");
 }

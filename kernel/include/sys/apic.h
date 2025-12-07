@@ -2,6 +2,28 @@
 
 #include <common.h>
 
+#define APIC_REG_APICID	        0x020
+#define APIC_REG_APICVER	    0x030
+#define APIC_REG_TASKPRIOR	    0x080
+#define APIC_REG_EOI	        0x0B0
+#define APIC_REG_LDR            0x0D0
+#define APIC_REG_DFR	        0x0E0
+#define APIC_REG_SPURIOUS       0x0F0
+
+#define APIC_REG_ESR            0x280
+#define APIC_REG_ICRL           0x300
+#define APIC_REG_ICRH           0x310
+#define APIC_REG_LVT_TMR        0x320
+#define APIC_REG_LVT_PERF       0x340
+#define APIC_REG_LVT_LINT0      0x350
+#define APIC_REG_LVT_LINT1      0x360
+#define APIC_REG_LVT_ERR        0x370
+#define APIC_REG_TMRINITCNT     0x380
+#define APIC_REG_TMRCURRCNT     0x390
+#define APIC_REG_TMRDIV         0x3E0
+#define APIC_REG_LAST           0x38F
+
+
 extern volatile bool __using_apic;
 
 enum APIC_Type {
@@ -92,6 +114,7 @@ struct APIC_Entry {
 
 void apic_init();
 uint32_t apic_write(uint32_t reg, uint32_t value);
+uint32_t apic_read(uint32_t reg);
 
 SAYORI_INLINE bool apic_is_enabled() {
     return __using_apic;

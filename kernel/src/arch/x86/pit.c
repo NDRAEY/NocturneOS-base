@@ -93,8 +93,6 @@ void timer_callback(SAYORI_UNUSED registers_t* regs){
  * @param - Частота
  */
 void init_timer(size_t f) {
-    __asm__ volatile("cli" ::: "memory");
-
     frequency = f;
 
     size_t divisor = BASE_FREQ / f;
@@ -111,6 +109,4 @@ void init_timer(size_t f) {
     outb(0x40, high);
 
 	register_interrupt_handler(IRQ0, timer_callback);
-
-    __asm__ volatile("sti" ::: "memory");
 }

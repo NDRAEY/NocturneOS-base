@@ -264,6 +264,8 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 		kernel/src/sys/acpi.c
 		kernel/src/sys/apic/apic.c
 		kernel/src/sys/apic/ioapic.c
+		kernel/src/sys/apic/lapic_timer.c
+		
 		kernel/src/drv/cmos.c
 		kernel/src/drv/input/ps2_mouse.c
 		kernel/src/drv/video/intel.c

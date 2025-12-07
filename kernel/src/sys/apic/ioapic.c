@@ -2,6 +2,7 @@
 #include <sys/apic.h>
 #include <sys/ioapic.h>
 #include <sys/acpi.h>
+#include <io/logging.h>
 #include <arch/x86/mem/paging_common.h>
 
 static size_t ioapic_addr;
