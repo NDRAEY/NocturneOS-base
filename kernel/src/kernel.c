@@ -13,6 +13,7 @@
 
 #include "arch/x86/pic.h"
 #include "arch/x86/registers.h"
+#include "drv/cmos.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
@@ -194,7 +195,10 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     __asm__ volatile("sti");
 
     // while(1) {
-    //     qemu_log("Crazy!");
+    //     sayori_time_t time = get_time();
+
+    //     qemu_log("Crazy! (%02d:%02d:%02d)", time.hours, time.minutes, time.seconds);
+
     //     sleep_ms(1000);
     // }
     

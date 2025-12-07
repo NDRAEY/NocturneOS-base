@@ -23,8 +23,8 @@
 #define APIC_REG_TMRDIV         0x3E0
 #define APIC_REG_LAST           0x38F
 
-
 extern volatile bool __using_apic;
+extern volatile size_t lapic_addr;
 
 enum APIC_Type {
     APIC_PLAPIC = 0,
@@ -113,9 +113,10 @@ struct APIC_Entry {
 } __attribute__((packed));
 
 void apic_init();
-uint32_t apic_write(uint32_t reg, uint32_t value);
-uint32_t apic_read(uint32_t reg);
 
 SAYORI_INLINE bool apic_is_enabled() {
     return __using_apic;
 }
+
+uint32_t apic_write(uint32_t reg, uint32_t value);
+uint32_t apic_read(uint32_t reg);

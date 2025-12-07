@@ -5,28 +5,41 @@
 #include <io/logging.h>
 #include "sys/apic.h"
 
-extern size_t lapic_addr;
+extern size_t timer_frequency;
+
+// Measure LAPIC Timer tick count for given `milliseconds`.
+size_t recalibrate_lapic_timer(size_t divisor, size_t milliseconds) {
+    apic_write(APIC_REG_TMRDIV, divisor);
+    apic_write(APIC_REG_TMRINITCNT, 0xFFFFFFFF);
+
+    __asm__ volatile("sti");
+
+    // USING PIT.
+    sleep_ms(milliseconds);
+
+    __asm__ volatile("cli");
+
+    // Stop timer (Set masking bit).
+    apic_write(APIC_REG_LVT_TMR, 0x1000);
+
+    return 0xFFFFFFFF - apic_read(APIC_REG_TMRCURRCNT);
+}
+
+const size_t LAPIC_TIMER_DIVISOR = 0x03;
 
 void lapic_init() {
     // Did by code example from https://wiki.osdev.org/APIC_timer
 
     qemu_log("Initializing LAPIC timer");
 
-    apic_write(APIC_REG_TMRDIV, 0x03);
-    apic_write(APIC_REG_TMRINITCNT, 0xFFFFFFFF);
+    // Calculate average tick count (6 times).
+    uint32_t ticks_in_1_ms = recalibrate_lapic_timer(LAPIC_TIMER_DIVISOR, 5) / 5;
 
-    __asm__ volatile("sti");
+    for(register size_t i = 0; i < 5; i++) {
+        ticks_in_1_ms += recalibrate_lapic_timer(LAPIC_TIMER_DIVISOR, 5) / 5;
 
-    // USING PIT.
-    sleep_ms(20);
-
-    __asm__ volatile("cli");
-
-    apic_write(APIC_REG_LVT_TMR, 0x1000);
-
-    uint32_t ticks_in_20_ms = 0xFFFFFFFF - apic_read(APIC_REG_TMRCURRCNT);
-    uint32_t ticks_in_1_ms = ticks_in_20_ms / 20;
-    uint32_t ticks_in_1_ns = ticks_in_1_ms / 1000;
+        ticks_in_1_ms /= 2;
+    }
 
     qemu_log("LAPIC ticks %d times in 1 PIT millisecond", ticks_in_1_ms);
 
@@ -38,6 +51,6 @@ void lapic_init() {
 
     // 32 is IRQ0 - PIT timer. 17th bit is periodic mode flag for timer.
     apic_write(APIC_REG_LVT_TMR, 32 | (1 << 17));
-    apic_write(APIC_REG_TMRDIV, 0x03);
+    apic_write(APIC_REG_TMRDIV, LAPIC_TIMER_DIVISOR);
     apic_write(APIC_REG_TMRINITCNT, ticks_in_1_ms);
 }

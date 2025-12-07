@@ -9,7 +9,6 @@
 #define timestamp() ((getTicks() * 1000) / getFrequency())
 
 size_t getTicks();
-double getUptime();
 size_t getFrequency();
 void sleep_ticks(size_t delay);
 void sleep_ms(size_t milliseconds);

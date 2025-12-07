@@ -16,24 +16,16 @@
 extern volatile bool scheduler_working;
 #endif
 
-volatile size_t tick = 0;                /* Количество тиков */
-volatile size_t frequency = CLOCK_FREQ;  /* Частота */
+volatile size_t timer_tick = 0;                /* Количество тиков */
+volatile size_t timer_frequency = CLOCK_FREQ;  /* Частота */
 
 /**
  * @brief Получить количество тиков
  *
  * @return size_t - Количество тиков с момента старта
  */
-size_t getTicks(){
-    return (size_t)tick;
-}
-
-double getUptime() {
-    if(getFrequency() == 0) {
-        return 0.0;
-    }else{
-        return (double)tick / (double)frequency;
-    }
+size_t getTicks() {
+    return (size_t)timer_tick;
 }
 
 /**
@@ -42,7 +34,7 @@ double getUptime() {
  * @return uint32_t - Частота таймера
  */
 size_t getFrequency() {
-    return frequency;
+    return timer_frequency;
 }
 
 /**
@@ -50,8 +42,9 @@ size_t getFrequency() {
  *
  * @param delay - Тики
  */
-void sleep_ticks(size_t delay){
+void sleep_ticks(size_t delay) {
     size_t current_ticks = getTicks();
+
     while (1) {
         if (current_ticks + delay < getTicks()){
             break;
@@ -68,7 +61,7 @@ void sleep_ticks(size_t delay){
  * @param milliseconds - Миллисекунды
  */
 void sleep_ms(size_t milliseconds) {
-    uint32_t needticks = milliseconds * frequency;
+    uint32_t needticks = milliseconds * timer_frequency;
     sleep_ticks(needticks / 1000);
 }
 
@@ -78,7 +71,11 @@ void sleep_ms(size_t milliseconds) {
  * @param regs - Регистры процессора
  */
 void timer_callback(SAYORI_UNUSED registers_t* regs){
-    tick++;
+    timer_tick++;
+
+    // if(timer_tick % 256 == 0) {
+    //     qemu_log("Tick!");
+    // }
 
     #ifdef NOCTURNE_SUPPORT_TIER1
     if (is_multitask() && scheduler_working) {
@@ -93,7 +90,7 @@ void timer_callback(SAYORI_UNUSED registers_t* regs){
  * @param - Частота
  */
 void init_timer(size_t f) {
-    frequency = f;
+    timer_frequency = f;
 
     size_t divisor = BASE_FREQ / f;
 

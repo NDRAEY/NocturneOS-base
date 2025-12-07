@@ -13,7 +13,7 @@
 #include "sys/rsdt.h"
 #include <common.h>
 
-size_t lapic_addr = 0;
+volatile size_t lapic_addr = 0;
 
 bool volatile __using_apic = false;
 
@@ -24,14 +24,6 @@ bool volatile __using_apic = false;
 
 //     qemu_log("APIC BASE: %x", eax & 0xfffff000);
 // }
-
-uint32_t apic_write(uint32_t reg, uint32_t value) {
-    return *(uint32_t volatile*)(lapic_addr + reg) = value;
-}
-
-uint32_t apic_read(uint32_t reg) {
-    return *((uint32_t volatile*)(lapic_addr + reg));
-}
 
 void apic_init() {
     if(!apic_find_ioapic()) {
@@ -87,4 +79,12 @@ void apic_init() {
     // lapic_init();
 
     // qemu_log("LAPIC INITIALIZED!");
+}
+
+uint32_t apic_write(uint32_t reg, uint32_t value) {
+    return *(uint32_t volatile*)(lapic_addr + reg) = value;
+}
+
+uint32_t apic_read(uint32_t reg) {
+    return *((uint32_t volatile*)(lapic_addr + reg));
 }
