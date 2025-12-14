@@ -206,11 +206,12 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     esp[-2] = (uint32_t) entry_point;
     esp[-3] = eflags;
 
-    // Those are EBX, ESI, EDI and EBP
+    // Those are EAX, EBX, ESI, EDI and EBP
     esp[-4] = 0;
     esp[-5] = 0;
     esp[-6] = 0;
     esp[-7] = 0;
+    // esp[-8] = 0;
 
     tmp_thread->state = PAUSED;
 
@@ -278,12 +279,12 @@ thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size
     esp[-3] = (uint32_t) entry_point;
     esp[-4] = eflags;
 
-    // Those are EBX, ESI, EDI and EBP
+    // Those are EAX, EBX, ESI, EDI and EBP
     esp[-5] = 0;
     esp[-6] = 0;
     esp[-7] = 0;
     esp[-8] = 0;
-
+    // esp[-9] = 0;
 
     return tmp_thread;
 }
