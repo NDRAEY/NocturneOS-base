@@ -26,6 +26,10 @@ void isr_handler(registers_t regs){
 void irq_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
+    // if (handler != 0){
+    //     handler(&regs);
+    // }
+
     if(__using_apic) {
         apic_write(0xB0, 0x00);
     } else {

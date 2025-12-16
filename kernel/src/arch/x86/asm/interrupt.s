@@ -87,20 +87,20 @@ IRQ 15, 47
 isr80:
       push  $0
       push  $0x80
+
       pusha
       push  %ds
+      
       mov   $0x10, %ax
       mov   %ax, %ds
+
       call  isr_handler
+      
       pop   %ds
-      pop   %edi
-      pop   %esi
-      pop   %ebp
-      add   $4, %esp
-      pop   %ebx
-      pop   %edx
-      pop   %ecx
-      add   $12, %esp
+      popa
+      
+      add   $8, %esp
+      
       iret
 
 /* Здесь две одинаковые функции (?) */
@@ -151,10 +151,15 @@ isr_common_stub_noerr:
 irq_common_stub:
     pusha
     push  %ds
+
     mov   $0x10, %ax
     mov   %ax, %ds
+    
     call  irq_handler
+    
     pop   %ds
     popa
+    
     add   $8, %esp
+    
     iret

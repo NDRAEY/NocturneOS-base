@@ -31,10 +31,6 @@ _Noreturn void bsod_screen(registers_t* regs, char* title, char* msg, uint32_t c
     qemu_printf("| \n");
     qemu_printf("======================================================\n");
 
-    if(is_multitask()) {
-        qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
-    }
-
     unwind_stack(10);
 
     #ifdef NOCTURNE_SUPPORT_TIER1

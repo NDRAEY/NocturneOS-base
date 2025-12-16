@@ -49,7 +49,7 @@ void sleep_ticks(size_t delay) {
         if (current_ticks + delay < getTicks()){
             break;
         } else {
-        	__asm__ volatile("nop");
+        	__asm__ volatile("hlt");
             yield();
         }
     }
@@ -62,6 +62,7 @@ void sleep_ticks(size_t delay) {
  */
 void sleep_ms(size_t milliseconds) {
     uint32_t needticks = milliseconds * timer_frequency;
+
     sleep_ticks(needticks / 1000);
 }
 

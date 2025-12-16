@@ -14,6 +14,8 @@
 #include	"mem/pmm.h"
 #include	"elf/elf.h"
 
+#include "sys/syscalls.h"
+
 #define DEFAULT_STACK_SIZE (64 << 10)
 
 typedef enum {
@@ -127,11 +129,13 @@ void scheduler_mode(bool on);
 
 SAYORI_INLINE void yield() {
     #ifdef NOCTURNE_X86
-    registers_t dummy_regs;
+    // __asm__ volatile("int $0x80" :: "a"(SYSCALL_YIELD), "b"(0), "c"(0), "d"(0) : "memory");
     
-    get_regs(&dummy_regs);
+    registers_t regs;
 
-    task_switch_v2_wrapper(&dummy_regs);
+    get_regs(&regs);
+    
+    task_switch_v2_wrapper(&regs);
     #endif
 }
 

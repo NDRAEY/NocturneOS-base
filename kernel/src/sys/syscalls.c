@@ -8,6 +8,7 @@
  */
 
 #include	"sys/syscalls.h"
+#include "arch/x86/registers.h"
 #include	"io/ports.h"
 #include    "io/screen.h"
 #include	"io/tty.h"
@@ -218,6 +219,40 @@ size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
     return 0;
 }
 
+size_t syscall_yield() {
+    registers_t regs;
+
+    get_regs(&regs);
+    
+    task_switch_v2_wrapper(&regs);
+
+    return 0;
+}
+
+size_t syscall_fd_allocate(const char *filename, size_t mode, int32_t *out) {
+    return file_descriptor_allocate(filename, mode, out);
+}
+
+size_t syscall_fd_read(int descriptor_number, size_t count, void* buffer) {
+    return file_descriptor_read(descriptor_number, count, buffer);
+}
+
+size_t syscall_fd_write(int descriptor_number, size_t count, const void* buffer) {
+    return file_descriptor_write(descriptor_number, count, buffer);
+}
+
+size_t syscall_fd_close(int descriptor_number) {
+    return file_descriptor_close(descriptor_number);
+}
+
+size_t syscall_fd_seek(int descriptor_number, ssize_t value, size_t whence) {
+    return file_descriptor_seek(descriptor_number, value, whence);
+}
+
+size_t syscall_fd_tell(int descriptor_number, int* out) {
+    return file_descriptor_tell(descriptor_number, out);
+}
+
 syscall_fn_t* calls_table[] = {
     // Environment
 	[0] = (syscall_fn_t *)syscall_env,
@@ -240,12 +275,12 @@ syscall_fn_t* calls_table[] = {
     [11] = (syscall_fn_t *)syscall_mouse,
 
     // Files
-    [12] = (syscall_fn_t *)file_descriptor_allocate,
-    [13] = (syscall_fn_t *)file_descriptor_read,
-	[14] = (syscall_fn_t *)file_descriptor_write,
-    [15] = (syscall_fn_t *)file_descriptor_seek,
-    [16] = (syscall_fn_t *)file_descriptor_tell,
-    [17] = (syscall_fn_t *)file_descriptor_close,
+    [12] = (syscall_fn_t *)syscall_fd_allocate,
+    [13] = (syscall_fn_t *)syscall_fd_read,
+	[14] = (syscall_fn_t *)syscall_fd_write,
+    [15] = (syscall_fn_t *)syscall_fd_seek,
+    [16] = (syscall_fn_t *)syscall_fd_tell,
+    [17] = (syscall_fn_t *)syscall_fd_close,
     
     // Date & Time
     [18] = (syscall_fn_t *)syscall_datetime,
@@ -253,7 +288,7 @@ syscall_fn_t* calls_table[] = {
 
     // Control flow
     [20] = (syscall_fn_t *)syscall_exit,
-    [21] = (syscall_fn_t *)yield,
+    [21] = (syscall_fn_t *)syscall_yield,
     
     // Misc.
     [22] = (syscall_fn_t *)syscall_screen_update,
@@ -291,11 +326,17 @@ void syscall_handler(registers_t* regs) {
         return;
     }
 
-    regs->eax = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
+    // FIXME: A dirty hack to provide regs to yield() system call.
+    // if(regs->eax == SYSCALL_YIELD) {
+    //     regs->ebx = (size_t)regs;
+    // }
 
-    // TODO: Just place result into eax, I know how to do it!
+    size_t result = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
 
-    __asm__ volatile("movl %0, %%eax" :: "r"(regs->eax));
+    // Place result into EAX.
+    regs->eax = result;
+
+    // __asm__ volatile("movl %0, %%eax" :: "r"(result));
 }
 
 /**

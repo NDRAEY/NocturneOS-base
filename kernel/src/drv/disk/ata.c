@@ -177,9 +177,11 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 			drives[drive_num].is_packet = true;
 		
 			outb(io + ATA_REG_COMMAND, ATA_CMD_IDENTIFY_PACKET);
-
+			
             // FIXME: Replace with real checks?
             sleep_ms(15);
+
+			qemu_log("Recv");
 
             for(int i = 0; i < 256; i++) {
                 ide_buf[i] = inw(io + ATA_REG_DATA);
@@ -187,7 +189,11 @@ uint8_t ide_identify(uint8_t bus, uint8_t drive) {
 
 			// Do my best for processing packet device.
 
+			// qemu_log("Converting...");
+
 			ide_name_convert(ide_buf, &drives[drive_num].fwversion, &drives[drive_num].serial_number, &drives[drive_num].model_name);
+
+			// qemu_log("Convert done...");
 
             drives[drive_num].capacity = atapi_read_size(bus, drive);
 			drives[drive_num].block_size = atapi_read_block_size(bus, drive);
