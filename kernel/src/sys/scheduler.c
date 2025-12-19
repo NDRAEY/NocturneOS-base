@@ -157,9 +157,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
         return NULL;
     }
 
-    void*	stack = nullptr;
-    uint32_t	eflags;
-
     qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
     qemu_log("Entry point: %p", entry_point);
@@ -177,11 +174,10 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 	tmp_thread->fxsave_region = kmalloc_common(512, 16);
 
     /* Create thread's stack */
-    stack = kmalloc_common(stack_size, 16);
+    size_t* stack = kmalloc_common(stack_size, 16);
     memset(stack, 0, stack_size);
 
     tmp_thread->stack = stack;
-    tmp_thread->esp = (uint32_t) stack + stack_size - (7 * 4);
     tmp_thread->stack_top = (uint32_t) stack + stack_size;
 
     /* Thread's count increment */
@@ -191,11 +187,6 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 
     /* Create pointer to stack frame */
     size_t* esp = (size_t*) ((char*)stack + stack_size);
-
-    // Get EFL
-    __asm__ volatile ("pushf; pop %0":"=r"(eflags));
-
-    eflags |= (1 << 9);
 
     if(args != NULL) {
         for(int i = 0; i < arg_count; i++) {
@@ -209,14 +200,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     // On normal systems (like in Linux) exit is called manually, but if something goes wrong, give this task a peaceful death.
     esp[-1] = (uint32_t) thread_exit_entrypoint;
     esp[-2] = (uint32_t) entry_point;
-    esp[-3] = eflags;
+    esp[-3] = 0x202;   // Our eflags
 
-    // Those are EAX, EBX, ESI, EDI and EBP
-    esp[-4] = 0;
-    esp[-5] = 0;
-    esp[-6] = 0;
-    esp[-7] = 0;
-    // esp[-8] = 0;
+    // 3 are our first ESP items (eflags, eip and exit_entrypoint)
+    // 4 are EBX, ESI, EDI and EBP.
+    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 4) * 4);
 
     tmp_thread->state = PAUSED;
 
