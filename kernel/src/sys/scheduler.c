@@ -379,6 +379,83 @@ bool is_multitask(void){
     return multi_task;
 }
 
+static void remove_thread(thread_t* thread) {
+    process_t* process = thread->process;
+    qemu_log("REMOVING DEAD THREAD: #%u", thread->id);
+
+    thread_remove_prepared((thread_t*)thread);
+
+    qemu_log("REMOVED FROM LIST");
+
+    kfree(thread->fxsave_region);
+    kfree(thread->stack);
+    kfree((void*)thread);
+
+    qemu_log("FREED MEMORY");
+
+    process->threads_count--;
+
+    bool is_kernels_pid = current_proc->pid == 0;
+    // NOTE: We should be in kernel process (PID 0) to free page tables and process itself.
+    // TODO: Switch to kernel's PD here, because process info stored there
+    if(process->threads_count == 0 && is_kernels_pid) {
+        qemu_warn("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
+
+        if(process->program) {
+            for (int32_t i = 0; i < process->program->elf_header.e_phnum; i++) {
+                Elf32_Phdr *phdr = process->program->p_header + i;
+
+                if(phdr->p_type != PT_LOAD)
+                    continue;
+
+                size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1U);
+
+                for(size_t x = 0; x < pagecount; x++) {
+                    size_t vaddr = phdr->p_vaddr + (x * PAGE_SIZE);
+                    size_t paddr = virt2phys_ext((void*)process->page_dir_virt, process->page_tables_virts, vaddr);
+
+                    qemu_log("Page dir: %x; Free: %x -> %x", process->page_dir_virt, vaddr, paddr);
+
+                    phys_free_single_page(paddr);
+                }
+            }
+
+            unload_elf(process->program);
+
+            qemu_log("Program unloaded.");
+        }
+
+        for(size_t pt = 0; pt < 1023; pt++) {
+            size_t page_table = process->page_tables_virts[pt];
+            if(page_table) {
+                qemu_note("[%-4d] <%08x - %08x> USED PAGE TABLE AT: %x", 
+                    pt,
+                    (pt * PAGE_SIZE) << 10,
+                    ((pt + 1) * PAGE_SIZE) << 10,
+                    page_table
+                );
+                kfree((void *) page_table);
+            }
+        }
+
+        qemu_log("FREED PAGE TABLES");
+
+        kfree((void *) process->page_dir_virt);
+
+        qemu_log("FREED PAGE DIR");
+        
+        kfree(process->name);
+        kfree(process->cwd);
+
+        process_remove_prepared((process_t*)process);
+
+        qemu_log("REMOVED PROCESS FROM LIST");
+        kfree((void*)process);
+
+        qemu_log("FREED PROCESS LIST ITEM");
+    }
+}
+
 void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
     if(!multi_task) {
         // qemu_err("Scheduler is disabled!");
@@ -393,80 +470,7 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
         if(next_thread->state == DEAD) {
         	qemu_log("QUICK NOTICE: WE ARE IN PROCESS NR. #%u", current_proc->pid);
         	
-            process_t* process = next_thread->process;
-            qemu_log("REMOVING DEAD THREAD: #%u", next_thread->id);
-
-            thread_remove_prepared((thread_t*)next_thread);
-
-            qemu_log("REMOVED FROM LIST");
-
-            kfree(next_thread->fxsave_region);
-            kfree(next_thread->stack);
-            kfree((void*)next_thread);
-
-            qemu_log("FREED MEMORY");
-
-            process->threads_count--;
-
-			bool is_kernels_pid = current_proc->pid == 0;
-            // NOTE: We should be in kernel process (PID 0) to free page tables and process itself.
-            // TODO: Switch to kernel's PD here, because process info stored there
-            if(process->threads_count == 0 && is_kernels_pid) {
-                qemu_warn("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
-
-                if(process->program) {
-                    for (int32_t i = 0; i < process->program->elf_header.e_phnum; i++) {
-                        Elf32_Phdr *phdr = process->program->p_header + i;
-
-                        if(phdr->p_type != PT_LOAD)
-                            continue;
-
-                        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1U);
-
-                        for(size_t x = 0; x < pagecount; x++) {
-                            size_t vaddr = phdr->p_vaddr + (x * PAGE_SIZE);
-                            size_t paddr = virt2phys_ext((void*)process->page_dir_virt, process->page_tables_virts, vaddr);
-
-                            qemu_log("Page dir: %x; Free: %x -> %x", process->page_dir_virt, vaddr, paddr);
-
-                            phys_free_single_page(paddr);
-                        }
-                    }
-
-                    unload_elf(process->program);
-
-                    qemu_log("Program unloaded.");
-                }
-
-                for(size_t pt = 0; pt < 1023; pt++) {
-                    size_t page_table = process->page_tables_virts[pt];
-                    if(page_table) {
-                        qemu_note("[%-4d] <%08x - %08x> USED PAGE TABLE AT: %x", 
-                            pt,
-                            (pt * PAGE_SIZE) << 10,
-                            ((pt + 1) * PAGE_SIZE) << 10,
-                            page_table
-                        );
-                        kfree((void *) page_table);
-                    }
-                }
-
-                qemu_log("FREED PAGE TABLES");
-
-                kfree((void *) process->page_dir_virt);
-
-                qemu_log("FREED PAGE DIR");
-                
-                kfree(process->name);
-                kfree(process->cwd);
-
-                process_remove_prepared((process_t*)process);
-
-                qemu_log("REMOVED PROCESS FROM LIST");
-                kfree((void*)process);
-
-                qemu_log("FREED PROCESS LIST ITEM");
-            }
+            remove_thread(next_thread);
         }
 
         next_thread = next_thread_soon;
