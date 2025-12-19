@@ -45,7 +45,9 @@ void tty_taskInit() {
     threadTTY01 = thread_create(proc,
 			   &animTextCursor,
 			   0x1000,
-			   true);
+			   THREAD_KERNEL,
+               NULL,
+            0);
 }
 
 void set_cursor_enabled(bool en) {

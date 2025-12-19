@@ -18,6 +18,8 @@
 
 #define DEFAULT_STACK_SIZE (64 << 10)
 
+#define THREAD_KERNEL (1 << 0)
+
 typedef enum {
     CREATED = 0,
     RUNNING,
@@ -96,17 +98,12 @@ void init_task_manager(void);
 void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs);
 extern void task_switch_v2(thread_t*, thread_t*);
 
-thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
-                                   bool kernel);
-
+thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t* args, size_t arg_count);
+  
 /* Create new thread */
-thread_t* thread_create(process_t* proc,
-	               	    void* entry_point,
-	               	    size_t stack_size,
-	               	    bool kernel);
+thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t* args, size_t arg_count);
                         
-thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size,
-bool kernel, size_t arg1);
+thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t arg1);
 
 /* Get current process */
 volatile process_t* get_current_proc(void);

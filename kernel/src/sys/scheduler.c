@@ -108,7 +108,7 @@ size_t create_process(void* entry_point, char* name, bool is_kernel) {
     
     process_add_prepared(proc);
 
-    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel);
+    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, is_kernel ? THREAD_KERNEL : 0, NULL, 0);
 
     qemu_log("PID: %d, DIR: %x; Threads: %d", proc->pid, proc->page_dir, proc->threads_count);
 
@@ -151,10 +151,7 @@ __attribute__((noreturn)) void thread_exit_entrypoint() {
  *
  * @return thread_t* - Поток
  */
-thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size,
-                                   bool kernel) {
-    (void)kernel;
-
+thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t* args, size_t arg_count) {
     if(!multi_task) {
         qemu_err("Scheduler is disabled!");
         return NULL;
@@ -166,7 +163,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
     qemu_log("Entry point: %p", entry_point);
-    qemu_log("Kernel: %d", kernel);
+    qemu_log("Kernel: %d", flags & THREAD_KERNEL);
 
     /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
@@ -193,12 +190,20 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     /* Fill stack */
 
     /* Create pointer to stack frame */
-    uint32_t* esp = (uint32_t*) ((char*)stack + stack_size);
+    size_t* esp = (size_t*) ((char*)stack + stack_size);
 
     // Get EFL
     __asm__ volatile ("pushf; pop %0":"=r"(eflags));
 
     eflags |= (1 << 9);
+
+    if(args != NULL) {
+        for(int i = 0; i < arg_count; i++) {
+            esp[-i] = (size_t)args[i];
+        }
+
+        esp -= arg_count;
+    }
 
     // Fill the stack.
     // On normal systems (like in Linux) exit is called manually, but if something goes wrong, give this task a peaceful death.
@@ -221,76 +226,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     return tmp_thread;
 }
 
-thread_t* _thread_create_unwrapped_arg1(process_t* proc, void* entry_point, size_t stack_size, bool kernel, size_t arg1) {
-    (void)kernel;
-
-    if(!multi_task) {
-        qemu_err("Scheduler is disabled!");
-        return NULL;
-    }
-
-    void*	stack = nullptr;
-    uint32_t	eflags;
-
-    qemu_log("Process at: %p", proc);
-    qemu_log("Stack size: %d", stack_size);
-    qemu_log("Entry point: %p", entry_point);
-    qemu_log("Kernel: %d", kernel);
-
-    /* Create new thread handler */
-    thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
-
-    /* Initialization of thread  */
-    tmp_thread->id = next_thread_id++;
-    tmp_thread->list_item.list = nullptr;
-    tmp_thread->process = proc;
-    tmp_thread->stack_size = stack_size;
-    tmp_thread->entry_point = (uint32_t) entry_point;
-	tmp_thread->fxsave_region = kmalloc_common(512, 16);
-
-    /* Create thread's stack */
-    stack = kmalloc_common(stack_size, 16);
-    memset(stack, 0, stack_size);
-
-    tmp_thread->stack = stack;
-    tmp_thread->esp = (uint32_t) stack + stack_size - (8 * 4);
-    tmp_thread->stack_top = (uint32_t) stack + stack_size;
-
-    /* Add thread to ring queue */
-    thread_add_prepared(tmp_thread);
-
-    /* Thread's count increment */
-    proc->threads_count++;
-
-    /* Fill stack */
-
-    /* Create pointer to stack frame */
-    uint32_t* esp = (uint32_t*) ((char*)stack + stack_size);
-
-    // Get EFL
-    __asm__ volatile ("pushf; pop %0" :"=r"(eflags)::"memory");
-
-    eflags |= (1 << 9);
-
-    // Fill the stack.
-    // On normal systems (like in Linux) exit is called manually, but if something goes wrong, give this task a peaceful death.
-    esp[-1] = arg1;
-    esp[-2] = (uint32_t) thread_exit_entrypoint;
-    esp[-3] = (uint32_t) entry_point;
-    esp[-4] = eflags;
-
-    // Those are EAX, EBX, ESI, EDI and EBP
-    esp[-5] = 0;
-    esp[-6] = 0;
-    esp[-7] = 0;
-    esp[-8] = 0;
-    // esp[-9] = 0;
-
-    return tmp_thread;
-}
-
-thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
-    bool kernel) {
+thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t* args, size_t arg_count) {
     if(!multi_task) {
         qemu_err("Scheduler is disabled!");
         return NULL;
@@ -300,7 +236,7 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
     __asm__ volatile ("cli");
 
     /* Create new thread handler */
-    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, kernel);
+    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, flags, args, arg_count);
 
     tmp_thread->state = CREATED;
 
@@ -312,8 +248,7 @@ thread_t* thread_create(process_t* proc, void* entry_point, size_t stack_size,
     return tmp_thread;
 }
 
-thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size,
-    bool kernel, size_t arg1) {
+thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_size, size_t flags, size_t arg1) {
     if(!multi_task) {
         qemu_err("Scheduler is disabled!");
         return NULL;
@@ -321,7 +256,7 @@ thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_si
 
     __asm__ volatile ("cli");
 
-    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped_arg1(proc, entry_point, stack_size, kernel, arg1);
+    thread_t* tmp_thread = (thread_t*) _thread_create_unwrapped(proc, entry_point, stack_size, flags, &arg1, 1);
 
     tmp_thread->state = CREATED;
 
@@ -370,7 +305,7 @@ bool process_exists(size_t pid) {
 
 void process_wait(size_t pid) {
     while(process_exists(pid)) {
-        __asm__ volatile("nop" ::: "memory");
+        __asm__ volatile("hlt" ::: "memory");
         yield();
     }
 }

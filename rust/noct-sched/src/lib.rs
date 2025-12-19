@@ -69,7 +69,7 @@ pub fn spawn(f: impl FnOnce() + Send + 'static) -> *mut thread_t {
             proc,
             trampoline as usize as *mut c_void,
             128 << 10,
-            true,
+            THREAD_KERNEL,
             raw as _,
         )
     }

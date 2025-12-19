@@ -20,8 +20,8 @@ void netstack_init() {
     system_network_incoming_queue = vector_new();
     system_network_outgoing_queue = vector_new();
 
-	thread_create(get_current_proc(), netstack_processor, 0x10000, true);
-	thread_create(get_current_proc(), netstack_processor_out, 0x10000, true);
+	thread_create(get_current_proc(), netstack_processor, 0x10000, THREAD_KERNEL, NULL, 0);
+	thread_create(get_current_proc(), netstack_processor_out, 0x10000, THREAD_KERNEL, NULL, 0);
 }
 
 void netstack_push(netcard_entry_t* card, void* packet_data, size_t length) {

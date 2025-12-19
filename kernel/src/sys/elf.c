@@ -114,7 +114,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     int(*entry_point)(int argc, char* eargv[]) = (int(*)(int, char**))elf_file->elf_header.e_entry;
     qemu_log("ELF entry point: %x", elf_file->elf_header.e_entry);
 
-    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, true);
+    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, 0, (size_t*)eargv, argc);
 
     thread_add_prepared(thread);
 
