@@ -16,9 +16,9 @@
 volatile isr_t interrupt_handlers[256];
 
 void isr_handler(registers_t regs){
-    if (interrupt_handlers[regs.int_num] != 0) {
-        isr_t handler = interrupt_handlers[regs.int_num];
-        
+    isr_t handler = interrupt_handlers[regs.int_num];
+
+    if(handler != NULL) {
         handler(&regs);
     }
 }
@@ -30,16 +30,7 @@ void irq_handler(registers_t regs) {
     //     handler(&regs);
     // }
 
-    if(__using_apic) {
-        apic_write(0xB0, 0x00);
-    } else {
-        if (regs.int_num >= 40){
-            outb(0xA0, 0x20);
-        }
-
-        outb(0x20, 0x20);
-    }
-
+    irq_eoi(regs.int_num);
     // FIXME: If I move this `if` block up to the `isr_t handler = ...` line, system will hang when you type too fast.
     // I don't know how this supposed to work, but I think the right option IS to place it next to `isr_t handler = ...`
     // Because we get da handler, execute it, and only then we signal our (A)PIC that we're done with it.
@@ -47,6 +38,18 @@ void irq_handler(registers_t regs) {
     // Fun fact: Those annoying random screen flickers are coming from here.
     if (handler != 0){
         handler(&regs);
+    }
+}
+
+void irq_eoi(size_t int_nr) {
+    if(__using_apic) {
+        apic_write(0xB0, 0x00);
+    } else {
+        if (int_nr >= 40){
+            outb(0xA0, 0x20);
+        }
+
+        outb(0x20, 0x20);
     }
 }
 
