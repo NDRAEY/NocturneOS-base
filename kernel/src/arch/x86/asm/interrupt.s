@@ -4,6 +4,7 @@
 /* Макрос для обработчика без возврата кода ошибки */
 .macro ISR_NOERRCODE isr_num
     .global	isr\isr_num
+    .align 4
 isr\isr_num:
     push	$0
     push	$\isr_num
@@ -13,6 +14,7 @@ isr\isr_num:
 /* Макрос для обработчика прерывания с возвратом кода ошибки */
 .macro ISR_ERRCODE isr_num
     .global	isr\isr_num
+    .align 4
 isr\isr_num:
     push	$\isr_num
     jmp	isr_common_stub_err
@@ -21,6 +23,7 @@ isr\isr_num:
 /* Макрос для враппера обработчика прерывания */
 .macro IRQ irq_num, isr_num
     .global irq\irq_num
+    .align 4
 irq\irq_num:
     push	$0
     push	$\isr_num
@@ -91,6 +94,7 @@ isr80:
       mov   $0x10, %ax
       mov   %ax, %ds
 
+      cld
       call  isr_handler
       
       pop   %ds
@@ -111,6 +115,7 @@ isr_common_stub_err:
     mov   $0x10, %ax
     mov   %ax, %ds
     /* вызываем наш обработчик */
+    cld
     call  isr_handler
     /* восстанавливаем селектор данных */
     pop   %ds
@@ -132,6 +137,7 @@ isr_common_stub_noerr:
     mov   $0x10, %ax
     mov   %ax, %ds
     /* вызываем наш обработчик */
+    cld
     call  isr_handler
     /* восстанавливаем селектор данных */
     pop   %ds
@@ -152,6 +158,7 @@ irq_common_stub:
     mov   $0x10, %ax
     mov   %ax, %ds
     
+    cld
     call  irq_handler
     
     pop   %ds
