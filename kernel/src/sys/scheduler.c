@@ -203,8 +203,8 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     esp[-3] = 0x202;   // Our eflags
 
     // 3 are our first ESP items (eflags, eip and exit_entrypoint)
-    // 4 are EBX, ESI, EDI and EBP.
-    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 4) * 4);
+    // 7 are EAX, EBX, ECX, EDX, ESI, EDI and EBP.
+    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 7) * 4);
 
     tmp_thread->state = PAUSED;
 

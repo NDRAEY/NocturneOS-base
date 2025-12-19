@@ -5,16 +5,17 @@
 .global		task_switch_v2
 task_switch_v2:
     pushf
-    
-    cli
 
+    push %eax
     push %ebx
+    push %ecx
+    push %edx
     push %esi
     push %edi
     push %ebp
 
-    mov 24(%esp), %eax  # Current task
-    mov 28(%esp), %ebx  # Next task
+    mov 36(%esp), %eax  # Current task
+    mov 40(%esp), %ebx  # Next task
 
     cmp %eax, %ebx
     je .no_need
@@ -59,7 +60,10 @@ task_switch_v2:
     pop %ebp
     pop %edi
     pop %esi
+    pop %edx
+    pop %ecx
     pop %ebx
+    pop %eax
 
     popf
 
