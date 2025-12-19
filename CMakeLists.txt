@@ -232,8 +232,6 @@ if(NOCTURNE_ARCH STREQUAL "x86")
 	set(ASM_SRC
 		kernel/src/arch/x86/asm/init.s
 		kernel/src/arch/x86/asm/interrupt.s
-		kernel/src/arch/x86/asm/sys_calls.s
-		kernel/src/arch/x86/asm/usr.s
 		kernel/src/arch/x86/asm/sse.s
 		kernel/src/arch/x86/asm/gdt.s
 		kernel/src/arch/x86/asm/paging.s
