@@ -16,7 +16,7 @@
 
 volatile isr_t interrupt_handlers[256];
 
-void isr_handler(registers_t regs){
+void isr_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
     if(handler != NULL) {
@@ -27,7 +27,7 @@ void isr_handler(registers_t regs){
 void irq_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
-    // if (handler != 0){
+    // if (handler != 0) {
     //     handler(&regs);
     // }
 
@@ -38,7 +38,7 @@ void irq_handler(registers_t regs) {
     // Because we get da handler, execute it, and only then we signal our (A)PIC that we're done with it.
     //
     // Fun fact: Those annoying random screen flickers are coming from here.
-    
+
     if (handler != 0){
         handler(&regs);
     }
@@ -48,7 +48,7 @@ void irq_eoi(size_t int_nr) {
     if(__using_apic) {
         apic_write(0xB0, 0x00);
     } else {
-        if (int_nr >= 40){
+        if (int_nr >= 0x28){
             outb(0xA0, 0x20);
         }
 

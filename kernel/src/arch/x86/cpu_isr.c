@@ -45,10 +45,9 @@ _Noreturn void bsod_screen(registers_t* regs, char* title, char* msg, uint32_t c
     #endif
 
     __asm__ volatile("cli");  // Disable interrupts
-    __asm__ volatile("hlt");  // Halt
 
     while(1) {
-        __asm__ volatile("nop");
+        __asm__ volatile("hlt"); // Halt
     }
 }
 
@@ -206,7 +205,7 @@ void page_fault(registers_t* regs){
             tty_printf("EIP error ");
         }
 
-        tty_printf("at address (virtual) %x",fault_addr);
+        tty_printf("at address (virtual) %x\n",fault_addr);
     }
 
     // Prevent kmallocs (in bsod_screen()) in Page Fault

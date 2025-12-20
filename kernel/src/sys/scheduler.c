@@ -137,9 +137,11 @@ size_t create_process(void* entry_point, char* name, bool is_kernel) {
 
 __attribute__((noreturn)) void thread_exit_entrypoint() {
     qemu_note("THREAD %d WANTS TO EXIT!", current_thread->id);
+    
     thread_exit(current_thread);
+
     while(1)  // If something goes wrong, we loop here.
-        ;
+        __asm__ volatile("hlt");
 }
 
 /**
@@ -262,17 +264,11 @@ void thread_exit(thread_t* thread){
         return;
     }
 
-    /* Disable all interrupts */
-	__asm__ volatile ("cli");
-
-	/* Mark it as deas */
+	/* Mark it as dead */
     thread->state = DEAD;
 
 	/* Load to ECX switch function address */
 	__asm__ volatile ("mov %0, %%ecx"::"a"(&task_switch_v2_wrapper));
-
-	/* Enable all interrupts */
-	__asm__ volatile ("sti");
 
 	/* Jump to switch_task() */
 	__asm__ volatile ("call *%ecx");
