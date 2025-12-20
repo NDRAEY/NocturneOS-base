@@ -64,7 +64,7 @@ elseif(NOCTURNE_ARCH STREQUAL "x86_64")
 	set(CMAKE_ASM_FLAGS "-m64 -g")
 endif()
 
-set(CMAKE_C_FLAGS "-fno-pic -ffreestanding -static -nostdlib -fno-stack-protector -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
+set(CMAKE_C_FLAGS "-pipe -fno-pic -ffreestanding -static -nostdlib -fno-stack-protector -Wall -Wextra -fdiagnostics-color ${C_INCLUDES} -std=c11 -Werror=return-type -Wno-address-of-packed-member -Wno-cast-function-type -DNOCTURNE_ARCH_STRING='\"${NOCTURNE_ARCH}\"'")
 
 if(NOCTURNE_USE_CLANG)
     message("Using Clang compiler!")

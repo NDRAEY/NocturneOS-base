@@ -95,7 +95,7 @@ isr80:
       mov   %ax, %ds
 
       cld
-      call  isr_handler
+      call  irq_handler
       
       pop   %ds
       popa
