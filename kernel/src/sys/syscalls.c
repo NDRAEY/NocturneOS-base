@@ -163,6 +163,8 @@ size_t syscall_get_console_size(uint32_t* out_wh) {
 }
 
 size_t syscall_get_screen_parameters(size_t screen_id, size_t parameter, uint8_t* out_buffer, size_t length) {
+    (void)screen_id;
+    
     // TODO: Utilize screen_id somehow.
 
     if(out_buffer == NULL) {
@@ -209,6 +211,8 @@ size_t syscall_copy_to_screen(size_t screen_id, uint8_t* buffer) {
 }
 
 size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
+    (void)screen_id;
+
     // TODO: Utilize screen_id somehow.
     if(buffer == NULL) {
         return (size_t)-1;
@@ -219,12 +223,8 @@ size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
     return 0;
 }
 
-size_t syscall_yield() {
-    registers_t regs;
-
-    get_regs(&regs);
-    
-    task_switch_v2_wrapper(&regs);
+size_t syscall_yield(registers_t* regs) {
+    task_switch_v2_wrapper(regs);
 
     return 0;
 }
@@ -313,7 +313,7 @@ void syscall_handler(registers_t* regs) {
 	if (regs->eax >= SYSCALL_COUNT) {
         qemu_err("Invalid system call: %d!", regs->eax);
 
-        __asm__ volatile("movl %0, %%eax" :: "r"(0));
+        // regs->eax = 0;
         return;
     }
 
@@ -322,16 +322,18 @@ void syscall_handler(registers_t* regs) {
     if(entry_point == NULL) {
         qemu_err("System call is not defined right now: %d", regs->eax);
 
-        __asm__ volatile("movl %0, %%eax" :: "r"(0));
+        // regs->eax = 0;
         return;
     }
 
     // FIXME: A dirty hack to provide regs to yield() system call.
-    // if(regs->eax == SYSCALL_YIELD) {
-    //     regs->ebx = (size_t)regs;
-    // }
+    if(regs->eax == SYSCALL_YIELD) {
+        regs->ebx = (size_t)regs;
+    }
 
     size_t result = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
+
+    qemu_printf("Syscall #%d = 0x%x\n", regs->eax, result);
 
     // Place result into EAX.
     regs->eax = result;

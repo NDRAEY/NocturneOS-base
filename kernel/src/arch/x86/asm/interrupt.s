@@ -6,6 +6,8 @@
     .global	isr\isr_num
     .align 4
 isr\isr_num:
+    cli
+
     push	$0
     push	$\isr_num
     jmp	isr_common_stub_noerr
@@ -16,6 +18,8 @@ isr\isr_num:
     .global	isr\isr_num
     .align 4
 isr\isr_num:
+    cli
+    
     push	$\isr_num
     jmp	isr_common_stub_err
 .endm
@@ -25,6 +29,8 @@ isr\isr_num:
     .global irq\irq_num
     .align 4
 irq\irq_num:
+    cli
+    
     push	$0
     push	$\isr_num
     jmp	irq_common_stub
@@ -85,24 +91,31 @@ IRQ 15, 47
 /* Вызов сервиса ОС */
 .global isr80
 isr80:
-      push  $0
-      push  $0x80
+    cli
+    
+    push  $0
+    push  $0x80
 
-      pusha
-      push  %ds
-      
-      mov   $0x10, %ax
-      mov   %ax, %ds
+    pusha
+    push  %ds
+    
+    mov   $0x10, %ax
+    mov   %ax, %ds
 
-      cld
-      call  irq_handler
-      
-      pop   %ds
-      popa
-      
-      add   $8, %esp
-      
-      iret
+    cld
+
+    # Why isr_handler? Because irq_handler sends EOI to (A)PIC, but isr_handler not.
+    # We are in syscall that user causes with `int` instruction which doesn't need any PIC.
+    call  isr_handler
+    
+    pop   %ds
+    popa
+    
+    add   $8, %esp
+
+    sti
+    
+    iret
 
 /* Здесь две одинаковые функции (?) */
 
@@ -126,6 +139,8 @@ isr_common_stub_err:
     /* возврат */
     /* при этом из стека восстанавливаются */
     /* CS, EIP, EFLAGS, SS и ESP */
+    sti
+
     iret
 
 isr_common_stub_noerr:
@@ -148,6 +163,8 @@ isr_common_stub_noerr:
     /* возврат */
     /* при этом из стека восстанавливаются */
     /* CS, EIP, EFLAGS, SS и ESP */
+    sti
+
     iret
 
 /* IRQ common stub */
@@ -166,4 +183,6 @@ irq_common_stub:
     
     add   $8, %esp
     
+    sti
+
     iret

@@ -187,6 +187,11 @@ void page_fault(registers_t* regs){
     }
     qemu_log("at address (virtual) %x",fault_addr);
 
+    print_regs(regs);
+
+    while(1)
+        __asm__ volatile("cli; hlt");
+
     if(tty_is_initialized()) {
         tty_printf("Process nr.%d caused page fault: ", get_current_proc()->pid); 
         if (present){

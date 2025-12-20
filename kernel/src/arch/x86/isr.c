@@ -27,10 +27,6 @@ void isr_handler(registers_t regs) {
 void irq_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
-    // if (handler != 0) {
-    //     handler(&regs);
-    // }
-
     irq_eoi(regs.int_num);
 
     // FIXME: If I move this `if` block up to the `isr_t handler = ...` line, system will hang when you type too fast.

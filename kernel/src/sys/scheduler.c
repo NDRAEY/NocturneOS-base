@@ -11,6 +11,7 @@
 #include <lib/string.h>
 #include <io/logging.h>
 #include "arch/x86/mem/paging.h"
+#include "arch/x86/mem/paging_common.h"
 #include "mem/vmm.h"
 #include "lib/math.h"
 #include "sys/sync.h"
@@ -43,9 +44,6 @@ void init_task_manager(void){
 	uint32_t esp = 0;
 	__asm__ volatile("mov %%esp, %0" : "=a"(esp));
 
-	/* Disable all interrupts */
-	__asm__ volatile ("cli");
-
 	list_init(&process_list);
 	list_init(&thread_list);
 
@@ -76,12 +74,14 @@ void init_task_manager(void){
 	kernel_thread->stack_top = __init_esp;
 	kernel_thread->fxsave_region = kmalloc_common(512, 16);
 
+    __asm__ volatile("fxsave (%0)" :: "a"(kernel_thread->fxsave_region));
+
+    kernel_thread->flags = THREAD_KERNEL;
+
 	list_add((void*)&thread_list, (void*)&kernel_thread->list_item);
 
 	current_proc = kernel_proc;
 	current_thread = kernel_thread;
-
-	__asm__ volatile ("sti");
 
 	/* Enable multitasking flag */
 	multi_task = true;
@@ -163,7 +163,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     qemu_log("Process at: %p", proc);
     qemu_log("Stack size: %d", stack_size);
     qemu_log("Entry point: %p", entry_point);
-    qemu_log("Kernel: %d", flags & THREAD_KERNEL);
+    qemu_log(
+        "Flags: %08x [%c]", 
+        flags,
+        (flags & THREAD_KERNEL) ? 'K' : '-'
+    );
 
     /* Create new thread handler */
     thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
@@ -175,10 +179,23 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->stack_size = stack_size;
     tmp_thread->entry_point = (uint32_t) entry_point;
 	tmp_thread->fxsave_region = kmalloc_common(512, 16);
+    tmp_thread->flags = flags;
 
     /* Create thread's stack */
-    size_t* stack = kmalloc_common(stack_size, 16);
-    memset(stack, 0, stack_size);
+    size_t real_stack_size = ALIGN(stack_size, PAGE_SIZE);
+
+    size_t* stack = kmalloc_common(real_stack_size, PAGE_SIZE);
+    memset(stack, 0, real_stack_size);
+
+    // If this task is a user task, make stack user-space.
+    // So, this is why our stack is page-aligned by its size and position.
+    if((flags & THREAD_KERNEL) == 0) {
+        size_t* pd = get_kernel_page_directory();
+
+        for(size_t i = 0; i < real_stack_size; i += PAGE_SIZE) {
+            phys_set_flags(pd, ((size_t)stack) + i, PAGE_WRITEABLE | PAGE_USER);
+        }
+    }
 
     tmp_thread->stack = stack;
     tmp_thread->stack_top = (uint32_t) stack + stack_size;
@@ -192,7 +209,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     size_t* esp = (size_t*) ((char*)stack + stack_size);
 
     if(args != NULL) {
-        for(int i = 0; i < arg_count; i++) {
+        for(size_t i = 0; i < arg_count; i++) {
             esp[-i] = (size_t)args[i];
         }
 
@@ -207,7 +224,7 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
 
     // 3 are our first ESP items (eflags, eip and exit_entrypoint)
     // 7 are EAX, EBX, ECX, EDX, ESI, EDI and EBP.
-    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 7) * 4);
+    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 7) * sizeof(size_t));
 
     tmp_thread->state = PAUSED;
 
@@ -378,17 +395,21 @@ static void remove_thread(thread_t* thread) {
     }
 }
 
-void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
+void task_switch_v2_wrapper(registers_t* regs) {
     if(!multi_task) {
         // qemu_err("Scheduler is disabled!");
         return;
     }
 
+    // Choose next thread.
     thread_t* next_thread = (thread_t *)current_thread->list_item.next;
 
+    // In case the thread in state of PAUSED or DEAD, we skip them until we find normal READY thread.
     while(next_thread != NULL && (next_thread->state == PAUSED || next_thread->state == DEAD)) {
+        // Save the next of next thread because if our `next_thread` is dead, it will be removed, leaving us with gap.
         thread_t* next_thread_soon = (thread_t *)next_thread->list_item.next;
 
+        // If we encountered dead thread, remove it.
         if(next_thread->state == DEAD) {
         	qemu_log("QUICK NOTICE: WE ARE IN PROCESS NR. #%u", current_proc->pid);
 
@@ -398,12 +419,19 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
         next_thread = next_thread_soon;
     }
 
-    __asm__ volatile("fxsave (%0) " :: "a"(current_thread->fxsave_region));
+    // Actually switch the context.
 
     task_switch_v2(current_thread, next_thread);
 
-    // next_thread is now current_thread. (I'm not sure)
-    __asm__ volatile("fxrstor (%0)" :: "a"(current_thread->fxsave_region));
+    // next_thread is now current_thread.
+
+    // If we have regs and kernel task flag is clear, set selectors to user ones.
+    // if(regs != NULL && (current_thread->flags & THREAD_KERNEL) == 0) {
+    //     regs->cs = 0x18 | 3;
+    //     regs->ss = 0x20 | 3;
+    // }
+
+    // FIXME: If we switch CS and SS, it will fail here. (The function's epilogue).
 }
 
 void idle_thread(void) {
@@ -443,4 +471,16 @@ void thread_remove_prepared(volatile thread_t* thread) {
     list_remove(&thread->list_item);
 
     mutex_release(&threadlist_scheduler_mutex);
+}
+
+void yield() {
+    #ifdef NOCTURNE_X86
+    // __asm__ volatile("int $0x80" :: "a"(SYSCALL_YIELD) : "memory");
+    
+    // registers_t regs;
+
+    // get_regs(&regs);
+    
+    // task_switch_v2_wrapper(&regs);
+    #endif
 }

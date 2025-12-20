@@ -23,12 +23,19 @@ task_switch_v2:
     # Save current thread's stack
     mov	%esp, 28(%eax)
 
+    # Save SIMD context
+    mov 48(%eax), %edx
+    fxsave (%edx)
+
     # Set current_thread to next entry
     mov %ebx, current_thread
 
     # Load thread's stack
     mov %ebx, %edx
     mov 28(%edx), %esp
+
+    mov 48(%eax), %edx
+    fxrstor (%edx)
 
     # Load stack_top to tss
     mov 40(%edx), %eax

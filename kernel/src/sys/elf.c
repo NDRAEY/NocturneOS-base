@@ -99,7 +99,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
                 addrto,
                 phdr->p_vaddr,
                 pagecount * PAGE_SIZE,
-                (PAGE_PRESENT | PAGE_USER | PAGE_WRITEABLE) // 0x07
+                (PAGE_USER | PAGE_WRITEABLE)
         );
 
         memset((void*)phdr->p_vaddr, 0, phdr->p_memsz);
@@ -114,18 +114,24 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     int(*entry_point)(int argc, char* eargv[]) = (int(*)(int, char**))elf_file->elf_header.e_entry;
     qemu_log("ELF entry point: %x", elf_file->elf_header.e_entry);
 
-    thread_t* thread = _thread_create_unwrapped(proc, entry_point, DEFAULT_STACK_SIZE, 0, (size_t*)eargv, argc);
-
-    thread_add_prepared(thread);
+    thread_t* thread = _thread_create_unwrapped(
+        proc,
+        entry_point,
+        DEFAULT_STACK_SIZE,
+        0,
+        (size_t*)eargv,
+        argc
+    );
 
     void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
-
+    
     proc->page_dir = phys;
     proc->page_dir_virt = (virtual_addr_t)virt;
     proc->program = elf_file;
-
+    
     process_add_prepared(proc);
+    thread_add_prepared(thread);
 
     qemu_log("PROCESS CREATED, CLEANING KERNEL PD");
 
@@ -152,7 +158,6 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     qemu_log("RESUMING...");
 
     mutex_release(&elf_loader_mutex);
-
 
     thread->state = CREATED;
 

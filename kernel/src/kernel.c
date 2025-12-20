@@ -11,15 +11,19 @@
 
 #include <sys/unwind.h>
 
+#include "arch/x86/mem/paging.h"
+#include "arch/x86/mem/paging_common.h"
 #include "arch/x86/pic.h"
 #include "arch/x86/registers.h"
 #include "drv/cmos.h"
+#include "io/logging.h"
 #include "io/ports.h"
 #include "io/tty.h"
 #include "mem/pmm.h"
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
 #include "sys/cpuid.h"
+#include "sys/scheduler.h"
 
 #ifdef NOCTURNE_X86
 #include "arch/x86/msr.h"
@@ -384,6 +388,8 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     launch_media_notifier();
 
     // net_test();
+
+    // spawn_prog("rd0:/clihlt", 0, NULL);
 
     new_nsh();
 
