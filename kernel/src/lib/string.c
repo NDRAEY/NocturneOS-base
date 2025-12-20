@@ -152,6 +152,8 @@ void* memcpy(void *restrict destination, const void *restrict source, size_t n){
 	return destination;
 }
 
+#include <io/logging.h>
+
 /**
  * @brief Заполнение массива указанными символами
  *
@@ -160,34 +162,56 @@ void* memcpy(void *restrict destination, const void *restrict source, size_t n){
  * @param size_t num - Размер заполняемой части массива в байтах
  */
 void* memset(void* ptr, int value, size_t num) {
-    // qemu_log("%x: %x * %d", (uint32_t)ptr, value, num);
+	uint8_t* mem = (uint8_t*)ptr;
+    uint8_t byte = (uint8_t)value;
 
-    size_t mem = (size_t)ptr;
+    // Alignment.
+    // Example:
+    //     ptr = 0x2001
+    //     num = whatever
+    //     value = whatever
+    // Let's assume we have 32-bit target.
+    // So the aligned address would be ALIGN(ptr, sizeof(size_t)) = 0x2004.
+    // The diff is 0x2004 - 0x2001 = 3. We fill those 3 bytes with our `value`.
+    // After this operation: ptr = 0x2004. `ptr` is aligned and we can do aligned writes on that area.
+    // By the condition the loop will also break if num == 0, so preventing code do out-of-bounds writes.
+    while (((size_t)mem & (sizeof(size_t) - 1)) != 0 && num > 0) {
+        *mem++ = byte;
+        num--;
+    }
     
-    if(num / sizeof(size_t) > 0) {
-        size_t fw = 0;
+    // Determine if can we fill memory region with large machine words first.
+    if(num >= sizeof(size_t)) {
+        // In x86 traditions "word" is 16-bit value,
+        // but for this case let's call it a max num of bits that one register of CPU can handle.
+        size_t word = 0;
         
-        // Fill all the bits with our 8-bit value
+        // Fill all the bits of word with our 8-bit value
         // Example for 32-bit:
         // 0x67 -> 0x67676767
         // Example for 64-bit:
         // 0x67 -> 0x6767676767676767
-        for(register size_t shft = 0; shft < (sizeof(size_t) * 8); shft += 8) {
-            fw |= ((size_t)value & 0xff) << shft;
+
+        // We don't have initialize `word`, if `byte` is zero, because `word` is already initialized to zero.
+        if(byte != 0) {
+            // 8 is not a magic number: 8 bits in bytes.
+            for (size_t i = 0; i < sizeof(size_t); i++) {
+                word |= ((size_t)byte << (i * 8));
+            }
         }
 
-        while(num >= sizeof(size_t)) {
-            *((size_t*)mem) = fw;
-
-            mem += sizeof(size_t);
+        // Write words.
+        volatile size_t* word_ptr = (volatile size_t*)mem;
+        while (num >= sizeof(size_t)) {
+            *word_ptr++ = word;
             num -= sizeof(size_t);
         }
+        
+        mem = (uint8_t*)word_ptr;
     }
 
-	uint8_t* p = (uint8_t*)mem;
-
 	while(num--) {
-		*(p++) = (uint8_t)value;
+		*mem++ = byte;
 	}
 
 	return ptr;

@@ -153,6 +153,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
 
     mutex_release(&elf_loader_mutex);
 
+
     thread->state = CREATED;
 
     return proc->pid;

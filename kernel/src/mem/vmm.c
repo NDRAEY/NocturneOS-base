@@ -10,6 +10,7 @@
 // for SayoriOS
 
 #include "mem/vmm.h"
+#include "arch/x86/mem/paging_common.h"
 #include "mem/pmm.h"
 #include "io/logging.h"
 #include "lib/math.h"
@@ -606,7 +607,7 @@ void *krealloc(void *ptr, size_t memory_size)
 void *clone_kernel_page_directory(size_t virts_out[1024])
 {
 	size_t *page_dir = kmalloc_common(PAGE_SIZE, PAGE_SIZE);
-	memset(page_dir, 0, PAGE_SIZE);
+	__builtin_memset(page_dir, 0, PAGE_SIZE);
 
 	size_t physaddr = virt2phys(get_kernel_page_directory(), (virtual_addr_t)page_dir);
 

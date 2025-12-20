@@ -10,6 +10,7 @@
 #include <sys/scheduler.h>
 #include <lib/string.h>
 #include <io/logging.h>
+#include "arch/x86/mem/paging.h"
 #include "mem/vmm.h"
 #include "lib/math.h"
 #include "sys/sync.h"
@@ -324,6 +325,8 @@ static void remove_thread(thread_t* thread) {
     if(process->threads_count == 0 && is_kernels_pid) {
         qemu_warn("PROCESS #%d `%s` DOES NOT HAVE ANY THREADS", process->pid, process->name);
 
+        // load_page_directory(kernel_page_directory);
+
         if(process->program) {
             for (int32_t i = 0; i < process->program->elf_header.e_phnum; i++) {
                 Elf32_Phdr *phdr = process->program->p_header + i;
@@ -348,7 +351,7 @@ static void remove_thread(thread_t* thread) {
             qemu_log("Program unloaded.");
         }
 
-        for(size_t pt = 0; pt < 1023; pt++) {
+        for(size_t pt = 0; pt < 1024; pt++) {
             size_t page_table = process->page_tables_virts[pt];
             if(page_table) {
                 qemu_note("[%-4d] <%08x - %08x> USED PAGE TABLE AT: %x", 
@@ -392,7 +395,7 @@ void task_switch_v2_wrapper(SAYORI_UNUSED registers_t* regs) {
 
         if(next_thread->state == DEAD) {
         	qemu_log("QUICK NOTICE: WE ARE IN PROCESS NR. #%u", current_proc->pid);
-        	
+
             remove_thread(next_thread);
         }
 
