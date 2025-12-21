@@ -333,7 +333,7 @@ void syscall_handler(registers_t* regs) {
 
     size_t result = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
 
-    qemu_printf("Syscall #%d = 0x%x\n", regs->eax, result);
+    // qemu_printf("Syscall #%d = 0x%x\n", regs->eax, result);
 
     // Place result into EAX.
     regs->eax = result;
