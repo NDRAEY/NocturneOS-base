@@ -75,6 +75,9 @@ void init_task_manager(void){
 	kernel_thread->stack_top = __init_esp;
 	kernel_thread->fxsave_region = kmalloc_common(512, 16);
 
+    kernel_thread->kernel_stack_bottom = (size_t)kmalloc_common(PAGE_SIZE * 4, PAGE_SIZE);
+    kernel_thread->kernel_stack_top = kernel_thread->kernel_stack_bottom + (PAGE_SIZE * 4);
+
     __asm__ volatile("fxsave (%0)" :: "a"(kernel_thread->fxsave_region));
 
     kernel_thread->flags = THREAD_KERNEL;
@@ -181,6 +184,11 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     tmp_thread->entry_point = (uint32_t) entry_point;
 	tmp_thread->fxsave_region = kmalloc_common(512, 16);
     tmp_thread->flags = flags;
+
+    tmp_thread->kernel_stack_bottom = (size_t)kmalloc_common(PAGE_SIZE, 16);
+    tmp_thread->kernel_stack_top = tmp_thread->kernel_stack_bottom + PAGE_SIZE;
+
+    qemu_log("Kernel stack for thread: %08x (Top: %08x)", tmp_thread->kernel_stack_bottom, tmp_thread->kernel_stack_top);
 
     /* Create thread's stack */
     size_t real_stack_size = ALIGN(stack_size, PAGE_SIZE);
@@ -439,13 +447,6 @@ void task_switch_v2_wrapper(registers_t* regs) {
     //         regs->ss = 0x20 | 3;
     //     }
     // }
-}
-
-void idle_thread(void) {
-    while(1) {
-        __asm__ volatile("hlt" ::: "memory");
-        yield();
-    }
 }
 
 void process_add_prepared(volatile process_t* process) {

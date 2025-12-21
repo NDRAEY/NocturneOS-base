@@ -224,7 +224,7 @@ size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
 }
 
 size_t syscall_yield(registers_t* regs) {
-    // task_switch_v2_wrapper(regs);
+    task_switch_v2_wrapper(regs);
 
     return 0;
 }
@@ -333,7 +333,7 @@ void syscall_handler(registers_t* regs) {
 
     size_t result = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
 
-    qemu_printf("Syscall #%d = 0x%x\n", regs->eax, result);
+    // qemu_printf("Syscall #%d = 0x%x\n", regs->eax, result);
 
     // Place result into EAX.
     regs->eax = result;

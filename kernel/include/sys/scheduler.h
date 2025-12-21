@@ -90,6 +90,10 @@ typedef volatile struct
     thread_state_t  state;
     // 48
     char*           fxsave_region;
+    // 52: This is used in TSS.
+    size_t          kernel_stack_top;
+    // 56
+    size_t          kernel_stack_bottom;
 } thread_t;
 
 /* Initialization */
