@@ -256,8 +256,8 @@ __attribute__((force_align_arg_pointer)) void screen_update() {
         memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
     }
 #else
-    // memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
-    __builtin_memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
+    memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
+    // __builtin_memcpy(framebuffer_addr, back_framebuffer_addr, framebuffer_size);
 #endif
     mutex_release(&graphics_flush_mutex);
 }
