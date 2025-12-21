@@ -38,7 +38,7 @@ task_switch_v2:
     fxrstor (%edx)
 
     # Load stack_top to tss
-    mov 40(%edx), %eax
+    mov 40(%ebx), %eax
     mov $tss, %edx
     mov %eax, 4(%edx)
 

@@ -224,7 +224,7 @@ size_t syscall_copy_from_screen(size_t screen_id, uint8_t* buffer) {
 }
 
 size_t syscall_yield(registers_t* regs) {
-    task_switch_v2_wrapper(regs);
+    // task_switch_v2_wrapper(regs);
 
     return 0;
 }
@@ -327,9 +327,9 @@ void syscall_handler(registers_t* regs) {
     }
 
     // FIXME: A dirty hack to provide regs to yield() system call.
-    if(regs->eax == SYSCALL_YIELD) {
-        regs->ebx = (size_t)regs;
-    }
+    // if(regs->eax == SYSCALL_YIELD) {
+    //     regs->ebx = (size_t)regs;
+    // }
 
     size_t result = entry_point(regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
 

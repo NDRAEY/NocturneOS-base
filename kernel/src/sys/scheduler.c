@@ -12,6 +12,7 @@
 #include <io/logging.h>
 #include "arch/x86/mem/paging.h"
 #include "arch/x86/mem/paging_common.h"
+#include "arch/x86/tss.h"
 #include "mem/vmm.h"
 #include "lib/math.h"
 #include "sys/sync.h"
@@ -184,8 +185,12 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     /* Create thread's stack */
     size_t real_stack_size = ALIGN(stack_size, PAGE_SIZE);
 
-    size_t* stack = kmalloc_common(real_stack_size, PAGE_SIZE);
+    // FIXME: Remove `+ PAGE_SIZE` and you'll get undefined behaviour (the first page table will be 0, but should always be mapped).
+    // Something overwrites the PD[0] in user mode.
+    size_t* stack = kmalloc_common(real_stack_size + PAGE_SIZE, PAGE_SIZE);
     memset(stack, 0, real_stack_size);
+
+    qemu_log("Stack at: %p (Top: %x)", stack, (size_t)stack + real_stack_size);
 
     // If this task is a user task, make stack user-space.
     // So, this is why our stack is page-aligned by its size and position.
@@ -426,12 +431,14 @@ void task_switch_v2_wrapper(registers_t* regs) {
     // next_thread is now current_thread.
 
     // If we have regs and kernel task flag is clear, set selectors to user ones.
-    // if(regs != NULL && (current_thread->flags & THREAD_KERNEL) == 0) {
-    //     regs->cs = 0x18 | 3;
-    //     regs->ss = 0x20 | 3;
-    // }
+    // if(regs != NULL) {
+    //     bool is_user_task = (current_thread->flags & THREAD_KERNEL) == 0;
 
-    // FIXME: If we switch CS and SS, it will fail here. (The function's epilogue).
+    //     if(is_user_task) {
+    //         regs->cs = 0x18 | 3;
+    //         regs->ss = 0x20 | 3;
+    //     }
+    // }
 }
 
 void idle_thread(void) {

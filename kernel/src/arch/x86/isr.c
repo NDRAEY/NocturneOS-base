@@ -16,6 +16,8 @@
 
 volatile isr_t interrupt_handlers[256];
 
+extern size_t* stack_top;
+
 void isr_handler(registers_t regs) {
     isr_t handler = interrupt_handlers[regs.int_num];
 
@@ -29,13 +31,7 @@ void irq_handler(registers_t regs) {
 
     irq_eoi(regs.int_num);
 
-    // FIXME: If I move this `if` block up to the `isr_t handler = ...` line, system will hang when you type too fast.
-    // I don't know how this supposed to work, but I think the right option IS to place it next to `isr_t handler = ...`
-    // Because we get da handler, execute it, and only then we signal our (A)PIC that we're done with it.
-    //
-    // Fun fact: Those annoying random screen flickers are coming from here.
-
-    if (handler != 0){
+    if (handler != 0) {        
         handler(&regs);
     }
 }

@@ -11,3 +11,6 @@ typedef	struct {
 
 // Not precise, but at least valid
 void get_regs(registers_t* regs);
+uint32_t read_cr0();
+uint32_t read_cr2();
+uint32_t read_cr3();

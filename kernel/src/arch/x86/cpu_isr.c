@@ -8,6 +8,8 @@
  */
 
 #include	"sys/cpu_isr.h"
+#include "arch/x86/tss.h"
+#include "debug/hexview.h"
 #include	"sys/unwind.h"
 #include <arch/x86/ports.h>
 #include    "sys/scheduler.h"
@@ -20,16 +22,21 @@ _Noreturn void bsod_screen(registers_t* regs, char* title, char* msg, uint32_t c
     qemu_printf("| Наименование: %s\n",title);
     qemu_printf("| Код ошибки: %x\n",code);
     qemu_printf("| Сообщение: %s\n",msg);
-    qemu_printf("| EAX: %x\n",regs->eax);
-    qemu_printf("| EBX: %x\n",regs->ebx);
-    qemu_printf("| ECX: %x\n",regs->ecx);
-    qemu_printf("| EDX: %x\n",regs->edx);
-    qemu_printf("| ESP: %x\n",regs->esp);
-    qemu_printf("| EBP: %x\n",regs->ebp);
-    qemu_printf("| EIP: %x\n",regs->eip);
+    qemu_printf("| EAX: %08x; ESI: %08x\n",regs->eax, regs->esi);
+    qemu_printf("| EBX: %08x; EDI: %08x\n",regs->ebx, regs->edi);
+    qemu_printf("| ECX: %08x; ESP: %08x\n",regs->ecx, regs->esp);
+    qemu_printf("| EDX: %08x; EBP: %08x\n",regs->edx, regs->ebp);
+    qemu_printf("| EIP: %08x; CS:  %02x; DS: %02x; SS: %02x\n", regs->eip, regs->cs, regs->ds, regs->ss);
+    qemu_printf("| CR0: %08x; CR2: %08x; CR3: %08x\n", read_cr0(), read_cr2(), read_cr3());
+    qemu_printf("| TSS/PREV: %08x\n", tss.prev_tss);
+    qemu_printf("| TSS/ESP0: %02x:%08x\n", tss.ss0, tss.esp0);
+    qemu_printf("| TSS/ESP1: %02x:%08x\n", tss.ss1, tss.esp1);
+    qemu_printf("| TSS/ESP2: %02x:%08x\n", tss.ss2, tss.esp2);
     qemu_printf("| EFLAGS: %x\n",regs->eflags);
     qemu_printf("| \n");
     qemu_printf("======================================================\n");
+
+    hexview_advanced(regs, sizeof(registers_t), 20, false, default_qemu_printf);
 
     unwind_stack(10);
 

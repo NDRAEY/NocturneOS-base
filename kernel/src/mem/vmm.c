@@ -630,34 +630,35 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 
 	for (size_t i = 0; i < (page_count - 1); i++)
 	{
-		if (kern_dir[i])
-		{
-			uint32_t *page_table = (uint32_t *)virts_out[i];
-			uint32_t physaddr_pt = virt2phys(kern_dir, (virtual_addr_t)page_table);
-
-			qemu_log("Copying from %x to %x", linaddr + (i * PAGE_SIZE), (size_t)page_table);
-
-			memcpy(page_table, (void *)(linaddr + (i * PAGE_SIZE)), PAGE_SIZE);
-
-			bool has_user_page = false;
-
-			for (int j = 0; j < 1024; j++)
-			{
-				if(page_table[j] & PAGE_USER) {
-					has_user_page = true;
-				}
-
-				page_table[j] = (page_table[j] & ~(PAGE_DIRTY | PAGE_ACCESSED));
-			}
-
-			size_t pde = physaddr_pt | PAGE_PRESENT | PAGE_WRITEABLE;
-
-			if(has_user_page) {
-				pde |= PAGE_USER;
-			}
-
-			page_dir[i] = pde;
+		if(kern_dir[i] == 0) {
+			continue;
 		}
+
+		uint32_t *page_table = (uint32_t *)virts_out[i];
+		uint32_t physaddr_pt = virt2phys(kern_dir, (virtual_addr_t)page_table);
+
+		qemu_log("Copying from %x to %x", linaddr + (i * PAGE_SIZE), (size_t)page_table);
+
+		__builtin_memcpy(page_table, (void *)(linaddr + (i * PAGE_SIZE)), PAGE_SIZE);
+
+		bool has_user_page = false;
+
+		for (int j = 0; j < 1024; j++)
+		{
+			if(page_table[j] & PAGE_USER) {
+				has_user_page = true;
+			}
+
+			page_table[j] = (page_table[j] & ~(PAGE_DIRTY | PAGE_ACCESSED));
+		}
+
+		size_t pde = physaddr_pt | PAGE_PRESENT | PAGE_WRITEABLE;
+
+		if(has_user_page) {
+			pde |= PAGE_USER;
+		}
+
+		page_dir[i] = pde;
 	}
 
 	page_dir[page_count - 1] = physaddr | 3;
@@ -667,6 +668,28 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 			qemu_log("[%d] %x = %x", i, kern_dir[i], page_dir[i]);
 		}
 	}
+
+	// -----------------------------------------
+
+	for(size_t i = 0; i < 1023; i++) {
+		size_t* pt = (size_t*)virts_out[i];
+
+		if(pt == 0) {
+			continue;
+		}
+
+		qemu_log("#%4d -> 0x%08x (0x%08x)", i, (size_t)pt, page_dir[i]);
+
+		// for(size_t j = 0; j < 1024; j++) {
+		// 	if(pt[j] == 0)
+		// 		continue;
+
+		// 	qemu_log("\\-- #%4d -> 0x%08x", j, pt[j]);
+		// }
+	}
+
+	// while(1)
+	// 	;
 
 	qemu_log("Page directory at: V%x (P%x); Here you are!", (size_t)page_dir, physaddr);
 

@@ -4,12 +4,16 @@
 
 struct    tss_entry {
     uint32_t  prev_tss;
+
     uint32_t  esp0;          /* Указатель текущего стека ядра */
     uint32_t  ss0;           /* Селектор сегмента текущего стека ядра */
+    
     uint32_t  esp1;
     uint32_t  ss1;
+    
     uint32_t  esp2;
     uint32_t  ss2;
+    
     uint32_t  cr3;
     uint32_t  eip;
     uint32_t  eflags;
@@ -28,9 +32,8 @@ struct    tss_entry {
     uint32_t  fs;
     uint32_t  gs;
     uint32_t  ldtr;
-    uint16_t  task_flags;
-    uint16_t  iomap_offset;  /* Смещение от начала TSS до I/O map */
-    uint8_t   iomap;         /* Байт-терминатор */
+    uint16_t  trap;
+    uint16_t  iomap_base; //  I/O Map Base Address Field
 } __attribute__((packed));
 
 typedef struct tss_entry tss_entry_t;
@@ -46,9 +49,14 @@ struct tss_descriptor
     uint8_t   present:1;        /* Бит присутствия */
     uint8_t   limit_19_16:4;    /* Биты 19-16 лимита */
     uint8_t   AVL:1;            /* Зарезервирован */
-    uint8_t   allways_zero:2;   /* Всегда нулевые */
+    uint8_t   always_zero:2;   /* Всегда нулевые */
     uint8_t   gran:1;           /* Бит гранулярности */
     uint8_t   base_31_24;       /* Биты 31-24 базы */
 }__attribute__((packed));
 
 typedef struct tss_descriptor tss_descriptor_t;
+
+extern tss_entry_t tss;
+
+void write_tss(int32_t num, uint32_t ss0, uint32_t esp0);
+void tss_flush(uint32_t tr_selector);

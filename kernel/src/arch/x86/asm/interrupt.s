@@ -1,5 +1,7 @@
 .extern     isr_handler
 .extern     irq_handler
+.extern		tss
+.extern		stack_top
 
 /* Макрос для обработчика без возврата кода ошибки */
 .macro ISR_NOERRCODE isr_num
@@ -30,7 +32,7 @@ isr\isr_num:
     .align 4
 irq\irq_num:
     cli
-    
+
     push	$0
     push	$\isr_num
     jmp	irq_common_stub
