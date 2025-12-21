@@ -150,6 +150,8 @@ void* memcpy(void *restrict destination, const void *restrict source, size_t n){
     }
 
 	return destination;
+
+    // return __builtin_memcpy(destination, source, n);
 }
 
 #include <io/logging.h>

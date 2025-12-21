@@ -639,12 +639,24 @@ void *clone_kernel_page_directory(size_t virts_out[1024])
 
 			memcpy(page_table, (void *)(linaddr + (i * PAGE_SIZE)), PAGE_SIZE);
 
+			bool has_user_page = false;
+
 			for (int j = 0; j < 1024; j++)
 			{
+				if(page_table[j] & PAGE_USER) {
+					has_user_page = true;
+				}
+
 				page_table[j] = (page_table[j] & ~(PAGE_DIRTY | PAGE_ACCESSED));
 			}
 
-			page_dir[i] = physaddr_pt | 3;
+			size_t pde = physaddr_pt | PAGE_PRESENT | PAGE_WRITEABLE;
+
+			if(has_user_page) {
+				pde |= PAGE_USER;
+			}
+
+			page_dir[i] = pde;
 		}
 	}
 

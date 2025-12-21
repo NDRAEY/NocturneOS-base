@@ -9,6 +9,7 @@
 
 #include "kernel.h"
 
+#include <stdint.h>
 #include <sys/unwind.h>
 
 #include "arch/x86/mem/paging.h"
@@ -141,6 +142,7 @@ void scan_kernel(const multiboot_header_t *mboot) {
   Да прибудет с тобой, священный код
   Я тебя благославляю
 */
+__attribute__((aligned(0x1000)))
 void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t initial_esp)
 {
     drawASCIILogo(0);
@@ -189,6 +191,29 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     qemu_ok("VMM OK!");
 
     mtrr_init();
+
+    // char* stack = kmalloc_common(0x1000, 0x1000);
+    // size_t stack_top = (size_t)stack + 0x1000 - 4;
+
+    // map_pages(get_kernel_page_directory(), phys_alloc_single_page(), 0x20000000, 0x1000, PAGE_WRITEABLE | PAGE_USER);
+
+    // uint8_t* code = (uint8_t*)0x20000000;
+
+    // code[0] = 0xeb;  // JMP 0x0  ; Will point back to 0x2000_0000
+    // code[1] = 0xfe;
+    // code[2] = 0xc3;  // RET
+
+    // __asm__ volatile("cli \n\
+    //     push $0x23 \n\
+    //     push %0 \n\
+    //     push $0x200 \n\
+    //     push $0x1B \n\
+    //     push %1 \n\
+    //     iret \n\
+    //     " :: "r"(stack_top), "r"(0x20000000));
+
+    // while(1)
+    //     ;
 
     __asm__ volatile("cli");
     

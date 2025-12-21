@@ -16,7 +16,7 @@
 	physical_addr_t virt = virtual;
 
 	for(virtual_addr_t vend = ALIGN(virt + size, PAGE_SIZE);
-	    virt <= vend;
+	    virt < vend;
 	    phys += PAGE_SIZE,
 	    virt += PAGE_SIZE
 	) {

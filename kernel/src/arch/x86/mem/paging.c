@@ -65,7 +65,15 @@ void map_single_page(page_directory_t* page_dir, physical_addr_t physical, virtu
 	if((page_dir[pdi] & 1) == 0) {
 		pt = (uint32_t *)phys_alloc_single_page();
 
-		page_dir[pdi] = (uint32_t)pt | PAGE_WRITEABLE | PAGE_PRESENT;
+		// FIXME: Is it safe to make page tables accessible by USER?
+		// I added the USER-flag, because of #PF in usermode no matter the PTE is set with USER-flag
+		uint32_t entry = (uint32_t)pt | PAGE_WRITEABLE | PAGE_PRESENT;
+
+		if(flags & PAGE_USER) {
+			entry |= PAGE_USER;
+		}
+
+		page_dir[pdi] = entry;
 
 		if(paging_initialized && page_dir == get_kernel_page_directory()) {
 			uint32_t pt_addr = (uint32_t)page_directory_start + (pdi * PAGE_SIZE);
@@ -190,6 +198,14 @@ void phys_set_flags(page_directory_t* page_dir, virtual_addr_t virtual, uint32_t
         pt = get_page_table_by_vaddr(page_dir, virtual);
     }
 
+	// Duplicated from `map_single_page()`.
+	//
+	// FIXME: Is it safe to make page table entries accessible by USER?
+	// I added the USER-flag, because of #PF in usermode no matter the PTE is set with USER-flag
+	if(flags & PAGE_USER) {
+		page_dir[PD_INDEX(virtual)] |= PAGE_USER;
+	}
+
     pt[PT_INDEX(virtual)] = (pt[PT_INDEX(virtual)] & ~0x3ff) | flags | PAGE_PRESENT;
 }
 
@@ -202,9 +218,7 @@ size_t* get_kernel_page_directory() {
 
 extern size_t grub_last_module_end;
 
-void init_paging(const multiboot_header_t *mboot) {
-	__asm__ volatile("cli");
-	
+void init_paging(const multiboot_header_t *mboot) {	
 	size_t grub_last_module_end = (((const multiboot_module_t *)mboot->mods_addr) + (mboot->mods_count - 1))->mod_end;
 	size_t real_end = (size_t)(grub_last_module_end + PAGE_BITMAP_SIZE);
 
@@ -252,6 +266,4 @@ void init_paging(const multiboot_header_t *mboot) {
 			qemu_log("[%d]: %x", i, pd[i]);
         }
 	}
-
-	__asm__ volatile("sti");
 }
