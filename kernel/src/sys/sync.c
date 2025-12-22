@@ -18,8 +18,8 @@
  */
 void mutex_get(mutex_t* mutex) {
     while (__atomic_test_and_set(&mutex->lock, __ATOMIC_ACQUIRE))
-        yield();
-        // ;
+        ;
+        // yield();
 }
 
 /**

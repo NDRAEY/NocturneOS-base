@@ -338,6 +338,7 @@ static void remove_thread(thread_t* thread) {
     qemu_log("REMOVED FROM LIST");
 
     kfree(thread->fxsave_region);
+    kfree((void*)thread->kernel_stack_bottom);
     kfree(thread->stack);
     kfree((void*)thread);
 

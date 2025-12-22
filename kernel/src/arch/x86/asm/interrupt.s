@@ -93,7 +93,8 @@ IRQ 15, 47
 /* Вызов сервиса ОС */
 .global isr80
 isr80:
-    # This will allow programs to run without `yield()`
+    # Commenting this will allow programs to run without `yield()`
+    # But we will see some screen flickers with green and brown colors.
     # cli
     
     push  $0

@@ -10,9 +10,9 @@ void qemu_printf(const char *text, ...);
 
 extern void (*default_qemu_printf)(const char *text, ...) __attribute__((format(printf, 1, 2)));
 
-#ifdef RELEASE
+// #ifdef RELEASE
 // I use it to debug in optimized builds.
-// #if 0
+#if 0
 #define qemu_note(M, ...) 
 #define qemu_log(M, ...)
 #define qemu_warn(M, ...)
