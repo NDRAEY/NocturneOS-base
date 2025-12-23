@@ -445,6 +445,7 @@ void task_switch_v2_wrapper(registers_t* regs) {
 
     //     if(is_user_task) {
     //         regs->cs = 0x18 | 3;
+    //         // regs->ds = 0x20 | 3;
     //         regs->ss = 0x20 | 3;
     //     }
     // }

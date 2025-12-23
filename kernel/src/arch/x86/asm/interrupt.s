@@ -102,7 +102,8 @@ isr80:
 
     pusha
 
-    push %ds
+    mov %ds, %ax
+    push %eax
     
     mov   $0x10, %ax
     mov   %ax, %ds
@@ -116,11 +117,11 @@ isr80:
     # We are in syscall that user causes with `int` instruction which doesn't need any PIC.
     call  isr_handler
     
-    pop   %eax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
+    pop   %ebx
+    mov %bx, %ds
+    mov %bx, %es
+    mov %bx, %fs
+    mov %bx, %gs
 
     popa
     
@@ -193,7 +194,9 @@ isr_common_stub_noerr:
 /* IRQ common stub */
 irq_common_stub:
     pusha
-    push  %ds
+
+    mov %ds, %ax
+    push  %eax
 
     mov   $0x10, %ax
     mov   %ax, %ds
@@ -203,12 +206,13 @@ irq_common_stub:
     
     cld
     call  irq_handler
-    
-    pop   %eax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
+
+    pop   %ebx
+    mov %bx, %ds
+    mov %bx, %es
+    mov %bx, %fs
+    mov %bx, %gs
+
     popa
     
     add   $8, %esp

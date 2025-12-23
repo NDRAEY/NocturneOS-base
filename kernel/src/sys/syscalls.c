@@ -149,6 +149,7 @@ size_t syscall_tty_flush() {
 
 size_t syscall_tty_write_raw(const char* text, size_t length) {
     tty_puts_raw(text, length);
+    
     return 0;
 }
 
@@ -337,8 +338,6 @@ void syscall_handler(registers_t* regs) {
 
     // Place result into EAX.
     regs->eax = result;
-
-    // __asm__ volatile("movl %0, %%eax" :: "r"(result));
 }
 
 /**

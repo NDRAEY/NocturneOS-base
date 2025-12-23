@@ -20,6 +20,10 @@ void write_tss(int32_t num, uint32_t ss0, uint32_t esp0){
     tss.cs = 0x0b;  // Kernel code segment but orred by 3
     tss.ss = tss.ds = tss.es = tss.fs = tss.gs = 0x13;   // Kernel data segment but orred by 3
 
+   // tss.cs = 0x08;  // Kernel code segment
+   // tss.ss = tss.ds = tss.es = tss.fs = tss.gs = 0x10;   // Kernel data segment
+
+
     // GDT entry is OK!
     /* база tss */
     uint32_t base = (uint32_t) &tss;
