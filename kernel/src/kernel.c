@@ -206,7 +206,7 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
     // __asm__ volatile("cli \n\
     //     push $0x23 \n\
     //     push %0 \n\
-    //     push $0x200 \n\
+    //     push $0x202 \n\
     //     push $0x1B \n\
     //     push %1 \n\
     //     iret \n\
@@ -446,10 +446,3 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t i
 //     qemu_note("Received %d bytes with data: `%s`", length, data);
 //     socket_close(srv_sock);
 // }
-
-void sysidle() {
-    while(1) {
-        __asm__ volatile("hlt");
-      yield();
-    }
-}

@@ -357,6 +357,8 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
                             qemu_note!("Started PID {pid}");
 
                             unsafe { process_wait(pid as _) };
+
+                            qemu_note!("Program finished!");
                         }
                         Err(_) => {
                             println!("{}: not an ELF file", path);

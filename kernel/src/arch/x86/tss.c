@@ -15,14 +15,14 @@ void write_tss(int32_t num, uint32_t ss0, uint32_t esp0){
     tss.ss0 = ss0;
     /* Указатель стека для уровня привилегий 0 */
     tss.esp0 = esp0;
-    tss.iomap_base = sizeof(tss_entry_t);
+   //  tss.iomap_base = sizeof(tss_entry_t);
 
-    tss.cs = 0x08;      // Kernel code segment
-    tss.ds = 0x10;      // Kernel data segment
-    tss.es = 0x10;
-    tss.fs = 0x10;
-    tss.gs = 0x10;
-    tss.ss = 0x10;
+    tss.cs = 0x0b;  // Kernel code segment but orred by 3
+    tss.ss = tss.ds = tss.es = tss.fs = tss.gs = 0x13;   // Kernel data segment but orred by 3
+
+   // tss.cs = 0x08;  // Kernel code segment
+   // tss.ss = tss.ds = tss.es = tss.fs = tss.gs = 0x10;   // Kernel data segment
+
 
     // GDT entry is OK!
     /* база tss */

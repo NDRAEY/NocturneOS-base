@@ -7,6 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2025
  */
 #include	"sys/sync.h"
+#include "sys/scheduler.h"
 
 // https://github.com/dreamportdev/Osdev-Notes/blob/master/05_Scheduling/04_Locks.md
 
@@ -16,7 +17,9 @@
  * @param mutex - Мьютекс
  */
 void mutex_get(mutex_t* mutex) {
-    while (__atomic_test_and_set(&mutex->lock, __ATOMIC_ACQUIRE));
+    while (__atomic_test_and_set(&mutex->lock, __ATOMIC_ACQUIRE))
+        ;
+        // yield();
 }
 
 /**

@@ -137,3 +137,8 @@ pub extern "C" fn tty_get_height() -> u32 {
 
     console.console().size_chars().0 as u32
 }
+
+#[unsafe(no_mangle)]
+pub extern "C" fn tty_force_unlock() {
+    unsafe { CONSOLE.force_unlock() };
+}

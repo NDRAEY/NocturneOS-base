@@ -235,7 +235,8 @@ __attribute__((force_align_arg_pointer)) void clean_screen() {
     memset(back_framebuffer_addr, 0, framebuffer_size);
   }
 #else
-    memset(back_framebuffer_addr, 0, framebuffer_size);
+    //memset(back_framebuffer_addr, 0, framebuffer_size);
+    __builtin_memset(back_framebuffer_addr, 0, framebuffer_size);
 #endif
 }
 

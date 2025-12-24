@@ -40,6 +40,10 @@ _Noreturn void bsod_screen(registers_t* regs, char* title, char* msg, uint32_t c
 
     unwind_stack(10);
 
+    tty_force_unlock();
+
+    tty_printf("kernel: Process nr.%d caused an exception: `%s: %s`\n", get_current_proc()->pid, title, msg); 
+
     #ifdef NOCTURNE_SUPPORT_TIER1
     if(is_multitask()) {
         qemu_err("PROCESS CAUSED THE EXCEPTION: nr. %d", get_current_proc()->pid);
@@ -196,29 +200,26 @@ void page_fault(registers_t* regs){
 
     print_regs(regs);
 
-    while(1)
-        __asm__ volatile("cli; hlt");
+    // if(tty_is_initialized()) {
+    //     tty_printf("Process nr.%d caused page fault: ", get_current_proc()->pid); 
+    //     if (present){
+    //         tty_printf("NOT PRESENT, ");
+    //     }
+    //     if (rw){
+    //         tty_printf("READ ONLY, ");
+    //     }
+    //     if (user){
+    //         tty_printf("USER MODE,  ");
+    //     }
+    //     if (reserved){
+    //         tty_printf("WRITING TO RESERVED BITS, ");
+    //     }
+    //     if (id){
+    //         tty_printf("EIP error ");
+    //     }
 
-    if(tty_is_initialized()) {
-        tty_printf("Process nr.%d caused page fault: ", get_current_proc()->pid); 
-        if (present){
-            tty_printf("NOT PRESENT, ");
-        }
-        if (rw){
-            tty_printf("READ ONLY, ");
-        }
-        if (user){
-            tty_printf("USER MODE,  ");
-        }
-        if (reserved){
-            tty_printf("WRITING TO RESERVED BITS, ");
-        }
-        if (id){
-            tty_printf("EIP error ");
-        }
-
-        tty_printf("at address (virtual) %x\n",fault_addr);
-    }
+    //     tty_printf("at address (virtual) %x\n",fault_addr);
+    // }
 
     // Prevent kmallocs (in bsod_screen()) in Page Fault
     bsod_screen(regs, "CRITICAL_ERROR_PF_PAGE_FAULT", msg, fault_addr);

@@ -93,16 +93,23 @@ IRQ 15, 47
 /* Вызов сервиса ОС */
 .global isr80
 isr80:
-    cli
+    # Commenting this will allow programs to run without `yield()`
+    # But we will see some screen flickers with green and brown colors.
+    # cli
     
     push  $0
     push  $0x80
 
     pusha
-    push  %ds
+
+    mov %ds, %ax
+    push %eax
     
     mov   $0x10, %ax
     mov   %ax, %ds
+    mov   %ax, %es
+    mov   %ax, %fs
+    mov   %ax, %gs
 
     cld
 
@@ -110,7 +117,12 @@ isr80:
     # We are in syscall that user causes with `int` instruction which doesn't need any PIC.
     call  isr_handler
     
-    pop   %ds
+    pop   %ebx
+    mov %bx, %ds
+    mov %bx, %es
+    mov %bx, %fs
+    mov %bx, %gs
+
     popa
     
     add   $8, %esp
@@ -124,23 +136,28 @@ isr80:
 isr_common_stub_err:
     /* пушим все */
     pusha
-    /* сохраняем селектор данных */
+    
     push  %ds
-    /* загружаем сегмент данных ядра */
+    
     mov   $0x10, %ax
     mov   %ax, %ds
-    /* вызываем наш обработчик */
+    mov   %ax, %es
+    mov   %ax, %fs
+    mov   %ax, %gs
+    
     cld
     call  isr_handler
-    /* восстанавливаем селектор данных */
-    pop   %ds
-    /* восстанавливаем все */
+    
+    pop   %eax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    
     popa
-    /* очищаем стек */
+    
     add   $8, %esp
-    /* возврат */
-    /* при этом из стека восстанавливаются */
-    /* CS, EIP, EFLAGS, SS и ESP */
+    
     sti
 
     iret
@@ -148,23 +165,28 @@ isr_common_stub_err:
 isr_common_stub_noerr:
     /* пушим все */
     pusha
-    /* сохраняем селектор данных */
+    
     push  %ds
-    /* загружаем сегмент данных ядра */
+    
     mov   $0x10, %ax
     mov   %ax, %ds
-    /* вызываем наш обработчик */
+    mov   %ax, %es
+    mov   %ax, %fs
+    mov   %ax, %gs
+    
     cld
     call  isr_handler
-    /* восстанавливаем селектор данных */
-    pop   %ds
-    /* восстанавливаем все */
+    
+    pop   %eax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    
     popa
-    /* очищаем стек */
+    
     add   $8, %esp
-    /* возврат */
-    /* при этом из стека восстанавливаются */
-    /* CS, EIP, EFLAGS, SS и ESP */
+    
     sti
 
     iret
@@ -172,15 +194,25 @@ isr_common_stub_noerr:
 /* IRQ common stub */
 irq_common_stub:
     pusha
-    push  %ds
+
+    mov %ds, %ax
+    push  %eax
 
     mov   $0x10, %ax
     mov   %ax, %ds
+    mov   %ax, %es
+    mov   %ax, %fs
+    mov   %ax, %gs
     
     cld
     call  irq_handler
-    
-    pop   %ds
+
+    pop   %ebx
+    mov %bx, %ds
+    mov %bx, %es
+    mov %bx, %fs
+    mov %bx, %gs
+
     popa
     
     add   $8, %esp
