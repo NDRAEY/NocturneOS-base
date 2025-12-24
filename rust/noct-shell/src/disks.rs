@@ -8,32 +8,30 @@ pub static DISKS_COMMAND_ENTRY: crate::ShellCommandEntry =
 
 pub fn disks(_ctx: &mut ShellContext, _args: &[&str]) -> Result<(), usize> {
     for (n, i) in noct_diskman::disk_list().iter().enumerate() {
+        let capacity = match i.capacity {
+            Some(cap) => format!("{cap}"),
+            None => "-".repeat(7)
+        };
+
+        let block_size = match i.block_size {
+            Some(blk) => format!("{blk}"),
+            None => "-".repeat(7)
+        };
+
+        let tags = if i.is_partition {
+            format!("{:?} [Partition]", i.drive_type)
+        } else {
+            format!("{:?}", i.drive_type)
+        };
+
         println!(
             "{:-2}. {:-7} -> {:?} ({} sectors, {} bytes each; {})",
             n + 1,
             i.id,
             i.name,
-            {
-                if let Some(cap) = i.capacity {
-                    &format!("{cap}")
-                } else {
-                    &format!("------")
-                }
-            },
-            {
-                if let Some(blk) = i.block_size {
-                    &format!("{blk}")
-                } else {
-                    &format!("-----")
-                }
-            },
-            {
-                if i.is_partition {
-                    &format!("{:?} [Partition]", i.drive_type)
-                } else {
-                    &format!("{:?}", i.drive_type)
-                }
-            }
+            capacity,
+            block_size,
+            tags
         );
     }
 
