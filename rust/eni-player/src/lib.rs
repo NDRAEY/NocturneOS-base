@@ -3,7 +3,6 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
-use alloc::string::{String, ToString};
 use alloc::sync::Arc;
 use alloc::{format, vec};
 use embedded_canvas::Canvas;
@@ -31,7 +30,7 @@ use spin::Mutex;
 
 use alloc::collections::LinkedList;
 
-const CACHE_SIZE: usize = 128 << 10;
+const CACHE_SIZE: usize = 512 << 10;
 
 mod margin;
 // mod border_wrapped;
@@ -89,7 +88,7 @@ fn draw_ui(
     canvas: &mut Canvas<Rgb888>,
     status: &PlayerStatus,
     filename: &str,
-    track_info: &(String, String),
+    track_info: &(&str, &str),
     cached_size: &usize,
     current_time: &usize,
     total_time: &usize,
@@ -239,13 +238,12 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
 
     let file: Arc<Mutex<File>> = Arc::new(Mutex::new(noct_fs::File::open(filepath).unwrap()));
 
+    let mut bytes = vec![0u8; 2048];
+    file.lock().read(&mut bytes).unwrap();
+
+    let wav = nwav::WAV::from_data(&bytes);
+    
     let (fmtdata, metadata) = {
-        let mut bytes = vec![0; 2048];
-
-        file.lock().read(&mut bytes).unwrap();
-
-        let wav = nwav::WAV::from_data(&bytes);
-
         let Some(Format(chunk)) = wav.read_chunk_by_name("fmt ") else {
             println!("Cannot read the `fmt ` chunk! Are you sure that's a WAV file?");
 
@@ -308,20 +306,20 @@ pub fn player(args: &[&str]) -> Result<(), usize> {
             let artist = a
                 .iter()
                 .filter(|x| x.0 == "IART")
-                .map(|x| x.1.clone())
+                .map(|x| x.1)
                 .next()
-                .unwrap_or("Unknown artist".to_string());
+                .unwrap_or("Unknown artist");
 
             let title = a
                 .iter()
                 .filter(|x| x.0 == "INAM")
-                .map(|x| x.1.clone())
+                .map(|x| x.1)
                 .next()
-                .unwrap_or("Unknown".to_string());
+                .unwrap_or("Unknown");
 
             (artist, title)
         })
-        .unwrap_or(("Unknown artist".to_string(), "Unknown".to_string()));
+        .unwrap_or(("Unknown artist", "Unknown"));
 
     loop {
         let key = noct_input::keyboard_buffer_get_or_nothing();
