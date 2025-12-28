@@ -8,7 +8,7 @@ use core::ffi::c_void;
 extern "C" {
     fn kmalloc_common(size: usize, align: usize) -> *mut c_void;
     fn kfree(ptr: *mut c_void);
-    // fn krealloc(ptr: *mut c_void, memory_size: usize) -> *mut c_void;
+    fn krealloc_common(ptr: *mut c_void, memory_size: usize, alignment: usize) -> *mut c_void;
 }
 
 pub struct Allocator;
@@ -27,8 +27,7 @@ unsafe impl GlobalAlloc for Allocator {
         kfree(ptr as *mut c_void);
     }
 
-    // TODO: Commented until I implement realloc that takes alignment into account!
-    // unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
-    //     krealloc(ptr as *mut c_void, new_size) as *mut u8
-    // }
+    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
+        krealloc_common(ptr as *mut c_void, new_size, _layout.align()) as *mut u8
+    }
 }
