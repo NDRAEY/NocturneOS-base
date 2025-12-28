@@ -36,7 +36,14 @@ SAYORI_INLINE void* kmalloc(size_t size) {
 	return kmalloc_common(size, 1);
 }
 
-void* krealloc(void* ptr, size_t memory_size);
+void *krealloc_common(void *ptr, size_t memory_size, size_t alignment);
+
+SAYORI_INLINE void* krealloc(void* ptr, size_t memory_size) {
+	size_t auto_alignment = ((size_t)ptr) & 0b1100;
+
+	return krealloc_common(ptr, memory_size, auto_alignment ? : 1);
+}
+
 void kfree(void* ptr);
 void* clone_kernel_page_directory(size_t virts_out[1024]);
 

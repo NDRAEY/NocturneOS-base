@@ -473,8 +473,7 @@ void kfree(void *ptr)
 #endif
 }
 
-void *krealloc(void *ptr, size_t memory_size)
-{
+void *krealloc_common(void *ptr, size_t memory_size, size_t alignment) {
 	if (!ptr)
 		return 0;
 
@@ -485,10 +484,8 @@ void *krealloc(void *ptr, size_t memory_size)
 
 	//	qemu_warn("ORIGINAL BLOCK: %x, %d", block->address, block->length);
 
-	if (memory_size > block->length)
-	{	// Expand
-		//		qemu_warn("EXPANDING FROM %d to %d", block->length, memory_size);
-
+	// Expand
+	if (memory_size > block->length) {
 		size_t index = heap_get_block_idx((size_t)ptr);
 
 		if (index == system_heap.allocated_count - 1)
@@ -511,11 +508,7 @@ void *krealloc(void *ptr, size_t memory_size)
 									page,
 									reg_addr,
 									PAGE_WRITEABLE);
-
-					//					qemu_ok("Mapped!");
-				} /* else {
-					 qemu_warn("Already mapped: %x", reg_addr);
-				 }*/
+				}
 
 				reg_addr += PAGE_SIZE;
 			}
@@ -523,19 +516,12 @@ void *krealloc(void *ptr, size_t memory_size)
 			system_heap.used_memory += memory_size - block->length;
 
 			block->length = memory_size;
-		}
-		else
-		{
-			//			qemu_err("CAN USE NEXT!");
-
+		} else {
 			struct heap_entry next = system_heap.memory[index + 1];
 
 			size_t willend = block->address + memory_size;
 
-			if (willend < next.address)
-			{
-				//				qemu_log("THERE'S FREE SPACE!");
-
+			if (willend < next.address) {
 				size_t reg_addr = block->address & ~0xfff;
 
 				for (size_t addr_offset = 0; addr_offset <= ALIGN(memory_size, 4096); addr_offset += PAGE_SIZE)
@@ -569,13 +555,7 @@ void *krealloc(void *ptr, size_t memory_size)
 			}
 			else
 			{
-				// qemu_note("No space between blocks! :(");  // IT'S NORMAL
-
-				// void *new_block = kmalloc(memory_size);
-
-				// Try to detect alignment automatically
-				// In this case alignment will be 1, 4, 8 and 12
-				void *new_block = kmalloc_common(memory_size, (block->address & 0b1100) ?: 1);
+				void *new_block = kmalloc_common(memory_size, alignment);
 
 				memcpy(new_block, (const void *)block->address, block->length);
 
@@ -586,9 +566,7 @@ void *krealloc(void *ptr, size_t memory_size)
 
 			//			qemu_ok("Next is %x, %d", next.address, next.length);
 		}
-	}
-	else if (memory_size < block->length)
-	{ // Shrink
+	} else if (memory_size < block->length) { // Shrink
 		qemu_warn("SHRINKING FROM %d to %d", block->length, memory_size);
 
 		system_heap.used_memory -= block->length - memory_size;
