@@ -113,6 +113,10 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
 
     int(*entry_point)(int argc, char* eargv[]) = (int(*)(int, char**))elf_file->elf_header.e_entry;
     qemu_log("ELF entry point: %x", elf_file->elf_header.e_entry);
+    
+    proc->program = elf_file;
+    
+    process_add_prepared(proc);
 
     thread_t* thread = _thread_create_unwrapped(
         proc,
@@ -123,15 +127,12 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
         argc
     );
 
+    // Update process data after adding it
     void* virt = clone_kernel_page_directory((size_t*)proc->page_tables_virts);
     uint32_t phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t) virt);
-    
+
     proc->page_dir = phys;
     proc->page_dir_virt = (virtual_addr_t)virt;
-    proc->program = elf_file;
-    
-    process_add_prepared(proc);
-    thread_add_prepared(thread);
 
     qemu_log("PROCESS CREATED, CLEANING KERNEL PD");
 
