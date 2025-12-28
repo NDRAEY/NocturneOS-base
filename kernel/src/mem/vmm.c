@@ -575,7 +575,7 @@ void *krealloc(void *ptr, size_t memory_size)
 
 				// Try to detect alignment automatically
 				// In this case alignment will be 1, 4, 8 and 12
-				void *new_block = kmalloc_common(memory_size, (block->address & 0x1100) ?: 1);
+				void *new_block = kmalloc_common(memory_size, (block->address & 0b1100) ?: 1);
 
 				memcpy(new_block, (const void *)block->address, block->length);
 

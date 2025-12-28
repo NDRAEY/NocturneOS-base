@@ -26,8 +26,8 @@ bool multi_task = false;
 process_t* kernel_proc = 0;	
 thread_t* kernel_thread = 0;
 
-process_t volatile* current_proc = 0;
-thread_t volatile* current_thread = 0;
+process_t* current_proc = 0;
+thread_t* current_thread = 0;
 
 extern uint32_t __init_esp;
 
@@ -49,7 +49,8 @@ void init_task_manager(void){
 	list_init(&thread_list);
 
 	/* Create kernel process */
-	kernel_proc = (process_t*)kcalloc(sizeof(process_t), 1);
+	kernel_proc = kmalloc_common(sizeof(process_t), 4);
+    memset(kernel_proc, 0, sizeof(process_t));
 
 	kernel_proc->pid = next_pid++;
     // NOTE: Page directory address must be PHYSICAL!
@@ -63,9 +64,8 @@ void init_task_manager(void){
 	list_add(&process_list, (void*)&kernel_proc->list_item);
 
 	/* Create kernel thread */
-	kernel_thread = (thread_t*) kmalloc(sizeof(thread_t));
-
-	memset((void*)kernel_thread, 0, sizeof(thread_t));
+	kernel_thread = kmalloc_common(sizeof(thread_t), 4);
+    memset(kernel_thread, 0, sizeof(thread_t));
 
 	kernel_thread->process = kernel_proc;
 	kernel_thread->list_item.list = nullptr;
@@ -174,7 +174,8 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     );
 
     /* Create new thread handler */
-    thread_t* tmp_thread = (thread_t*) kcalloc(sizeof(thread_t), 1);
+    thread_t* tmp_thread = kmalloc_common(sizeof(thread_t), 4);
+    memset(tmp_thread, 0, sizeof(thread_t));
 
     /* Initialization of thread  */
     tmp_thread->id = next_thread_id++;

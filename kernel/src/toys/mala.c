@@ -1,5 +1,6 @@
 // Måla v0.1 (Swedish - Draw) (read as Mola) by NDRAEY (c) 2023
 
+#include "mem/vmm.h"
 #include <kernel.h>
 #include <io/keyboard.h>
 #include <io/screen.h>
@@ -55,7 +56,7 @@ void mala_init() {
 
     buffer_size = BUFSIZE(canvas_width, canvas_height);
 
-    buffer = kmalloc(buffer_size);
+    buffer = kmalloc_common(buffer_size, 16);
 
     memset(buffer, 0xFF, buffer_size);
 }

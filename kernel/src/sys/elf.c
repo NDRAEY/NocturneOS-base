@@ -16,7 +16,8 @@
 
 elf_t* load_elf(const char* name){
 	/* Allocate ELF file structure */
-	elf_t* elf = kcalloc(sizeof(elf_t), 1);
+	elf_t* elf = kmalloc_common(sizeof(elf_t), 4);
+    memset(elf, 0, sizeof(elf_t));
 
 	/* Open ELF file */
 	FILE *file_elf = fopen(name, O_READ);

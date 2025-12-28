@@ -42,7 +42,7 @@ SAYORI_INLINE const char* thread_state_string(thread_state_t state) {
     }
 }
 
-typedef	volatile struct {
+typedef	struct {
     // 0
 	list_item_t		list_item;		/* List item */
 	// 12
@@ -66,8 +66,7 @@ typedef	volatile struct {
 /*-----------------------------------------------------------------------------
  * 		Thread structure
  *---------------------------------------------------------------------------*/
-typedef volatile struct
-{
+typedef struct {
     // 0
 	list_item_t		list_item;			/* List item */
     // 12
