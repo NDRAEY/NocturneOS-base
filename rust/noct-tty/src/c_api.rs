@@ -38,9 +38,9 @@ pub fn tty_puts_str(s: &str) {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn tty_puts(s: *const c_char) {
     let s = unsafe { CStr::from_ptr(s) };
-    let s = s.to_str().unwrap();
+    let s = s.to_string_lossy();
 
-    tty_puts_str(s);
+    tty_puts_str(&s);
 }
 
 /// # Safety: `s` pointer must me non-null
