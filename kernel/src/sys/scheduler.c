@@ -71,7 +71,7 @@ void init_task_manager(void){
 	kernel_thread->list_item.list = nullptr;
 	kernel_thread->id = next_thread_id++;
 	kernel_thread->stack_size = DEFAULT_STACK_SIZE;
-	kernel_thread->esp = esp;
+	kernel_thread->esp = (size_t*)esp;
 	kernel_thread->stack_top = __init_esp;
 	kernel_thread->fxsave_region = kmalloc_common(512, 16);
 
@@ -220,25 +220,34 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     /* Fill stack */
 
     /* Create pointer to stack frame */
-    size_t* esp = (size_t*) ((char*)stack + stack_size);
+    tmp_thread->esp = (size_t*)((size_t)stack + stack_size);
 
     if(args != NULL) {
         for(size_t i = 0; i < arg_count; i++) {
-            esp[-i] = (size_t)args[i];
+            *--tmp_thread->esp = (size_t)args[i];
         }
-
-        esp -= arg_count;
     }
 
     // Fill the stack.
     // On normal systems (like in Linux) exit is called manually, but if something goes wrong, give this task a peaceful death.
-    esp[-1] = (uint32_t) thread_exit_entrypoint;
-    esp[-2] = (uint32_t) entry_point;
-    esp[-3] = 0x202;   // Our eflags
 
-    // 3 are our first ESP items (eflags, eip and exit_entrypoint)
-    // 7 are EAX, EBX, ECX, EDX, ESI, EDI and EBP.
-    tmp_thread->esp = (uint32_t) stack + stack_size - ((3 + 7) * sizeof(size_t));
+    // Add exit entrypoint. But it will be called only in Kernel Task.
+    // Any invocation of kernel code in usermode is painful for program (and me).
+    *--tmp_thread->esp = (uint32_t)thread_exit_entrypoint;
+
+    *--tmp_thread->esp = (uint32_t)entry_point;
+
+    // If it's a user task, load up the user_mode jumper.
+    // if((flags & THREAD_KERNEL) == 0) {
+    //     *--tmp_thread->esp = (uint32_t)0;
+    //     *--tmp_thread->esp = (uint32_t)enter_usermode;
+    // }
+
+    *--tmp_thread->esp = 0x202;   // Our eflags
+
+    // 7 is a register count we saving on the stack on the task switch.
+    // See src/arch/x86/asm/switch_task.s for more info.
+    tmp_thread->esp -= 7;
 
     tmp_thread->state = PAUSED;
 
@@ -494,4 +503,17 @@ void yield() {
     
     task_switch_v2_wrapper(&regs);
     #endif
+}
+
+void enter_usermode(void (*ep)()) {
+    __asm__ volatile("cli \n\
+        push $0x23 \n\
+        push %0 \n\
+        push $0x202 \n\
+        push $0x1B \n\
+        push %1 \n\
+        iret \n\
+    " :: "r"(current_thread->esp), "r"((size_t)ep));
+
+    // ep();
 }

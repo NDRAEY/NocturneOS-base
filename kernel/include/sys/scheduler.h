@@ -78,7 +78,7 @@ typedef struct {
     // 24
 	void*			stack;
     // 28
-	size_t		    esp;				/* Thread state */
+	size_t*		    esp;				/* Thread state */
     // 32
 	size_t		    entry_point;
     // 36
@@ -143,3 +143,5 @@ void thread_add_prepared(volatile thread_t* thread);
 
 void process_remove_prepared(volatile process_t* process);
 void thread_remove_prepared(volatile thread_t* thread);
+
+void enter_usermode(void (*ep)());
