@@ -28,8 +28,9 @@ extern "C" {
 
 #[doc(hidden)]
 pub fn _print_qemu(args: fmt::Arguments) {
-    // QEMU.write_fmt(args).unwrap();
-    QEMU.lock().write_fmt(args).unwrap();
+    #[cfg(NOCTURNE_DEBUG)] {
+        QEMU.lock().write_fmt(args).unwrap();
+    }
 }
 
 #[macro_export]

@@ -238,6 +238,8 @@ thread_t* _thread_create_unwrapped(process_t* proc, void* entry_point, size_t st
     *--tmp_thread->esp = (uint32_t)entry_point;
 
     // If it's a user task, load up the user_mode jumper.
+    // TODO: To enable usermode tasks, uncomment those 4 lines below.
+
     // if((flags & THREAD_KERNEL) == 0) {
     //     *--tmp_thread->esp = (uint32_t)0;
     //     *--tmp_thread->esp = (uint32_t)enter_usermode;

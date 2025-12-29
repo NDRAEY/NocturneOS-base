@@ -1,6 +1,7 @@
 set(RUST_TARGET "${RUST_TARGET_TRIPLE}.json")
 set(RUST_COMPILER_TOOLCHAIN "nightly-2025-12-01")
 set(RUST_FLAGS -Zbuild-std=core,compiler_builtins,alloc -Znext-lockfile-bump)
+set(RUST_FLAGS_AFTER "")
 set(RUST_TOOLCHAIN_FULLNAME "${RUST_COMPILER_TOOLCHAIN}-x86_64-unknown-linux-gnu")  
 set(RUST_CARGO_PATH "~/.rustup/toolchains/${RUST_TOOLCHAIN_FULLNAME}/bin/src/cargo")
 
@@ -19,15 +20,24 @@ add_custom_target(chen ALL DEPENDS "${CMAKE_SOURCE_DIR}/utils/chen/target/releas
 add_dependencies(${KERNEL} chen)
 
 function(add_rust_integration build_type)
+	# Nocturne's `debug` profile is Rust's `dev` one.
 	if(${build_type} STREQUAL "debug")
 		set(rust_profile "dev")
 	else()
 		set(rust_profile ${build_type})
 	endif()
 
+	if(${build_type} STREQUAL "debug")
+		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_DEBUG)
+	elseif(${build_type} STREQUAL "release_no_opt")
+		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_RELEASE)
+	elseif(${build_type} STREQUAL "release")
+		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_RELEASE)
+	endif()
+
 	add_custom_command(
 		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/${build_type}/libnocturne.a" "fake.a"
-		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile ${rust_profile}
+		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile ${rust_profile} -- ${RUST_FLAGS_AFTER}
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 		COMMENT "Building Rust files..."
 		DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"

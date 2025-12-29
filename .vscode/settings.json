@@ -40,4 +40,9 @@
         "isr.h": "c",
         "cputemp.h": "c"
     },
+    "rust-analyzer.cargo.cfgs": [
+        "debug_assertions",
+        "miri",
+        "NOCTURNE_DEBUG"
+    ],
 }
