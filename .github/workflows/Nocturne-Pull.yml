@@ -29,7 +29,6 @@ jobs:
         run: |
           bash tools/rust.sh
 
-
       - name: Step 2 - Configuring the kernel
         run: bash tools/build/make_builds.sh
 
