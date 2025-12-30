@@ -2,9 +2,9 @@
  * @file sys/timer.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Модуль системного таймера
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-10-01
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 #include  "arch/x86/pit.h"
 #include  "arch/x86/isr.h"

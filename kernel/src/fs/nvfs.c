@@ -2,9 +2,9 @@
  * @file drv/fs/nvfs.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief New Virtual File System - Новая виртуальная файловая система
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2023-10-14
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
 */
 
 #include <io/ports.h>

@@ -254,7 +254,7 @@ pub fn new_nsh(_argc: u32, _argv: *const *const core::ffi::c_char) -> u32 {
     let ver = version();
 
     println!("NocturneOS [Версия: v{}.{}.{}]", ver.0, ver.1, ver.2);
-    println!("(c) SayoriOS & NocturneOS Team, 2025.");
+    println!("(c) SayoriOS & NocturneOS Team, 2026.");
     println!("Для дополнительной информации наберите \"help\".");
 
     loop {

@@ -2,9 +2,9 @@
  * @file sys/scheduler.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY (pikachu_andrey@vk.com)
  * @brief Менеджер задач
- * @version 0.4.2
- * @date 2025-04-13
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @version 0.4.3
+ * @date 2025-12-29
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 
 #include <sys/scheduler.h>
@@ -450,17 +450,6 @@ void task_switch_v2_wrapper(registers_t* regs) {
     task_switch_v2(current_thread, next_thread);
 
     // next_thread is now current_thread.
-
-    // If we have regs and kernel task flag is clear, set selectors to user ones.
-    // if(regs != NULL) {
-    //     bool is_user_task = (current_thread->flags & THREAD_KERNEL) == 0;
-
-    //     if(is_user_task) {
-    //         regs->cs = 0x18 | 3;
-    //         // regs->ds = 0x20 | 3;
-    //         regs->ss = 0x20 | 3;
-    //     }
-    // }
 }
 
 void process_add_prepared(volatile process_t* process) {

@@ -2,9 +2,9 @@
  * @file drv/beeper.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Драйвер пищалки
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-10-10
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
 */
 
 #include <arch/x86/ports.h>

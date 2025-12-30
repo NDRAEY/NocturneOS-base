@@ -2,8 +2,8 @@
  * @brief Драйвер ATAPI PIO
  * @author NDRAEY >_
  * @date 2023-07-21
- * @version 0.4.2
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @version 0.4.3
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 
 // Super-duper original ATAPI driver by NDRAEY (c) 2023

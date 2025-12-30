@@ -1,6 +1,6 @@
-// Intel HD Graphics (8086:2a42) driver by NDRAEY (c) 2024
+// Intel HD Graphics (8086:2a42) driver by NDRAEY (c) 2026
 // WARNING: Driver is in WIP STAGE
-// For SayoriOS ;)
+// For SayoriOS / NocturneOS ;)
 
 #include "generated/pci.h"
 #include "io/logging.h"

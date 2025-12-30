@@ -2,9 +2,9 @@
  * @file sys/gdt.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief (GDT) Глобальная таблица дескрипторов
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-10-01
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 #include  "arch/x86/gdt.h"
 #include  "arch/x86/tss.h"

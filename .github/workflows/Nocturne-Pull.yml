@@ -27,7 +27,8 @@ jobs:
 
       - name: Step 1.2 - Install toolchain
         run: |
-          rustup component add rust-src --toolchain nightly-2025-12-01-x86_64-unknown-linux-gnu
+          bash tools/rust.sh
+
 
       - name: Step 2 - Configuring the kernel
         run: bash tools/build/make_builds.sh

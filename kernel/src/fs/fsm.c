@@ -2,9 +2,9 @@
  * @file drv/fs/fsm.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), Павленко Андрей (pikachu_andrey@vk.com)
  * @brief File System Manager (Менеджер файловых систем)
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2023-10-16
- * @copyright Copyright SayoriOS & NocturneOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS & NocturneOS Team (c) 2022-2026
 */
 
 #include <io/logging.h>

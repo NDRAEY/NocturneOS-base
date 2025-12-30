@@ -2,9 +2,9 @@
  * @file lib/php/pathinfo.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Функция замены строк
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2023-07-30
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 
 #include <lib/php/pathinfo.h>

@@ -2,7 +2,7 @@
  * @file drv/psf.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), Арен Елчинян (SynapseOS)
  * @brief Поддержка шрифтов PSF
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2023-01-13
  * @copyright Copyright SayoriOS Team (c) 2023
  */

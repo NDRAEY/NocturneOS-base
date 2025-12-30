@@ -2,9 +2,9 @@
  * @file drv/env.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru)
  * @brief Пользовательское окружение ОС
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-11-07
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
 */
 
 #include <version.h>

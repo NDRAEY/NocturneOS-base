@@ -2,9 +2,9 @@
  * @file io/port_io.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Средства для работы с портами
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2023-01-07
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 
 #include <lib/string.h>

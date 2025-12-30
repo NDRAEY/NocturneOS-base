@@ -2,9 +2,9 @@
  * @file sys/elf.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Загрузщик ELF
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-10-20
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
 */
 
 #include <mem/pmm.h>

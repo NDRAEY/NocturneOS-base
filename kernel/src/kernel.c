@@ -2,9 +2,9 @@
  * @file kernel.c
  * @author Пиминов Никита (nikita.piminoff@yandex.ru), NDRAEY >_ (pikachu_andrey@vk.com)
  * @brief Основная точка входа в ядро
- * @version 0.4.2
+ * @version 0.4.3
  * @date 2022-11-01
- * @copyright Copyright SayoriOS Team (c) 2022-2025
+ * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 
 #include "kernel.h"
@@ -59,10 +59,10 @@
 
 size_t VERSION_MAJOR = 0;      /// Мажор
 size_t VERSION_MINOR = 4;      /// Минор
-size_t VERSION_PATCH = 2;      /// Патч
+size_t VERSION_PATCH = 3;      /// Патч
 
 char* OS_ARCH = "i386";        /// Архитектура
-char* VERSION_NAME = "Space";  /// Имя версии (изменяется вместе с патчем)
+char* VERSION_NAME = "Leap";   /// Имя версии (изменяется вместе с патчем)
 
 extern bool ps2_channel2_okay;
 
