@@ -9,7 +9,7 @@ NocturneOS - это форк операционной системы SayoriOS.
 
 
 ![Workflow](https://github.com/NDRAEY/NocturneOS-base/actions/workflows/Nocturne-Auto.yml/badge.svg)
-![Warnings](https://badgen.net/https/ndraey.github.io/NocturneOS-base/warning_count.txt?cache=3600)
+![Warnings](https://badgen.net/https/nocturneos.github.io/Nocturne/warning_count.txt?cache=3600)
 
 Простая операционная система для компьютеров на архитектуре x86. Написана на языках Ассемблер, C и Rust.
 
