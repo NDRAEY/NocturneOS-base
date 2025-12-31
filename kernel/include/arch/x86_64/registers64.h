@@ -20,3 +20,7 @@ typedef	struct {
     uint64_t rsp;
     uint64_t ss;
 } __attribute__((packed)) registers_t;
+
+uint64_t read_cr0();
+uint64_t read_cr2();
+uint64_t read_cr3();

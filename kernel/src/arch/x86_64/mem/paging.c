@@ -170,13 +170,15 @@ extern uint64_t _pdt[512];
 void paging_preinit(const multiboot_header_t* mboot) {
     size_t kstart = (size_t)&KERNEL_BASE_pos;
     size_t grub_last_module_end = (((const multiboot_module_t *)mboot->mods_addr) + (mboot->mods_count - 1))->mod_end;
-    size_t kend = grub_last_module_end + PAGE_BITMAP_SIZE;
+    size_t kend = grub_last_module_end + phys_get_bitmap_size();
 
     size_t big_page_count = ALIGN(kend - kstart, PAGE_SIZE * 512) / (PAGE_SIZE * 512);
 
     if(big_page_count > 512) {
         // panic()
     }
+
+    qemu_log("Kernel range: %08x - %08x", kstart, kend);
 
     qemu_log("Will use %d big pages", big_page_count);
 

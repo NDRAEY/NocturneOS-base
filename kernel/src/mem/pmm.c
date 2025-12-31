@@ -14,6 +14,7 @@
 #include "mem/pmm.h"
 #include  "arch/x86/ports.h"
 #include "io/logging.h"
+#include "multiboot.h"
 #include "sys/scheduler.h"
 
 extern size_t KERNEL_BASE_pos;
@@ -28,9 +29,7 @@ size_t phys_memory_size = 0;
 size_t used_phys_memory_size = 0;
 
 /// Карта занятых страниц
-// uint8_t pages_bitmap[PAGE_BITMAP_SIZE] = {0};
 uint8_t* pages_bitmap = 0;
-
 
 /**
  * @brief Allocates a single page (4096 bytes)
@@ -44,7 +43,7 @@ physical_addr_t phys_alloc_single_page() {
 		phys_not_enough_memory();
 	}
 
-	for(size_t i = 0; i < PAGE_BITMAP_SIZE; i++) {
+	for(size_t i = 0; i < phys_get_bitmap_size(); i++) {
 		if(pages_bitmap[i] == 0xff) {
 			// 0xff is eight ones in 8 bit.
 			// 8 ones - all pages in this index is used.
@@ -57,9 +56,9 @@ physical_addr_t phys_alloc_single_page() {
 				if(((pages_bitmap[i] >> j) & 1) == 0) {
 					// Page is free
 					pages_bitmap[i] |= (1 << j);
-
+					
 					used_phys_memory_size += PAGE_SIZE;
-
+					
 					// Every (8bit) entry can handle (4096 * 8) = 32768 bytes.
 					// Every bit of entry can hold one page (4096 bytes). 
 					return (PAGE_SIZE * 8 * i) + (j * PAGE_SIZE);
@@ -89,7 +88,7 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 	// They used for saving start indexes of our pages.
 	size_t si = 0, sj = 0;
 
-	for(size_t i = 0; i < PAGE_BITMAP_SIZE; i++) {
+	for(size_t i = 0; i < phys_get_bitmap_size(); i++) {
 		if(pages_bitmap[i] == 0xff) {
 			// 0xff is eight ones in 8 bit.
 			// 8 ones - all pages in this index is used.
@@ -109,7 +108,7 @@ physical_addr_t phys_alloc_multi_pages(size_t count) {
 						// If we found `count` free pages in a row, we should mark them as used and return address.
 
 						// Roll through all entries, starting from indices we preserved.
-						for(; si < PAGE_BITMAP_SIZE; si++) {
+						for(; si < phys_get_bitmap_size(); si++) {
 							for(; sj < 8; sj++) {
 								// Mark as used.
 								pages_bitmap[si] |= (1 << sj);
@@ -181,7 +180,7 @@ void phys_free_multi_pages(physical_addr_t addr, size_t count) {
 	size_t j = (addr % (PAGE_SIZE * 8)) / PAGE_SIZE;
 
 	// Roll over all entries starting from index of our address
-	for(; i < PAGE_BITMAP_SIZE; i++) {
+	for(; i < phys_get_bitmap_size(); i++) {
 		for(; j < 8; j++) {
 			// Just clear a nth bit
 			pages_bitmap[i] &= ~(1 << j);
@@ -217,6 +216,11 @@ void phys_mark_page_entry(physical_addr_t addr, bool used) {
 	if(!addr)
 		return;
 
+	if((addr / 4096) / 8 >= phys_get_bitmap_size()) {
+		qemu_err("BUG: %zx is beyond bitmap!", addr);
+		__asm__ volatile("cli \n hlt");
+	}
+
 	// Extract our entry position (i) and bit in the entry (j).
 
 	size_t i = addr / (PAGE_SIZE * 8);
@@ -235,11 +239,16 @@ size_t getInstalledRam(){
 void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length) {
 	size_t n = length / sizeof(memory_map_entry_t);
 
-	for (size_t i = 0; i < n; i++){
+	for (size_t i = 0; i < n; i++) {
 		const memory_map_entry_t* entry = mmap_addr + i;
 
 		size_t addr = entry->addr_low;
 		size_t length = entry->len_low;
+
+		if(addr >= phys_get_bitmap_size() * 4096 * 8) {
+			qemu_warn("Reserved entry is beyond memory bitmap range: %x", addr);
+			continue;
+		}
 
 		if(entry->type != 1) {
 			for(size_t j = 0; j < length; j += PAGE_SIZE) {
@@ -279,9 +288,23 @@ void check_memory_map(const memory_map_entry_t* mmap_addr, uint32_t length){
 	qemu_log("RAM: %d MB | %d KB | %d B", phys_memory_size >> 20, phys_memory_size >> 10, phys_memory_size);
 }
 
+// Physical memory bitmap size, in bytes.
+size_t bitmap_size = 0;
+
+size_t phys_get_bitmap_size() {
+	return bitmap_size;
+}
+
 void init_pmm(const multiboot_header_t* hdr) {
+	// Calculate bitmap size
+	size_t pages_available = ALIGN(phys_memory_size / PAGE_SIZE, 0x100);
+	bitmap_size = pages_available / 8;
+
+	qemu_log("Memory %zu bytes; %zu pages available", phys_memory_size, pages_available);
+	qemu_log("Calculated bitmap size: %zu bytes", bitmap_size);
+
 	size_t grub_last_module_end = (((const multiboot_module_t *)hdr->mods_addr) + (hdr->mods_count - 1))->mod_end;
-	size_t real_end = (size_t)(grub_last_module_end + PAGE_BITMAP_SIZE);
+	size_t real_end = (size_t)(grub_last_module_end + phys_get_bitmap_size());
 
 	kernel_start = (size_t)&KERNEL_BASE_pos;
 	kernel_end = (size_t)&KERNEL_END_pos;
@@ -290,7 +313,7 @@ void init_pmm(const multiboot_header_t* hdr) {
 
     pages_bitmap = (uint8_t*)grub_last_module_end;
 
-	memset(pages_bitmap, 0, PAGE_BITMAP_SIZE);
+	memset(pages_bitmap, 0, phys_get_bitmap_size());
 
 	size_t kernel_size = real_end - kernel_start;
 

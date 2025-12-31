@@ -220,7 +220,7 @@ extern size_t grub_last_module_end;
 
 void init_paging(const multiboot_header_t *mboot) {	
 	size_t grub_last_module_end = (((const multiboot_module_t *)mboot->mods_addr) + (mboot->mods_count - 1))->mod_end;
-	size_t real_end = (size_t)(grub_last_module_end + PAGE_BITMAP_SIZE);
+	size_t real_end = (size_t)(grub_last_module_end + phys_get_bitmap_size());
 
 	// Create new page directory
 

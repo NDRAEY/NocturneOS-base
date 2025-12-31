@@ -95,46 +95,6 @@ void new_nsh();
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
 
-#ifndef RELEASE
-void scan_kernel(const multiboot_header_t *mboot) {
-    kernel_start = (size_t)&KERNEL_BASE_pos;
-	kernel_end = (size_t)&KERNEL_END_pos;
-
-    qemu_log("Flags: %x", mboot->flags);
-    qemu_log("MemLower: %x", mboot->mem_lower);
-    qemu_log("MemUpper: %x", mboot->mem_upper);
-    qemu_log("BootDevice: %x", mboot->boot_device);
-    qemu_log("CmdLine: %x", mboot->cmdline);
-    qemu_log("ModsCount: %x", mboot->mods_count);
-    qemu_log("ModsAddr: %x", mboot->mods_addr);
-    qemu_log("Num: %x", mboot->num);
-    qemu_log("Size: %x", mboot->size);
-    qemu_log("Addr: %x", mboot->addr);
-    qemu_log("Shndx: %x", mboot->shndx);
-    qemu_log("MmapLength: %x", mboot->mmap_length);
-    qemu_log("MmapAddr: %x", mboot->mmap_addr);
-
-	qemu_log("Kernel: %x - %x", kernel_start, kernel_end);
-
-    multiboot_module_t* module_list = (multiboot_module_t*)mboot->mods_addr;
-    size_t count = mboot->mods_count;
-
-    for (size_t i = 0; i < count; i++) {
-        const multiboot_module_t *mod = module_list + i;
-        (void)mod;
-
-        qemu_log("Module #%d: Start: %x; End: %x; Size: %d k",
-                i,
-                mod->mod_start,
-                mod->mod_end,
-                (mod->mod_end - mod->mod_start) >> 10
-        );
-    }
-
-    const multiboot_module_t* last_module = module_list + count - 1;
-    qemu_log("Bitmap: %x - %x", last_module->mod_end, last_module->mod_end + PAGE_BITMAP_SIZE);
-}
-#endif
 
 /*
   Спаси да сохрани этот кусок кода
@@ -146,10 +106,6 @@ __attribute__((aligned(0x1000)))
 void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot, uint32_t initial_esp)
 {
     drawASCIILogo(0);
-
-    #ifndef RELEASE
-    scan_kernel(mboot);
-    #endif
 
     qemu_log("SayoriOS v%d.%d.%d\nBuilt: %s",
              VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, // Версия ядра

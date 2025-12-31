@@ -44,7 +44,7 @@ void vmm_init()
 	system_heap.used_memory = 0;
 
 	extern size_t grub_last_module_end;
-	size_t real_end = grub_last_module_end + PAGE_BITMAP_SIZE;
+	size_t real_end = grub_last_module_end + phys_get_bitmap_size();
 
 	system_heap.start = 0x1000000;
 

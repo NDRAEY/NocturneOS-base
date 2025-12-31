@@ -2,6 +2,7 @@
 #include <arch/x86/ports.h>
 #include <arch/x86/serial_port.h>
 #include "arch/x86/mem/paging_common.h"
+#include "arch/x86/pic.h"
 #include "arch/x86_64/idt64.h"
 #include "arch/x86/pit.h"
 #include "arch/x86/isr.h"
@@ -28,6 +29,8 @@ void __attribute__((noreturn)) arch_init(const multiboot_header_t *mboot) {
     __com_init(PORT_COM1);
 
     qemu_log("Hello, world! (MBOOT = %p)", mboot);
+
+    pic_init();
 
     init_idt();
     isr_init();

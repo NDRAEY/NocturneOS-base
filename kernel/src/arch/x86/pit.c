@@ -50,7 +50,10 @@ void sleep_ticks(size_t delay) {
             break;
         } else {
         	__asm__ volatile("hlt");
+
+            #ifdef NOCTURNE_FEATURE_MULTITASKING
             yield();
+            #endif
         }
     }
 }

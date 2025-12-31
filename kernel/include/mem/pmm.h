@@ -24,6 +24,8 @@ extern size_t kernel_end;
 
 void init_pmm(const multiboot_header_t* hdr);
 
+size_t phys_get_bitmap_size();
+
 physical_addr_t phys_alloc_single_page();
 physical_addr_t phys_alloc_multi_pages(size_t count);
 
@@ -37,3 +39,5 @@ void phys_mark_page_entry(physical_addr_t addr, bool used);
 
 void check_memory_map(const memory_map_entry_t* mmap_addr, uint32_t length);
 void mark_reserved_memory_as_used(const memory_map_entry_t* mmap_addr, uint32_t length);
+
+bool phys_is_reserved_zone(size_t addr, size_t length);
