@@ -75,12 +75,12 @@ NocturneOS - это форк операционной системы SayoriOS.
 
 ## Сборка
 
-Для написания программ под NocturneOS может потребоваться SayoriSDK: https://github.com/NDRAEY/NocturneSDK
+Для написания программ под NocturneOS может потребоваться NocturneSDK: https://github.com/NocturneOS/NocturneSDK
 
 Для компиляции вам потребуется операционная система на базе ядра Linux или Windows (с WSL), в которой предустановлено ПО для разработки.Установить можно следующей командой:
 
 ```bash
-sudo apt-get install python3 gcc cmake ninja-build xorriso mtools
+sudo apt-get install python3 gcc cmake ninja-build xorriso mtools grub-pc-bin
 ```
 
 Система содержит модули написанные на языке программирования Rust, поэтому требуется установить компилятор Rust.
@@ -104,7 +104,7 @@ sudo apt-get install qemu-system-x86 qemu-tools
 Клонируем репозиторий:
 
 ```bash
-git clone https://github.com/NDRAEY/NocturneOS-base NocturneOS
+git clone https://github.com/NocturneOS/Nocturne NocturneOS
 ```
 
 Переходим к папке:
@@ -122,7 +122,7 @@ cmake -B cmake-build-debug -G Ninja . -DCMAKE_BUILD_TYPE=Debug
 Компилируем и запускаем:
 
 ```bash
-cmake --build cmake-build-debug/ -j4 -- run
+cmake --build cmake-build-debug/ -j$(nproc) -- run
 ```
 
 Также `run` можно заменить на `iso` чтобы просто собрать образ.
