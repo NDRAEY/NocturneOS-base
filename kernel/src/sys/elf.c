@@ -75,7 +75,6 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
     mutex_get(&elf_loader_mutex);
 
     extern volatile uint32_t next_pid;
-    extern list_t process_list, thread_list;
 
     process_t* proc = allocate_one(process_t);
 
@@ -91,7 +90,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
         if (phdr->p_type != PT_LOAD)
             continue;
 
-        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1);
+        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1u);
 
         physical_addr_t addrto = phys_alloc_multi_pages(pagecount);
 
@@ -143,7 +142,7 @@ int32_t spawn_prog(const char *name, int argc, const char* const* eargv) {
         if(phdr->p_type != PT_LOAD)
             continue;
 
-        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1);
+        size_t pagecount = MAX((ALIGN(phdr->p_memsz, PAGE_SIZE) / PAGE_SIZE), 1u);
 
         qemu_log("\t- Cleaning %d: %x [%d]", i, phdr->p_vaddr, pagecount * PAGE_SIZE);
 

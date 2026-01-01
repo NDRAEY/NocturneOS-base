@@ -69,3 +69,5 @@
 #include "generated/noctfs.h"
 #include "generated/fatfs.h"
 #include "generated/pci.h"
+
+void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot);

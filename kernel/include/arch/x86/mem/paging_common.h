@@ -2,9 +2,9 @@
 
 #include <common.h>
 
-#define		PAGE_SIZE				0x1000
-#define		PAGE_OFFSET_MASK		0xFFF	
-#define		PAGE_TABLE_INDEX_BITS	10	
+#define		PAGE_SIZE				0x1000u
+#define		PAGE_OFFSET_MASK		0xFFF
+#define		PAGE_TABLE_INDEX_BITS	10
 #define		PAGE_TABLE_INDEX_MASK	0x3FF
 
 #define		PAGE_PRESENT		(1U << 0)

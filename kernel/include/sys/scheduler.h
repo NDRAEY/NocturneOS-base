@@ -93,6 +93,8 @@ typedef struct {
     size_t          kernel_stack_top;
     // 56
     size_t          kernel_stack_bottom;
+    // 60: Indicates the last system error happened in this thread (i/o error, memory allocation fail, etc.).
+    size_t          last_error;
 } thread_t;
 
 /* Initialization */
