@@ -16,7 +16,8 @@
 
 #include "sys/syscalls.h"
 
-#define DEFAULT_STACK_SIZE (64 << 10)
+// 128 KB stack for each user thread
+#define DEFAULT_STACK_SIZE (128 << 10)
 
 #define THREAD_KERNEL (1 << 0)
 

@@ -115,8 +115,6 @@ void acpi_scan_all_tables(uint32_t rsdt_addr) {
 
     uint32_t* rsdt_end = (uint32_t*)(rsdt_addr + sizeof(ACPISDTHeader));
 
-    qemu_printf("]\n");
-
     qemu_log("RSDT start: %x", rsdt_addr);
     qemu_log("RSDT end: %x", (size_t)rsdt_end);
 

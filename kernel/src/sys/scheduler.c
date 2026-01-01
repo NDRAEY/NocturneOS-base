@@ -486,13 +486,17 @@ void thread_remove_prepared(volatile thread_t* thread) {
 
 void yield() {
     #ifdef NOCTURNE_X86
-    // __asm__ volatile("int $0x80" :: "a"(SYSCALL_YIELD) : "memory");
+    __asm__ volatile("cli");
+
+    //__asm__ volatile("int $0x80" :: "a"(SYSCALL_YIELD) : "memory");
     
     registers_t regs;
 
     get_regs(&regs);
     
     task_switch_v2_wrapper(&regs);
+
+    __asm__ volatile("sti");
     #endif
 }
 

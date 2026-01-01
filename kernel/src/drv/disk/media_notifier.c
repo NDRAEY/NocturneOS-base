@@ -125,8 +125,9 @@ void launch_media_notifier()
     thread_create(
         get_current_proc(),
         notifier_thread,
-        0x1000,
+        0x4000,
         THREAD_KERNEL,
-    NULL,
-    0);
+        NULL,
+        0
+    );
 }
