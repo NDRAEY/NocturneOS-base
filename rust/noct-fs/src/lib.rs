@@ -18,7 +18,7 @@ use alloc::{str, vec};
 
 unsafe impl Send for File {}
 
-pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
+pub fn read_to_string(file_path: &str) -> Result<String, &str> {
     let cs = CString::new(file_path).unwrap();
 
     let file = unsafe { fopen(cs.as_ptr(), FileOpenMode_O_READ) };
@@ -28,22 +28,19 @@ pub fn read_to_string(file_path: &str) -> Result<&str, &str> {
     }
 
     let size = unsafe { fsize(file) as usize };
-    let mut buffer: Vec<u8> = vec![0; size + 1]; // Создаем буфер для строки
+    
+    let mut buffer: String = String::with_capacity(size);
+    unsafe { buffer.as_mut_vec().set_len(size) };
+
     let ptr = buffer.as_mut_ptr() as *mut c_void;
 
     unsafe {
-        fread(file, 1, size as u32, ptr);
+        fread(file, 1, size as _, ptr);
 
         fclose(file);
     }
 
-    let result = unsafe {
-        CStr::from_ptr(buffer.as_ptr() as *const _)
-            .to_str()
-            .unwrap()
-    };
-
-    Ok(result)
+    Ok(buffer)
 }
 
 pub fn read(file_path: &str) -> Result<Vec<u8>, &'static str> {

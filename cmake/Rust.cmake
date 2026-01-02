@@ -27,17 +27,9 @@ function(add_rust_integration build_type)
 		set(rust_profile ${build_type})
 	endif()
 
-	if(${build_type} STREQUAL "debug")
-		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_DEBUG)
-	elseif(${build_type} STREQUAL "release_no_opt")
-		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_RELEASE)
-	elseif(${build_type} STREQUAL "release")
-		set(RUST_FLAGS_AFTER --cfg=NOCTURNE_RELEASE)
-	endif()
-
 	add_custom_command(
 		OUTPUT "${CMAKE_SOURCE_DIR}/rust/target/${RUST_TARGET_TRIPLE}/${build_type}/libnocturne.a" "fake.a"
-		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile ${rust_profile} -- ${RUST_FLAGS_AFTER}
+		COMMAND cargo +${RUST_COMPILER_TOOLCHAIN} rustc --target ${RUST_TARGET} ${RUST_FLAGS} --profile ${rust_profile}
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rust
 		COMMENT "Building Rust files..."
 		DEPENDS "${CMAKE_SOURCE_DIR}/rust/src"

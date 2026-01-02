@@ -23,6 +23,7 @@ cmake-*/
 compile_commands.json
 .cache/
 test_*
+test-*
 *.wav
 /kernel/include/generated/*
 /analyzer.txt

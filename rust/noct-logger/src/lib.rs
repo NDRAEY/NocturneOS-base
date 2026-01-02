@@ -28,8 +28,14 @@ extern "C" {
 
 #[doc(hidden)]
 pub fn _print_qemu(args: fmt::Arguments) {
-    #[cfg(NOCTURNE_DEBUG)] {
+    #[cfg(debug_assertions)]
+    {
         QEMU.lock().write_fmt(args).unwrap();
+    }
+
+    #[cfg(not(debug_assertions))]
+    {
+        let _ = args;
     }
 }
 

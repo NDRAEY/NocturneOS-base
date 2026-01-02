@@ -67,6 +67,3 @@ strip = true
 lto = true
 opt-level = 0
 codegen-units = 1
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(NOCTURNE_DEBUG)', 'cfg(NOCTURNE_RELEASE)'] }
