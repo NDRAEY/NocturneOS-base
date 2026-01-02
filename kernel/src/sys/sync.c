@@ -7,7 +7,7 @@
  * @copyright Copyright SayoriOS Team (c) 2022-2026
  */
 #include	"sys/sync.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 
 // https://github.com/dreamportdev/Osdev-Notes/blob/master/05_Scheduling/04_Locks.md
 

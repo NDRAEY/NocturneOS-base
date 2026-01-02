@@ -12,7 +12,7 @@
 #include <io/logging.h>
 #include <lib/stdio.h>
 #include <lib/math.h>
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 
 elf_t* load_elf(const char* name){
 	/* Allocate ELF file structure */

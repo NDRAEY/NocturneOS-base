@@ -6,7 +6,7 @@ fn main() {
     let target = std::env::var("TARGET").unwrap();
 
     let mut builder = bindgen::Builder::default()
-        .header("../../kernel/include/sys/scheduler.h")
+        .header("../../kernel/include/sys/scheduler/scheduler.h")
         .clang_arg("-I../../kernel/include/")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .use_core()

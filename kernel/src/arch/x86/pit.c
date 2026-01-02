@@ -10,7 +10,7 @@
 #include  "arch/x86/isr.h"
 #include  "arch/x86/ports.h"
 #include "io/logging.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 
 #ifdef NOCTURNE_SUPPORT_TIER1
 extern volatile bool scheduler_working;

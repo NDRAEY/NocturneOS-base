@@ -11,7 +11,7 @@
 #include "mem/pmm.h"
 #include "lib/stdio.h"
 #include "mem/vmm.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 #include "generated/audiosystem_headers.h"
 
 uint8_t ac97_busnum, ac97_slot, ac97_func;

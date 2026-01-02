@@ -20,7 +20,7 @@
 
 #include "sys/acpi.h"
 #include "sys/timer.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 #include "sys/cpu_isr.h"
 #include "sys/bootscreen.h"
 #include "sys/logo.h"

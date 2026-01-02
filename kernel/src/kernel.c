@@ -24,7 +24,7 @@
 #include "mem/vmm.h"
 #include "drv/audio/ac97.h"
 #include "sys/cpuid.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 
 #ifdef NOCTURNE_X86
 #include "arch/x86/msr.h"

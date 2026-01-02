@@ -23,7 +23,7 @@
 #include <io/logging.h>
 #include <mem/vmm.h>
 #include <lib/asprintf.h>
-#include <sys/scheduler.h>
+#include <sys/scheduler/scheduler.h>
 #include <io/ports.h>
 
 void (*default_qemu_printf)(const char *text, ...) = qemu_printf;

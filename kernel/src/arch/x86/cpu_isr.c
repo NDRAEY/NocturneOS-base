@@ -12,7 +12,7 @@
 #include "debug/hexview.h"
 #include	"sys/unwind.h"
 #include <arch/x86/ports.h>
-#include    "sys/scheduler.h"
+#include    "sys/scheduler/scheduler.h"
 #include 	<io/status_loggers.h>
 #include 	<io/logging.h>
 

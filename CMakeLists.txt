@@ -166,7 +166,8 @@ set(COMMON_C_SRC
 	kernel/src/lib/time_conversion.c 
 	kernel/src/fs/nvfs.c 
   #kernel/src/fs/tempfs.c 
-	kernel/src/sys/scheduler.c
+	kernel/src/sys/scheduler/scheduler.c
+	kernel/src/sys/scheduler/thread.c
 	kernel/src/lib/php/pathinfo.c 
 	kernel/src/drv/psf.c 
 	kernel/src/sys/unwind.c 

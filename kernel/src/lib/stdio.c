@@ -13,7 +13,7 @@
 #include <fs/fsm.h>
 #include <fs/nvfs.h>
 #include <io/tty.h>
-#include <sys/scheduler.h>
+#include <sys/scheduler/scheduler.h>
 
 /**
  * @brief Проверка файла на наличие ошибок при работе

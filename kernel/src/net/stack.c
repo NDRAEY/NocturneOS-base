@@ -7,7 +7,7 @@
 #include "../lib/libvector/include/vector.h"
 #include "mem/vmm.h"
 #include <io/logging.h>
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 #include "net/ethernet.h"
 
 volatile vector_t* system_network_incoming_queue = 0;

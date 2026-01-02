@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <mem/vmm.h>
 #include <io/tty.h>
-#include <sys/scheduler.h>
+#include <sys/scheduler/scheduler.h>
 #include <io/logging.h>
 #include <io/status_loggers.h>
 #include <lib/math.h>

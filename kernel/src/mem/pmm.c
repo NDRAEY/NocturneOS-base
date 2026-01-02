@@ -15,7 +15,7 @@
 #include  "arch/x86/ports.h"
 #include "io/logging.h"
 #include "multiboot.h"
-#include "sys/scheduler.h"
+#include "sys/scheduler/scheduler.h"
 
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
