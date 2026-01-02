@@ -19,7 +19,7 @@ pub fn memmeter(mut f: impl FnMut()) -> MeterResults {
     let end_trun = stats.total_memory_run;
 
     MeterResults {
-        virtual_delta: end_virt - virt,
-        total_memory_run: end_trun - trun,
+        virtual_delta: end_virt.saturating_sub(virt),
+        total_memory_run: end_trun.saturating_sub(trun),
     }
 }

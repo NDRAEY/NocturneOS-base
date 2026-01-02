@@ -60,7 +60,10 @@ unsafe extern "C" fn fun_info(disk_name: *const c_char, path: *const c_char) -> 
     let path = ".".to_string() + raw_ptr_to_str(path);
 
     let entity = match fl.find_file(&path) {
-        Err(_) => return FSM_FILE::missing(),
+        Err(_) => {
+            qemu_err!("{path} is missing!");
+            return FSM_FILE::missing()
+        },
         Ok(e) => e,
     };
 

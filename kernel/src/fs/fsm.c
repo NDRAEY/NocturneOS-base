@@ -115,21 +115,17 @@ size_t fsm_write(int FIndex, const char* disk_name, const char* Name, size_t Off
 
 FSM_FILE fsm_info(int FIndex,const char* disk_name, const char* Name){
     if (fsm_debug) {
-        qemu_log("[FSM] [INFO] F:%d | D:`%s` | N:%s",FIndex,disk_name,Name);
+        qemu_log("[FSM] [INFO] FS ID: %d; Disk name: `%s`; Name: `%s`",FIndex,disk_name,Name);
     }
 
     vector_result_t res = vector_get(registered_filesystems, FIndex);
 
 	if (res.error) {
-        if (fsm_debug) {
+        // if (fsm_debug) {
             qemu_log("[FSM] [INFO] READY == 0");
-        }
+        // }
 		return (FSM_FILE){};
 	}
-    
-    if (fsm_debug) {
-        qemu_log("[FSM] [INFO] GO TO GFSM");
-    }
     
     FilesystemHandler* fsm = (FilesystemHandler*)res.element;
 	

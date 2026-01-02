@@ -1,5 +1,6 @@
 use noct_fs_sys::dir::Directory;
 
+use noct_logger::qemu_note;
 use noct_sys::chdir_nonrelative;
 
 use crate::println;
@@ -19,7 +20,7 @@ pub fn cd(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let mut dir = context.current_path.clone();
     dir.apply(path);
 
-    if !Directory::is_accessible(&dir) {
+    if !Directory::is_accessible(dir.as_str()) {
         println!("Cannot access: `{}`", dir);
 
         return Err(1);

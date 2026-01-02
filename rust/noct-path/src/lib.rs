@@ -1,13 +1,14 @@
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 
 extern crate alloc;
 
 use core::fmt::Display;
 
 use alloc::{
-    string::{String, ToString},
-    vec::Vec,
+    borrow::ToOwned, string::{String, ToString}, vec::Vec
 };
+
+use core::cmp::PartialEq;
 
 #[cfg(test)]
 pub mod tests;
@@ -31,6 +32,34 @@ impl Path {
         })
     }
 
+    pub fn is_absolute(path: &str) -> bool {
+        let delimited = path.split(":/").collect::<Vec<_>>();
+
+        let has_valid_delims = delimited.len() == 2;
+        
+        if has_valid_delims {
+            // If disk name is not empty
+            if !delimited[0].is_empty() {
+                // And first character in disk name is alphanumeric.
+                if delimited[0].chars().next().unwrap().is_alphanumeric() {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    pub fn disk_name(&self) -> &str {
+        &self.buffer.split(":/").next().unwrap()
+    }
+
+    pub fn path_part(&self) -> &str {
+        let mut iter = self.buffer.split(":/");
+
+        iter.nth(1).unwrap_or("")
+    }
+
     fn sep(&self) -> Vec<&str> {
         let mut stems: Vec<&str> = Vec::new();
 
@@ -44,42 +73,30 @@ impl Path {
     }
 
     pub fn apply(&mut self, path: &str) -> &mut Self {
-        if path.len() >= 3 {
-            let letter = path.chars().nth(0).unwrap();
-            let delim = &path[1..=2];
+        if Path::is_absolute(path) {
+            self.buffer = path.to_string();
 
-            if letter.is_alphabetic() && delim == ":/" {
-                self.buffer = path.to_string();
+            self.remove_trailing();
 
-                self.remove_trailing();
-
-                return self;
-            }
+            return self;
         }
-
-        let mut stems: Vec<&str> = Vec::new();
 
         for i in path.split('/') {
-            if !i.is_empty() {
-                stems.push(i);
-            }
-        }
+            if i == "." {
+                continue;
+            } else if i == ".." {
+                self.remove_trailing();
 
-        if !self.buffer.ends_with('/') {
-            self.buffer.push('/');
-        }
-
-        for i in &stems {
-            if i == &".." {
-                let sep = self.sep();
-
-                if sep.len() > 1 {
-                    self.buffer = sep[..sep.len() - 1].join("/") + "/";
-                }
-            } else if i == &"." {
-                // Do nothing
+                self.parent();
+            } else if i == "" {
+                continue;
             } else {
-                self.buffer += &(String::from(*i) + "/");
+                if !self.buffer.ends_with('/') {
+                    self.buffer.push('/');
+                }
+
+                self.buffer.push_str(i);
+                self.buffer.push('/');
             }
         }
 
@@ -89,35 +106,30 @@ impl Path {
     }
 
     fn remove_trailing(&mut self) {
-        while self.buffer.ends_with('/') && (self.buffer.len() > 3) {
+        while self.buffer.ends_with('/') {
             self.buffer.pop();
+        }
+
+        if self.buffer.chars().filter(|x| *x == '/').count() == 0 {
+            self.buffer.push('/');
         }
     }
 
     pub fn parent(&mut self) {
         // let stems: Vec<&str> = self.buffer.split("/").filter(|a| !a.is_empty()).collect();
 
-        // IDK why it doesn't work, it gives random string array.
-        let stems = self.sep();
+        let path_p = self.path_part();
 
-        if stems.len() == 1 {
-            self.buffer = stems.join("/") + "/";
+        let mut iter = path_p.split('/');
+        
+        // Remove the last element from iterator.
+        iter.next_back();
 
-            return;
-        }
+        let path = iter.collect::<Vec<_>>();
 
-        let mut finpath = stems[..stems.len() - 1].join("/");
-
-        // If resulting path leads to root, we need to add some slash
-        if finpath.len() == 2 {
-            finpath += "/";
-        }
-
-        self.buffer = finpath;
-    }
-
-    pub fn as_string(&self) -> &String {
-        &self.buffer
+        let total = self.disk_name().to_owned() + ":/" + &path.join("/");
+        
+        self.buffer = total;
     }
 
     pub fn as_str(&self) -> &str {
@@ -132,5 +144,17 @@ impl Path {
 impl Display for Path {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(&self.buffer)
+    }
+}
+
+impl PartialEq for Path {
+    fn eq(&self, other: &Self) -> bool {
+        self.buffer == other.buffer
+    }
+}
+
+impl PartialEq<&str> for Path {
+    fn eq(&self, other: &&str) -> bool {
+        self.buffer == *other
     }
 }

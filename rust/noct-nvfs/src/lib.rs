@@ -8,6 +8,7 @@ extern crate alloc;
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 use alloc::{boxed::Box, ffi::CString, string::String};
+use noct_logger::{qemu_err, qemu_note};
 use core::{
     ffi::{CStr, c_char},
     mem,
@@ -48,12 +49,22 @@ pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
 
     let filesystem_name = unsafe { fsm_get_disk_filesystem(disk_id_owned.as_ptr()) };
 
-    info.DriverFS = unsafe { fsm_getIDbyName(filesystem_name) };
+    if filesystem_name.is_null() {
+        qemu_err!("Filesystem name is null!");
+        return Box::into_raw(info);
+    }
+
+    let filesystem_id = unsafe { fsm_getIDbyName(filesystem_name) };
+
+    qemu_note!("FS ID: {}", filesystem_id);
+    
+    info.DriverFS = filesystem_id;
 
     if info.DriverFS == -1 {
         return Box::into_raw(info);
     }
 
+    info.Online = true;
     info.Ready = true;
 
     Box::into_raw(info)

@@ -9,8 +9,6 @@ use core::cell::OnceCell;
 use noct_logger::{qemu_err, qemu_ok};
 use noct_sched::task_yield;
 
-use spin::RwLock;
-
 pub mod kbd;
 
 /// Global keyboard buffer (kernel-wide). Used everywhere.

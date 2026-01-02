@@ -1,6 +1,3 @@
-use alloc::string::ToString;
-
-use noct_logger::qemu_log;
 use noct_tty::{print, println};
 
 use super::ShellContext;

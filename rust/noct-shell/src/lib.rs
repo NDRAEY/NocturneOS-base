@@ -6,6 +6,7 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
+use alloc::borrow::ToOwned;
 use elf::endian::AnyEndian;
 use noct_fs_sys::dir::Directory;
 use noct_input::kbd::CharKey;
@@ -229,7 +230,7 @@ fn suggest_completions(stem: &str) -> (Vec<String>, Option<usize>) {
         path.as_str()
     );
 
-    let rdir = match Directory::from_path(&path) {
+    let rdir = match Directory::from_path(path.as_str()) {
         Some(r) => r,
         None => {
             qemu_err!("Failed to build directory.");
@@ -240,7 +241,7 @@ fn suggest_completions(stem: &str) -> (Vec<String>, Option<usize>) {
     let variants = rdir.into_iter().names();
 
     let variants = variants
-        .map(|name| path.as_string().clone() + &name)
+        .map(|name| path.as_str().to_owned() + &name)
         .filter(|full| full.starts_with(&fullpath))
         .collect();
 
@@ -338,7 +339,7 @@ fn process_command(context: &mut ShellContext, raw_input: &str) {
             }
         }
         None => {
-            let path = context.current_path.as_string().clone() + command;
+            let path = context.current_path.as_str().to_owned() + command;
 
             qemu_note!("{path:?}");
             let file = noct_fs::File::open(&path);

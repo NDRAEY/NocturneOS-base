@@ -13,8 +13,8 @@ pub struct Directory<'a> {
 }
 
 impl Directory<'_> {
-    pub fn from_path<PathPattern: ToString>(path: &PathPattern) -> Option<Self> {
-        let st = CString::new(path.to_string()).unwrap();
+    pub fn from_path(path: &str) -> Option<Self> {
+        let st = CString::new(path).unwrap();
 
         let mut data = unsafe { core::mem::zeroed::<FSM_DIR>() };
 
@@ -52,8 +52,8 @@ impl Directory<'_> {
         self.files.len() as _
     }
 
-    pub fn is_accessible<PathPattern: ToString>(path: &PathPattern) -> bool {
-        let st = CString::new(path.to_string()).unwrap();
+    pub fn is_accessible(path: &str) -> bool {
+        let st = CString::new(path).unwrap();
 
         let entry = unsafe { nvfs_info(st.as_ptr()) };
 

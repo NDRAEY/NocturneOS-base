@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tarfs = { version = "0.2.4", default-features = false }
+tarfs = { version = "0.2.6", default-features = false }
 noct-diskman = { path = "../noct-diskman" }
 noct-fs-sys = { path = "../noct-fs-sys" }
 noct-logger = { path = "../noct-logger" }

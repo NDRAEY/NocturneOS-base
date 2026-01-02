@@ -1,10 +1,29 @@
-use noct_fs_sys::{FSM_ENTITY_TYPE_TYPE_DIR, dir::Directory};
+use alloc::vec::Vec;
+use noct_fs_sys::{FSM_ENTITY_TYPE_TYPE_DIR, dir::Directory, file::File};
 
 use crate::println;
 
 use super::ShellContext;
 
 pub static DIR_COMMAND_ENTRY: crate::ShellCommandEntry = ("dir", dir, Some("Lists a directory"));
+
+// Sorts entities of dir by name (A-Z) ascending by using bubble sort.
+fn sort_entities(files: &mut [File]) {
+    for _ in 0..files.len() {
+        for n in 0..files.len() {
+            if n + 1 >= files.len() {
+                break;
+            }
+
+            let this = files.get(n).unwrap();
+            let next = files.get(n + 1).unwrap();
+
+            if this.name > next.name {
+                files.swap(n, n + 1);
+            }
+        }
+    }
+}
 
 pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
     let path = {
@@ -14,7 +33,7 @@ pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
         }
     };
 
-    let dir = match Directory::from_path(&path) {
+    let dir = match Directory::from_path(path) {
         Some(x) => x,
         None => {
             println!("`{}`: no such directory", path);
@@ -24,7 +43,11 @@ pub fn dir(context: &mut ShellContext, args: &[&str]) -> Result<(), usize> {
 
     println!("Listing directory: `{}`\n", path);
 
-    for file in dir.into_iter() {
+    let mut files: Vec<File> = dir.into_iter().collect();
+
+    sort_entities(&mut files);
+
+    for file in files {
         let fdatetime = file.file.LastTime;
         let ftype = file.file.Type;
         let fsize = file.file.Size;

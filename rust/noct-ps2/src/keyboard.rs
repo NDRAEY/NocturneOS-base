@@ -1,6 +1,6 @@
 use noct_input::keyboard_buffer_put;
 use noct_interrupts::{IRQ1, register_interrupt_handler, registers_t};
-use noct_logger::{qemu_err, qemu_log, qemu_note, qemu_ok};
+use noct_logger::{qemu_err, qemu_log, qemu_ok};
 use x86::io::inb;
 
 use crate::{
