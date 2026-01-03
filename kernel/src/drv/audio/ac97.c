@@ -207,7 +207,7 @@ void ac97_FillBDLs() {
         ac97_buffer[filled].memory_pos = phys;
         ac97_buffer[filled].sample_count = bdl_span / sample_divisor;
 
-        qemu_log("[%d] %x -> %x", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count * sample_divisor);
+        // qemu_log("[%d] %x -> %x", filled, ac97_buffer[filled].memory_pos, ac97_buffer[filled].sample_count * sample_divisor);
 
         filled++;
     }

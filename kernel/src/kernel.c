@@ -25,6 +25,7 @@
 #include "drv/audio/ac97.h"
 #include "sys/cpuid.h"
 #include "sys/scheduler/scheduler.h"
+#include "sys/scheduler/thread.h"
 
 #ifdef NOCTURNE_X86
 #include "arch/x86/msr.h"
@@ -95,6 +96,15 @@ void new_nsh();
 extern size_t KERNEL_BASE_pos;
 extern size_t KERNEL_END_pos;
 
+
+void task01() {
+    for(int i = 0; i < 5; i++) {
+        qemu_log("Task A");
+        sleep_ms(100);
+    }
+
+    // Exit
+}
 
 /*
   Спаси да сохрани этот кусок кода
@@ -186,6 +196,11 @@ void __attribute__((noreturn)) kmain(const multiboot_header_t *mboot)
     
     qemu_log("Initializing Task Manager...");
     init_task_manager();
+
+    // thread_create(get_current_proc(), task01, 0x100, THREAD_KERNEL, NULL, 0);
+
+    // while(1)
+    //     ;
 
     ipc_init();
 

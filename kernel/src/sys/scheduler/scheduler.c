@@ -240,6 +240,36 @@ static void remove_thread(thread_t* thread) {
     }
 }
 
+static inline thread_t* sched_select_next() {
+    // Choose next thread.
+    thread_t* next_thread = (thread_t *)get_current_thread()->list_item.next;
+
+    while(next_thread != NULL) {
+        // Save the next of next thread because if our `next_thread` is dead, it will be removed, leaving us with gap.
+        thread_t* next_thread_soon = (thread_t *)next_thread->list_item.next;
+
+        // If the thread is PAUSED, skip it.
+        if(next_thread->state == PAUSED) {
+            next_thread = next_thread_soon;
+            continue;
+        }
+
+        // If we encountered dead thread, remove it.
+        if(next_thread->state == DEAD) {
+        	qemu_log("QUICK NOTICE: WE ARE IN PROCESS NR. #%u", current_proc->pid);
+
+            remove_thread(next_thread);
+
+            next_thread = next_thread_soon;
+            continue;
+        }
+
+        break;
+    }
+
+    return next_thread;
+}
+
 void task_switch_v2_wrapper(registers_t* regs) {
     if(!multi_task) {
         // qemu_err("Scheduler is disabled!");
@@ -247,25 +277,9 @@ void task_switch_v2_wrapper(registers_t* regs) {
     }
 
     // Choose next thread.
-    thread_t* next_thread = (thread_t *)get_current_thread()->list_item.next;
-
-    // In case the thread in state of PAUSED or DEAD, we skip them until we find normal READY thread.
-    while(next_thread != NULL && (next_thread->state == PAUSED || next_thread->state == DEAD)) {
-        // Save the next of next thread because if our `next_thread` is dead, it will be removed, leaving us with gap.
-        thread_t* next_thread_soon = (thread_t *)next_thread->list_item.next;
-
-        // If we encountered dead thread, remove it.
-        if(next_thread->state == DEAD) {
-        	qemu_log("QUICK NOTICE: WE ARE IN PROCESS NR. #%u", current_proc->pid);
-
-            remove_thread(next_thread);
-        }
-
-        next_thread = next_thread_soon;
-    }
+    thread_t* next_thread = sched_select_next();
 
     // Actually switch the context.
-
     task_switch_v2(get_current_thread(), next_thread);
 
     // next_thread is now current_thread.

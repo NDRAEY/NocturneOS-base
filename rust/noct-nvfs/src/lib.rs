@@ -55,8 +55,6 @@ pub unsafe extern "C" fn nvfs_decode(name: *const c_char) -> *mut NVFS_DECINFO {
     }
 
     let filesystem_id = unsafe { fsm_getIDbyName(filesystem_name) };
-
-    qemu_note!("FS ID: {}", filesystem_id);
     
     info.DriverFS = filesystem_id;
 
