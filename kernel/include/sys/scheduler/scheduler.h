@@ -20,9 +20,6 @@ void init_task_manager(void);
 void task_switch_v2_wrapper(registers_t* regs);
 extern void task_switch_v2(thread_t*, thread_t*);
 
-/* Get current process */
-volatile process_t* get_current_proc(void);
-
 size_t create_process(void* entry_point, char* name, bool is_kernel);
 
 /* Check multitask flag */
@@ -47,10 +44,10 @@ __attribute__((noreturn)) void thread_exit_entrypoint();
 
 int32_t spawn_prog(const char *name, int argc, const char* const* eargv);
 
-void process_add_prepared(volatile process_t* process);
-void thread_add_prepared(volatile thread_t* thread);
+void process_add_prepared(process_t* process);
+void thread_add_prepared(thread_t* thread);
 
-void process_remove_prepared(volatile process_t* process);
-void thread_remove_prepared(volatile thread_t* thread);
+void process_remove_prepared(process_t* process);
+void thread_remove_prepared(thread_t* thread);
 
 void enter_usermode(void (*ep)());

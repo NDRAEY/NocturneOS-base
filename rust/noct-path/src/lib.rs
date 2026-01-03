@@ -60,18 +60,6 @@ impl Path {
         iter.nth(1).unwrap_or("")
     }
 
-    fn sep(&self) -> Vec<&str> {
-        let mut stems: Vec<&str> = Vec::new();
-
-        for i in self.buffer.split('/') {
-            if !i.is_empty() {
-                stems.push(i);
-            }
-        }
-
-        stems
-    }
-
     pub fn apply(&mut self, path: &str) -> &mut Self {
         if Path::is_absolute(path) {
             self.buffer = path.to_string();

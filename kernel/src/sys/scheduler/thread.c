@@ -21,7 +21,7 @@ thread_t* get_current_thread() {
     return current_thread;
 }
 
-void thread_add_prepared(volatile thread_t* thread) {
+void thread_add_prepared(thread_t* thread) {
     mutex_get(&threadlist_scheduler_mutex);
 
     list_add(&thread_list, (list_item_t*)&thread->list_item);
@@ -29,7 +29,7 @@ void thread_add_prepared(volatile thread_t* thread) {
     mutex_release(&threadlist_scheduler_mutex);
 }
 
-void thread_remove_prepared(volatile thread_t* thread) {
+void thread_remove_prepared(thread_t* thread) {
     mutex_get(&threadlist_scheduler_mutex);
 
     list_remove(&thread->list_item);

@@ -24,3 +24,6 @@ typedef	struct {
     // If process is a program, it should contain elf header.
     elf_t*          program;
 } process_t;
+
+/* Get current process */
+process_t* get_current_proc(void);

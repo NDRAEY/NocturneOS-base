@@ -131,7 +131,7 @@ size_t create_process(void* entry_point, char* name, bool is_kernel) {
  *
  * @return process_t* - Current process
  */
- volatile process_t * get_current_proc(void) {
+process_t* get_current_proc(void) {
     return current_proc;
 }
 
@@ -143,7 +143,7 @@ bool process_exists(size_t pid) {
             return true;
         }
 
-        proc = (volatile process_t*)proc->list_item.next;
+        proc = (process_t*)proc->list_item.next;
     } while(proc != NULL && proc->pid != 0);
 
     return false;
@@ -285,7 +285,7 @@ void task_switch_v2_wrapper(registers_t* regs) {
     // next_thread is now current_thread.
 }
 
-void process_add_prepared(volatile process_t* process) {
+void process_add_prepared(process_t* process) {
     mutex_get(&proclist_scheduler_mutex);
 
     list_add(&process_list, (list_item_t*)&process->list_item);
@@ -293,7 +293,7 @@ void process_add_prepared(volatile process_t* process) {
     mutex_release(&proclist_scheduler_mutex);
 }
 
-void process_remove_prepared(volatile process_t* process) {
+void process_remove_prepared(process_t* process) {
     mutex_get(&proclist_scheduler_mutex);
 
     list_remove(&process->list_item);
