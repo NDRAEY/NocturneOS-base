@@ -7,7 +7,10 @@ uint32_t next_thread_id = 0;
 
 thread_t* kernel_thread = 0;
 thread_t* current_thread = 0;
+
 mutex_t threadlist_scheduler_mutex = {.lock = false};
+
+thread_t* sched_idle_thread;
 
 void initialize_thread_list() {
     list_init(&thread_list);
@@ -212,4 +215,21 @@ __attribute__((noreturn)) void thread_exit_entrypoint() {
 
     while(1)  // If something goes wrong, we loop here.
         __asm__ volatile("hlt");
+}
+
+__attribute__((noreturn)) void sched_idle_task() {
+	while(1) {
+		__asm__ volatile("hlt");
+	}
+}
+
+void initialize_idle_thread() {
+	sched_idle_thread = thread_create(
+		get_current_proc(),
+		sched_idle_task,
+		0x100,
+		THREAD_KERNEL,
+		NULL,
+		0
+	);
 }

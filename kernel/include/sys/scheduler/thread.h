@@ -57,3 +57,4 @@ thread_t* thread_create_arg1(process_t* proc, void* entry_point, size_t stack_si
 void thread_exit(thread_t* thread);
 
 __attribute__((noreturn)) void thread_exit_entrypoint();
+void initialize_idle_thread();
